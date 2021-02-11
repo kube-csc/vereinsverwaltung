@@ -1,3 +1,13 @@
+<h1>Internetauftritt von Veriene</h1>
+<p>Ausgelegt für ein Kanuverein mit verschiedenen Abteilungen
+<ul>
+<li>Wandersport</li>
+<li>Rennsport</li>
+<li>Drachenboot</li>
+<li>SUP</li>
+</ul>
+</p>
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">

@@ -3,6 +3,7 @@
 /public/storage
 /storage/*.key
 /vendor
+/database/DB_Projekt_KEL/DB_Projekt_KEL_20210213/*.sql
 .env
 .env.backup
 .phpunit.result.cache

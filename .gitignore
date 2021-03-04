@@ -1,9 +1,11 @@
 /node_modules
 /public/hot
 /public/storage
+/public/asset/img
+/public/asset/vendor
 /storage/*.key
 /vendor
-/database/DB_Projekt_KEL/DB_Projekt_KEL_20210213/*.sql
+/database/DB_Projekt_KEL
 .env
 .env.backup
 .phpunit.result.cache

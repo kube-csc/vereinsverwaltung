@@ -22,7 +22,7 @@
   <!-- Vendor CSS Files -->
   <link href="{{ asset('asset/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/icofont/icofont.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('asset/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+  <?php /*?><link href="{{ asset('asset/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">*/ ?>
   <link href="{{ asset('asset/vendor/venobox/venobox.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/owl.carousel/asset/owl.carousel.min.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/aos/aos.css" rel="stylesheet') }}">
@@ -30,6 +30,11 @@
   <!-- Template Main CSS File -->
   <link href="{{ asset('asset/css/style.css') }}" rel="stylesheet">
 
+  <!-- Laravell app.style.ss-->
+  <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+  <?php // TODO: boxicons über webpack einbinden ?>
+  <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
   <!-- =======================================================
   * Template Name: Squadfree - v2.2.0
   * Template URL: https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/
@@ -52,11 +57,11 @@
 
       <nav class="nav-menu d-none d-lg-block">
         <ul>
-          <li class="active"><a href="index.html">Home</a></li>
-          <li><a href="#about">About Us</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#team">Team</a></li>
+          <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/">Home</a></li>
+          <li class="{{ Request::is('/#about') ? 'active' : '' }}"><a href="#about">About Us</a></li>
+          <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="#services">Services</a></li>
+          <li class="{{ Request::is('/#portfolio') ? 'active' : '' }}"><a href="#portfolio">Portfolio</a></li>
+          <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="#team">Team</a></li>
           <li class="drop-down"><a href="">Drop Down</a>
             <ul>
               <li><a href="#">Drop Down 1</a></li>
@@ -74,7 +79,7 @@
               <li><a href="#">Drop Down 5</a></li>
             </ul>
           </li>
-          <li><a href="#contact">Contact Us</a></li>
+          <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="#contact">Contact Us</a></li>
 
         </ul>
       </nav><!-- .nav-menu -->
@@ -86,7 +91,7 @@
   <section id="hero">
     <div class="hero-container" data-aos="fade-up">
       <h1>Welcome to Squad</h1>
-      <h2>We are team of talanted designers making websites with Bootstrap huhuh</h2>
+      <h2>We are team of talanted designers making websites with Bootstrap</h2>
           <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
     </div>
   </section><!-- End Hero -->
@@ -577,7 +582,9 @@
 
   <!-- Vendor JS Files -->
   <script src="{{ asset('asset/vendor/jquery/jquery.min.js') }}"></script>
+  <?php /* TODO:
   <script src="{{ asset('asset/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  */ ?>
   <script src="{{ asset('asset/vendor/jquery.easing/jquery.easing.min.js') }}"></script>
   <script src="{{ asset('asset/vendor/php-email-form/validate.js') }}"></script>
   <script src="{{ asset('asset/vendor/waypoints/jquery.waypoints.min.js') }}"></script>
@@ -586,6 +593,7 @@
   <script src="{{ asset('asset/vendor/venobox/venobox.min.js') }}"></script>
   <script src="{{ asset('asset/vendor/owl.carousel/owl.carousel.min.js') }}"></script>
   <script src="{{ asset('asset/vendor/aos/aos.js') }}"></script>
+
 
   <!-- Template Main JS File -->
   <script src="{{ asset('asset/js/main.js') }}"></script>

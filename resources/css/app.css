@@ -1,3 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+/* TODO:  Boxicoins müssen noch eingebunden werden;probleme bereiten die Schriften
+@import 'boxicons/fonts/boxicons.eot';
+@import 'boxicons/css/boxicons.min.css';*/

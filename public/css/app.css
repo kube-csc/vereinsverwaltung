@@ -32718,6 +32718,10 @@ select {
           animation: bounce 1s infinite;
 }
 
+/* TODO:  Boxicoins müssen noch eingebunden werden
+@import 'boxicons/fonts/boxicons.eot';
+@import 'boxicons/css/boxicons.min.css';*/
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;

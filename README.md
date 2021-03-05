@@ -1,6 +1,7 @@
 <h1>Internetauftritt von Vereine</h1>
 <p>Ausgelegt für ein Kanuverein mit verschiedenen Abteilungen
-wie z.B.
+<br>
+Beispiel der Abteilungen:
 <ul>
 <li>Jugend</li>
 <li>Wandersport</li>
@@ -12,10 +13,16 @@ wie z.B.
 
 <h2>Aktueller Stand</h2>
 <ul>
-<li>Insallation Laravel 8.* mit jetstream 2.* und livewire 2.* teams</li>
+  <li>Insallation Laravel 8.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss
+  <a href="https://jetstream.laravel.com/2.x/introduction.html"></a>
+  <a href="https://jetstream.laravel.com/2.x/stacks/livewire.html"></a></li>
+  <li>boxicons <a href="https://boxicons.com/"></a></li>
+  <li>boxicons <a href="https://tailwindcss.com/"></a></li>
 </ul>
 </p>
-
+<br>
+<hr>
+<br>
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">

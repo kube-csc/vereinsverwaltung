@@ -1,10 +1,18 @@
-<h1>Internetauftritt von Veriene</h1>
+<h1>Internetauftritt von Vereine</h1>
 <p>Ausgelegt für ein Kanuverein mit verschiedenen Abteilungen
+wie z.B.
 <ul>
+<li>Jugend</li>
 <li>Wandersport</li>
 <li>Rennsport</li>
 <li>Drachenboot</li>
 <li>SUP</li>
+</ul>
+</p>
+
+<h2>Aktueller Stand</h2>
+<ul>
+<li>Insallation Laravel 8.* mit jetstream 2.* und livewire 2.* teams</li>
 </ul>
 </p>
 

@@ -18,13 +18,13 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-
   <!-- Vendor CSS Files -->
+  <?php /*  <link href="{{ asset('asset/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"> */ ?>
   <link href="{{ asset('asset/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/icofont/icofont.min.css') }}" rel="stylesheet">
-  <?php /*?><link href="{{ asset('asset/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">*/ ?>
+  <?php /* <link href="{{ asset('asset/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet"> */ ?>
   <link href="{{ asset('asset/vendor/venobox/venobox.css') }}" rel="stylesheet">
-  <link href="{{ asset('asset/vendor/owl.carousel/asset/owl.carousel.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('asset/vendor/owl.carousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/aos/aos.css" rel="stylesheet') }}">
 
   <!-- Template Main CSS File -->
@@ -35,6 +35,7 @@
 
   <?php // TODO: boxicons über webpack einbinden ?>
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+
   <!-- =======================================================
   * Template Name: Squadfree - v2.2.0
   * Template URL: https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/
@@ -50,7 +51,7 @@
     <div class="container d-flex align-items-center">
 
       <div class="logo mr-auto">
-        <h1 class="text-light"><a href="home.php"><span>Squadfree</span></a></h1>
+        <h1 class="text-light"><a href="home"><span>Squadfree</span></a></h1>
         <!-- Uncomment below if you prefer to use an image logo -->
         <!-- <a href="index.html"><img src="asset/img/logo.png" alt="" class="img-fluid"></a>-->
       </div>
@@ -64,7 +65,7 @@
           <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="#team">Team</a></li>
           <li class="drop-down"><a href="">Drop Down</a>
             <ul>
-              <li><a href="#">Drop Down 1</a></li>
+              <li class="{{ Request::is('deep') ? 'active' : '' }}"><a href="/deep">Drop Down 1</a></li>
               <li class="drop-down"><a href="#">Drop Down 2</a>
                 <ul>
                   <li><a href="#">Deep Drop Down 1</a></li>

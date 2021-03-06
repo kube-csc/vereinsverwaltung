@@ -101,75 +101,174 @@
 
 @yield('content')
 
+<?php
+$version = "1.0.0";
+$installdate = "01.10.2020";
+$firma = "Kanuten Emscher-Lippe e.V.";
+$vereinstrasse = "Zu den Sportstätten 5";
+$vereinsplz = "D-45711";
+$vereinsort = "Datteln";
+$vereintelefon = "(02363) 8420";
+$vereinfax="";
+$vereinemail = "kel@kel-datteln.de";
+$vereineintagngsort = "Recklinghausen";
+$vereinvrnummer = "VR 0627";
+$dateformat = "d.m.Y";
+$sponsoren = "Partner";
+$abmeldezeit = "3600";
+$keywords = "Kanuten Emscher-Lippe, Datteln, KEL, Kanuverein, Sport, Kanuwandersport, Kanurennsport, Kanu, Kajak, Paddeln, Drachenboot, Drachenbootregatta,
+             Wassersport, Regatta, SUP, Outrigger";
+$description = "Wir sind ein Kanuverein mit Jugend-, Wander-, Rennsport-, SUP-, Outrigger- und Drachenbootabteilung in Datteln NRW am Dortmund-Ems-Kanal.";
 
-  <!-- ======= Footer ======= -->
-  <footer id="footer">
-    <div class="footer-top">
-      <div class="container">
-        <div class="row">
+$slogen="Wir sind ein Kanuverein in Datteln am Dortmund Ems Kanal.";
+$canonical="https://www.kel-datteln.de";
+$domain="www.kel-datteln.de";
+?>
 
-          <div class="col-lg-4 col-md-6">
-            <div class="footer-info" data-aos="fade-up" data-aos-delay="50">
-              <h3>Squadfree</h3>
-              <p class="pb-3"><em>Qui repudiandae et eum dolores alias sed ea. Qui suscipit veniam excepturi quod.</em></p>
-              <p>
-                A108 Adam Street <br>
-                NY 535022, USA<br><br>
-                <strong>Phone:</strong> +1 5589 55488 55<br>
-                <strong>Email:</strong> info@example.com<br>
-              </p>
-              <div class="social-links mt-3">
-                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-                <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
-                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-                <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
-                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
-              </div>
+<!-- ======= Footer ======= -->
+<footer id="footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-4 col-md-6">
+          <div class="footer-info" data-aos="fade-up" data-aos-delay="50">
+            <h3><?php echo "$firma"?></h3>
+            <h4>Vorstandsadressen</h4>
+            <?php /*
+            <p class="pb-3"><em>Qui repudiandae et eum dolores alias sed ea. Qui suscipit veniam excepturi quod.</em></p> // QUESTION: : Warum em
+            */ ?>
+            <p>
+              <?php
+              echo "$firma <br>";
+              echo "$vereinstrasse <br>";
+              echo "$vereinsplz $vereinsort <br>";
+              if ($vereintelefon<>'')
+              {
+                ?>
+               <i class="icofont-telephone"></i><?php echo $vereintelefon ; ?>
+                 <br>
+              <?php
+              }
+              if ($vereinfax<>'')
+              {
+                ?>
+                <i class="icofont-fax"></i><?php echo $vereinfax ; ?>
+             <?php
+              }
+              ?>
+              <i class="icofont-email"></i><a href="mailto:<?php echo $vereinemail ; ?>"><?php echo $vereinemail ; ?></a>
+            </p>
+
+            <div class="social-links mt-3">
+              <a href="https://www.facebook.com/KELDatteln" class="facebook" target="_blank"><i class="bx bxl-facebook"></i></a>
+              <?php /*
+              <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+              <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+              <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+              <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+              */ ?>
             </div>
           </div>
+        </div>
 
-          <div class="col-lg-2 col-md-6 footer-links" data-aos="fade-up" data-aos-delay="150">
-            <h4>Useful Links</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-2 col-md-6 footer-links" data-aos="fade-up" data-aos-delay="250">
-            <h4>Our Services</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
-            </ul>
-          </div>
-
+          <!--<div class="col-lg-2 col-md-6 footer-links" data-aos="fade-up" data-aos-delay="150"> -->
           <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="350">
-            <h4>Our Newsletter</h4>
-            <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
-            <form action="" method="post">
-              <input type="email" name="email"><input type="submit" value="Subscribe">
-            </form>
+          <h4>Sozial Media</h4>
+          <ul>
+            <li><a href="https://www.facebook.com/KELDatteln" class="facebook" target="_blank"><i class="bx bxl-facebook"></i>KEL-Datteln</a></li>
+            <li><a href="https://de-de.facebook.com/pages/Emscher-Lippe-Dragons/125457887633531" class="facebook" target="_blank"><i class="bx bxl-facebook"></i>Emscher-Lippe-Dragons</a></li>
+            <li><a href="https://www.facebook.com/Ohana-Dragons-229310284689451" class="facebook" target="_blank"><i class="bx bxl-facebook"></i>Ohana Dragons</a></li>
+            <li><a href="https://www.facebook.com/PinkDragons45711" class="facebook" target="_blank"><i class="bx bxl-facebook"></i>Pink Dragons</a></li>
+          </ul>
+          <br>
+          <h4>Weitere Seiten</h4>
+          <ul>
+            <li><a href="http://www.kel-datteln.de/index.php?sprung=regatta/eventausgabe.php&amp;menu=regatta&amp;terminsammler=1" target="_blank">Rennsportregatta</a></li>
+            <li><a href="http://www.day-of-dragons.de" target="_blank">Day of Dragons</a></li>
+            <li><a href="http://sup.kel-datteln.de"    target="_blank">SUP Kurse</a></li>
+            <li><a href="http://oc.kel-datteln.de"     target="_blank">Outrigger für Vereinsmitglieder Buchen</a></li>
+          </ul>
+          <?php /* NOTE: mit fictogramm
+           <li><i class="bx bx-chevron-right"></i> <a href="#" target="_blank">SUP Kurse</a></li>
+          */ ?>
+        </div>
 
-          </div>
-
+<?php /*
+        <div class="col-lg-2 col-md-6 footer-links" data-aos="fade-up" data-aos-delay="150">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+          </ul>
+        </div>
+*/ ?>
+<?php /*
+        <div class="col-lg-2 col-md-6 footer-links" data-aos="fade-up" data-aos-delay="250">
+          <h4>Our Services</h4>
+          <ul>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
+          </ul>
+        </div>
+*/ ?>
+        <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="350">
+        <?php /* TODO: Netsletter
+          <h4>Dein Newsletter</h4>
+          <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+          <form action="" method="post">
+            <input type="email" name="email"><input type="submit" value="Subscribe">
+          </form>
+          <br>
+          */ ?>
+          <h4>Links</h4>
+          <ul>
+           <li><a href="anfahrt.php"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+          </ul>
+          <br>
+          <h4>Dokumente</h4>
+          <ul>
+           <li><a href="https://www.kel-datteln.de/download/vereinssatzung2010.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinssatzung 2010</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+           <li><a href="https://www.kel-datteln.de/download/Sportkleidung_2019.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinskleidung</a></li>
+          </ul>
+          <br>
+          <h4>Intern</h4>
+          <ul>
+            <?php /* TODO: Anmeldung alte Seite
+               <li><a href="http://www.kel-datteln.de/passwort/password.php" target="_blank"><i class="bx bx-log-in"></i>Login (alte Seite)</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+            */ ?>
+           <li><a href="http://<?php echo $domain ?>/passwort/login.php"><i class="bx bx-log-in"></i>Admin Login</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+          </ul>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="container">
-      <div class="copyright">
-        &copy; Copyright <strong><span>Squadfree</span></strong>. All Rights Reserved
-      </div>
-
+  <div class="container">
+    <div class="copyright">
+      &copy; Copyright <strong><span><?php echo $firma ?></span></strong><br>
+      All Rights Reserved
     </div>
-  </footer><!-- End Footer -->
+    <div class="credits">
+      <?php /* // NOTE:
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/ -->
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+      <br><br>
+      */?>
+      <a href="http://<?php echo $domain ?>/seiten/datenschutzerklaerung.php">Datenschutzerklärung</a> |
+      <a href="http://<?php echo $domain ?>/seiten/impressum.php">Impressum</a>
+    </div>
+  </div>
+</footer><!-- End Footer -->
 
   <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
 

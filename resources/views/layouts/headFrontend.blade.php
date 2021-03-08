@@ -1,3 +1,31 @@
+<?php
+// TODO: anderes Einbinden
+  $version = "1.0.0";
+  $installdate = "01.10.2020";
+  $verein= "Kanuten Emscher-Lippe e.V.";
+  $vereinstrasse = "Zu den Sportstätten 5";
+  $vereinsplz = "D-45711";
+  $vereinsort = "Datteln";
+  $vereintelefon = "(02363) 8420";
+  $vereinfax="";
+  $vereinemail = "kel@kel-datteln.de";
+  $vereineintagngsort = "Recklinghausen";
+  $vereinvrnummer = "VR 0627";
+  $dateformat = "d.m.Y";
+  $sponsoren = "Partner";
+  $abmeldezeit = "3600";
+  $keywords = "Kanuten Emscher-Lippe, Datteln, KEL, Kanuverein, Sport, Kanuwandersport, Kanurennsport, Kanu, Kajak, Paddeln, Drachenboot, Drachenbootregatta,
+               Wassersport, Regatta, SUP, Outrigger";
+  $description = "Wir sind ein Kanuverein mit Jugend-, Wander-, Rennsport-, SUP-, Outrigger- und Drachenbootabteilung in Datteln NRW am Dortmund-Ems-Kanal.";
+
+  $slogen="Wir sind ein Kanuverein in Datteln am Dortmund Ems Kanal.";
+  $canonical="https://www.kel-datteln.de/neu";
+  $domain="kel-datteln.de";
+?>
+
+
+@include('_partials.option')  <?php // TODO:  KEL-Datteln muss noch als Variabel umgesetzt werden ?>
+
 <!DOCTYPE html>
 <html lang="de">
 
@@ -5,9 +33,11 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Squadfree Bootstrap Template - Index</title>
+  <title>@yield('title', 'KEL-Datteln' )</title> <?php // TODO:  KEL-Datteln muss noch als Variabel umgesetzt werden?>
+
+
   <meta content="" name="descriptison">
-  <meta content="" name="keywords">
+  <meta content="" name="keywordsanlegen">
 
   <?php /*
   <!-- Favicons -->
@@ -66,7 +96,7 @@
           <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="#team">Team</a></li>
           <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="">Drop Down</a>
             <ul>
-              <li><a href="/deep">Drop Down 1</a></li>
+              <li><a href="#">Drop Down 1</a></li>
               <li class="drop-down"><a href="#">Drop Down 2</a>
                 <ul>
                   <li><a href="#">Deep Drop Down 1</a></li>
@@ -98,32 +128,7 @@
     </div>
   </section><!-- End Hero -->
 
-
 @yield('content')
-
-<?php
-$version = "1.0.0";
-$installdate = "01.10.2020";
-$firma = "Kanuten Emscher-Lippe e.V.";
-$vereinstrasse = "Zu den Sportstätten 5";
-$vereinsplz = "D-45711";
-$vereinsort = "Datteln";
-$vereintelefon = "(02363) 8420";
-$vereinfax="";
-$vereinemail = "kel@kel-datteln.de";
-$vereineintagngsort = "Recklinghausen";
-$vereinvrnummer = "VR 0627";
-$dateformat = "d.m.Y";
-$sponsoren = "Partner";
-$abmeldezeit = "3600";
-$keywords = "Kanuten Emscher-Lippe, Datteln, KEL, Kanuverein, Sport, Kanuwandersport, Kanurennsport, Kanu, Kajak, Paddeln, Drachenboot, Drachenbootregatta,
-             Wassersport, Regatta, SUP, Outrigger";
-$description = "Wir sind ein Kanuverein mit Jugend-, Wander-, Rennsport-, SUP-, Outrigger- und Drachenbootabteilung in Datteln NRW am Dortmund-Ems-Kanal.";
-
-$slogen="Wir sind ein Kanuverein in Datteln am Dortmund Ems Kanal.";
-$canonical="https://www.kel-datteln.de";
-$domain="www.kel-datteln.de";
-?>
 
 <!-- ======= Footer ======= -->
 <footer id="footer">
@@ -133,14 +138,14 @@ $domain="www.kel-datteln.de";
 
         <div class="col-lg-4 col-md-6">
           <div class="footer-info" data-aos="fade-up" data-aos-delay="50">
-            <h3><?php echo "$firma"?></h3>
+            <h3><?php echo $verein; ?></h3>
             <h4>Vorstandsadressen</h4>
             <?php /*
             <p class="pb-3"><em>Qui repudiandae et eum dolores alias sed ea. Qui suscipit veniam excepturi quod.</em></p> // QUESTION: : Warum em
             */ ?>
             <p>
               <?php
-              echo "$firma <br>";
+              echo "$verein <br>";
               echo "$vereinstrasse <br>";
               echo "$vereinsplz $vereinsort <br>";
               if ($vereintelefon<>'')
@@ -252,7 +257,7 @@ $domain="www.kel-datteln.de";
 
   <div class="container">
     <div class="copyright">
-      &copy; Copyright <strong><span><?php echo $firma ?></span></strong><br>
+      &copy; Copyright <strong><span><?php echo $verein ?></span></strong><br>
       All Rights Reserved
     </div>
     <div class="credits">
@@ -264,8 +269,8 @@ $domain="www.kel-datteln.de";
       Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       <br><br>
       */?>
-      <a href="http://<?php echo $domain ?>/seiten/datenschutzerklaerung.php">Datenschutzerklärung</a> |
-      <a href="http://<?php echo $domain ?>/seiten/impressum.php">Impressum</a>
+      <a href="/datenschutzerklaerung">Datenschutzerklärung</a> |
+      <a href="/impressum">Impressum</a>
     </div>
   </div>
 </footer><!-- End Footer -->

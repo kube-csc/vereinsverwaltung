@@ -1,7 +1,8 @@
 @extends('layouts.headFrontend')
 
-@section('content')
+@section('title' ,'Starteite')
 
+@section('content')
   <main id="main">
 
     <!-- ======= About Section ======= -->
@@ -414,5 +415,4 @@
     </section><!-- End Contact Section -->
 
   </main><!-- End #main -->
-
 @endsection

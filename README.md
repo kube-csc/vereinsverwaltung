@@ -18,6 +18,8 @@ Beispiel der Abteilungen:
   <a href="https://jetstream.laravel.com/2.x/stacks/livewire.html"></a></li>
   <li>boxicons <a href="https://boxicons.com/"></a></li>
   <li>boxicons <a href="https://tailwindcss.com/"></a></li>
+  <li>boxicons <a href="https://tailwindcss.com/"></a></li>
+  <li>.htaccess für 1und1 Server</li>
 </ul>
 </p>
 <br>

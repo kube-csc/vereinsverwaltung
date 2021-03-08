@@ -17,11 +17,14 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/deep', function () {
-    return view('deep');
-});
-
-
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::get('/impressum', function () {
+    return view('impressum');
+});
+
+Route::get('/datenschutzerklaerung', function () {
+    return view('datenschutzerklaerung');
+});

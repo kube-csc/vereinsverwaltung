@@ -21,6 +21,10 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
+Route::get('/anfahrt', function () {
+    return view('anfahrt');
+});
+
 Route::get('/impressum', function () {
     return view('impressum');
 });

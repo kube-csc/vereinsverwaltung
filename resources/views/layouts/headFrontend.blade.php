@@ -1,5 +1,5 @@
 <?php
-// TODO: anderes Einbinden
+// TODO: Config Daten anderes Einbinden
   $version = "1.0.0";
   $installdate = "01.10.2020";
   $verein= "Kanuten Emscher-Lippe e.V.";
@@ -90,11 +90,7 @@
       <nav class="nav-menu d-none d-lg-block">
         <ul>
           <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/">Home</a></li>
-          <li class="{{ Request::is('/#about') ? 'active' : '' }}"><a href="#about">About Us</a></li>
-          <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="#services">Services</a></li>
-          <li class="{{ Request::is('/#portfolio') ? 'active' : '' }}"><a href="#portfolio">Portfolio</a></li>
-          <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="#team">Team</a></li>
-          <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="">Drop Down</a>
+          <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="">Abteilung</a>
             <ul>
               <li><a href="#">Drop Down 1</a></li>
               <li class="drop-down"><a href="#">Drop Down 2</a>
@@ -111,8 +107,10 @@
               <li><a href="#">Drop Down 5</a></li>
             </ul>
           </li>
-          <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="#contact">Contact Us</a></li>
-
+          <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="#team">Team</a></li>
+          <li class="{{ Request::is('/#portfolio') ? 'active' : '' }}"><a href="#portfolio">Partner</a></li>
+          <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="#contact">Kontakt</a></li>
+          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="#contact">Anfahrt</a></li>
         </ul>
       </nav><!-- .nav-menu -->
 
@@ -189,10 +187,10 @@
           <br>
           <h4>Weitere Seiten</h4>
           <ul>
-            <li><a href="http://www.kel-datteln.de/index.php?sprung=regatta/eventausgabe.php&amp;menu=regatta&amp;terminsammler=1" target="_blank">Rennsportregatta</a></li>
-            <li><a href="http://www.day-of-dragons.de" target="_blank">Day of Dragons</a></li>
-            <li><a href="http://sup.kel-datteln.de"    target="_blank">SUP Kurse</a></li>
-            <li><a href="http://oc.kel-datteln.de"     target="_blank">Outrigger für Vereinsmitglieder Buchen</a></li>
+            <li><a href="http://www.kel-datteln.de/index.php?sprung=regatta/eventausgabe.php&amp;menu=regatta&amp;terminsammler=1" target="_blank" class="bx bx-link-external">Rennsportregatta</a></li>
+            <li><a href="http://www.day-of-dragons.de" target="_blank" class="bx bx-link-external">Day of Dragons</a></li>
+            <li><a href="http://sup.kel-datteln.de"    target="_blank" class="bx bx-link-external">SUP Kurse</a></li>
+            <li><a href="http://oc.kel-datteln.de"     target="_blank" class="bx bx-link-external">Outrigger für Vereinsmitglieder Buchen</a></li>
           </ul>
           <?php /* NOTE: mit fictogramm
            <li><i class="bx bx-chevron-right"></i> <a href="#" target="_blank">SUP Kurse</a></li>
@@ -234,7 +232,7 @@
           */ ?>
           <h4>Links</h4>
           <ul>
-           <li><a href="anfahrt.php"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+           <li><a href="anfahrt"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
           </ul>
           <br>
           <h4>Dokumente</h4>
@@ -291,11 +289,8 @@
   <script src="{{ asset('asset/vendor/owl.carousel/owl.carousel.min.js') }}"></script>
   <script src="{{ asset('asset/vendor/aos/aos.js') }}"></script>
 
-
   <!-- Template Main JS File -->
   <script src="{{ asset('asset/js/main.js') }}"></script>
 
-
   </body>
-
   </html>

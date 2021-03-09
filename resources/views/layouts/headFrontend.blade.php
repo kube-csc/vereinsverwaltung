@@ -74,18 +74,27 @@
   ======================================================== -->
 </head>
 
-
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top header-transparent">
-    <div class="container d-flex align-items-center">
+  <!-- ======= Facebook======= -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
-      <div class="logo mr-auto">
-        <h1 class="text-light"><a href="home"><span>Squadfree</span></a></h1>
-        <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <a href="index.html"><img src="asset/img/logo.png" alt="" class="img-fluid"></a>-->
-      </div>
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top header-transparent">
+  <div class="container d-flex align-items-center">
+
+    <div class="logo mr-auto">
+      <h1 class="text-light"><a href="/"><span><?php echo "$domain"?></span></a></h1>
+      <!-- Uncomment below if you prefer to use an image logo -->
+      <!-- <a href="index.php"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+    </div>
 
       <nav class="nav-menu d-none d-lg-block">
         <ul>
@@ -110,7 +119,7 @@
           <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="#team">Team</a></li>
           <li class="{{ Request::is('/#portfolio') ? 'active' : '' }}"><a href="#portfolio">Partner</a></li>
           <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="#contact">Kontakt</a></li>
-          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="#contact">Anfahrt</a></li>
+          <li class="{{ Request::is('anfahrt') ? 'active' : 'aa' }}"><a href="/anfahrt">Anfahrt</a></li>
         </ul>
       </nav><!-- .nav-menu -->
 
@@ -120,9 +129,10 @@
   <!-- ======= Hero Section ======= -->
   <section id="hero">
     <div class="hero-container" data-aos="fade-up">
-      <h1>Welcome to Squad</h1>
-      <h2>We are team of talanted designers making websites with Bootstrap</h2>
-          <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
+      <h1><?php echo"$verein";?></h1>
+      <h2><?php echo"$slogen";?></h2>
+      <?php // TODO:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
+      <a href="/#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
     </div>
   </section><!-- End Hero -->
 

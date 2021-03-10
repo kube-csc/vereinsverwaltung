@@ -33,11 +33,11 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>@yield('title', 'KEL-Datteln' )</title> <?php // TODO:  KEL-Datteln muss noch als Variabel umgesetzt werden?>
+  <title>@yield( 'title' , '{!! $verein !!}' )</title>
 
-
-  <meta content="" name="descriptison">
-  <meta content="" name="keywordsanlegen">
+<?php // TODO: Meta Conten bearbeiten ?>
+  <meta content="{!! $description !!}" name="descriptison">
+  <meta content="{!! $keywords !!}"    name="keywordsanlegen">
 
   <?php /*
   <!-- Favicons -->
@@ -132,7 +132,7 @@
       <h1><?php echo"$verein";?></h1>
       <h2><?php echo"$slogen";?></h2>
       <?php // TODO:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
-      <a href="/#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
+      <a href="/#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> <?php // TODO: vor dem #About den Routname hinzufügen?>
     </div>
   </section><!-- End Hero -->
 
@@ -256,7 +256,13 @@
             <?php /* TODO: Anmeldung alte Seite
                <li><a href="http://www.kel-datteln.de/passwort/password.php" target="_blank"><i class="bx bx-log-in"></i>Login (alte Seite)</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
             */ ?>
-           <li><a href="http://<?php echo $domain ?>/passwort/login.php"><i class="bx bx-log-in"></i>Admin Login</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+           <li><a href="http://<?php echo $domain ?>/passwort/login.php"><i class="bx bx-log-in"></i>Login (altes System)</a></li> <?php // TODO: Löschen wenn neues Backend Fertig ist ?>
+           <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Login</a></li>
+
+           @if (Route::has('register'))
+            <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Regestrieren</a></li>
+           @endif
+
           </ul>
         </div>
       </div>

@@ -116,11 +116,11 @@
               <li><a href="#">Drop Down 5</a></li>
             </ul>
           </li>
-          <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="#team">Team</a></li>
-          <li class="{{ Request::is('/#portfolio') ? 'active' : '' }}"><a href="#portfolio">Partner</a></li>
-          <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="#contact">Kontakt</a></li>
+          <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
+          <li class="{{ Request::is('/#portfolio') ? 'active' : '' }}"><a href="/#portfolio">Partner</a></li>
+          <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="/#contact">Kontakt</a></li>
           <li class="{{ Request::is('anfahrt') ? 'active' : 'aa' }}"><a href="/anfahrt">Anfahrt</a></li>
-        </ul>
+          </ul>
       </nav><!-- .nav-menu -->
 
     </div>
@@ -283,7 +283,7 @@
       Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       <br><br>
       */?>
-      <a href="/datenschutzerklaerung">Datenschutzerklärung</a> |
+      <a href="/instruction/1">Datenschutzerklärung</a> |
       <a href="/impressum">Impressum</a>
     </div>
   </div>

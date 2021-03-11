@@ -48,8 +48,8 @@
   <?php // TODO: Beschreibungen in Beschreibungen anpassen ?>
             <!-- ======= Anfahrt Section ======= -->
       <?php  /*<section class="inner-page">  */?>
-    <section id="contact" class="contact section-bg">
-      <div class="contact">
+        <section id="about" class="about">
+         <div class="container">
   <?php /* TODO:
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
           <h2>Impressum</h2>

@@ -1,5 +1,6 @@
 @extends('layouts.headFrontend')
 
+@section('about' ,'/anfahrt') <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
 @section('title' ,'Anfahrt')
 
 <?php
@@ -30,8 +31,6 @@
 @section('content')
   <main id="main">
 
-    <main id="main">
-
       <!-- ======= Breadcrumbs Section ======= -->
       <section class="breadcrumbs">
         <div class="container">
@@ -51,31 +50,31 @@
       <?php  /*<section class="inner-page">  */?>
       <?php  /*    <section id="anfahrt" class="contact section-bg"> */?>
 
-    <section id="about" class="contact section-bg">
-      <div class="container">
+    <section id="anfahrt" class="contact section-bg">
+      <div id="about" class="container">
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
           <h2>Anfahrt über die A2</h2>
-          <p>
           <h3>Castrop-Rauxel Henrichenburg / Datteln</h3>
-          An der Ampel rechts, dem Straßenverlauf der B235 folgen.
-          In Datteln schwenkt die B235 rechts in Richtung Olfen / Lüdinghausen.
-          An der Aral Tankstelle rechts (dort steht auch ein "Hochhaus") in Richtung Waltrop.
-          Nächste Straße links (Hafenstr.).
-          Dem Straßenverlauf folgen und über den Kanal.
-          Nächste Str. links "Zu den Sportstätten",
-          bis zum Ende fahren. Dort ist das Bootshaus.
-          <br>
+          <p>
+            An der Ampel rechts, dem Straßenverlauf der B235 folgen.
+            In Datteln schwenkt die B235 rechts in Richtung Olfen / Lüdinghausen.
+            An der Aral Tankstelle rechts (dort steht auch ein "Hochhaus") in Richtung Waltrop.
+            Nächste Straße links (Hafenstr.).
+            Dem Straßenverlauf folgen und über den Kanal.
+            Nächste Str. links "Zu den Sportstätten",
+            bis zum Ende fahren. Dort ist das Bootshaus.
+          </p>
           oder
-          <br>
           <h3>Dortmund Mengede (innerhalb des Kreuz Nord-West)</h3>
-          An der Ampel links in Richtung Waltrop / Datteln.
-          Man fährt 3 mal über einen Kanal (das 2. und 3. mal erst nach der
-          Ortsdurchfahrt Waltrop),
-          nach der 3. Kanalquerung die nächste Straße rechts (Hafenstr.).
-          Dem Straßenverlauf folgen und wieder einmal über den Kanal zurück.
-          Die nächste Str. links "Zu den Sportstätten",
-          bis zum Ende fahren. Dort ist das Bootshaus.
+          <p>
+            An der Ampel links in Richtung Waltrop / Datteln.
+            Man fährt 3 mal über einen Kanal (das 2. und 3. mal erst nach der
+            Ortsdurchfahrt Waltrop),
+            nach der 3. Kanalquerung die nächste Straße rechts (Hafenstr.).
+            Dem Straßenverlauf folgen und wieder einmal über den Kanal zurück.
+            Die nächste Str. links "Zu den Sportstätten",
+            bis zum Ende fahren. Dort ist das Bootshaus.
           </p>
         </div>
 

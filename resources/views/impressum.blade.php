@@ -1,9 +1,10 @@
 @extends('layouts.headFrontend')
 
+@section('about' ,'/impressum') <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
 @section('title' ,'Impressum')
 
 <?php
-// TODO: anderes Einbinden
+// TODO: Config Daten anderes Einbinden
   $version = "1.0.0";
   $installdate = "01.10.2020";
   $verein= "Kanuten Emscher-Lippe e.V.";
@@ -26,7 +27,6 @@
   $canonical="https://www.kel-datteln.de/neu";
   $domain="kel-datteln.de";
 ?>
-
 
 @section('content')
     <main id="main">

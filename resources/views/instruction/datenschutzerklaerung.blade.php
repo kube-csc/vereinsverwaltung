@@ -1,6 +1,7 @@
 <?php // TODO: Text muss noch über dei Datenbank eingelesen werden ?>
 @extends('layouts.headFrontend')
 
+@section('about' ,'/instruction/1') <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
 @section('title' ,'Datnschutzerklärung')
 
 @section('content')

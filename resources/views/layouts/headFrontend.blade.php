@@ -45,6 +45,9 @@
   <link href="asset/img/apple-touch-icon.png" rel="apple-touch-icon">
 */ ?>
 
+  <!-- Favicons -->
+  <link href="/favicon.png" rel="icon">
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
@@ -132,7 +135,8 @@
       <h1><?php echo"$verein";?></h1>
       <h2><?php echo"$slogen";?></h2>
       <?php // TODO:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
-      <a href="/#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> <?php // TODO: vor dem #About den Routname hinzufügen?>
+      <a href="@yield( 'about' , '' )/#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
+      <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
     </div>
   </section><!-- End Hero -->
 
@@ -260,7 +264,7 @@
            <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Login</a></li>
 
            @if (Route::has('register'))
-            <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Regestrieren</a></li>
+            <li><a href="{{ route('register') }}"><i class="bx bx-log-in"></i>Regestrieren</a></li>
            @endif
 
           </ul>

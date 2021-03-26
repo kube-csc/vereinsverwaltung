@@ -5,47 +5,62 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 
 use App\Models\SportSection;
+use Livewire\WithPagination;
 
 class Sectionspport extends Component
 {
+
+  use WithPagination;
+
+  //public $abteilungs;  // Wegen Verwendung abteilungs in public function render() verwendet wird
   public $newAbteilung;
   public $newDomain;
-  public $abteilungs;
 
   protected $fillable = [];
 
+/*
   public function mount()
   {
-     $inicialsectionspport = SportSection::latest()->get();  // TODO: Alphabetisch soltierento  // TODO: Filter Status >0
+    $inicialsectionspport = SportSection::latest()->get();  // TODO: Alphabetisch soltierento
     // $inicialsectionspport ->takeUntil(function ($status) {return $status >= 1;});
-     $this->abteilungs = $inicialsectionspport;
-
-     // ->orderBy('created_at','DESC')
+    $this->abteilungs = $inicialsectionspport->where('status' , '>' , '0')->where('idabteilung' , '=' , '0');
+    // ->orderBy('created_at','DESC')
+    //$this->abteilungs = $this->abteilungs->where('status' , '>' , '0');
+    // ->orderBy('created_at','DESC')[[
   }
+*/
 
-  public function newAbteilung()
+  public function addAbteilung()
   {
-
-    /*
+   /*
     if ($this->newAbteilung == '') {
      return;
     }
     */
+   $this->validate(['newAbteilung' => 'required|max:255']);
+   $this->validate(['newDomain'    => 'max:255']);
 
-    $this->validate(['newAbteilung' => 'required|max:255']);
-    $this->validate(['newDomain'    => 'max:255']);
-
-    $createdAbteilung = SportSection::create([
+   $createdAbteilung = SportSection::create([
       'abteilung'    =>  $this->newAbteilung,
       'domain'       =>  $this->newDomain,
       'status'       => '2',
       'idmitglied'   => auth()->user()->id
     ]);
    //  $this->abteilungs->push($createdAbteilung);
-   $this->abteilungs->prepend($createdAbteilung);
+   // $this->abteilungs->push($createdAbteilung);
 
    $this->newAbteilung="";
    $this->newDomain="";
+   session()->flash('message', 'Neue Abteilung '.$this->newAbteilung.' angelegt.');
+  }
+
+  public function remove($abteilungid)
+  {
+    $Component = SportSection::find($abteilungid);
+  //Storage::disk('public')->delete($comment->image);
+    $Component->delete();
+   //$this->abteilungs = $this->abteilungs->except($abteilungid);
+    session()->flash('message', 'Abteilung '.$Component->abteilung.' gelöscht.');
   }
 
   public $count = 1;
@@ -60,8 +75,10 @@ class Sectionspport extends Component
       $this->count--;
   }
 
-    public function render()
-    {
-        return view('livewire.sectionspport');
-    }
+  public function render()
+  {
+      return view('livewire.sectionspport', [
+        'abteilungs' => SportSection::where('status' , '>' , '0')->where('idabteilung' , '=' , '0')->latest()->paginate(4),
+      ]);  // TODO: paginate Views in dr blade funktiniert nicht
+  }
 }

@@ -13,6 +13,16 @@
       </div>
       @endif
   </div>
+
+<?php /* TODO:
+  <section>
+      @if($image)
+      <img src={{$image}} width="100" />
+      @endif
+      <input type="file" id="image" wire:change="$emit('fileChoosen')">
+  </section>
+ */?>
+
   <form class="my-4 flex" wire:submit.prevent="addAbteilung">
     <div>
       <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Sportabteilung"
@@ -32,7 +42,7 @@
       <div class="flex justify-between my-2">
         <div class="flex">
           <p class="font-bold text-lg">{{ $abteilung ['abteilung'] }}</p>
-          <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $abteilung->updated_at }}</p>  <!-- TODO: Ergänzen wenn das Datum nicht überall Null ist ->diffForHumans()  -->
+          <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $abteilung->updated_at->diffForHumans() }}</p>
         </div>
         <?php // TODO: fas da-times bearebiten ?>
         @if($abteilung['status']==1)

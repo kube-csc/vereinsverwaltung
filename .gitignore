@@ -6,6 +6,7 @@
 /storage/*.key
 /vendor
 /database/DB_Projekt_KEL
+/resources/views/vendor/livewire
 .env
 .env.backup
 .phpunit.result.cache

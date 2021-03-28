@@ -37,14 +37,14 @@ class Sectionspport extends Component
      return;
     }
     */
-   $this->validate(['newAbteilung' => 'required|max:255']);
+   $this->validate(['newAbteilung' => 'required|max:20']);
    $this->validate(['newDomain'    => 'max:255']);
 
    $createdAbteilung = SportSection::create([
       'abteilung'    =>  $this->newAbteilung,
       'domain'       =>  $this->newDomain,
       'status'       => '2',
-      'idmitglied'   => auth()->user()->id
+      'iduser'   => auth()->user()->id
     ]);
    //  $this->abteilungs->push($createdAbteilung);
    // $this->abteilungs->push($createdAbteilung);
@@ -78,7 +78,7 @@ class Sectionspport extends Component
   public function render()
   {
       return view('livewire.sectionspport', [
-        'abteilungs' => SportSection::where('status' , '>' , '0')->where('idabteilung' , '=' , '0')->latest()->paginate(4),
+        'abteilungs' => SportSection::where('status' , '>' , '0')->where('idabteilung' , '=' , '0')->latest()->paginate(5),
       ]);  // TODO: paginate Views in dr blade funktiniert nicht
   }
 }

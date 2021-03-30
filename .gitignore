@@ -6,7 +6,7 @@
 /storage/*.key
 /vendor
 /database/DB_Projekt_KEL
-/database/seeders
+/database/seeders_KEL
 /resources/views/vendor/livewire
 .env
 .env.backup

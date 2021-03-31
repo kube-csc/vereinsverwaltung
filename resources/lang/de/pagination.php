@@ -18,5 +18,5 @@ return [
     'Showing' =>  'Zeigt',
     'to' =>       'bis',
     'of' =>       'von',
-    'results' =>  'Ergebnisen',
+    'results' =>  'Ergebnissen',
 ];

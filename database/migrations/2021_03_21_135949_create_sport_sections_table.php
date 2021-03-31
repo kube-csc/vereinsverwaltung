@@ -15,10 +15,10 @@ class CreateSportSectionsTable extends Migration
     {
         Schema::create('sport_sections', function (Blueprint $table) {
             $table->id();
-            $table->string('abteilung','20');
-            $table->unsignedBigInteger('idtermin')->nullable();
-            $table->integer('status')->nullable();
-            $table->unsignedBigInteger('idabteilung')->nullable();
+            $table->string('abteilung','40');
+            $table->unsignedBigInteger('idtermin');
+            $table->integer('status');
+            $table->unsignedBigInteger('idabteilung');
             $table->string('bild')->nullable();
             $table->string('domain')->nullable();
             $table->unsignedBigInteger('iduser');

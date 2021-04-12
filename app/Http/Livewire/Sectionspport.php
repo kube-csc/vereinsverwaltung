@@ -3,10 +3,8 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
-use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManagerStatic;
 
 use App\Models\SportSection;
 
@@ -17,16 +15,18 @@ class Sectionspport extends Component
 
   //public $abteilungs;  // Wegen Verwendung abteilungs in public function render() verwendet wird
   public $newAbteilung;
-  public $newDomain;
-  public $image;
+  public $eventId ;
+  public $active ;
 
   //protected $fillable = [];
 
-  protected $listeners = ['fileUpload' => 'handleFileUpload'];
+  protected $listeners = [
+    'sportSectionSelected',
+  ];
 
-  public function handleFileUpload($imageData)
+  public function sportSectionSelected($sectionsportId)
   {
-          $this->image = $imageData;
+      $this->active = $sectionsportId;
   }
 
   public function updated($field)
@@ -41,34 +41,17 @@ class Sectionspport extends Component
     }
 
     $this->validate(['newAbteilung' => 'required|max:40']);
-    $this->validate(['newDomain'    => 'max:255']);
 
-    $image             = $this->storeImage();
     $createdAbteilung  = SportSection::create([
-        'abteilung'    => $this->newAbteilung,
-        'domain'       => $this->newDomain,
-        'idtermin'     => '0',
-        'idabteilung'  => '0',
-        'status'       => '2',
-        'iduser'       => auth()->user()->id,
-        'bild'         => $image,
+        'abteilung'        => $this->newAbteilung,
+        'idtermin'         => '0',
+        'sportSections_id' => '0',
+        'status'           => '2',
+        'user_id'          => auth()->user()->id,
       ]);
-    $this->newAbteilung='';
-    $this->newDomain   = '';
-    $this->image       = '';
-    session()->flash('message', 'Neue Abteilung '.$this->newAbteilung.' angelegt.');
-  }
+    $this->newAbteilung= '';
 
-  public function storeImage()
-  {
-      if (!$this->image) {
-          return null;
-      }
-
-      $img   = ImageManagerStatic::make($this->image)->encode('jpg');
-      $name  = Str::random() . '.jpg';
-      Storage::disk('public')->put($name, $img);
-      return $name;
+    session()->flash('message', 'Neue Abteilung '.$this->newAbteilung.' wurde angelegt.');
   }
 
   public function remove($abteilungid)
@@ -76,13 +59,13 @@ class Sectionspport extends Component
     $abteilung = SportSection::find($abteilungid);
     Storage::disk('public')->delete($abteilung->bild);
     $abteilung->delete();
-    session()->flash('message', 'Abteilung '.$abteilung->abteilung.' gelöscht.');
+    session()->flash('message', 'Die Abteilung '.$abteilung->abteilung.' wurde gelöscht.');
   }
 
   public function render()
   {
      return view('livewire.sectionspport', [
-        'abteilungs' => SportSection::where('idabteilung' , '=' , '0')->latest()->paginate(5),
+        'abteilungs' => SportSection::where('idabteilung' , '=' , '0')->latest()->paginate(8),
       ]);
   }
 }

@@ -16,12 +16,13 @@ class CreateSportSectionsTable extends Migration
         Schema::create('sport_sections', function (Blueprint $table) {
             $table->id();
             $table->string('abteilung','40');
-            $table->unsignedBigInteger('idtermin');
+            $table->unsignedBigInteger('idtermin');   // todo auf englisch event_id
             $table->integer('status');
-            $table->unsignedBigInteger('idabteilung');
+            $table->unsignedBigInteger('sportSections_id');
             $table->string('bild')->nullable();
             $table->string('domain')->nullable();
-            $table->unsignedBigInteger('iduser');
+            $table->string('farbe')->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
     }
@@ -36,23 +37,3 @@ class CreateSportSectionsTable extends Migration
         Schema::dropIfExists('sport_sections');
     }
 }
-
-
-
-/*
-$table->unsignedBigInteger('user_id')->nullable()->after('id');
-$table->foreign('user_id')
-      ->references('id')->on('users')
-      ->onDelete('cascade');
-
-
-CREATE TABLE `verein1_abteilung` (
-  `ID` int(11) NOT NULL,
-  `abteilung` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `idtermin` int(5) NOT NULL,
-  `status` int(1) NOT NULL,
-  `idabteilung` int(3) NOT NULL,
-  `bild` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `domain` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-*/

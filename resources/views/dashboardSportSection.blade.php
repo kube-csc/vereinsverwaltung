@@ -51,12 +51,12 @@
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
                       <div class="flex items-center">
-                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Mannschaft</div>
+                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Anteilungsinformationen</div>
                       </div>
 
                       <div class="ml-12">
                           <div class="mt-2 text-sm text-gray-500">
-                              Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript development. Check them out, see for yourself, and massively level up your development skills in the process.
+                                <livewire:sport-section-informations />
                           </div>
 
                           <a href="https://laracasts.com">

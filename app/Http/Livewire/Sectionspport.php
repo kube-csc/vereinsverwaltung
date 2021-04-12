@@ -65,7 +65,7 @@ class Sectionspport extends Component
   public function render()
   {
      return view('livewire.sectionspport', [
-        'abteilungs' => SportSection::where('idabteilung' , '=' , '0')->latest()->paginate(8),
+        'abteilungs' => SportSection::where('sportSections_id' , '=' , '0')->latest()->paginate(8),
       ]);
   }
 }

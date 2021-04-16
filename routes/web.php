@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstructionController;
+use App\Http\Controllers\BotManController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,10 +27,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboardSportSection', f
     return view('dashboardSportSection');
 })->name('dashboardSportSection');
 
-
 Route::resources([
     'instruction' => InstructionController::class,
-    ]);
+]);
 
 Route::get('/anfahrt', function () {
     return view('anfahrt');
@@ -41,3 +42,5 @@ Route::get('/impressum', function () {
 Route::get('/datenschutzerklaerung', function () {
     return view('datenschutzerklaerung');
 });
+
+Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);

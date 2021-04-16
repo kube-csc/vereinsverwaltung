@@ -862,7 +862,8 @@
         r = {
             position: "fixed",
             bottom: "0px",
-            right: "20px",
+            //right: "20px",
+            right: "58px", //KEl Optimierung
             zIndex: 2147483647,
             minWidth: "400px",
             boxSizing: "content-box",
@@ -909,10 +910,14 @@
             display: "flex",
             justifyContent: "center",
             position: "absolute",
-            top: "38px",
-            right: "20px",
-            height: "60px",
-            width: "60px",
+            //top: "38px",
+            top: "65px",  //KEl Optimierung
+            //right: "20px",
+            right: "0px",  //KEl Optimierung
+            //height: "60px",
+            height: "40px",  //KEl Optimierung
+            //width: "60px",
+            width: "40px",  //KEl Optimierung
             border: 0,
             borderRadius: "50%",
             boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.2)"

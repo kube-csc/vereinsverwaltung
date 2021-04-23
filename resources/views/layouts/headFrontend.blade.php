@@ -1,31 +1,3 @@
-<?php
-// TODO: Config Daten anderes Einbinden
-  $version = "1.0.0";
-  $installdate = "01.10.2020";
-  $verein= "Kanuten Emscher-Lippe e.V.";
-  $vereinstrasse = "Zu den Sportstätten 5";
-  $vereinsplz = "D-45711";
-  $vereinsort = "Datteln";
-  $vereintelefon = "(02363) 8420";
-  $vereinfax="";
-  $vereinemail = "kel@kel-datteln.de";
-  $vereineintagngsort = "Recklinghausen";
-  $vereinvrnummer = "VR 0627";
-  $dateformat = "d.m.Y";
-  $sponsoren = "Partner";
-  $abmeldezeit = "3600";
-  $keywords = "Kanuten Emscher-Lippe, Datteln, KEL, Kanuverein, Sport, Kanuwandersport, Kanurennsport, Kanu, Kajak, Paddeln, Drachenboot, Drachenbootregatta,
-               Wassersport, Regatta, SUP, Outrigger";
-  $description = "Wir sind ein Kanuverein mit Jugend-, Wander-, Rennsport-, SUP-, Outrigger- und Drachenbootabteilung in Datteln NRW am Dortmund-Ems-Kanal.";
-
-  $slogen="Wir sind ein Kanuverein in Datteln am Dortmund Ems Kanal.";
-  $canonical="https://www.kel-datteln.de/neu";
-  $domain="kel-datteln.de";
-?>
-
-
-@include('_partials.option')  <?php // TODO:  KEL-Datteln muss noch als Variabel umgesetzt werden ?>
-
 <!DOCTYPE html>
 <html lang="de">
 
@@ -69,6 +41,7 @@
   <?php // TODO: boxicons über webpack einbinden ?>
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
 
+   @include('_partials.header')
   <!-- =======================================================
   * Template Name: Squadfree - v2.2.0
   * Template URL: https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/
@@ -79,15 +52,23 @@
 
 <body>
 
-  <!-- ======= Facebook======= -->
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+<?php
+// TODO: Social Media Abfrage wieder einbauen
+//if ($sozialmediaanzeigen=='j')
+//{
+  ?>
+    <!-- ======= Facebook======= -->
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+  <?php
+//}
+?>
 
 <!-- ======= Header ======= -->
 <header id="header" class="fixed-top header-transparent">
@@ -107,7 +88,7 @@
               <li><a href="#">Drop Down 1</a></li>
               <li class="drop-down"><a href="#">Drop Down 2</a>
                 <ul>
-                  <li><a href="#">Deep Drop Down 1</a></li>
+                  <li><a href="#">Abteilung</a></li>
                   <li><a href="#">Deep Drop Down 2</a></li>
                   <li><a href="#">Deep Drop Down 3</a></li>
                   <li><a href="#">Deep Drop Down 4</a></li>
@@ -176,16 +157,16 @@
               ?>
               <i class="icofont-email"></i><a href="mailto:<?php echo $vereinemail ; ?>"><?php echo $vereinemail ; ?></a>
             </p>
+              <div class="social-links mt-3">
+                <a href="https://www.facebook.com/KELDatteln" class="facebook" target="_blank"><i class="bx bxl-facebook"></i></a>
+                <?php /*
+                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                */ ?>
+              </div>
 
-            <div class="social-links mt-3">
-              <a href="https://www.facebook.com/KELDatteln" class="facebook" target="_blank"><i class="bx bxl-facebook"></i></a>
-              <?php /*
-              <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-              <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-              <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
-              <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
-              */ ?>
-            </div>
           </div>
         </div>
 
@@ -313,4 +294,7 @@
   <script src="{{ asset('asset/js/main.js') }}"></script>
 
   </body>
+
+
+
   </html>

@@ -861,9 +861,10 @@
         },
         r = {
             position: "fixed",
-            bottom: "0px",
+            //bottom: "0px",
+            bottom: "50px", //KEl Optimierung
             //right: "20px",
-            right: "58px", //KEl Optimierung
+            right: "15px", //KEl Optimierung
             zIndex: 2147483647,
             minWidth: "400px",
             boxSizing: "content-box",

@@ -295,6 +295,20 @@
 
   </body>
 
-
+  <!-- BotMan WebDrive -->
+  <link rel="stylesheet" type="text/css" href="chat.min.css">
+  <script>
+      var botmanWidget = {
+          frameEndpoint: 'chat.php',
+          placeholderText: "Sende eine Nachricht...",
+          introMessage: "✋ Hi, ich bin der KEL ChatBot",
+          title: 'KEL ChatBot',
+          mainColor: "#1148e0",
+          headerTextColor: "#333",
+          bubbleBackground: "#1148e0",
+          bubbleAvatarUrl: ""
+      };
+  </script>
+  <script src='widget.js'></script>
 
   </html>

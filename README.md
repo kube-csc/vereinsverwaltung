@@ -3,11 +3,11 @@
 <br>
 Beispiel der Abteilungen:
 <ul>
-<li>Jugend</li>
-<li>Wandersport</li>
-<li>Rennsport</li>
-<li>Drachenboot</li>
-<li>SUP</li>
+  <li>Jugend</li>
+  <li>Wandersport</li>
+  <li>Rennsport</li>
+  <li>Drachenboot</li>
+  <li>SUP</li>
 </ul>
 </p>
 
@@ -16,10 +16,10 @@ Beispiel der Abteilungen:
   <li>Insallation Laravel 8.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss
   <a href="https://jetstream.laravel.com/2.x/introduction.html"></a>
   <a href="https://jetstream.laravel.com/2.x/stacks/livewire.html"></a></li>
-  <li>boxicons <a href="https://boxicons.com/"></a></li>
-  <li>boxicons <a href="https://tailwindcss.com/"></a></li>
-  <li>boxicons <a href="https://tailwindcss.com/"></a></li>
+  <li><a href="https://boxicons.com/">boxicons </a></li>
+  <li><a href="https://tailwindcss.com/">Tailwindcss </a></li>
   <li>.htaccess für 1und1 Server</li>
+  <li><a href="https://botman.io">Botman</a></li>
 </ul>
 </p>
 <br>

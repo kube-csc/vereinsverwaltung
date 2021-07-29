@@ -16,13 +16,14 @@ class CreateSportSectionsTable extends Migration
         Schema::create('sport_sections', function (Blueprint $table) {
             $table->id();
             $table->string('abteilung','40');
-            $table->unsignedBigInteger('idtermin');   // todo auf englisch event_id
-            $table->integer('status');
+            $table->unsignedBigInteger('event_id');
             $table->unsignedBigInteger('sportSections_id');
+            $table->integer('status');
             $table->string('bild')->nullable();
             $table->string('domain')->nullable();
             $table->string('farbe')->nullable();
             $table->unsignedBigInteger('user_id');
+            $table->SoftDeletes();
             $table->timestamps();
         });
     }

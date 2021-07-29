@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstructionController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SportSectionController;
 use App\Http\Controllers\BotManController;
 
 /*
@@ -15,17 +17,33 @@ use App\Http\Controllers\BotManController;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [HomeController::class, 'index']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
+    return view('admin.dashboard');
 })->name('dashboard');
 
+Route::middleware(['auth:sanctum', 'verified'])->get('/adminmenu', function () {
+    return view('admin.adminmenu');
+})->name('adminmenu');
+
+/*  //livewire
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboardSportSection', function () {
-    return view('dashboardSportSection');
+    return view('admin.sportSection.dashboardSportSection');
 })->name('dashboardSportSection');
+*/
+
+//Route::resource('sportSection', 'SportSectionController');
+Route::get('/Abteilung/alle',                            [SportSectionController::class, 'index'])     ->name('sportSection.index');
+Route::get('/Abteilung/neu',                             [SportSectionController::class, 'create'])    ->name('sportSection.create');
+Route::post('/Abteilung/speichern',                      [SportSectionController::class, 'store'])     ->name('sportSection.store');
+Route::get('/Abteilung/edit/{sportSection_id}',          [SportSectionController::class, 'edit'])      ->name('sportSection.edit');
+Route::post('/Abteilung/update/{sportSection_id}',       [SportSectionController::class, 'update'])    ->name('sportSection.update');
+Route::get('/Abteilung/aktiv/{sportSection_id}',         [SportSectionController::class, 'aktiv'])     ->name('sportSection.aktiv');
+Route::get('/Abteilung/inaktiv/{sportSection_id}',       [SportSectionController::class, 'inaktiv'])   ->name('sportSection.inaktiv');
+Route::get('/Abteilung/start/{sportSection_id}',         [SportSectionController::class, 'start'])     ->name('sportSection.start');
+Route::get('/Abteilung/softDelete/{sportSection_id}',    [SportSectionController::class, 'softDelete']);
+Route::get('/Abteilung/picturedelete/{sportSection_id}', [SportSectionController::class, 'pictureDelete']);
 
 Route::resources([
     'instruction' => InstructionController::class,
@@ -44,3 +62,7 @@ Route::get('/datenschutzerklaerung', function () {
 });
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
+
+Route::resources([
+    'BotmanQuestion' => BotmanQuestionController::class,
+]);

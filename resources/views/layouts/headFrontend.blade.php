@@ -1,3 +1,25 @@
+<?php
+// TODO: Config Daten anderes Einbinden
+  $verein= "Kanuten Emscher-Lippe e.V.";
+  $vereinstrasse = "Zu den Sportstätten 5";
+  $vereinsplz = "D-45711";
+  $vereinsort = "Datteln";
+  $vereintelefon = "(02363) 8420";
+  $vereinfax="";
+  $vereinemail = "kel@kel-datteln.de";
+  $vereineintagngsort = "Recklinghausen";
+  $vereinvrnummer = "VR 0627";
+  $keywords = "Kanuten Emscher-Lippe, Datteln, KEL, Kanuverein, Sport, Kanuwandersport, Kanurennsport, Kanu, Kajak, Paddeln, Drachenboot, Drachenbootregatta,
+               Wassersport, Regatta, SUP, Outrigger";
+  $description = "Wir sind ein Kanuverein mit Jugend-, Wander-, Rennsport-, SUP-, Outrigger- und Drachenbootabteilung in Datteln NRW am Dortmund-Ems-Kanal.";
+
+  $slogen="Wir sind ein Kanuverein in Datteln am Dortmund Ems Kanal.";
+  $canonical="https://www.kel-datteln.de/neu";
+  $domain="kel-datteln.de";
+
+  $sozialmediaanzeigen='n';
+?>
+
 <!DOCTYPE html>
 <html lang="de">
 
@@ -41,7 +63,7 @@
   <?php // TODO: boxicons über webpack einbinden ?>
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
 
-   @include('_partials.header')
+   @include('layouts.header')
   <!-- =======================================================
   * Template Name: Squadfree - v2.2.0
   * Template URL: https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/
@@ -83,6 +105,8 @@
       <nav class="nav-menu d-none d-lg-block">
         <ul>
           <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/">Home</a></li>
+          @php
+          /*
           <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="">Abteilung</a>
             <ul>
               <li><a href="#">Drop Down 1</a></li>
@@ -91,19 +115,22 @@
                   <li><a href="#">Abteilung</a></li>
                   <li><a href="#">Deep Drop Down 2</a></li>
                   <li><a href="#">Deep Drop Down 3</a></li>
-                  <li><a href="#">Deep Drop Down 4</a></li>
-                  <li><a href="#">Deep Drop Down 5</a></li>
-                </ul>
+                  </ul>
               </li>
               <li><a href="#">Drop Down 3</a></li>
               <li><a href="#">Drop Down 4</a></li>
-              <li><a href="#">Drop Down 5</a></li>
             </ul>
           </li>
-          <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
-          <li class="{{ Request::is('/#portfolio') ? 'active' : '' }}"><a href="/#portfolio">Partner</a></li>
+          */
+          @endphp
+          @php
+            // TODO: Active im Menu funktioniert noch nicht
+          @endphp
+          @php
+            //           <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
+          @endphp
           <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="/#contact">Kontakt</a></li>
-          <li class="{{ Request::is('anfahrt') ? 'active' : 'aa' }}"><a href="/anfahrt">Anfahrt</a></li>
+          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/anfahrt">Anfahrt</a></li>
           </ul>
       </nav><!-- .nav-menu -->
 
@@ -117,7 +144,12 @@
       <h2><?php echo"$slogen";?></h2>
       <?php // TODO:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
       <a href="@yield( 'about' , '' )/#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
-      <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
+      @php
+      /* TODO: vor dem #About den Routenname hinzufügen verbessern
+      benutzt in:
+      resources\views\instruction\datenschutzerklaerung.blade.php
+      */
+      @endphp
     </div>
   </section><!-- End Hero -->
 

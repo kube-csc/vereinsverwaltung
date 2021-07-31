@@ -4,7 +4,6 @@
 $serverdomain=$_SERVER["HTTP_HOST"];
 
 //todo Code überarbeiten
-
 $abteilungs     = DB::table('sport_sections')->where('status' , '1')->orwhere('domain',$serverdomain)->orderby('status')->get();
 $abteilungCount = DB::table('sport_sections')->where('status' , '1')->orwhere('domain',$serverdomain)->count();
 
@@ -25,7 +24,7 @@ foreach ( $abteilungs as $abteilung)
       #hero {
         width: 100%;
         height: 100vh;
-        background: url("/storage/<?php echo $bild ;?>") top center;
+        background: url("/storage/header/<?php echo $bild ;?>") top center;
         background-size: cover;
         position: relative;
         margin-bottom: -90px;
@@ -47,16 +46,18 @@ foreach ( $abteilungs as $abteilung)
 
           #header.header-scrolled {
             background: rgba(<?php echo $farbe ;?>);
-          padding: 0;
+            padding: 0;
          }
 
+         #footer .footer-top .footer-info {
+           border-top: 4px solid rgba(<?php echo $farbe ;?>);
+        }
+
          .about .content .about-btn {
-           /*   background: #d6338d; */
           background: rgba(<?php echo $farbe ;?>);
          }
 
          .back-to-top {
-        /*   background: #d6338d; */
             background: rgba(<?php echo $farbe ;?>);
          }
 
@@ -67,22 +68,21 @@ foreach ( $abteilungs as $abteilung)
            }
 
           #footer .footer-top .footer-info {
-            border-top: 4px solid #d6338d;
+            border-top: 4px solid rgba(<?php echo $farbe ;?>);
          }
 
          .about .content .about-btn {
-           /*   background: #d6338d; */
           background: rgba(<?php echo $farbe ;?>);
          }
 
          .back-to-top {
-        /*   background: #d6338d; */
+
             background: rgba(<?php echo $farbe ;?>);
          }
 
          }
         }
-              <?php
+      <?php
       }
      ?>
    </style>

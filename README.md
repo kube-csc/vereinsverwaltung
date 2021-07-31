@@ -6,12 +6,12 @@ Beispiel der Abteilungen:
   <li>Jugend</li>
   <li>Wandersport</li>
   <li>Rennsport</li>
-  <li>Drachenboot</li>
+  <li>Drachenboot mit drei Mannschaften</li>
   <li>SUP</li>
 </ul>
 </p>
 
-<h2>Aktueller Stand</h2>
+<h2>Installierte Programme</h2>
 <ul>
   <li>Insallation Laravel 8.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss
   <a href="https://jetstream.laravel.com/2.x/introduction.html"></a>
@@ -21,7 +21,24 @@ Beispiel der Abteilungen:
   <li>.htaccess für 1und1 Server</li>
   <li><a href="https://botman.io">Botman</a></li>
 </ul>
-</p>
+
+<h2>Frontend</h2>
+<ul>
+<li>Header</li>
+<li>Leanding Page
+  <li>Ausgabe der Vereinsbeschreibung</li>
+  <li>Auflistung der Abteilung</li>
+  <li>Kontakt des Vereins inc. Map</li>
+</li>
+<li>Footer</li>
+</ul>
+
+<h2>Backend</h2>
+<ul>
+  <li>Eingabe und Bearbeitung der Vereinsbeschreibung</li>
+  <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
+</ul>
+
 <br>
 <hr>
 <br>

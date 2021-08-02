@@ -14,8 +14,6 @@ use App\Models\Event;
 
 class SportSectionController extends Controller
 {
-     public $active;
-
     /**
      * Display a listing of the resource.
      *
@@ -26,45 +24,63 @@ class SportSectionController extends Controller
        $this->middleware('auth');
     }
 
-    public function aktiv($sportSections_id)
+    public function sportSectionSelected($sportSection_id)
     {
-      sportSection::find($sportSections_id)->update([
+        $this->active = $sportSection_id;
+    }
+
+    public function aktiv($sportSection_id)
+    {
+      sportSection::find($sportSection_id)->update([
             'status'      => '2',
             'updated_at'  => Carbon::now()
           ]);
      return Redirect()->back()->with('success' , 'Abteilung wurde sichtbar geschaltet.');
     }
 
-    public function inaktiv($sportSections_id)
+    public function inaktiv($sportSection_id)
     {
-      sportSection::find($sportSections_id)->update([
+      sportSection::find($sportSection_id)->update([
             'status'      => '0',
             'updated_at'  => Carbon::now()
           ]);
      return Redirect()->back()->with('success' , 'Abteilung wurde unsichtbar geschaltet.');
     }
 
-    public function start($sportSections_id)
+    public function start($sportSection_id)
     {
      sportSection::where('status' , '1')->update([
             'status'      => '2',
             'updated_at'  => Carbon::now()
           ]);
-      sportSection::find($sportSections_id)->update([
+      sportSection::find($sportSection_id)->update([
             'status'      => '1',
             'updated_at'  => Carbon::now()
           ]);
      return Redirect()->back()->with('success' , 'Abteilung wurde Startseite festgelegt.');
     }
 
+    public function sportSectionSportTeam($sportSection_id)
+    {
+      $sportSectionVonSportTeam = sportSection::find($sportSection_id);
+      $sportTeams = sportSection::where('sportSections_id'  , $sportSection_id)->orderby('abteilung')->get();
+      return Redirect()->back()->with(
+      //return view('admin.sportSection.index')->with(
+      [
+        'success'          => 'Mannschaften der Abteilung ' . $sportSectionVonSportTeam->abteilung . ' wurde selectiert.',
+        'SportSectionName' => $sportSectionVonSportTeam->abteilung,
+        'sportTeams'       => $sportTeams,
+      ]);
+    }
+
     public function index()
     {
       $sportSections = sportSection::where('sportSections_id' , '')->orderby('abteilung')->paginate(5);
-
+      $sportTeams = sportSection::where('id' , '0')->orderby('abteilung')->get();
       return view('admin.sportSection.index')->with(
         [
           'sportSections' => $sportSections,
-          'active'        => $this->active
+          'sportTeams'    => $sportTeams,
         ]);
     }
 
@@ -119,7 +135,7 @@ class SportSectionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($sportSection_id)
+    public function show($SportTeam_id)
     {
         //
     }
@@ -130,9 +146,9 @@ class SportSectionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($sportSection_id)
+    public function edit($SportTeam_id)
     {
-      $sportSection = sportSection::find($sportSection_id);
+      $sportSection = sportSection::find($SportTeam_id);
 
       if ($sportSection->event_id>0) {
        //$event = DB::table('events')->find($sportSection->event_id);
@@ -142,7 +158,6 @@ class SportSectionController extends Controller
       else {
         $ausgabetext='';
       }
-
       return view('admin.sportSection.edit',compact('sportSection' , 'ausgabetext'));
     }
 
@@ -153,7 +168,7 @@ class SportSectionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $sportSection_id)
+    public function update(Request $request, $SportTeam_id)
     {
       $request->validate(
         [
@@ -165,7 +180,7 @@ class SportSectionController extends Controller
         ]
       );
 
-      sportSection::find($sportSection_id)->update([
+      sportSection::find($SportTeam_id)->update([
         'abteilung'         => $request->abteilung,
         'farbe'             => $request->farbe,
         'domain'            => $request->domain,
@@ -174,9 +189,9 @@ class SportSectionController extends Controller
 
       $messagePicture='';
       if($request->bild){
-        $newPictureName=$this->saveInmage($request->bild , $sportSection_id);
+        $newPictureName=$this->saveInmage($request->bild , $SportTeam_id);
         if($newPictureName<>''){
-          sportSection::find($sportSection_id)->update([
+          sportSection::find($SportTeam_id)->update([
             'bild'         => $newPictureName
           ]);
           $messagePicture='<br>Das Headerbild wurde hochgeladen.';
@@ -187,7 +202,7 @@ class SportSectionController extends Controller
       }
 
       if ($request->beschreibung<>'') {
-        $sportSection = sportSection::find($sportSection_id);
+        $sportSection = sportSection::find($SportTeam_id);
         if ($sportSection->event_id>0){
           Event::find($sportSection->event_id)->update([
             'beschreibung'      => $request->beschreibung,
@@ -199,7 +214,7 @@ class SportSectionController extends Controller
           $createdEvent= new Event(
             [
               'beschreibung'     => $request->beschreibung,
-              'sportSection_id'  => $request->sportSection_id,
+              'SportTeam_id'  => $request->SportTeam_id,
               'veranstaltung'    => 4,   //4 = Abteilungsbeschreibung
               'autor_id'         => Auth::user()->id,
               'bearbeiter_id'    => Auth::user()->id,
@@ -213,7 +228,7 @@ class SportSectionController extends Controller
 
            $newEventId  = $createdEvent->id;
 
-           sportSection::find($sportSection_id)->update([
+           sportSection::find($SportTeam_id)->update([
             'event_id'         => $newEventId
           ]);
         }
@@ -221,7 +236,7 @@ class SportSectionController extends Controller
 
       return redirect('/Abteilung/alle')->with(
         [
-          'success' => 'Die Daten von Abteilung <b>' . $request->abteilung . '</b> wurde geändert.'.$messagePicture
+          'success' => 'Die Daten von der Abteilung <b>' . $request->abteilung . '</b> wurde geändert.'.$messagePicture
         ]
       );
     }
@@ -237,9 +252,9 @@ class SportSectionController extends Controller
      //
     }
 
-    public function softDelete($sportSections_id)
+    public function softDelete($SportTeam_id)
     {
-      $delete = sportSection::find($sportSections_id)->delete();
+      $delete = sportSection::find($SportTeam_id)->delete();
       return redirect('/Abteilung/alle')->with(
         [
           'success' => 'Das Abteilung wurde gelöscht.'
@@ -248,8 +263,8 @@ class SportSectionController extends Controller
     }
 
     //Bilder Speichern
-    public function saveInmage($bildInput , $sportSection_id){
-     $newPictureName="header".$sportSection_id.'.jpg';
+    public function saveInmage($bildInput , $SportTeam_id){
+     $newPictureName="header".$SportTeam_id.'.jpg';
      $bild = Image::make($bildInput);
      $breite= $bild->width();
      $hoehe = $bild->height();
@@ -263,13 +278,13 @@ class SportSectionController extends Controller
      }
     }
 
-    // Bilder von $sportSection löschen
-       public function pictureDelete($sportSection_id){
-         $newPictureName="header".$sportSection_id.'.jpg';
+    // Bilder von SportSection löschen
+       public function pictureDelete($SportTeam_id){
+         $newPictureName="header".$SportTeam_id.'.jpg';
          if (file_exists(public_path().'/storage/header/'.$newPictureName)){
             unlink(public_path().'/storage/header/'.$newPictureName);
           }
-         sportSection::find($sportSection_id)->update([
+         sportSection::find($SportTeam_id)->update([
           'bild'         => ''
          ]);
          return back()->with([

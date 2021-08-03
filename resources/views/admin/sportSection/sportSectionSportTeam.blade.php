@@ -52,7 +52,7 @@
                               </div>
 
                               @foreach ( $sportSections as $sportSection )
-                              <div class="rounded border shadow p-3 my-2 {{$sportSection->id == $sportSection->id ? 'bg-blue-200' : ''}}" onclick="window.location.replace('sportSectionSportTeam/{{ $sportSection->id }}')">
+                              <div class="rounded border shadow p-3 my-2 {{$sportSectionIdSelecte == $sportSection->id ? 'bg-blue-300' : 'bg-blue-200'}}" onclick="window.location.replace('/Abteilung/sportSectionSportTeam/{{ $sportSection->id }}')">
                                   <div class="flex justify-between my-2">
                                     <div class="flex">
                                       <p class="font-bold text-lg">{{ $sportSection->abteilung }}</p>
@@ -109,12 +109,51 @@
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
                       <div class="flex items-center">
-
-                       <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
-
-                         </div>
-
+                      @if ($sportSectionName<>'')
+                       <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Mannschaften der Abteilung {{ $sportSectionName }}</div>
+                      @endif
                       </div>
+
+                      @foreach ( $sportTeams as $sportTeam )
+                      <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('edit/{{ $sportTeam->id }}')">
+                          <div class="flex justify-between my-2">
+                            <div class="flex">
+                              <p class="font-bold text-lg">{{ $sportTeam->abteilung }} </p>
+                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $sportTeam->updated_at->diffForHumans() }}</p>
+                                 <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Mannschaft/edit/'.$sportTeam->id) }}">
+                                  <box-icon name='edit' type='solid'></box-icon>
+                                 </a>
+                                  @if($sportTeam['status']==2)
+                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Mannschaft/start/'.$sportTeam->id) }}">
+                                     <box-icon name='pin' type='solid'></box-icon>
+                                    </a>
+                                  @endif
+                                  @if($sportTeam['status']==2)
+                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Mannschaft/inaktiv/'.$sportTeam->id) }}">
+                                     <box-icon name='show'  type='solid'></box-icon>
+                                    </a>
+                                  @endif
+                                  @if($sportTeam['status']==0)
+                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Mannschaft/aktiv/'.$sportTeam->id) }}">
+                                     <box-icon name='hide' type='solid'></box-icon>
+                                    </a>
+                                    <!-- <i class="fas fa-times text-red-200 hover:text-red-600 cursor-pointer">inaktiv</i> -->
+                                  @endif
+                                  @if ($sportTeam['event_id']==0)
+                                   <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Mannschaft/softDelete/'.$sportTeam->id) }}">
+                                     <box-icon type='solid' name='x-square'></box-icon>
+                                   </a>
+                                  @endif
+                              </div>
+                          </div>
+                          @if($sportTeam->bild)
+                           <img src="/storage/header/{{$sportTeam->bild}}" />
+                           <a href="{{ url('Mannschaft/picturedelete/'.$sportTeam->id) }}">
+                             <box-icon name='x'></box-icon>
+                           </a>
+                          @endif
+                      </div>
+                      @endforeach
 
                   </div>
 

@@ -62,25 +62,25 @@ class SportSectionController extends Controller
 
     public function sportSectionSportTeam($sportSection_id)
     {
+      $sportSections = sportSection::where('sportSections_id' , '')->orderby('abteilung')->paginate(5);
       $sportSectionVonSportTeam = sportSection::find($sportSection_id);
       $sportTeams = sportSection::where('sportSections_id'  , $sportSection_id)->orderby('abteilung')->get();
-      return Redirect()->back()->with(
-      //return view('admin.sportSection.index')->with(
-      [
-        'success'          => 'Mannschaften der Abteilung ' . $sportSectionVonSportTeam->abteilung . ' wurde selectiert.',
-        'SportSectionName' => $sportSectionVonSportTeam->abteilung,
-        'sportTeams'       => $sportTeams,
-      ]);
+      return view('admin.sportSection.sportSectionSportTeam')->with(
+        [
+          'success'               => 'Mannschaften der Abteilung ' . $sportSectionVonSportTeam->abteilung . ' wurde selectiert.',
+          'sportSectionName'      => $sportSectionVonSportTeam->abteilung,
+          'sportTeams'            => $sportTeams,
+          'sportSections'         => $sportSections,
+          'sportSectionIdSelecte' => $sportSection_id,
+         ]);
     }
 
     public function index()
     {
       $sportSections = sportSection::where('sportSections_id' , '')->orderby('abteilung')->paginate(5);
-      $sportTeams = sportSection::where('id' , '0')->orderby('abteilung')->get();
       return view('admin.sportSection.index')->with(
         [
           'sportSections' => $sportSections,
-          'sportTeams'    => $sportTeams,
         ]);
     }
 

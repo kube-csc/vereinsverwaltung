@@ -16,16 +16,42 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
           $table->id();
           //Vereinsverwaltung
-          $table->string('nachname', 40)->default('');
-          $table->string('vorname', 40)->default('');
+          $table->string('nachname', 40);
+          $table->string('vorname', 40);
+          $table->string('geschlecht', 1);
+          $table->date('geburtsdatum')->nullable();
+          $table->date('vereinseintritt')->nullable();
+          $table->date('vereinsaustritt')->nullable();
+          $table->integer('sportSections_id')->default(0);
+          $table->string('password_alt', 20)->nullable();
+          $table->integer('webspace')->default(0);
+          $table->integer('regattatrainer')->default(0);
+          $table->char('trainernachricht', 1)->default('');
+          $table->decimal('gewicht', 4, 1)->default(0.0);
+          $table->integer('position')->default(0);
+          $table->integer('seite')->default(0);
+          $table->integer('status')->default(0);
+          $table->integer('admin')->default(0);
+          $table->integer('vorstand_id')->default(0);
+          $table->text('beschreibung');
+          $table->string('telefon', 25)->default('');
+          $table->string('bild', 15)->default('');
+          $table->integer('pixx')->default(0);
+          $table->integer('pixy')->default(0);
+
           //Laravel
-          $table->string('name');
-          $table->string('email')->unique();
+          $table->string('name')->nullable();
+
+          $table->string('email')->nullable();
+          //$table->string('email')->unique();
+
           $table->timestamp('email_verified_at')->nullable();
           $table->string('password');
+
           $table->rememberToken();
           $table->foreignId('current_team_id')->nullable();
           $table->text('profile_photo_path')->nullable();
+          $table->SoftDeletes();
           $table->timestamps();
         }
       );

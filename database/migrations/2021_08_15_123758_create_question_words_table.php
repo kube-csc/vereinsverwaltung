@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBotmanQuestionsTable extends Migration
+class CreateQuestionWordsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateBotmanQuestionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('botman_questions', function (Blueprint $table) {
+        Schema::create('question_words', function (Blueprint $table) {
             $table->id();
-            $table->string('question');
+            $table->string('questionWord');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->SoftDeletes();
             $table->timestamps();
 
             $table->foreign('user_id')
                   ->references('id')->on('users');
-                  //->onDelete('cascade');
         });
     }
 
@@ -33,6 +31,6 @@ class CreateBotmanQuestionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('botman_questions');
+        Schema::dropIfExists('question_words');
     }
 }

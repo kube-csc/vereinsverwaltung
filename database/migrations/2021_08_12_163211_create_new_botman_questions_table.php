@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBotmanQuestionsTable extends Migration
+class CreateNewBotmanQuestionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateBotmanQuestionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('botman_questions', function (Blueprint $table) {
+        Schema::create('new_botman_questions', function (Blueprint $table) {
             $table->id();
             $table->string('question');
             $table->unsignedBigInteger('user_id')->nullable();
@@ -22,7 +22,7 @@ class CreateBotmanQuestionsTable extends Migration
 
             $table->foreign('user_id')
                   ->references('id')->on('users');
-                  //->onDelete('cascade');
+            //    ->onDelete('cascade');
         });
     }
 
@@ -33,6 +33,6 @@ class CreateBotmanQuestionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('botman_questions');
+        Schema::dropIfExists('new_botman_questions');
     }
 }

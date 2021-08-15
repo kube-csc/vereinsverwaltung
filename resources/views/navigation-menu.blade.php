@@ -12,12 +12,9 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                 @php /*Dasboard  
                     <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-jet-nav-link>
-                    */
-                  @endphp
                   @php  /*livewire
                     <x-jet-nav-link href="{{ route('dashboardSportSection') }}" :active="request()->routeIs('dashboardSportSection')">
                         {{ __('Abteilung') }}
@@ -25,7 +22,7 @@
                     */
                   @endphp
                   <x-jet-nav-link href="{{ route('adminmenu') }}" :active="request()->routeIs('adminmenu')">
-                      {{ __('Intrnes Dashboard') }}
+                      {{ __('Menue') }}
                   </x-jet-nav-link>
                   <x-jet-nav-link href="/">
                       {{ __('Homepage') }}

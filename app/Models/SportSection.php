@@ -14,15 +14,19 @@ class SportSection extends Model
 
     protected $guarded = [];
 
-    public function events()
+    public function event()
     {
-        return $this->hasMany(Event::class);
+        return $this->belongsTo(Event::class, 'event_id');
     }
 
-    public function creator()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    //public function event() {
+      //  return $this->belongsTo('App\Models\event');
+  //  }
 
     public function getImagePathAttribute()
       {

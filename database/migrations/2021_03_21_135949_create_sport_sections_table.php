@@ -16,7 +16,7 @@ class CreateSportSectionsTable extends Migration
         Schema::create('sport_sections', function (Blueprint $table) {
             $table->id();
             $table->string('abteilung','40');
-            $table->unsignedBigInteger('event_id');
+            $table->unsignedBigInteger('event_id')->nullable();
             $table->unsignedBigInteger('sportSections_id');
             $table->integer('status');
             $table->string('bild')->nullable();
@@ -25,6 +25,13 @@ class CreateSportSectionsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->SoftDeletes();
             $table->timestamps();
+
+            $table->foreign('event_id')
+              ->references('id')->on('events');
+
+            $table->foreign('user_id')
+             ->references('id')->on('users');
+
         });
     }
 

@@ -17,7 +17,7 @@ class CreateSportSectionsTable extends Migration
             $table->id();
             $table->string('abteilung','40');
             $table->unsignedBigInteger('event_id')->nullable();
-            $table->unsignedBigInteger('sportSections_id');
+            $table->unsignedBigInteger('sportSections_id')->nullable();
             $table->integer('status');
             $table->string('bild')->nullable();
             $table->string('domain')->nullable();
@@ -30,8 +30,7 @@ class CreateSportSectionsTable extends Migration
               ->references('id')->on('events');
 
             $table->foreign('user_id')
-             ->references('id')->on('users');
-
+              ->references('id')->on('users');
         });
     }
 

@@ -112,7 +112,7 @@ class SportSectionController extends Controller
       $sportSection= new sportSection(
         [
           'abteilung'        => $request->abteilung,
-          'event_id'         => 0,
+          'event_id'         => NULL,
           'sportSections_id' => 0,
           'status'           => 2,
           'user_id'          => Auth::user()->id,
@@ -174,8 +174,8 @@ class SportSectionController extends Controller
         [
           'abteilung'         => 'required|max:40',
           'farbe'             => 'max:255',
-          'domain'             => 'max:255',
-          //'domain'            => 'sometimes|url'  //todo: Lehre Felder wird nicht akzepiert
+          'domain'            => 'max:255',
+          //'domain'           => 'sometimes|url'  //todo: Lehre Felder wird nicht akzepiert
           'bild'              => 'mimes:jpeg,jpg,bmp,png,gif'
         ]
       );
@@ -214,8 +214,8 @@ class SportSectionController extends Controller
           $createdEvent= new Event(
             [
               'beschreibung'     => $request->beschreibung,
-              'SportTeam_id'  => $request->SportTeam_id,
-              'veranstaltung'    => 4,   //4 = Abteilungsbeschreibung
+              'SportTeam_id'     => $request->SportTeam_id,
+              'verwendung'       => 4,   //4 = Abteilungsbeschreibung
               'autor_id'         => Auth::user()->id,
               'bearbeiter_id'    => Auth::user()->id,
               'datumvon'         => Carbon::now(),

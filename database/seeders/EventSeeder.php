@@ -119,7 +119,7 @@ class EventSeeder extends Seeder
                                     'datumvona' => NULL,
                                     'datumbisa' => NULL,
                                     'veranstaltung' => '',
-                                    'ueberschrift' => 'Mannscahft 1',
+                                    'ueberschrift' => 'Mannschaft 1',
                                     'beschreibung' => 'Hier steht die Beschreibung von der Mannschaft 1',
                                     'Ansprechparten' => '',
                                     'telefon' => '',
@@ -150,7 +150,7 @@ class EventSeeder extends Seeder
                                     'datumvona' => NULL,
                                     'datumbisa' => NULL,
                                     'veranstaltung' => '',
-                                    'ueberschrift' => 'Mannscahft 2',
+                                    'ueberschrift' => 'Mannschaft 2',
                                     'beschreibung' => 'Hier steht die Beschreibung von der Mannschaft 2',
                                     'Ansprechparten' => '',
                                     'telefon' => '',
@@ -177,5 +177,5 @@ class EventSeeder extends Seeder
                     ));
 
 
-                        }
-                    }
+    }
+}

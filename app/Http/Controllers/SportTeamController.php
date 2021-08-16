@@ -94,7 +94,7 @@ class SportTeamController extends Controller
    $SportTeam= new sportSection(
      [
        'abteilung'        => $request->mannschaft,
-       'event_id'         => 0,
+       'event_id'         => NULL,
        'sportSections_id' => $request->sportSection_id,
        'status'           => 2,
        'user_id'          => Auth::user()->id,

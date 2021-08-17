@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Abteilungsdashboard') }}
+            {{ __('Abteilung Dashboard') }}
         </h2>
     </x-slot>
 
@@ -81,13 +81,15 @@
                                              <box-icon type='solid' name='x-square'></box-icon>
                                            </a>
                                           @endif
-
                                           @if ($sportSection['status']>0)
                                            <a href="{{ url('Mannschaft/neu/'.$sportSection->id) }}">
                                              <box-icon type='solid' name='user-plus'></box-icon>
                                            </a>
+                                           <a href="{{ url('Abteilungsevent/neu/'.$sportSection->id) }}">
+                                            <box-icon type='solid' name='calendar-plus'></box-icon>
+                                           </a>
                                           @endif
-                                      </div>
+                                    </div>
                                   </div>
                                   @if($sportSection->bild)
                                    <img src="/storage/header/{{$sportSection->bild}}" />

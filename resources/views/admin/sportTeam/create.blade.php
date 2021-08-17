@@ -41,10 +41,11 @@
                                   @endif
                               </div>
 
-                              <form class="my-4 flex" autocomplete="off" action="{{ route('sportTeam.store') }}" method="post">
+                              <form class="my-4" autocomplete="off" action="{{ route('sportTeam.store') }}" method="post">
                                 @csrf
                                 <input type="hidden" id="sportSection_id" name="sportSection_id" value="{{ old('sportSection_id') ?? $sportSection_id }}">
                                 <div>
+                                    <label for="name">Mannschaftsname:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('mannschaft') ? 'bg-red-300' : '' }}"
                                     id="abteilung" placeholder="Mannschaftsname" name="mannschaft" value="{{ old('mannschaft') }}">
                                     <small class="form-text text-danger">{!! $errors->first('mannschaft') !!}</small>

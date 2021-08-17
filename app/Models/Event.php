@@ -16,4 +16,14 @@ class Event extends Model
        return $this->hasMany(Events::class);
      }
 
+     public function autor()
+     {
+         return $this->belongsTo(User::class, 'user_id');
+     }
+
+     public function editor()
+     {
+         return $this->belongsTo(User::class, 'user_id');
+     }
+
 }

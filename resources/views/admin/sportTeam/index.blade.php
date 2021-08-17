@@ -70,6 +70,11 @@
                                              <box-icon type='solid' name='x-square'></box-icon>
                                            </a>
                                           @endif
+                                          @if($sportTeam['status']>0)
+                                           <a href="{{ url('Abteilungsevent/neu/'.$sportTeam->id) }}">
+                                             <box-icon type='solid' name='calendar-plus'></box-icon>
+                                           </a>
+                                          @endif
                                       </div>
                                   </div>
                                   @if($sportTeam->bild)

@@ -5,6 +5,7 @@ use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SportSectionController;
 use App\Http\Controllers\SportTeamController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\BotManController;
 
 /*
@@ -59,19 +60,28 @@ Route::get('/Mannschaft/start/{sportSection_id}',         [SportTeamController::
 Route::get('/Mannschaft/softDelete/{sportSection_id}',    [SportTeamController::class, 'softDelete']);
 Route::get('/Mannschaft/picturedelete/{sportSection_id}', [SportTeamController::class, 'pictureDelete']);
 
+//Route::resource('event', 'EventController');
+Route::get('/Event/alle',                             [EventController::class, 'index'])     ->name('event.index');
+Route::get('/Event/neu',                              [EventController::class, 'create'])    ->name('event.create');
+Route::get('/Abteilungsevent/neu/{sportSection_id}',  [EventController::class, 'createSportSection']) ->name('event.createSportSection');
+//Route::get('/Mannschaftsevent/neu/{sportSection_id}', [EventController::class, 'createSportTeam'])    ->name('event.createSportTeam');
+Route::post('/Event/speichern',                       [EventController::class, 'store'])     ->name('event.store');
+Route::get('/Event/edit/{event_id}',                  [EventController::class, 'edit'])      ->name('event.edit');
+Route::post('/Event/update/{event_id}',               [EventController::class, 'update'])    ->name('event.update');
+
 Route::resources([
     'instruction' => InstructionController::class,
 ]);
 
-Route::get('/anfahrt', function () {
+Route::get('/Anfahrt', function () {
     return view('anfahrt');
 });
 
-Route::get('/impressum', function () {
+Route::get('/Impressum', function () {
     return view('impressum');
 });
 
-Route::get('/datenschutzerklaerung', function () {
+Route::get('/Datenschutzerklaerung', function () {
     return view('datenschutzerklaerung');
 });
 

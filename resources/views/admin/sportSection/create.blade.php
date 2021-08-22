@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Abteilungsdashboard') }}
+            {{ __('Abteilung - Dashboard') }}
         </h2>
         </h2>
     </x-slot>
@@ -43,9 +43,10 @@
                                   @endif
                               </div>
 
-                              <form class="my-4 flex" autocomplete="off" action="{{ route('sportSection.store') }}" method="post">
+                              <form class="my-4" autocomplete="off" action="{{ route('sportSection.store') }}" method="post">
                                 @csrf
                                 <div>
+                                    <label for="name">Abteilungsname:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('abteilung') ? 'bg-red-300' : '' }}"
                                     id="abteilung" placeholder="Abteilung" name="abteilung" value="{{ old('abteilung') }}">
                                     <small class="form-text text-danger">{!! $errors->first('abteilung') !!}</small>

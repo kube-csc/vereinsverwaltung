@@ -72,8 +72,7 @@ class SportTeamController extends Controller
   */
  public function create($sportSection_id)
  {
-   //$sportSection_id=$sportSection_id;
-   return view('admin.sportTeam.create',compact('sportSection_id'));
+    return view('admin.sportTeam.create',compact('sportSection_id'));
  }
 
  /**
@@ -85,13 +84,13 @@ class SportTeamController extends Controller
  public function store(Request $request)
  {
 
-   $request->validate(
+    $request->validate(
      [
        'mannschaft'         => 'required|max:40'
      ]
-   );
+    );
 
-   $SportTeam= new sportSection(
+    $SportTeam= new sportSection(
      [
        'abteilung'        => $request->mannschaft,
        'event_id'         => NULL,
@@ -102,7 +101,7 @@ class SportTeamController extends Controller
        'created_at'       => Carbon::now()
      ]
     );
-   $SportTeam->save();
+    $SportTeam->save();
 
    return redirect('/Mannschaft/alle')->with(
      [
@@ -218,7 +217,7 @@ class SportTeamController extends Controller
 
    return redirect('/Mannschaft/alle')->with(
      [
-       'success' => 'Die Daten von der Mannschaft <b>' . $request->abteilung . '</b> wurde geändert.'.$messagePicture
+       'success' => 'Die Daten von der Mannschaft <b>' . $request->abteilung . '</b> wurden geändert.'.$messagePicture
      ]
    );
  }

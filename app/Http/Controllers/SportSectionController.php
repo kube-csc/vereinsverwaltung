@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
+//use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Intervention\Image\Facades\Image;
-//use Illuminate\Support\Facades\DB;
 use Auth;
 
 use App\Models\SportSection;
@@ -77,7 +76,7 @@ class SportSectionController extends Controller
 
     public function index()
     {
-      $sportSections = sportSection::where('sportSections_id' , '')->orderby('abteilung')->paginate(5);
+      $sportSections = sportSection::where('sportSections_id' , NULL)->orderby('abteilung')->paginate(5);
       return view('admin.sportSection.index')->with(
         [
           'sportSections' => $sportSections,
@@ -175,7 +174,7 @@ class SportSectionController extends Controller
           'abteilung'         => 'required|max:40',
           'farbe'             => 'max:255',
           'domain'            => 'max:255',
-          //'domain'           => 'sometimes|url'  //todo: Lehre Felder wird nicht akzepiert
+        //'domain'            => 'sometimes|url'  //todo: Leere Felder wird nicht akzepiert
           'bild'              => 'mimes:jpeg,jpg,bmp,png,gif'
         ]
       );
@@ -211,11 +210,10 @@ class SportSectionController extends Controller
           ]);
         }
         else{
-          $createdEvent= new Event(
-            [
+          $createdEvent= new Event([
               'beschreibung'     => $request->beschreibung,
               'SportTeam_id'     => $request->SportTeam_id,
-              'verwendung'       => 4,   //4 = Abteilungsbeschreibung
+              'verwendung'       => 4,                       //4 = Abteilungsbeschreibung
               'autor_id'         => Auth::user()->id,
               'bearbeiter_id'    => Auth::user()->id,
               'datumvon'         => Carbon::now(),
@@ -229,14 +227,14 @@ class SportSectionController extends Controller
            $newEventId  = $createdEvent->id;
 
            sportSection::find($SportTeam_id)->update([
-            'event_id'         => $newEventId
+            'event_id' => $newEventId
           ]);
         }
       }
 
       return redirect('/Abteilung/alle')->with(
         [
-          'success' => 'Die Daten von der Abteilung <b>' . $request->abteilung . '</b> wurde geändert.'.$messagePicture
+          'success' => 'Die Daten von der Abteilung <b>' . $request->abteilung . '</b> wurden geändert.'.$messagePicture
         ]
       );
     }

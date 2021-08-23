@@ -61,7 +61,7 @@ class SportSectionController extends Controller
 
     public function sportSectionSportTeam($sportSection_id)
     {
-      $sportSections = sportSection::where('sportSections_id' , '')->orderby('abteilung')->paginate(5);
+      $sportSections = sportSection::where('sportSections_id' , NULL)->orderby('abteilung')->paginate(5);
       $sportSectionVonSportTeam = sportSection::find($sportSection_id);
       $sportTeams = sportSection::where('sportSections_id'  , $sportSection_id)->orderby('abteilung')->get();
       return view('admin.sportSection.sportSectionSportTeam')->with(
@@ -255,7 +255,7 @@ class SportSectionController extends Controller
       $delete = sportSection::find($SportTeam_id)->delete();
       return redirect('/Abteilung/alle')->with(
         [
-          'success' => 'Das Abteilung wurde gelöscht.'
+          'success' => 'Die Abteilung wurde gelöscht.'
         ]
       );
     }

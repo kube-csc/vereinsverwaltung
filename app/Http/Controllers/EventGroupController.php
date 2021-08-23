@@ -7,7 +7,6 @@ use Illuminate\Support\Carbon;
 use Auth;
 
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
 
 class EventGroupController extends Controller
 {
@@ -42,7 +41,7 @@ class EventGroupController extends Controller
     {
         $request->validate(
             [
-                'termingruppe'         => 'required|max:50'
+                'termingruppe' => 'required|max:50'
             ]
         );
 
@@ -80,9 +79,10 @@ class EventGroupController extends Controller
      * @param  \App\Models\eventGroup  $eventGroup
      * @return \Illuminate\Http\Response
      */
-    public function edit(eventGroup $eventGroup)
+    public function edit($eventGroup_id)
     {
-        //
+        $eventGroup =eventGroup::find($eventGroup_id);
+        return view('admin.eventGroup.edit',compact('eventGroup'));
     }
 
     /**
@@ -92,9 +92,25 @@ class EventGroupController extends Controller
      * @param  \App\Models\eventGroup  $eventGroup
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, eventGroup $eventGroup)
+    public function update(Request $request, $eventGroup_id)
     {
-        //
+        $request->validate(
+            [
+              'termingruppe'         => 'required|max:50'
+            ]
+        );
+
+        eventGroup::find($eventGroup_id)->update([
+            'termingruppe'    => $request->termingruppe,
+            'updated_at'      => Carbon::now()
+          ]);
+
+        return redirect('/Eventgruppe/alle')->with(
+            [
+                'success' => 'Die Daten von der Event Gruppe <b>' . $request->termingruppe . '</b> wurden geändert.'
+            ]
+        );
+
     }
 
     /**
@@ -106,5 +122,15 @@ class EventGroupController extends Controller
     public function destroy(eventGroup $eventGroup)
     {
         //
+    }
+
+    public function softDelete($eventGroup_id)
+    {
+        $delete = eventGroup::find($eventGroup_id)->delete();
+        return redirect('/Eventgruppe/alle')->with(
+            [
+                'success' => 'Die Event Gruppe wurde gelöscht.'
+            ]
+        );
     }
 }

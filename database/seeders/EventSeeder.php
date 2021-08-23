@@ -207,8 +207,8 @@ class EventSeeder extends Seeder
                                 6 =>
                                 array (
                                     'id' => 7,
-                                    'datumvon' => '2021-06-11',
-                                    'datumbis' => '2021-06-11',
+                                    'datumvon' => '2050-06-11',
+                                    'datumbis' => '2050-06-11',
                                     'datumvona' => NULL,
                                     'datumbisa' => NULL,
                                     'veranstaltung' => '',

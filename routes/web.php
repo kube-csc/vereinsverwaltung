@@ -4,10 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SportSectionController;
+use App\Http\Controllers\EventGroupController;
 use App\Http\Controllers\SportTeamController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BotManController;
-
+use App\Http\Controllers\BotmanQuestionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -61,13 +62,22 @@ Route::get('/Mannschaft/softDelete/{sportSection_id}',    [SportTeamController::
 Route::get('/Mannschaft/picturedelete/{sportSection_id}', [SportTeamController::class, 'pictureDelete']);
 
 //Route::resource('event', 'EventController');
-Route::get('/Event/alle',                             [EventController::class, 'index'])     ->name('event.index');
-Route::get('/Event/neu',                              [EventController::class, 'create'])    ->name('event.create');
+Route::get('/Event/alle',                             [EventController::class, 'index'])              ->name('event.index');
+Route::get('/Eventvergangenheit/alle',                [EventController::class, 'indexPast'])          ->name('event.indexPast');
+Route::get('/Event/neu',                              [EventController::class, 'create'])             ->name('event.create');
 Route::get('/Abteilungsevent/neu/{sportSection_id}',  [EventController::class, 'createSportSection']) ->name('event.createSportSection');
-//Route::get('/Mannschaftsevent/neu/{sportSection_id}', [EventController::class, 'createSportTeam'])    ->name('event.createSportTeam');
-Route::post('/Event/speichern',                       [EventController::class, 'store'])     ->name('event.store');
-Route::get('/Event/edit/{event_id}',                  [EventController::class, 'edit'])      ->name('event.edit');
-Route::post('/Event/update/{event_id}',               [EventController::class, 'update'])    ->name('event.update');
+//Route::get('/Mannschaftsevent/neu/{sportSection_id}', [EventController::class, 'createSportTeam'])  ->name('event.createSportTeam');
+Route::post('/Event/speichern',                       [EventController::class, 'store'])              ->name('event.store');
+Route::get('/Event/edit/{event_id}',                  [EventController::class, 'edit'])               ->name('event.edit');
+Route::post('/Event/update/{event_id}',               [EventController::class, 'update'])             ->name('event.update');
+
+//Route::resource('Eventgruppe', 'EventGroupController');
+Route::get('/Eventgruppe/alle',                        [EventGroupController::class, 'index'])         ->name('eventGroup.index');
+Route::get('/Eventgruppe/neu',                         [EventGroupController::class, 'create'])        ->name('eventGroup.create');
+Route::post('/Eventgruppe/speichern',                  [EventGroupController::class, 'store'])         ->name('eventGroup.store');
+Route::get('/Eventgruppe/edit/{eventGroup_id}',        [EventGroupController::class, 'edit'])          ->name('eventGroup.edit');
+Route::post('/Eventgruppe/update/{eventGroup_id}',     [EventGroupController::class, 'update'])        ->name('eventGroup.update');
+Route::get('/Eventgruppe/softDelete/{eventGroup_id}',  [EventGroupController::class, 'softDelete']);
 
 Route::resources([
     'instruction' => InstructionController::class,

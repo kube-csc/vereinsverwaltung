@@ -18,12 +18,22 @@ class Event extends Model
 
      public function autor()
      {
-         return $this->belongsTo(User::class, 'user_id');
+         return $this->belongsTo(User::class, 'autor_id');
      }
 
      public function editor()
      {
-         return $this->belongsTo(User::class, 'user_id');
+         return $this->belongsTo(User::class, 'bearbeiter_id');
+     }
+
+     public function sportSectionName()
+     {
+         return $this->belongsTo(SportSection::class, 'sportSection_id');
+     }
+
+     public function eventGroupName()
+     {
+         return $this->belongsTo(eventGroup::class, 'eventGroup_id');
      }
 
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\sportSection;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
+//use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Auth;
 
@@ -14,11 +14,30 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
     public function index()
     {
-        $events = event::where('verwendung' , '0')->orderby('datumbis')->paginate(5);
+        $events = event::where([
+            ['verwendung' , '0'],
+            ['datumbis' ,'>=', Carbon::now()]
+          ])
+            ->orderby('datumbis')
+            ->paginate(5);
+
+        return view('admin.event.index')->with([
+            'events' => $events
+          ]);
+    }
+
+    public function indexPast()
+    {
+        $events = event::where([
+             ['verwendung' , '0'],
+             ['datumbis' ,'<=', Carbon::now()]
+           ])
+             ->orderby('datumbis')
+             ->paginate(5);
         return view('admin.event.index')->with([
             'events' => $events
           ]);
@@ -35,15 +54,12 @@ class EventController extends Controller
                                                                  ->orderby('sportSections_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();
-        return view('admin.event.create')->with(
-            [
-              'sportSections' => $sportSections
-            ]);
+        return view('admin.event.create' , compact('sportSections' ));
     }
 
     public function createSportSection($sportSection_id)
-    {   $sportSection_id=$sportSection_id;
-        return view('admin.event.create', compact('sportSection_id'));
+    {
+        return view('admin.event.create' , compact('sportSection_id'));
     }
 
     /**
@@ -105,7 +121,7 @@ class EventController extends Controller
                                                                  ->orderby('sportSections_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();
-        return view('admin.event.edit',compact('event' , 'sportSections'));
+        return view('admin.event.edit' , compact('event' , 'sportSections'));
     }
 
     /**
@@ -134,9 +150,8 @@ class EventController extends Controller
             'updated_at'       => Carbon::now()
            ]
         );
-    
-        return redirect('/Event/alle')->with(
-            [
+
+        return redirect('/Event/alle')->with([
               'success' => 'Die Daten von dem Event <b>' . $request->ueberschrift . '</b> wurden geändert.'
             ]
         );

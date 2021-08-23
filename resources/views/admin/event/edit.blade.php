@@ -56,6 +56,7 @@
                                     <small class="form-text text-danger">{!! $errors->first('datumbis') !!}</small>
                                 </div>
                                 <div class="my-4" >
+                                    <label for="name">Beschreibung:</label>
                                     <textarea rows="25" cols="250" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->beschreibung }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                 </div>
@@ -66,26 +67,25 @@
                                     @php $firsttime = 0 @endphp
                                         @foreach ($sportSections as $sportSection)
                                             @if ($sportSection->sportSections_id > 0 && $firsttime == 0)
-                                            @php $firsttime = 1 @endphp
-                                            </optgroup>
-                                            <optgroup label="Mannschaft:">
+                                                @php $firsttime = 1 @endphp
+                                                </optgroup>
+                                                <optgroup label="Mannschaft:">
                                             @endif
                                             <option value="{{ $sportSection->id }}"
-                                            @if ($event->sportSection_id == $sportSection->id) 
-                                            selected
+                                            @if ($event->sportSection_id == $sportSection->id)
+                                             selected
                                             @endif
-                                            >
-                                            {{ $sportSection->abteilung }}</option>
+                                            >{{ $sportSection->abteilung }}</option>
                                         @endforeach
                                     </optgroup>
                                     </select>
                                 </div>
                                 <div class="py-2">
-                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">ändern Abteilung</button>
+                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">speichern</button>
                                 </div>
                              </form>
                              <br>
-                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Abteilung/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
                             </div>
                           </div>
 

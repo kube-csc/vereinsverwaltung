@@ -46,7 +46,7 @@
                               <form class="my-4" autocomplete="off" action="{{ route('event.store') }}" method="post">
                                 @csrf
 
-                                <div>   
+                                <div>
                                     <label for="name">Eventname:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ueberschrift') ? 'bg-red-300' : '' }}"
                                     id="ueberschrift" placeholder="Event Name" name="ueberschrift" value="{{ old('ueberschrift') }}">
@@ -77,16 +77,15 @@
                                     @php $firsttime = 0 @endphp
                                         @foreach ($sportSections as $sportSection)
                                             @if ($sportSection->sportSections_id > 0 && $firsttime == 0)
-                                            @php $firsttime = 1 @endphp
-                                            </optgroup>
-                                            <optgroup label="Mannschaft:">
+                                                @php $firsttime = 1 @endphp
+                                                </optgroup>
+                                                <optgroup label="Mannschaft:">
                                             @endif
                                             <option value="{{ $sportSection->id }}"
-                                            @if ($sportSection->status == 1) 
-                                            selected
+                                            @if ($sportSection->status == 1)
+                                                 selected
                                             @endif
-                                            >
-                                            {{ $sportSection->abteilung }}</option>
+                                            >{{ $sportSection->abteilung }}</option>
                                         @endforeach
                                     </optgroup>
                                     </select>
@@ -96,10 +95,12 @@
                                     @endif
                                 </div>
                                 <div class="py-2">
-                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Event</button>
+                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Event speichern</button>
                                 </div>
 
                             </form>
+                            <br>
+                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
 
                             </div>
                           </div>

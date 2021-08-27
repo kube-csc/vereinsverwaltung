@@ -20,7 +20,10 @@ use App\Http\Controllers\BotmanQuestionController;
 |
 */
 
+//HomePage
 Route::get('/', [HomeController::class, 'index']);
+Route::get('/Abteilung/detail/{sportTeam}',  [HomeController::class, 'sportSectionShow']);
+//->name('sportSection.show');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');
@@ -78,6 +81,8 @@ Route::post('/Eventgruppe/speichern',                  [EventGroupController::cl
 Route::get('/Eventgruppe/edit/{eventGroup_id}',        [EventGroupController::class, 'edit'])          ->name('eventGroup.edit');
 Route::post('/Eventgruppe/update/{eventGroup_id}',     [EventGroupController::class, 'update'])        ->name('eventGroup.update');
 Route::get('/Eventgruppe/softDelete/{eventGroup_id}',  [EventGroupController::class, 'softDelete']);
+Route::get('/Eventgruppe/aktiv/{sportSection_id}',     [EventGroupController::class, 'aktiv'])         ->name('eventGroup.aktiv');
+Route::get('/Eventgruppe/inaktiv/{sportSection_id}',   [EventGroupController::class, 'inaktiv'])       ->name('eventGroup.inaktiv');
 
 Route::resources([
     'instruction' => InstructionController::class,

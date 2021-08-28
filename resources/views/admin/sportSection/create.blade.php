@@ -55,7 +55,8 @@
                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neue Abteilung</button>
                                 </div>
                             </form>
-
+                            <br>
+                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventgruppe/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
                             </div>
                           </div>
 

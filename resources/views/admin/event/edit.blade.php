@@ -85,7 +85,11 @@
                                 </div>
                              </form>
                              <br>
-                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                              @if($event->datumbis >= date("d.m.Y", strtotime(now())) )
+                                  <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                              @else
+                                  <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventvergangenheit/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                              @endif
                             </div>
                           </div>
 

@@ -52,9 +52,25 @@
                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/edit/'.$eventGroup->id) }}">
                                           <box-icon name='edit' type='solid'></box-icon>
                                          </a>
-                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/softDelete/'.$eventGroup->id) }}">
-                                          <box-icon type='solid' name='x-square'></box-icon>
-                                         </a>
+                                         @if($eventGroup['visible']==1)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/inaktiv/'.$eventGroup->id) }}">
+                                                <box-icon name='show'  type='solid'></box-icon>
+                                            </a>
+                                         @endif
+                                         @if($eventGroup['visible']==0)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/aktiv/'.$eventGroup->id) }}">
+                                                <box-icon name='hide' type='solid'></box-icon>
+                                            </a>
+                                         @endif
+                                         @php
+                                             //ToDo: Count mit einer lösung im Controller
+                                             $eventCount = DB::table('events')->where('eventGroup_id' , $eventGroup->id)->count();
+                                         @endphp
+                                         @if($eventCount==0)
+                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/softDelete/'.$eventGroup->id) }}">
+                                               <box-icon type='solid' name='x-square'></box-icon>
+                                             </a>
+                                         @endif
                                     </div>
                                   </div>
                               </div>

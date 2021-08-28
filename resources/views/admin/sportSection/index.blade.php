@@ -70,7 +70,7 @@
                                              <box-icon name='show'  type='solid'></box-icon>
                                             </a>
                                           @endif
-                                          @if($sportSection['status']==0)
+                                          @if($sportSection['visible']==true)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/aktiv/'.$sportSection->id) }}">
                                              <box-icon name='hide' type='solid'></box-icon>
                                             </a>
@@ -102,6 +102,7 @@
 
                               {{ $sportSections->links() }}
 
+                             <br>
                              <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
                             </div>
                           </div>

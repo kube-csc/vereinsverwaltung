@@ -115,7 +115,7 @@
                       </div>
 
                       @foreach ( $sportTeams as $sportTeam )
-                      <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('edit/{{ $sportTeam->id }}')">
+                      <div class="rounded border shadow p-3 my-2 bg-blue-200">
                           <div class="flex justify-between my-2">
                             <div class="flex">
                               <p class="font-bold text-lg">{{ $sportTeam->abteilung }} </p>

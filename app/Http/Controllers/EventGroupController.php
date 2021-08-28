@@ -10,6 +10,24 @@ use Illuminate\Http\Request;
 
 class EventGroupController extends Controller
 {
+    public function aktiv($sportSection_id)
+    {
+        eventGroup::find($sportSection_id)->update([
+            'visible'      => '2',
+            'updated_at'   => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Event Grupe wurde sichtbar geschaltet.');
+    }
+
+    public function inaktiv($sportSection_id)
+    {
+        eventGroup::find($sportSection_id)->update([
+            'visible'      => '0',
+            'updated_at'   => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Event Gruppe wurde unsichtbar geschaltet.');
+    }
+
     /**
      * Display a listing of the resource.
      *

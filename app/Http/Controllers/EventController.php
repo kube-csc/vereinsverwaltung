@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\sportSection;
 use Illuminate\Http\Request;
-//use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Auth;
 
@@ -51,7 +50,7 @@ class EventController extends Controller
     public function create()
     {
         $sportSections = sportSection::where('status' , '>' ,'0')->orderby('status')
-                                                                 ->orderby('sportSections_id')
+                                                                 ->orderby('sportSection_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();
         return view('admin.event.create' , compact('sportSections' ));
@@ -118,7 +117,7 @@ class EventController extends Controller
     {
         $event = Event::find($event_id);
         $sportSections = sportSection::where('status' , '>' ,'0')->orderby('status')
-                                                                 ->orderby('sportSections_id')
+                                                                 ->orderby('sportSection_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();
         return view('admin.event.edit' , compact('event' , 'sportSections'));

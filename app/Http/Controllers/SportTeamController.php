@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
+// use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Intervention\Image\Facades\Image;
 use Auth;
@@ -58,7 +58,7 @@ class SportTeamController extends Controller
 
  public function index()
  {
-   $sportTeams = sportSection::where('sportSections_id' , '>' , '0')->orderby('abteilung')->paginate(5);
+   $sportTeams = sportSection::where('sportSection_id' , '>' , '0')->orderby('abteilung')->paginate(5);
    return view('admin.sportTeam.index')->with(
      [
        'sportTeams'    => $sportTeams,
@@ -94,7 +94,7 @@ class SportTeamController extends Controller
      [
        'abteilung'        => $request->mannschaft,
        'event_id'         => NULL,
-       'sportSections_id' => $request->sportSection_id,
+       'sportSection_id' => $request->sportSection_id,
        'status'           => 2,
        'user_id'          => Auth::user()->id,
        'updated_at'       => Carbon::now(),
@@ -155,7 +155,7 @@ class SportTeamController extends Controller
      [
        'abteilung'         => 'required|max:40',
        'farbe'             => 'max:255',
-       'domain'             => 'max:255',
+       'domain'            => 'max:255',
        //'domain'            => 'sometimes|url'  //todo: Lehre Felder wird nicht akzepiert
        'bild'              => 'mimes:jpeg,jpg,bmp,png,gif'
      ]
@@ -259,14 +259,14 @@ class SportTeamController extends Controller
   }
  }
 
- // Bilder von SportTeam löschen
+ // Bilder von SportTeams löschen
     public function pictureDelete($SportTeam_id){
       $newPictureName="header".$SportTeam_id.'.jpg';
       if (file_exists(public_path().'/storage/header/'.$newPictureName)){
          unlink(public_path().'/storage/header/'.$newPictureName);
        }
       sportSection::find($SportTeam_id)->update([
-       'bild'         => ''
+       'bild'      => ''
       ]);
       return back()->with([
           'success' => 'Das Headerbild vom der Mannschaft wurde gelöscht'

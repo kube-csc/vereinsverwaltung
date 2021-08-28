@@ -61,9 +61,9 @@ class SportSectionController extends Controller
 
     public function sportSectionSportTeam($sportSection_id)
     {
-      $sportSections = sportSection::where('sportSections_id' , NULL)->orderby('abteilung')->paginate(5);
+      $sportSections = sportSection::where('sportSection_id' , NULL)->orderby('abteilung')->paginate(5);
       $sportSectionVonSportTeam = sportSection::find($sportSection_id);
-      $sportTeams = sportSection::where('sportSections_id'  , $sportSection_id)->orderby('abteilung')->get();
+      $sportTeams = sportSection::where('sportSection_id'  , $sportSection_id)->orderby('abteilung')->get();
       return view('admin.sportSection.sportSectionSportTeam')->with(
         [
           'success'               => 'Mannschaften der Abteilung ' . $sportSectionVonSportTeam->abteilung . ' wurde selectiert.',
@@ -76,7 +76,7 @@ class SportSectionController extends Controller
 
     public function index()
     {
-      $sportSections = sportSection::where('sportSections_id' , NULL)->orderby('abteilung')->paginate(5);
+      $sportSections = sportSection::where('sportSection_id' , NULL)->orderby('abteilung')->paginate(5);
       return view('admin.sportSection.index')->with(
         [
           'sportSections' => $sportSections,
@@ -112,7 +112,7 @@ class SportSectionController extends Controller
         [
           'abteilung'        => $request->abteilung,
           'event_id'         => NULL,
-          'sportSections_id' => 0,
+          'sportSection_id' => 0,
           'status'           => 2,
           'user_id'          => Auth::user()->id,
           'updated_at'       => Carbon::now(),
@@ -134,7 +134,7 @@ class SportSectionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($SportTeam_id)
+    public function show()
     {
         //
     }
@@ -145,9 +145,9 @@ class SportSectionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($SportTeam_id)
+    public function edit($sportSection_id)
     {
-      $sportSection = sportSection::find($SportTeam_id);
+      $sportSection = sportSection::find($sportSection_id);
 
       if ($sportSection->event_id>0) {
        //$event = DB::table('events')->find($sportSection->event_id);

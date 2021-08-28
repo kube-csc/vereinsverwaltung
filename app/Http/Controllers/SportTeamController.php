@@ -137,7 +137,7 @@ class SportTeamController extends Controller
    else {
      $ausgabetext='';
    }
-   return view('admin.sportTeam.edit',compact('SsportTeam' , 'ausgabetext'));
+   return view('admin.sportTeam.edit',compact('$sportTeam' , 'ausgabetext'));
  }
 
  /**

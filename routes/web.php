@@ -84,9 +84,11 @@ Route::get('/Eventgruppe/softDelete/{eventGroup_id}',  [EventGroupController::cl
 Route::get('/Eventgruppe/aktiv/{sportSection_id}',     [EventGroupController::class, 'aktiv'])         ->name('eventGroup.aktiv');
 Route::get('/Eventgruppe/inaktiv/{sportSection_id}',   [EventGroupController::class, 'inaktiv'])       ->name('eventGroup.inaktiv');
 
+/*
 Route::resources([
     'instruction' => InstructionController::class,
 ]);
+*/
 
 Route::get('/Anfahrt', function () {
     return view('anfahrt');
@@ -97,8 +99,10 @@ Route::get('/Impressum', function () {
 });
 
 Route::get('/Datenschutzerklaerung', function () {
-    return view('datenschutzerklaerung');
+    return view('instruction.datenschutzerklaerung');
 });
+
+Route::get('/Datenschutzerklaerung', [InstructionController::class, 'datenschutz']);
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

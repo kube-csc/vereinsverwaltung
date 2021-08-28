@@ -1,7 +1,7 @@
 <?php // TODO: Text muss noch über dei Datenbank eingelesen werden ?>
 @extends('layouts.headFrontend')
 
-@section('about' ,'/instruction/1') <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
+@section('about' ,'/Datnschutzerklaerung') <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
 @section('title' ,'Datnschutzerklärung')
 
 @section('content')
@@ -28,11 +28,12 @@
 
       <div class="section-title" data-aos="fade-in" data-aos-delay="100">
         <h2>Datenschutzerklärung</h2>
-        <?php //$instructions->beschreibung)
-        $texausgabe = str_replace(array("\\r\\n", "\\n", "\\r"), '<br>', $instructions->beschreibung);
+        <?php //$instruction->beschreibung)
+        $texausgabe = str_replace(array("\\r\\n", "\\n", "\\r"), '<br>', $instruction->beschreibung);
         $texausgabe = str_replace(array("</li><br>"), '</li>', $texausgabe);
-        echo "$texausgabe";
+        //echo "$texausgabe";
         ?>
+          {!! $texausgabe !!}
       </div>
 
     </div>

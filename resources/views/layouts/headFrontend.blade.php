@@ -336,8 +336,8 @@
       Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       <br><br>
       */?>
-      <a href="/instruction/1">Datenschutzerklärung</a> |
-      <a href="/impressum">Impressum</a>
+      <a href="/Datenschutzerklaerung">Datenschutzerklärung</a> |
+      <a href="/Impressum">Impressum</a>
     </div>
   </div>
 </footer><!-- End Footer -->

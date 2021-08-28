@@ -44,13 +44,20 @@ class InstructionController extends Controller
      * @param  \App\Models\instruction  $instruction
      * @return \Illuminate\Http\Response
      */
-    public function show(instruction $instruction)
+    public function show()
     {
+      //
+    }
+
+    public function datenschutz()
+    {
+        $instruction = instruction::find(1);
+        $test=$instruction->beschreibung;
         return view('instruction.datenschutzerklaerung')->with(
-         [
-           'instructions'     => $instruction,
-         ]
-       );
+            [
+                'instruction'     => $instruction,
+            ]
+        );
     }
 
     /**

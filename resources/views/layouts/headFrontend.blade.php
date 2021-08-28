@@ -18,6 +18,12 @@
   $domain="kel-datteln.de";
 
   $sozialmediaanzeigen='n';
+
+  $sportSectionMenus = DB::table('sport_sections')
+      ->where('status' ,'>' ,'1')
+      ->where('sportSection_id' , NULL)
+      ->orderby('abteilung')
+      ->get();
 ?>
 
 <!DOCTYPE html>
@@ -40,13 +46,12 @@
 */ ?>
 
   <!-- Favicons -->
-  <link href="/favicon.png" rel="icon">
+  <link href="favicon.png" rel="icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <?php /*  <link href="{{ asset('asset/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"> */ ?>
   <link href="{{ asset('asset/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/icofont/icofont.min.css') }}" rel="stylesheet">
   <?php /* <link href="{{ asset('asset/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet"> */ ?>
@@ -103,35 +108,66 @@
     </div>
 
       <nav class="nav-menu d-none d-lg-block">
-        <ul>
-          <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/">Home</a></li>
-          @php
-          /*
-          <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="">Abteilung</a>
-            <ul>
-              <li><a href="#">Drop Down 1</a></li>
-              <li class="drop-down"><a href="#">Drop Down 2</a>
-                <ul>
-                  <li><a href="#">Abteilung</a></li>
-                  <li><a href="#">Deep Drop Down 2</a></li>
-                  <li><a href="#">Deep Drop Down 3</a></li>
-                  </ul>
-              </li>
-              <li><a href="#">Drop Down 3</a></li>
-              <li><a href="#">Drop Down 4</a></li>
-            </ul>
-          </li>
-          */
-          @endphp
-          @php
-            // TODO: Active im Menu funktioniert noch nicht
-          @endphp
-          @php
-            //           <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
-          @endphp
-          <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="/#contact">Kontakt</a></li>
-          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/anfahrt">Anfahrt</a></li>
+
+          <ul>
+              <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/">Home</a></li>
+
+              <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="/#about">Abteilung</a>
+                  <ul>
+                      @foreach($sportSectionMenus as $sportSectionMenu)
+
+                          @php
+                              $sportTeamMenus = DB::table('sport_sections')
+                              ->where('status' , '>' , '1')
+                              ->where('sportSection_id' , '=' , $sportSectionMenu->id)
+                              ->orderby('abteilung')
+                              ->get();
+
+                              $sportTeamMenuCount = DB::table('sport_sections')
+                              ->where('status' , '>' , '1')
+                              ->where('sportSection_id' , '=' , $sportSectionMenu->id)
+                              ->count();
+
+                              $first=0;
+                          @endphp
+                          <li class="{{$sportTeamMenuCount > 0 ? 'drop-down' : ''}}">
+                              <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
+                                 {{ $sportSectionMenu->abteilung }}
+                              </a>
+
+                              @foreach($sportTeamMenus as $sportTeamMenu)
+                                  @if($first==0)
+                                      <ul>
+                                          @php
+                                              $first=1;
+                                          @endphp
+                                          @endif
+                                          <li>
+                                              <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportTeamMenu->abteilung) }}">
+                                                  {{ $sportTeamMenu->abteilung }}
+                                              </a>
+                                          </li>
+                                  @endforeach
+
+                                  @if($first==1)
+                                      </ul> <!-- Teams -->
+                                  @endif
+
+                          </li>  <!-- Abteilung Mannschaft   -->
+                      @endforeach
+                  </ul>   <!-- Abteilung -->
+              </li>    <!-- Abteilung Mannschaft   -->
+              @php
+                  // TODO: Active im Menu funktioniert noch nicht
+              @endphp
+
+              @php
+                  //           <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
+              @endphp
+              <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="/#contact">Kontakt</a></li>
+              <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
           </ul>
+
       </nav><!-- .nav-menu -->
 
     </div>
@@ -310,11 +346,13 @@
 
   <!-- Vendor JS Files -->
   <script src="{{ asset('asset/vendor/jquery/jquery.min.js') }}"></script>
-  <?php /* TODO:
+
   <script src="{{ asset('asset/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  */ ?>
+    <?php /* TODO: */ ?>
   <script src="{{ asset('asset/vendor/jquery.easing/jquery.easing.min.js') }}"></script>
+  @php /*
   <script src="{{ asset('asset/vendor/php-email-form/validate.js') }}"></script>
+  */ @endphp
   <script src="{{ asset('asset/vendor/waypoints/jquery.waypoints.min.js') }}"></script>
   <script src="{{ asset('asset/vendor/counterup/counterup.min.js') }}"></script>
   <script src="{{ asset('asset/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
@@ -333,12 +371,14 @@
       var botmanWidget = {
           frameEndpoint: 'chat.php',
           placeholderText: "Sende eine Nachricht...",
-          introMessage: "✋ Hi, ich bin der KEL ChatBot",
+          introMessage: "✋ Hollo, ich bin der KEL ChatBot",
           title: 'KEL ChatBot',
           mainColor: "#1148e0",
           headerTextColor: "#333",
           bubbleBackground: "#1148e0",
-          bubbleAvatarUrl: ""
+          bubbleAvatarUrl: "asset/img/chatbot.jpg",   //https://www.istockphoto.com/
+          mobileHeight: "75%",
+
       };
   </script>
   <script src='widget.js'></script>

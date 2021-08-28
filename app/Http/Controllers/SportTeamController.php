@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Intervention\Image\Facades\Image;
 use Auth;
 
-use App\Models\sportSection;
+use App\Models\SportSection;
 use App\Models\Event;
 
 class SportTeamController extends Controller
@@ -25,40 +24,40 @@ class SportTeamController extends Controller
     $this->middleware('auth');
  }
 
- public function aktiv($SportTeam_id)
+ public function aktiv($sportTeam_id)
  {
-   sportSection::find($SportTeam_id)->update([
+   SportSection::find($sportTeam_id)->update([
          'status'      => '2',
          'updated_at'  => Carbon::now()
        ]);
-  return Redirect()->back()->with('success' , 'Mannschaft wurde sichtbar geschaltet.');
+  return Redirect()->back()->with('success' , 'Die Mannschaft wurde sichtbar geschaltet.');
  }
 
- public function inaktiv($SportTeam_id)
+ public function inaktiv($sportTeam_id)
  {
-   sportSection::find($SportTeam_id)->update([
+   SportSection::find($sportTeam_id)->update([
          'status'      => '0',
          'updated_at'  => Carbon::now()
        ]);
-  return Redirect()->back()->with('success' , 'Mannschaft wurde unsichtbar geschaltet.');
+  return Redirect()->back()->with('success' , 'Die Mannschaft wurde unsichtbar geschaltet.');
  }
 
- public function start($SportTeams_id)
+ public function start($sportTeams_id)
  {
-  sportSection::where('status' , '1')->update([
+   SportSection::where('status' , '1')->update([
          'status'      => '2',
          'updated_at'  => Carbon::now()
        ]);
-   sportSection::find($SportTeams_id)->update([
+   SportSection::find($sportTeams_id)->update([
          'status'      => '1',
          'updated_at'  => Carbon::now()
        ]);
-  return Redirect()->back()->with('success' , 'Mannschaft wurde Startseite festgelegt.');
+  return Redirect()->back()->with('success' , 'Die Mannschaft wurde Startseite festgelegt.');
  }
 
  public function index()
  {
-   $sportTeams = sportSection::where('sportSection_id' , '>' , '0')->orderby('abteilung')->paginate(5);
+   $sportTeams = SportSection::where('sportSection_id' , '>' , '0')->orderby('abteilung')->paginate(5);
    return view('admin.sportTeam.index')->with(
      [
        'sportTeams'    => $sportTeams,
@@ -94,7 +93,7 @@ class SportTeamController extends Controller
      [
        'abteilung'        => $request->mannschaft,
        'event_id'         => NULL,
-       'sportSection_id' => $request->sportSection_id,
+       'sportSection_id'  => $request->sportSection_id,
        'status'           => 2,
        'user_id'          => Auth::user()->id,
        'updated_at'       => Carbon::now(),
@@ -116,7 +115,7 @@ class SportTeamController extends Controller
   * @param  int  $id
   * @return \Illuminate\Http\Response
   */
- public function show($SportTeam_id)
+ public function show()
  {
      //
  }
@@ -127,19 +126,18 @@ class SportTeamController extends Controller
   * @param  int  $id
   * @return \Illuminate\Http\Response
   */
- public function edit($SportTeam_id)
+ public function edit($sportTeam_id)
  {
-   $SportTeam = sportSection::find($SportTeam_id);
+   $sportTeam = SportSection::find($sportTeam_id);
 
-   if ($SportTeam->event_id>0) {
-    //$event = DB::table('events')->find($SportTeam->event_id);
-    $event = Event::find($SportTeam->event_id);
+   if ($sportTeam->event_id>0) {
+    $event = Event::find($sportTeam->event_id);
     $ausgabetext=$event->beschreibung ;
    }
    else {
      $ausgabetext='';
    }
-   return view('admin.sportTeam.edit',compact('SportTeam' , 'ausgabetext'));
+   return view('admin.sportTeam.edit',compact('SsportTeam' , 'ausgabetext'));
  }
 
  /**
@@ -149,7 +147,7 @@ class SportTeamController extends Controller
   * @param  int  $id
   * @return \Illuminate\Http\Response
   */
- public function update(Request $request, $SportTeam_id)
+ public function update(Request $request, $sportTeam_id)
  {
    $request->validate(
      [
@@ -161,7 +159,7 @@ class SportTeamController extends Controller
      ]
    );
 
-   sportSection::find($SportTeam_id)->update([
+   SportSection::find($sportTeam_id)->update([
      'abteilung'         => $request->abteilung,
      'farbe'             => $request->farbe,
      'domain'            => $request->domain,
@@ -170,9 +168,9 @@ class SportTeamController extends Controller
 
    $messagePicture='';
    if($request->bild){
-     $newPictureName=$this->saveInmage($request->bild , $SportTeam_id);
+     $newPictureName=$this->saveInmage($request->bild , $sportTeam_id);
      if($newPictureName<>''){
-       sportSection::find($SportTeam_id)->update([
+       SportSection::find($sportTeam_id)->update([
          'bild'         => $newPictureName
        ]);
        $messagePicture='<br>Das Headerbild wurde hochgeladen.';
@@ -183,9 +181,9 @@ class SportTeamController extends Controller
    }
 
    if ($request->beschreibung<>'') {
-     $SportTeam = sportSection::find($SportTeam_id);
+     $sportTeam = sportSection::find($sportTeam_id);
      if ($SportTeam->event_id>0){
-       Event::find($SportTeam->event_id)->update([
+       Event::find($sportTeam->event_id)->update([
          'beschreibung'      => $request->beschreibung,
          'bearbeiter_id'     => Auth::user()->id,
          'updated_at'        => Carbon::now()
@@ -209,7 +207,7 @@ class SportTeamController extends Controller
 
         $newEventId  = $createdEvent->id;
 
-        sportSection::find($SportTeam_id)->update([
+        SportSection::find($sportTeam_id)->update([
          'event_id'         => $newEventId
        ]);
      }
@@ -244,8 +242,8 @@ class SportTeamController extends Controller
  }
 
  //Bilder Speichern
- public function saveInmage($bildInput , $SportTeam_id){
-  $newPictureName="header".$SportTeam_id.'.jpg';
+ public function saveInmage($bildInput , $sportTeam_id){
+  $newPictureName="header".$sportTeam_id.'.jpg';
   $bild = Image::make($bildInput);
   $breite= $bild->width();
   $hoehe = $bild->height();
@@ -260,12 +258,12 @@ class SportTeamController extends Controller
  }
 
  // Bilder von SportTeams löschen
-    public function pictureDelete($SportTeam_id){
-      $newPictureName="header".$SportTeam_id.'.jpg';
+    public function pictureDelete($sportTeam_id){
+      $newPictureName="header".$sportTeam_id.'.jpg';
       if (file_exists(public_path().'/storage/header/'.$newPictureName)){
          unlink(public_path().'/storage/header/'.$newPictureName);
        }
-      sportSection::find($SportTeam_id)->update([
+      sportSection::find($sportTeam_id)->update([
        'bild'      => ''
       ]);
       return back()->with([

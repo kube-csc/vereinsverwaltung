@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Abteilungsdashboard') }}
+            {{ __('Mannschaft - Dashboard') }}
         </h2>
         </h2>
     </x-slot>
@@ -12,7 +12,7 @@
 
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
-                    Abteilung: {{ old('abteilung') ?? $SportTeam->abteilung }}
+                    Abteilung: {{ old('abteilung') ?? $sportTeam->abteilung }}
                   </div>
 
                   <div class="mt-6 text-gray-500">
@@ -32,7 +32,7 @@
                       <div class="ml-12">
                           <div class="mt-2 text-sm text-gray-500">
 
-                              <form autocomplete="off" action="{{ url('Mannschaft/update/'.$SportTeam->id) }}" method="post" enctype="multipart/form-data">
+                              <form autocomplete="off" action="{{ url('Mannschaft/update/'.$sportTeam->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
                                   // TODO:  @method('PUT') in Hobby Projekt noch mal erlernen
@@ -40,25 +40,25 @@
                                 <div class="my-4" >
                                     <label for="name">Mannschaftsname:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('abteilung') ? 'bg-red-300' : '' }}"
-                                    id="abteilung" placeholder="Abteilung" name="abteilung" value="{{ old('abteilung') ?? $SportTeam->abteilung }}">
+                                    id="abteilung" placeholder="Abteilung" name="abteilung" value="{{ old('abteilung') ?? $sportTeam->abteilung }}">
                                     <small class="form-text text-danger">{!! $errors->first('abteilung') !!}</small>
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Domain:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('domain') ? 'bg-red-300' : '' }}"
-                                    id="domain" placeholder="http://..." name="domain" value="{{ old('domain') ?? $SportTeam->domain }}">
+                                    id="domain" placeholder="http://..." name="domain" value="{{ old('domain') ?? $sportTeam->domain }}">
                                     <small class="form-text text-danger">{!! $errors->first('domain') !!}</small>
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Akzentfarbe:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('farbe') ? 'bg-red-300' : '' }}"
-                                    id="frabe" placeholder="#FFFFFF" name="farbe" value="{{ old('farbe') ?? $SportTeam->farbe }}">
+                                    id="frabe" placeholder="#FFFFFF" name="farbe" value="{{ old('farbe') ?? $sportTeam->farbe }}">
                                     <small class="form-text text-danger">{!! $errors->first('farbe') !!}</small>
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Headerbild:</label>
-                                    @if($SportTeam->bild)
-                                     <img src="/storage/header/{{$SportTeam->bild}}" />
+                                    @if($sportTeam->bild)
+                                     <img src="/storage/header/{{$sportTeam->bild}}" />
                                     @endif
                                     <input type="file" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bild') ? 'bg-red-300' : '' }}"
                                     id="bild" name="bild" value="">

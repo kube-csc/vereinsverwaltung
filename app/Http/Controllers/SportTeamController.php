@@ -137,7 +137,7 @@ class SportTeamController extends Controller
    else {
      $ausgabetext='';
    }
-   return view('admin.sportTeam.edit',compact('$sportTeam' , 'ausgabetext'));
+   return view('admin.sportTeam.edit',compact('sportTeam' , 'ausgabetext'));
  }
 
  /**
@@ -154,7 +154,7 @@ class SportTeamController extends Controller
        'abteilung'         => 'required|max:40',
        'farbe'             => 'max:255',
        'domain'            => 'max:255',
-       //'domain'            => 'sometimes|url'  //todo: Lehre Felder wird nicht akzepiert
+       //'domain'            => 'sometimes|url'  //ToDo: Lehre Felder wird nicht akzepiert
        'bild'              => 'mimes:jpeg,jpg,bmp,png,gif'
      ]
    );
@@ -182,7 +182,7 @@ class SportTeamController extends Controller
 
    if ($request->beschreibung<>'') {
      $sportTeam = sportSection::find($sportTeam_id);
-     if ($SportTeam->event_id>0){
+     if ($sportTeam->event_id>0){
        Event::find($sportTeam->event_id)->update([
          'beschreibung'      => $request->beschreibung,
          'bearbeiter_id'     => Auth::user()->id,
@@ -208,7 +208,7 @@ class SportTeamController extends Controller
         $newEventId  = $createdEvent->id;
 
         SportSection::find($sportTeam_id)->update([
-         'event_id'         => $newEventId
+         'event_id' => $newEventId
        ]);
      }
    }
@@ -236,7 +236,7 @@ class SportTeamController extends Controller
    $delete = sportSection::find($SportTeams_id)->delete();
    return redirect('/Mannschaft/alle')->with(
      [
-       'success' => 'Das Mannschaft wurde gelöscht.'
+       'success' => 'Die Mannschaft wurde gelöscht.'
      ]
    );
  }

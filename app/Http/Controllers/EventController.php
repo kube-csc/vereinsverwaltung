@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Models\sportSection;
+use App\Models\SportSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Auth;
@@ -49,7 +49,7 @@ class EventController extends Controller
      */
     public function create()
     {
-        $sportSections = sportSection::where('status' , '>' ,'0')->orderby('status')
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
                                                                  ->orderby('sportSection_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();
@@ -116,7 +116,7 @@ class EventController extends Controller
     public function edit($event_id)
     {
         $event = Event::find($event_id);
-        $sportSections = sportSection::where('status' , '>' ,'0')->orderby('status')
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
                                                                  ->orderby('sportSection_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();

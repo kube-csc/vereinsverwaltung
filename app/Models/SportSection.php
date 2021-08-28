@@ -24,9 +24,6 @@ class SportSection extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    //public function event() {
-      //  return $this->belongsTo('App\Models\event');
-  //  }
 
     public function getImagePathAttribute()
       {

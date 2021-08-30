@@ -32,7 +32,7 @@ foreach ( $abteilungHomes as $abteilungHome)
               <div class="content">
                 <!-- ======= Facebook======= -->
                 <center>
-                <div class="fb-like" data-href="http://www.<?php echo "$domain"?>" data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                <div class="fb-like" data-href="http://www.{{ str_replace('_', ' ', env('Verein_Domain')) }}" data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
                 </center>
 
                 <h3>{{ $abteilungHome->abteilung }}</h3>

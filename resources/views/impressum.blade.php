@@ -1,36 +1,11 @@
 @extends('layouts.headFrontend')
 
-@section('about' ,'/impressum') <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
+@section('about' ,'/impressum') <?php // ToDo: vor dem #About den Routenname hinzufügen verbessern?>
 @section('title' ,'Impressum')
-
-<?php
-// TODO: Config Daten anderes Einbinden
-  $version = "1.0.0";
-  $installdate = "01.10.2020";
-  $verein= "Kanuten Emscher-Lippe e.V.";
-  $vereinstrasse = "Zu den Sportstätten 5";
-  $vereinsplz = "D-45711";
-  $vereinsort = "Datteln";
-  $vereintelefon = "(02363) 8420";
-  $vereinfax="";
-  $vereinemail = "kel@kel-datteln.de";
-  $vereineintagngsort = "Recklinghausen";
-  $vereinvrnummer = "VR 0627";
-  $dateformat = "d.m.Y";
-  $sponsoren = "Partner";
-  $abmeldezeit = "3600";
-  $keywords = "Kanuten Emscher-Lippe, Datteln, KEL, Kanuverein, Sport, Kanuwandersport, Kanurennsport, Kanu, Kajak, Paddeln, Drachenboot, Drachenbootregatta,
-               Wassersport, Regatta, SUP, Outrigger";
-  $description = "Wir sind ein Kanuverein mit Jugend-, Wander-, Rennsport-, SUP-, Outrigger- und Drachenbootabteilung in Datteln NRW am Dortmund-Ems-Kanal.";
-
-  $slogen="Wir sind ein Kanuverein in Datteln am Dortmund Ems Kanal.";
-  $canonical="https://www.kel-datteln.de/neu";
-  $domain="kel-datteln.de";
-?>
 
 @section('content')
     <main id="main">
-
+        <name id="about" >
       <!-- ======= Breadcrumbs Section ======= -->
       <section class="breadcrumbs">
         <div class="container">
@@ -62,18 +37,32 @@
           <div class="col-lg-6">
             <div class="info-box mb-4">
               <i class="bx bx-building-house"></i>
-              <h3>Adresse</h3>
+                <b>Adresse</b>
               <p>
-                <?php
-                if ($verein<>"") {echo "$verein<br>";} else {echo "Hier steht die Vereinsanschrift<br>Bitte in Einstellungen die Adressdaten eingeben!!<br>";}
-                if ($vereinstrasse<>"") {echo "$vereinstrasse<br>";}
-                if ($vereinsplz<>"" && $vereinsort<>"") {echo "$vereinsplz $vereinsort<br>";}
-                if ($vereineintagngsort<>"") {echo "Eingetragen in das Vereinsregister $vereineintagngsort<br>";}
-                if ($vereinvrnummer<>"") {echo "VR-Nummer: $vereinvrnummer<br>";}
-                if ($vereintelefon<>"") {echo "Tel: $vereintelefon<br>";}
-                if ($vereinfax<>"") {echo "Fax: $vereinfax<br>";}
-                if ($vereinemail<>"") {?>E-Mail: <a href="mailto:<?php echo "$vereinemail";?>"><?php echo "$vereinemail";?></a> <?php ;}
-                ?>
+                @if (env('Verein_Name')<>"")
+                      {{ str_replace('_', ' ', env('Verein_Name')) }}
+                @else
+                      {{'Hier steht die Vereinsanschrift. Bitte in der .Env die Daten pflegen'}}
+                @endif
+                  <br>
+                  {{ str_replace('_', ' ', env('Verein_Strasse')) }}<br>
+                  {{ str_replace('_', ' ', env('Verein_PLZ')) }} {{ str_replace('_', ' ', env('Verein_Ort')) }}
+                    <br><br>
+                @if (env('Verein_EeintagngsOrt')<>"")
+                  Eingetragen in das Vereinsregister: {{ str_replace('_', ' ', env('Verein_EeintagngsOrt')) }}<br>
+                @endif
+                @if (env('Verein_VRNummer')<>"")
+                  VR-Nummer:  {{ str_replace('_', ' ', env('Verein_VRNummer')) }}
+                @endif
+                    <br><br>
+                @if(env('Verein_Telefon')<>"")
+                    Tel: {{ str_replace('_', ' ', env('Verein_Telefon')) }}<br>
+                @endif
+                @if(env('Verein_Fax')<>"")
+                    Fax: {{ str_replace('_', ' ', env('Verein_Fax')) }}<br>
+                @endif
+                <a href="mailto:{{ str_replace('_', ' ', env('Verein_Email')) }}">{{ str_replace('_', ' ', env('Verein_Email')) }}</a></p>
+
               </p>
             </div>
           </div>
@@ -81,11 +70,16 @@
           <div class="col-lg-6">
             <div class="info-box  mb-4">
               <i class="bx bx-home"></i>
-              <h3>Dieser vertreten durch den Vorsitzenden:</h3>
+              <b>Dieser vertreten durch den Vorsitzenden:</b>
             <p>
-              <b>1. Vorsitzender: </b><a href="mailto:d.kuhnert@kel-datteln.de">Detlev Kuhnert</a>
+               1. Vorsitzender: <br>
+                <a href="mailto:d.kuhnert@kel-datteln.de">Detlev Kuhnert</a>
               <br>
-              Kreuzstr. 1 b, 45711 Datteln,  Mobil 0172-6862220<br>
+                Kreuzstr. 1 b<br>
+                45711 Datteln<br>
+                Mobil 0172-6862220<br>
+                <br>
+                <br>
               Für weitere Mitglieder des Vorstands <a href="index.php#team">hier</a> klicken.
             </p>
           </div>
@@ -94,10 +88,13 @@
           <div class="col-lg-6">
             <div class="info-box  mb-4">
               <i class="bx bx-home"></i>
-              <h3>Für den Inhalt dieser Seiten ist verantwortlich als Webmaster:</h3>
+              <b>Für den Inhalt dieser Seiten ist verantwortlich als Webmaster:</b>
               <p>
-                <b>Webmaster: </b> <a href="mailto:webmaster@kel-datteln.de">Stefan Kuck</a>
-                <br>Kieselstrasse 60, 45731 Waltrop, Tel. (02309) 73056
+               <a href="mailto:webmaster@kel-datteln.de">Stefan Kuck</a>
+                <br>
+                  Kieselstrasse 60<br>
+                  45731 Waltrop<br>
+                  Tel. (02309) 73056
               </p>
               </p>
             </div>
@@ -131,7 +128,8 @@
           bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden
           die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen
           entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.</span></p>
-          <?php /*?><p style="line-height: normal;"><strong><span style="font-size: 12pt; font-family: 'Times New Roman','serif';">Datenschutz</span></strong></p>
+          <?php /*?>
+          <p style="line-height: normal;"><strong><span style="font-size: 12pt; font-family: 'Times New Roman','serif';">Datenschutz</span></strong></p>
           <p style="line-height: normal;"><span style="font-size: 12pt; font-family: 'Times New Roman','serif';">Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich.
           Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder eMail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden
           ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.</span></p>
@@ -154,7 +152,8 @@
           zuordnen kann, loggen Sie sich bitte aus Ihrem Facebook-Benutzerkonto aus.</span></p>
           <p style="line-height: normal;"><span style="font-size: 12pt; font-family: 'Times New Roman','serif';"> </span></p>
           <p style="line-height: normal;"><em><span style="font-size: 12pt; font-family: 'Times New Roman','serif';">Quellen: <a href="http://www.e-recht24.de/muster-disclaimer.htm" target="_blank"><span style="color: blue;">Disclaimer</span></a> von eRecht24, dem Portal zum Internetrecht von Rechtsanwalt Sören Siebert, <a href="http://www.e-recht24.de/artikel/datenschutz/6590-facebook-like-button-datenschutz-disclaimer.html" target="_blank"><span style="color: blue;">eRecht24 Datenschutzerklärung für
-          Facebook</span></a></span></em></p><?php */?>
+          Facebook</span></a></span></em></p>
+          <?php */?>
         </p>
       </div>
 

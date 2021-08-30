@@ -1,15 +1,15 @@
 <h1>Internetauftritt von Vereine</h1>
-<p>Ausgelegt für ein Kanuverein mit verschiedenen Abteilungen
-<br>
-Beispiel der Abteilungen:
-<ul>
-  <li>Jugend</li>
-  <li>Wandersport</li>
-  <li>Rennsport</li>
-  <li>Drachenboot mit drei Mannschaften</li>
-  <li>SUP</li>
-</ul>
+<p>
+ Ausgelegt für ein Kanuverein mit verschiedenen Abteilungen
 </p>
+<h2>Beispiel der Abteilungen:</h2> 
+    <ul>
+      <li>Jugend</li>
+      <li>Wandersport</li>
+      <li>Rennsport</li>
+      <li>Drachenboot mit drei Mannschaften</li>
+      <li>SUP</li>
+    </ul>
 
 <h2>Installierte Programme</h2>
 <ul>
@@ -24,25 +24,49 @@ Beispiel der Abteilungen:
 
 <h2>Frontend</h2>
 <ul>
-<li>Header</li>
+<li>Header abhänig von den Seiten</li>
 <li>Leanding Page
-  <li>Ausgabe der Vereinsbeschreibung</li>
-  <li>Auflistung der Abteilung</li>
-  <li>Kontakt des Vereins inc. Map</li>
+     <ul>
+      <li>Ausgabe der Vereinsbeschreibung</li>
+      <li>Presendation der Abteilung mit deren Mannschaften</li>
+      <li>Kontakt des Vereins inc. Map</li>
+    </ul>
 </li>
-<li>Footer</li>
+  <li>Presendation der Abteilung</li>
+  <li>Presendation der Mannschaften</li>
+  <li>Impresssum</li>
+  <li>Datenschutzerklärung</li>
+  <li>Footer</li>
 </ul>
 
 <h2>Backend</h2>
 <ul>
   <li>Eingabe und Bearbeitung der Vereinsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
+  <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
+  <li>Eingabe und Bearbeitung von Events</li>
+  <li>Eingabe und Bearbeitung von Events Gruppen</li>
+</ul>
+
+<h2>Installation</h2>
+<ul>
+   <li>git clone  https://github.com/kube-csc/vereinsverwaltung.git</li>
+   <li>.env Datei Ausfüllen Es werden auch Informationen über den Verein abgefragt</li>
+   <li>composer.phar install</li>
+   <li>php artisan storage:link</li>
+   <li>php artisan migrate:fresh --seed Datenbank mir Demodaten</li>
+</ul>
+
+<h2>Update</h2>
+<ul>
+   <li>git pull origin main</li>
+   <li>php artisan migrate:fresh --seed</li>
 </ul>
 
 <br>
 <hr>
 <br>
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"> alt="Laravel"</a></p>
 
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>

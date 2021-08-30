@@ -1,24 +1,4 @@
 <?php
-// TODO: Config Daten anderes Einbinden
-  $verein= "Kanuten Emscher-Lippe e.V.";
-  $vereinstrasse = "Zu den Sportstätten 5";
-  $vereinsplz = "D-45711";
-  $vereinsort = "Datteln";
-  $vereintelefon = "(02363) 8420";
-  $vereinfax="";
-  $vereinemail = "kel@kel-datteln.de";
-  $vereineintagngsort = "Recklinghausen";
-  $vereinvrnummer = "VR 0627";
-  $keywords = "Kanuten Emscher-Lippe, Datteln, KEL, Kanuverein, Sport, Kanuwandersport, Kanurennsport, Kanu, Kajak, Paddeln, Drachenboot, Drachenbootregatta,
-               Wassersport, Regatta, SUP, Outrigger";
-  $description = "Wir sind ein Kanuverein mit Jugend-, Wander-, Rennsport-, SUP-, Outrigger- und Drachenbootabteilung in Datteln NRW am Dortmund-Ems-Kanal.";
-
-  $slogen="Wir sind ein Kanuverein in Datteln am Dortmund Ems Kanal.";
-  $canonical="https://www.kel-datteln.de/neu";
-  $domain="kel-datteln.de";
-
-  $sozialmediaanzeigen='n';
-
   $sportSectionMenus = DB::table('sport_sections')
       ->where('status' ,'>' ,'1')
       ->where('sportSection_id' , NULL)
@@ -32,10 +12,15 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title>@yield( 'title' , '{!! $verein !!}' )</title>
-
-<?php // TODO: Meta Conten bearbeiten ?>
+  @php
+      $Vereinsname = str_replace('_', ' ', env('Verein_DomainName'));
+  @endphp
+  <title> @yield( 'title' , '$Vereinsname' ) </title>
+    @php
+        // TODO: Meta Conten bearbeiten
+        $description = str_replace('_', ' ', env('Verein_description'));
+        $keywords    = str_replace('_', ' ', env('Verein_Keywords'));
+    @endphp
   <meta content="{!! $description !!}" name="descriptison">
   <meta content="{!! $keywords !!}"    name="keywordsanlegen">
 
@@ -68,7 +53,8 @@
   <?php // TODO: boxicons über webpack einbinden ?>
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
 
-   @include('layouts.header')
+  @include('layouts.header')
+
   <!-- =======================================================
   * Template Name: Squadfree - v2.2.0
   * Template URL: https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/
@@ -79,11 +65,7 @@
 
 <body>
 
-<?php
-// TODO: Social Media Abfrage wieder einbauen
-//if ($sozialmediaanzeigen=='j')
-//{
-  ?>
+@if(env('Verein_Domain')=="ja")
     <!-- ======= Facebook======= -->
   <div id="fb-root"></div>
   <script>(function(d, s, id) {
@@ -93,16 +75,14 @@
     js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1";
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));</script>
-  <?php
-//}
-?>
+@endif
 
 <!-- ======= Header ======= -->
 <header id="header" class="fixed-top header-transparent">
   <div class="container d-flex align-items-center">
 
     <div class="logo mr-auto">
-      <h1 class="text-light"><a href="/"><span><?php echo "$domain"?></span></a></h1>
+      <h1 class="text-light"><a href="/"><span>{{ str_replace('_', ' ', env('Verein_Domain')) }}</span></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.php"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
     </div>
@@ -141,7 +121,14 @@
                                           @php
                                               $first=1;
                                           @endphp
-                                          @endif
+                                          <!-- ToDo: Wird für die mobile Version verwendet, weil der Link Link eine Ebende nicht funktioniert -->
+                                          <li>
+                                              <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
+                                                  {{ $sportSectionMenu->abteilung }}
+                                              </a>
+                                          </li>
+                                          <!-- End -->
+                                  @endif
                                           <li>
                                               <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportTeamMenu->abteilung) }}">
                                                   {{ $sportTeamMenu->abteilung }}
@@ -153,7 +140,7 @@
                                       </ul> <!-- Teams -->
                                   @endif
 
-                          </li>  <!-- Abteilung Mannschaft   -->
+                          </li>  <!-- Abteilung Mannschaft -->
                       @endforeach
                   </ul>   <!-- Abteilung -->
               </li>    <!-- Abteilung Mannschaft   -->
@@ -176,8 +163,12 @@
   <!-- ======= Hero Section ======= -->
   <section id="hero">
     <div class="hero-container" data-aos="fade-up">
-      <h1><?php echo"$verein";?></h1>
-      <h2><?php echo"$slogen";?></h2>
+       @php
+        $Verein = str_replace('_', ' ', env('Verein_Name'));
+        $SLogen = str_replace('_', ' ', env('Verein_SLogen'));
+       @endphp
+      <h1>{{ $Verein }}</h1>
+      <h2>{{ $SLogen }}</h2>
       <?php // TODO:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
       <a href="@yield( 'about' , '' )/#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
       @php
@@ -199,32 +190,27 @@
 
         <div class="col-lg-4 col-md-6">
           <div class="footer-info" data-aos="fade-up" data-aos-delay="50">
-            <h3><?php echo $verein; ?></h3>
-            <h4>Vorstandsadressen</h4>
-            <?php /*
-            <p class="pb-3"><em>Qui repudiandae et eum dolores alias sed ea. Qui suscipit veniam excepturi quod.</em></p> // QUESTION: : Warum em
-            */ ?>
-            <p>
-              <?php
-              echo "$verein <br>";
-              echo "$vereinstrasse <br>";
-              echo "$vereinsplz $vereinsort <br>";
-              if ($vereintelefon<>'')
-              {
-                ?>
-               <i class="icofont-telephone"></i><?php echo $vereintelefon ; ?>
-                 <br>
-              <?php
-              }
-              if ($vereinfax<>'')
-              {
-                ?>
-                <i class="icofont-fax"></i><?php echo $vereinfax ; ?>
-             <?php
-              }
+            <h3>{{ str_replace('_', ' ', env('Verein_Name')) }}</h3>
+            <?php
+              /*
+                <p class="pb-3"><em>Qui repudiandae et eum dolores alias sed ea. Qui suscipit veniam excepturi quod.</em></p>
+                // QUESTION: : Warum em
+              */
               ?>
-              <i class="icofont-email"></i><a href="mailto:<?php echo $vereinemail ; ?>"><?php echo $vereinemail ; ?></a>
+            <p>
+              {{ str_replace('_', ' ', env('Verein_Name')) }}<br>
+              {{ str_replace('_', ' ', env('Verein_Strasse')) }}<br>
+              {{ str_replace('_', ' ', env('Verein_PLZ')) }} {{ str_replace('_', ' ', env('Verein_Ort')) }}<br>
+              @if(env('Verein_Telefon')<>"")
+               <i class="icofont-telephone"></i>{{ str_replace('_', ' ', env('Verein_Telefon')) }}<br>
+              @endif
+              @if(env('Verein_Fax')<>"")
+               <i class="icofont-fax"></i>{{ str_replace('_', ' ', env('Verein_Fax')) }}<br>
+              @endif
+              <i class="icofont-email"></i>
+              <a href="mailto:{{ str_replace('_', ' ', env('Verein_Email')) }}">{{ str_replace('_', ' ', env('Verein_Email')) }}</a>
             </p>
+
               <div class="social-links mt-3">
                 <a href="https://www.facebook.com/KELDatteln" class="facebook" target="_blank"><i class="bx bxl-facebook"></i></a>
                 <?php /*
@@ -255,9 +241,6 @@
             <li><a href="http://sup.kel-datteln.de"    target="_blank" class="bx bx-link-external">SUP Kurse</a></li>
             <li><a href="http://oc.kel-datteln.de"     target="_blank" class="bx bx-link-external">Outrigger für Vereinsmitglieder Buchen</a></li>
           </ul>
-          <?php /* NOTE: mit fictogramm
-           <li><i class="bx bx-chevron-right"></i> <a href="#" target="_blank">SUP Kurse</a></li>
-          */ ?>
         </div>
 
 <?php /*
@@ -309,7 +292,7 @@
             <?php /* TODO: Anmeldung alte Seite
                <li><a href="http://www.kel-datteln.de/passwort/password.php" target="_blank"><i class="bx bx-log-in"></i>Login (alte Seite)</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
             */ ?>
-           <li><a href="http://<?php echo $domain ?>/passwort/login.php"><i class="bx bx-log-in"></i>Login (altes System)</a></li> <?php // TODO: Löschen wenn neues Backend Fertig ist ?>
+           <li><a href="http://{{ str_replace('_', ' ', env('Verein_Domain')) }}/passwort/login.php"><i class="bx bx-log-in"></i>Login (altes System)</a></li> <?php // TODO: Löschen wenn neues Backend Fertig ist ?>
            <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Login</a></li>
 
            @if (Route::has('register'))
@@ -324,7 +307,7 @@
 
   <div class="container">
     <div class="copyright">
-      &copy; Copyright <strong><span><?php echo $verein ?></span></strong><br>
+      &copy; Copyright <strong><span>{{ str_replace('_', ' ', env('Verein_Name')) }}</span></strong><br>
       All Rights Reserved
     </div>
     <div class="credits">

@@ -4,7 +4,8 @@
 
     <div class="section-title" data-aos="fade-in" data-aos-delay="250">
       <h2>Kontakt</h2>
-      <?php /* TODO:  Beschreibungstext Kontakte
+      <?php
+        /* TODO:  Beschreibungstext Kontakte
       <p>Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
       */ ?>
     </div>
@@ -15,11 +16,9 @@
           <i class="bx bx-map"></i>
           <h3>Adresse</h3>
           <p>
-            <?php
-            echo "$verein <br>";
-            echo "$vereinstrasse <br>";
-            echo "$vereinsplz $vereinsort <br>";
-            ?>
+            {{ str_replace('_', ' ', env('Verein_Name')) }}<br>
+            {{ str_replace('_', ' ', env('Verein_Strasse')) }}<br>
+            {{ str_replace('_', ' ', env('Verein_PLZ')) }} {{ str_replace('_', ' ', env('Verein_Ort')) }}
           </p>
         </div>
       </div>
@@ -28,7 +27,7 @@
         <div class="info-box  mb-4">
           <i class="bx bx-envelope"></i>
           <h3>Email</h3>
-          <p><a href="mailto:<?php echo $vereinemail ; ?>"><?php echo $vereinemail ; ?></a></p>
+          <p><a href="mailto:{{ str_replace('_', ' ', env('Verein_Email')) }}">{{ str_replace('_', ' ', env('Verein_Email')) }}</a></p>
         </div>
       </div>
 
@@ -37,16 +36,12 @@
           <i class="bx bx-phone-call"></i>
           <h3>Telefon</h3>
           <p>
-            <?php
-            if ($vereintelefon<>"")
-            {
-            echo "<strong>Tel:</strong> $vereintelefon <br>";
-            }
-            if ($vereinfax<>"")
-            {
-            echo "<strong>Fax:</strong> $vereinfax <br>";
-            }
-            ?>
+            @if(env('Verein_Telefon')<>"")
+            <strong>Tel: </strong>{{ str_replace('_', ' ', env('Verein_Telefon')) }}<br>
+            @endif
+            @if(env('Verein_Fax')<>"")
+            <strong>Fax: </strong>{{ str_replace('_', ' ', env('Verein_Fax')) }}<br>
+            @endif
           </p>
         </div>
       </div>

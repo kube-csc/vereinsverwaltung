@@ -8,10 +8,9 @@
 
 @include('home.sportSection')
 
-<?php /* TODO: Team Seite erstellen
-include('_partials.sportSectionTeam')
-*/
-?>
+@include('home.eventFuture')
+
+@include('home.team')
 
 @include('home.contakt')
 

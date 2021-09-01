@@ -1,9 +1,12 @@
 <?php
+  /*
   $sportSectionMenus = DB::table('sport_sections')
-      ->where('status' ,'>' ,'1')
+      ->where('status' , '>' , '1')
       ->where('sportSection_id' , NULL)
       ->orderby('abteilung')
       ->get();
+  */
+
 ?>
 
 <!DOCTYPE html>
@@ -82,7 +85,7 @@
   <div class="container d-flex align-items-center">
 
     <div class="logo mr-auto">
-      <h1 class="text-light"><a href="/"><span>{{ str_replace('_', ' ', env('Verein_Domain')) }}</span></a></h1>
+      <h1 class="text-light"><a href="/"><span>{{ str_replace('_' , ' ' , env('Verein_Domain')) }}</span></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.php"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
     </div>
@@ -90,25 +93,22 @@
       <nav class="nav-menu d-none d-lg-block">
 
           <ul>
-              <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/">Home</a></li>
+              <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/#about">Home</a></li>
 
               <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="/#about">Abteilung</a>
                   <ul>
-                      @foreach($sportSectionMenus as $sportSectionMenu)
+                      @foreach($abteilungs as $sportSectionMenu)
 
                           @php
-                              $sportTeamMenus = DB::table('sport_sections')
+                            $sportTeamMenus = DB::table('sport_sections')
                               ->where('status' , '>' , '1')
                               ->where('sportSection_id' , '=' , $sportSectionMenu->id)
                               ->orderby('abteilung')
                               ->get();
 
-                              $sportTeamMenuCount = DB::table('sport_sections')
-                              ->where('status' , '>' , '1')
-                              ->where('sportSection_id' , '=' , $sportSectionMenu->id)
-                              ->count();
+                            $sportTeamMenuCount = $sportTeamMenus->count();
 
-                              $first=0;
+                            $first=0;
                           @endphp
                           <li class="{{$sportTeamMenuCount > 0 ? 'drop-down' : ''}}">
                               <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
@@ -121,7 +121,7 @@
                                           @php
                                               $first=1;
                                           @endphp
-                                          <!-- ToDo: Wird für die mobile Version verwendet, weil der Link Link eine Ebende nicht funktioniert -->
+                                          <!-- ToDo: Wird für die mobile Version verwendet. Der Link, der eine Ebende höher ist, funktioniert nicht. -->
                                           <li>
                                               <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
                                                   {{ $sportSectionMenu->abteilung }}
@@ -134,7 +134,8 @@
                                                   {{ $sportTeamMenu->abteilung }}
                                               </a>
                                           </li>
-                                  @endforeach
+
+                              @endforeach
 
                                   @if($first==1)
                                       </ul> <!-- Teams -->
@@ -148,9 +149,11 @@
                   // TODO: Active im Menu funktioniert noch nicht
               @endphp
 
-              @php
-                  //           <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
-              @endphp
+              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/#services">Event</a></li>
+              <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
+
+              <!-- <li><a href="#portfolio">Portfolio</a></li> -->
+
               <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="/#contact">Kontakt</a></li>
               <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
           </ul>
@@ -170,7 +173,7 @@
       <h1>{{ $Verein }}</h1>
       <h2>{{ $SLogen }}</h2>
       <?php // TODO:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
-      <a href="@yield( 'about' , '' )/#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
+      <a href="@yield( 'about' , '' )#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
       @php
       /* TODO: vor dem #About den Routenname hinzufügen verbessern
       benutzt in:
@@ -202,13 +205,13 @@
               {{ str_replace('_', ' ', env('Verein_Strasse')) }}<br>
               {{ str_replace('_', ' ', env('Verein_PLZ')) }} {{ str_replace('_', ' ', env('Verein_Ort')) }}<br>
               @if(env('Verein_Telefon')<>"")
-               <i class="icofont-telephone"></i>{{ str_replace('_', ' ', env('Verein_Telefon')) }}<br>
+               <i class="icofont-telephone"></i>{{ str_replace('_' , ' ' , env('Verein_Telefon')) }}<br>
               @endif
               @if(env('Verein_Fax')<>"")
-               <i class="icofont-fax"></i>{{ str_replace('_', ' ', env('Verein_Fax')) }}<br>
+               <i class="icofont-fax"></i>{{ str_replace('_' , ' ' , env('Verein_Fax')) }}<br>
               @endif
               <i class="icofont-email"></i>
-              <a href="mailto:{{ str_replace('_', ' ', env('Verein_Email')) }}">{{ str_replace('_', ' ', env('Verein_Email')) }}</a>
+              <a href="mailto:{{ str_replace('_' , ' ' , env('Verein_Email')) }}">{{ str_replace('_' , ' ' , env('Verein_Email')) }}</a>
             </p>
 
               <div class="social-links mt-3">
@@ -225,7 +228,7 @@
         </div>
 
           <!--<div class="col-lg-2 col-md-6 footer-links" data-aos="fade-up" data-aos-delay="150"> -->
-          <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="350">
+          <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="100">
           <h4>Sozial Media</h4>
           <ul>
             <li><a href="https://www.facebook.com/KELDatteln" class="facebook" target="_blank"><i class="bx bxl-facebook"></i>KEL-Datteln</a></li>
@@ -267,7 +270,7 @@
           </ul>
         </div>
 */ ?>
-        <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="350">
+        <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="150">
         <?php /* TODO: Netsletter
           <h4>Dein Newsletter</h4>
           <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>

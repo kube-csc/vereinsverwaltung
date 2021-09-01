@@ -20,7 +20,6 @@ class CreateBoardsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('postenmaenlich');
             $table->string('postenweiblich');
-            $table->string('email')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->SoftDeletes();
             $table->timestamps();

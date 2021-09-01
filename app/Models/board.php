@@ -11,4 +11,14 @@ class board extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public function boardUserName()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function boardUsers(){
+        return $this->belongsToMany('App\Models\User');
+
+        //return $this->belongsToMany('App\Hobby');
+    }
 }

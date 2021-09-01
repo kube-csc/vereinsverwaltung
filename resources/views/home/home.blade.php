@@ -10,6 +10,10 @@
 
 @include('home.eventFuture')
 
+@include('home.eventPast')
+
+@include('home.counts')
+
 @include('home.team')
 
 @include('home.contakt')

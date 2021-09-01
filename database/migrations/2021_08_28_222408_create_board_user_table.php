@@ -16,11 +16,12 @@ class CreateBoardUserTable extends Migration
         Schema::create('board_user', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('board_id');
+            $table->unsignedBigInteger('user_id');
             $table->integer('position');
             $table->integer('nummer');
-            $table->unsignedBigInteger('user_id');
+            $table->string('vorstandsemail')->nullable();
             $table->timestamps();
-
+            $table->string('vorstandsbild')->nullable();
             $table->foreign('user_id')
               ->references('id')->on('users');
 

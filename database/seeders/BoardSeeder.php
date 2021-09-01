@@ -21,12 +21,11 @@ class BoardSeeder extends Seeder
           [
               array(
                       'id' => '1',
-                      'sportSection_id' => '7',
+                      'sportSection_id' => '1',
                       'position' => '10',
                       'user_id' => '1',
                       'postenmaenlich' => 'Vorsitzender',
                       'postenweiblich' => 'Vorsitzende',
-                      'email' => 'vorstand@verein.de',
                       'visible' => '1'
                    ),
 

@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\eventGroup;
 use App\Models\SportSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -53,7 +54,9 @@ class EventController extends Controller
                                                                  ->orderby('sportSection_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();
-        return view('admin.event.create' , compact('sportSections' ));
+        $eventGroups = eventGroup::orderby('termingruppe')
+            ->get();
+        return view('admin.event.create' , compact('sportSections' , 'eventGroups'));
     }
 
     public function createSportSection($sportSection_id)
@@ -81,7 +84,9 @@ class EventController extends Controller
             'datumvon'         => $request->datumvon,
             'datumbis'         => $request->datumbis,
             'beschreibung'     => $request->beschreibung,
+            'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
+            'eventGroup_id'    => $request->eventGroup_id,
             'bearbeiter_id'    => Auth::user()->id,
             'autor_id'         => Auth::user()->id,
             'updated_at'       => Carbon::now(),
@@ -120,7 +125,10 @@ class EventController extends Controller
                                                                  ->orderby('sportSection_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();
-        return view('admin.event.edit' , compact('event' , 'sportSections'));
+
+        $eventGroups = eventGroup::orderby('termingruppe')
+            ->get();
+        return view('admin.event.edit' , compact('event' , 'sportSections' , 'eventGroups'));
     }
 
     /**
@@ -144,7 +152,9 @@ class EventController extends Controller
             'datumvon'         => $request->datumvon,
             'datumbis'         => $request->datumbis,
             'beschreibung'     => $request->beschreibung,
+            'nachtermin'      => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
+            'eventGroup_id'    => $request->eventGroup_id,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
            ]

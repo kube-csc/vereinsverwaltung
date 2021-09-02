@@ -56,9 +56,14 @@
                                     <small class="form-text text-danger">{!! $errors->first('datumbis') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <label for="name">Beschreibung:</label>
+                                    <label for="name">Ankündigung:</label>
                                     <textarea rows="25" cols="250" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->beschreibung }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
+                                </div>
+                                <div class="my-4" >
+                                    <label for="name">Nachbericht:</label>
+                                    <textarea rows="25" cols="250" name="nachbericht" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->nachtermin }}</textarea>
+                                    <small class="form-text text-danger">{!! $errors->first('nachbericht') !!}</small>
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Abteilung / Mannschaft:</label><br>
@@ -80,6 +85,26 @@
                                     </optgroup>
                                     </select>
                                 </div>
+                                <div class="my-4" >
+                                    <label for="name">Event Gruppe:</label><br>
+                                    <select name="eventGroup_id">
+                                        <optgroup>
+                                            @foreach ($eventGroups as $eventGroup)
+                                                <option value="{{ $eventGroup->id }}"
+                                                      @if( $event->eventGroup_id == $eventGroup->id )
+                                                         selected
+                                                      @endif
+                                                >{{ $eventGroup->termingruppe }}</option>
+                                            @endforeach
+                                        </optgroup>
+                                    </select>
+                                </div>
+
+
+
+
+
+
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">speichern</button>
                                 </div>

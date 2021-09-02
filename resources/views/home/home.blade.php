@@ -12,7 +12,9 @@
 
 @include('home.eventPast')
 
+@if('r' == 'h')
 @include('home.counts')
+@endif
 
 @include('home.team')
 
@@ -21,3 +23,18 @@
 </main><!-- End #main -->
 
 @endsection
+
+@php
+    // TODO: Funktion anderes Integrieren
+    function textmax(&$beschreibung,$sollang,&$abgeschnitten)
+    {
+     $abgeschnitten=0;
+     $laenge=strlen($beschreibung);
+     if ($laenge>$sollang)
+      {
+        $beschreibung=substr($beschreibung,0,$sollang);
+        $beschreibung=$beschreibung."...";  // TODO:  Punkte werden nicht angefügt
+        $abgeschnitten=1;
+      }
+    }
+@endphp

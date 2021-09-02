@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\board;
+use App\Models\Event;
 use App\Models\SportSection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
 {
@@ -35,12 +36,25 @@ class HomeController extends Controller
           ->get();
       */
 
+      $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now())
+          ->where('verwendung' , 0)
+          ->orderby('datumvon')
+          ->limit(4)
+          ->get();
+
+      $eventsPast         = Event::where('datumvon' , '<=' , Carbon::now())
+          ->where('nachtermin' , '!=' , '')
+          ->where('verwendung' , 0)
+          ->orderby('datumvon' , 'DESC')
+          ->limit(4)
+          ->get();
+
       $boards=board::where('sportSection_id' , $sportSection_id)
           ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
           ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
           ->get();
 
-      /*
+       /*
         $boards=board::select("bu.email as vorstandsemail",
             "vorname",
             "nachname",
@@ -52,7 +66,7 @@ class HomeController extends Controller
             ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
             ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
             ->get();
-*/
+       */
 
       return view('home.home')->with(
         [
@@ -62,6 +76,8 @@ class HomeController extends Controller
          'abteilungsCount'     => $abteilungsCount,
          //'sportSectionMenus'   => $sportSectionMenu,
          'boards'              => $boards,
+         'eventsFuture'        => $eventsFuture,
+         'eventsPast'          => $eventsPast,
          'serverdomain'        => $serverdomain
         ]
      );
@@ -89,6 +105,18 @@ class HomeController extends Controller
         }
         $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
         return view('home.sportSectionShow' , compact('sportSectionNames' , 'sportTeamNames' , 'abteilungs'));
+    }
+
+    public function eventShow($eventSeorch)
+    {
+        $seoch = str_replace('_' , ' ' , $eventSeorch);
+        $events = event::where('ueberschrift' , $seoch)->get();
+
+        $abteilungs          = SportSection::where('status' , '>' , '1')
+            ->where('sportSection_id' , NULL)
+            ->orderby('abteilung')
+            ->get();
+        return view('home.eventShow' , compact('events' , 'abteilungs'));
     }
 
 }

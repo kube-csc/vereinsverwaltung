@@ -13,7 +13,7 @@ class Event extends Model
 
     public function events()
      {
-       return $this->hasMany(Events::class);
+       return $this->hasMany(Event::class);
      }
 
      public function autor()

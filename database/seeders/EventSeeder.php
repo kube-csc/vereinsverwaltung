@@ -189,7 +189,9 @@ class EventSeeder extends Seeder
                                     'homepage' => '',
                                     'sportSection_id' => '5',
                                     'startseite' => '',
-                                    'nachtermin' => '',
+                                    'nachtermin' => 'Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic q
+                                    Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic q
+                                    ',
                                     'anmeldetext' => '',
                                     'onlinemeldung' => '0',
                                     'created_at' => '2021-03-28 13:06:42',
@@ -220,7 +222,9 @@ class EventSeeder extends Seeder
                                     'homepage' => '',
                                     'sportSection_id' => '5',
                                     'startseite' => '',
-                                    'nachtermin' => '',
+                                    'nachtermin' => 'Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic q
+                                    Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic q
+                                    ',
                                     'anmeldetext' => '',
                                     'onlinemeldung' => '0',
                                     'created_at' => '2021-03-28 13:06:42',

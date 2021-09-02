@@ -70,6 +70,11 @@
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                 </div>
                                 <div class="my-4" >
+                                  <label for="name">Nachbericht:</label>
+                                  <textarea rows="25" cols="250" name="nachbericht" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('nachbericht') }}</textarea>
+                                  <small class="form-text text-danger">{!! $errors->first('nachbericht') !!}</small>
+                                </div>
+                                <div class="my-4" >
                                     @if (!isset($sportSection_id))
                                     <label for="name">Abteilung / Mannschaft:</label><br>
                                     <select name="sportSection_id">
@@ -94,9 +99,23 @@
                                     <input type="hidden" id="sportSection_id" name="sportSection_id" value="{{ old('sportSection_id') ?? $sportSection_id }}">
                                     @endif
                                 </div>
-                                <div class="py-2">
+                                <div class="my-4" >
+                                      <label for="name">Event Gruppe:</label><br>
+                                      <select name="eventGroup_id">
+                                          <optgroup>
+                                              @foreach ($eventGroups as $eventGroup)
+                                              <option value="{{ $eventGroup->id }}"
+                                                  @if( old('eventGroup_id') == $eventGroup->id )
+                                                   selected
+                                                  @endif
+                                              >{{ $eventGroup->termingruppe }}</option>
+                                              @endforeach
+                                          </optgroup>
+                                      </select>
+                               </div>
+                               <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Event speichern</button>
-                                </div>
+                               </div>
 
                             </form>
                             <br>

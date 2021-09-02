@@ -65,6 +65,7 @@
                                     <small class="form-text text-danger">{!! $errors->first('bild') !!}</small>
                                 </div>
                                 <div class="my-4" >
+                                    <label for="name">Beschreibung:</label>
                                     <textarea rows="25" cols="250" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $ausgabetext }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                 </div>

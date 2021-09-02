@@ -1,14 +1,3 @@
-<?php
-  /*
-  $sportSectionMenus = DB::table('sport_sections')
-      ->where('status' , '>' , '1')
-      ->where('sportSection_id' , NULL)
-      ->orderby('abteilung')
-      ->get();
-  */
-
-?>
-
 <!DOCTYPE html>
 <html lang="de">
 
@@ -20,7 +9,7 @@
   @endphp
   <title> @yield( 'title' , '$Vereinsname' ) </title>
     @php
-        // TODO: Meta Conten bearbeiten
+        // ToDo: Meta Conten bearbeiten
         $description = str_replace('_', ' ', env('Verein_description'));
         $keywords    = str_replace('_', ' ', env('Verein_Keywords'));
     @endphp

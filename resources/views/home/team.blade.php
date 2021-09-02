@@ -1,10 +1,16 @@
-<!-- ======= Team Section ======= -->
-<section id="team" class="team">
+@if($boards->count() > 0 )
+ <!-- ======= Team Section ======= -->
+ <section id="team" class="team">
     <div class="container">
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
             <h2>Team</h2>
-            <p>Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem.
+            @php /*
+                 ToDo: Text muss noch bearbeitet werden
+                 */
+            @endphp
+            <p>
+                Als Kontaktpersonen stehen zur Verfügung.
             </p>
         </div>
 
@@ -50,4 +56,5 @@
         </div>
 
     </div>
-</section><!-- End Team Section -->
+ </section><!-- End Team Section -->
+@endif

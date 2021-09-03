@@ -16,7 +16,7 @@ class CreateBoardUserTable extends Migration
         Schema::create('board_user', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('board_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->integer('position');
             $table->integer('nummer');
             $table->string('vorstandsemail')->nullable();

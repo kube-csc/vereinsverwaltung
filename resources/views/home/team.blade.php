@@ -43,7 +43,13 @@
                             <a href=""><i class="icofont-instagram"></i></a>
                             <a href=""><i class="icofont-linkedin"></i></a>
                             */ @endphp
-                            <a href=""><i class="icofont-mail"></i>{{ $board->vorstandsemail }}</a>
+                            @if(isset($board->vorstandsemail))
+                             <a href=""><i class="icofont-mail"></i>{{ $board->vorstandsemail }}</a>
+                            @else
+                              @if(isset($board->email) | $board->email != str_replace("@domain.de", "" , $board->email))
+                                <a href=""><i class="icofont-mail"></i>{{ $board->email }}</a>
+                              @endif
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -27,7 +27,9 @@
                         @else
                             <p>von {{ date("d.m.Y", strtotime($eventPast->datumvon)) }} bis {{ date("d.m.Y", strtotime($eventPast->datumbis)) }}</p>
                         @endif
-                        <p class="description">{{$eventPast->eventGroupName->termingruppe}}</p>
+                        @if(isset($eventPast->eventGroupName->termingruppe))
+                            <p class="description">{{$eventPast->eventGroupName->termingruppe}}</p>
+                        @endif
                         @php
                             $abgeschnitten=0;
                             $ausgabetext=$eventPast->nachtermin;

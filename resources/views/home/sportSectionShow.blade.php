@@ -11,14 +11,14 @@
             <div class="container">
                 <div class="row no-gutters">
             <?php
-            foreach ( $sportSectionNames as $sportSectionName)
+            foreach ($sportSectionNames as $sportSectionName)
              {
              ?>
                     <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                         <div class="content">
                             <!-- ======= Facebook======= -->
                             <center>
-                                <div class="fb-like" data-href="http://www.{{ str_replace('_', ' ', env('Verein_Domain')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                                <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('Verein_Domain')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
                             </center>
 
                             <h3>{{ $sportSectionName->abteilung }}</h3>
@@ -88,19 +88,5 @@
 
 
     </main><!-- End #main -->
-    @php
-        // TODO: Funktion anderes Integrieren
-        function textmax(&$beschreibung,$sollang,&$abgeschnitten)
-        {
-            $abgeschnitten=0;
-            $laenge=strlen($beschreibung);
-            if ($laenge>$sollang)
-                {
-                $beschreibung=substr($beschreibung,0,$sollang);
-                $beschreibung=$beschreibung."...";  // TODO:  Punkte werden nicht angefügt
-                $abgeschnitten=1;
-                }
-        }
-    @endphp
 
 @endsection

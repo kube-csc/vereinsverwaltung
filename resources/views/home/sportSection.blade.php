@@ -51,7 +51,7 @@ foreach ( $abteilungHomes as $abteilungHome)
   <div class="icon-boxes d-flex flex-column justify-content-center">
         <?php
         $i=0;
-        foreach ( $abteilungs as $abteilung)
+        foreach ($abteilungs as $abteilung)
           {
             ++$i;
             if ($i==1)
@@ -69,15 +69,13 @@ foreach ( $abteilungHomes as $abteilungHome)
              }
           ?>
           <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-            <i class="bx bx-receipt"></i>
+            <a href="Abteilung/detail/{{ str_replace(' ' , '_' , $abteilung->abteilung) }}"><i class="bx bx-receipt"></i></a>
             <h4>{{ $abteilung->abteilung }}</h4>
             <?php
             if ($abteilung->event_id>0)
              {
             ?>
-
               {!! $ausgabetext !!}
-
               @php
                $sportTeams = DB::table('sport_sections')->where('sportSection_id' , $abteilung->id)->get();
                $first=0;
@@ -124,18 +122,3 @@ foreach ( $abteilungHomes as $abteilungHome)
   </div>
   </div>
 </section><!-- End About Section -->
-
-@php
-// TODO: Funktion anderes Integrieren
-function textmax(&$beschreibung,$sollang,&$abgeschnitten)
-{
- $abgeschnitten=0;
- $laenge=strlen($beschreibung);
- if ($laenge>$sollang)
-  {
-    $beschreibung=substr($beschreibung,0,$sollang);
-    $beschreibung=$beschreibung."...";  // TODO:  Punkte werden nicht angefügt
-    $abgeschnitten=1;
-  }
-}
-@endphp

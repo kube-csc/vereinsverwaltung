@@ -92,8 +92,8 @@ class HomeController extends Controller
      */
     public function sportSectionShow($sportSectionSeorch)
     {
-        $seoch = str_replace('_' , ' ' , $sportSectionSeorch);
-        $sportSectionNames = SportSection::where('abteilung' , $seoch)->get();
+        $sportSectionSearch = str_replace('_' , ' ' , $sportSectionSeorch);
+        $sportSectionNames = SportSection::where('abteilung' , $sportSectionSearch)->get();
 
         $abteilungs          = SportSection::where('status' , '>' , '1')
             ->where('sportSection_id' , NULL)
@@ -104,7 +104,7 @@ class HomeController extends Controller
             $sportSectionsId = $sportSectionName->id;
         }
         $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
-        return view('home.sportSectionShow' , compact('sportSectionNames' , 'sportTeamNames' , 'abteilungs'));
+        return view('home.sportSectionShow' , compact('sportSectionNames' , 'sportTeamNames' , 'abteilungs' , 'sportSectionSearch'));
     }
 
     public function eventShow($eventSeorch)

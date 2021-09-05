@@ -51,8 +51,9 @@
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Akzentfarbe:</label>
+                                    rgba(.....)
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('farbe') ? 'bg-red-300' : '' }}"
-                                    id="frabe" placeholder="#FFFFFF" name="farbe" value="{{ old('farbe') ?? $sportTeam->farbe }}">
+                                    id="frabe" placeholder="205,16,118" name="farbe" value="{{ old('farbe') ?? $sportTeam->farbe }}">
                                     <small class="form-text text-danger">{!! $errors->first('farbe') !!}</small>
                                 </div>
                                 <div class="my-4" >

@@ -1,5 +1,5 @@
 <?php // TODO: Text muss noch über dei Datenbank eingelesen werden ?>
-@extends('layouts.headFrontend')
+@extends('layouts.frontend')
 
 @section('about' ,'/Datnschutzerklaerung') <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
 @section('title' ,'Datnschutzerklärung')

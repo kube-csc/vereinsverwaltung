@@ -1,4 +1,4 @@
-@extends('layouts.headFrontend')
+@extends('layouts.frontend')
 
 @section('title' ,'Event')
 

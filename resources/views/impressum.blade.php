@@ -1,4 +1,4 @@
-@extends('layouts.headFrontend')
+@extends('layouts.frontend')
 
 @section('about' ,'/impressum') <?php // ToDo: vor dem #About den Routenname hinzufügen verbessern?>
 @section('title' ,'Impressum')
@@ -61,7 +61,7 @@
                 @if(env('Verein_Fax')<>"")
                     Fax: {{ str_replace('_', ' ', env('Verein_Fax')) }}<br>
                 @endif
-                <a href="mailto:{{ str_replace('_', ' ', env('Verein_Email')) }}">{{ str_replace('_', ' ', env('Verein_Email')) }}</a></p>
+                <a href="mailto:{{ str_replace('_', ' ', env('Verein_Email')) }}">{{ str_replace('_', ' ', env('Verein_Email')) }}</a>
 
               </p>
             </div>

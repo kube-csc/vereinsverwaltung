@@ -1,32 +1,7 @@
-@extends('layouts.headFrontend')
+@extends('layouts.frontend')
 
 @section('about' ,'/anfahrt') <?php // TODO: vor dem #About den Routenname hinzufügen verbessern?>
 @section('title' ,'Anfahrt')
-
-<?php
-// TODO: Config Daten anderes Einbinden
-  $version = "1.0.0";
-  $installdate = "01.10.2020";
-  $verein= "Kanuten Emscher-Lippe e.V.";
-  $vereinstrasse = "Zu den Sportstätten 5";
-  $vereinsplz = "D-45711";
-  $vereinsort = "Datteln";
-  $vereintelefon = "(02363) 8420";
-  $vereinfax="";
-  $vereinemail = "kel@kel-datteln.de";
-  $vereineintagngsort = "Recklinghausen";
-  $vereinvrnummer = "VR 0627";
-  $dateformat = "d.m.Y";
-  $sponsoren = "Partner";
-  $abmeldezeit = "3600";
-  $keywords = "Kanuten Emscher-Lippe, Datteln, KEL, Kanuverein, Sport, Kanuwandersport, Kanurennsport, Kanu, Kajak, Paddeln, Drachenboot, Drachenbootregatta,
-               Wassersport, Regatta, SUP, Outrigger";
-  $description = "Wir sind ein Kanuverein mit Jugend-, Wander-, Rennsport-, SUP-, Outrigger- und Drachenbootabteilung in Datteln NRW am Dortmund-Ems-Kanal.";
-
-  $slogen="Wir sind ein Kanuverein in Datteln am Dortmund Ems Kanal.";
-  $canonical="https://www.kel-datteln.de/neu";
-  $domain="kel-datteln.de";
-?>
 
 @section('content')
   <main id="main">
@@ -46,7 +21,7 @@
       </section><!-- End Breadcrumbs Section -->
 
             <!-- ======= Anfahrt Section ======= -->
-            <?php // // TODO: Bereinigung ?>
+            <?php // // ToDo: Bereinigung ?>
       <?php  /*<section class="inner-page">  */?>
       <?php  /*    <section id="anfahrt" class="contact section-bg"> */?>
 
@@ -84,11 +59,14 @@
               <i class="bx bx-map"></i>
               <h3>Adresse</h3>
               <p>
-                <?php
-                echo "$verein <br>";
-                echo "$vereinstrasse <br>";
-                echo "$vereinsplz $vereinsort <br>";
-                ?>
+                 @if (env('Verein_Name')<>"")
+                  {{ str_replace('_', ' ', env('Verein_Name')) }}
+                 @else
+                  {{'Hier steht die Vereinsanschrift. Bitte in der .Env die Daten pflegen'}}
+                 @endif
+                  <br>
+                  {{ str_replace('_', ' ', env('Verein_Strasse')) }}<br>
+                  {{ str_replace('_', ' ', env('Verein_PLZ')) }} {{ str_replace('_', ' ', env('Verein_Ort')) }}
               </p>
             </div>
           </div>
@@ -97,7 +75,7 @@
             <div class="info-box  mb-4">
               <i class="bx bx-envelope"></i>
               <h3>Email</h3>
-              <p><a href="mailto:<?php echo $vereinemail ; ?>"><?php echo $vereinemail ; ?></a></p>
+              <p><a href="mailto:{{ str_replace('_', ' ', env('Verein_Email')) }}">{{ str_replace('_', ' ', env('Verein_Email')) }}</a></p>
             </div>
           </div>
 
@@ -106,16 +84,12 @@
               <i class="bx bx-phone-call"></i>
               <h3>Telefon</h3>
               <p>
-                <?php
-                if ($vereintelefon<>"")
-                {
-                echo "<strong>Tel:</strong> $vereintelefon <br>";
-                }
-                if ($vereinfax<>"")
-                {
-                echo "<strong>Fax:</strong> $vereinfax <br>";
-                }
-                ?>
+               @if(env('Verein_Telefon')<>"")
+                 Tel: {{ str_replace('_', ' ', env('Verein_Telefon')) }}<br>
+               @endif
+               @if(env('Verein_Fax')<>"")
+                 Fax: {{ str_replace('_', ' ', env('Verein_Fax')) }}<br>
+               @endif
               </p>
             </div>
           </div>

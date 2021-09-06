@@ -143,7 +143,7 @@
                   </ul>   <!-- Abteilung -->
               </li>    <!-- Abteilung Mannschaft   -->
               @php
-                  // ToDo: Active im Menu funktioniert noch nicht
+                  // TODO: Active im Menu funktioniert noch nicht
               @endphp
 
               <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/#services">Event</a></li>
@@ -159,26 +159,6 @@
 
     </div>
   </header><!-- End Header -->
-
-<!-- ======= Hero Section ======= -->
-<section id="hero">
-    <div class="hero-container" data-aos="fade-up">
-       @php
-        $Verein = str_replace('_', ' ', env('Verein_Name'));
-        $SLogen = str_replace('_', ' ', env('Verein_SLogen'));
-       @endphp
-      <h1>{{ $Verein }}</h1>
-      <h2>{{ $SLogen }}</h2>
-      <?php // TODO:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
-      <a href="@yield( 'about' , '' )#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
-      @php
-      /* ToDo: vor dem #About den Routenname hinzufügen verbessern
-      benutzt in:
-      resources\views\instruction\datenschutzerklaerung.blade.php
-      */
-      @endphp
-    </div>
-</section><!-- End Hero -->
 
 @yield('content')
 

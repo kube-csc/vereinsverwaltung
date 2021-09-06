@@ -258,7 +258,7 @@
           */ ?>
           <h4>Links</h4>
           <ul>
-           <li><a href="anfahrt"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+           <li><a href="/Anfahrt"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
           </ul>
           <br>
           <h4>Dokumente</h4>

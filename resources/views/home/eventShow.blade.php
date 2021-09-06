@@ -27,12 +27,28 @@
                         @else
                             <p>von {{ date("d.m.Y", strtotime($event->datumvon)) }} bis {{ date("d.m.Y", strtotime($event->datumbis)) }}</p>
                         @endif
-                        @if($event->datumbis < Illuminate\Support\Carbon::now())
+                        @if($event->datumbis > Illuminate\Support\Carbon::now())
+                            @if(isset($event->Ansprechparten) && $event->Ansprechparten <> '')
+                                Ansprechpartner: {!! $event->Ansprechparten !!}<br>
+                            @endif
+                            @if(isset($event->telefon) && $event->telefon <> '')
+                                Telefon: {!! $event->telefon !!}<br>
+                            @endif
+                            @if(isset($event->email) && $event->email <> '')
+                                Email: {!! $event->email !!}</br>
+                            @endif
+                            @if(isset($event->homepage) && $event->homepage <> '')
+                                Homepage: {!! $event->homepage !!}</br>
+                            @endif
                             {!! $event->beschreibung !!}
                         @endif
-                        @if($event->datumvon > Illuminate\Support\Carbon::now())
+                        @if($event->datumvon < Illuminate\Support\Carbon::now())
+                            @if(isset($event->homepage) && $event->homepage <> '')
+                                Homepage: {!! $event->homepage !!}<br>
+                            @endif
                             {!! $event->nachtermin !!}
                         @endif
+                        </p>
                         </div>
                     </div>
              @php
@@ -47,7 +63,6 @@
                 </div>
             </div>
         </section><!-- End About Section -->
-
 
     </main><!-- End #main -->
 

@@ -19,9 +19,8 @@
                     <div class="icon-box" data-aos="fade-up">
                         <div class="icon"><i class="bx bxl-dribbble"></i></div>
                         @php
-                            //ToDo: Link bearbeiten
                         @endphp
-                        <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}">{{$eventPast->ueberschrift}}</a></h4>
+                        <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
                         @if($eventPast->datumvon == $eventPast->datumbis)
                             <p>am {{ date("d.m.Y", strtotime($eventPast->datumvon)) }}</p>
                         @else
@@ -33,12 +32,12 @@
                         @php
                             $abgeschnitten=0;
                             $ausgabetext=$eventPast->nachtermin;
-                            $textlaenge=450;
+                            $textlaenge=400;
                             textmax($ausgabetext,$textlaenge,$abgeschnitten);
                         @endphp
                         <p class="description">{{$ausgabetext}}</p>
                         @if ($abgeschnitten==1)
-                            <a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}" class="about-btn">mehr<i class="bx bx-chevron-right"></i></a>
+                            <a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}" class="about-btn">mehr<i class="bx bx-chevron-right"></i></a>
                         @endif
 
                     </div>

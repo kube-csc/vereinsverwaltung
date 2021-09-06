@@ -93,7 +93,7 @@ class HomeController extends Controller
     public function sportSectionShow($sportSectionSeorch)
     {
         $sportSectionSearch = str_replace('_' , ' ' , $sportSectionSeorch);
-        $sportSectionNames = SportSection::where('abteilung' , $sportSectionSearch)->get();
+        $sportSectionNames  = SportSection::where('abteilung' , $sportSectionSearch)->get();
 
         /*
         $abteilungs          = SportSection::where('status' , '>' , '1')
@@ -105,15 +105,17 @@ class HomeController extends Controller
         foreach($sportSectionNames as $sportSectionName) {
             $sportSectionsId = $sportSectionName->id;
         }
-        $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
+        $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->where('' , )->get();
         return view('home.sportSectionShow' , compact('sportSectionNames' , 'sportTeamNames' , 'sportSectionSearch'));
         //return view('home.sportSectionShow' , compact('sportSectionNames' , 'sportTeamNames' , 'abteilungs' , 'sportSectionSearch'));
     }
 
     public function eventShow($eventSeorch)
     {
-        $seoch = str_replace('_' , ' ' , $eventSeorch);
-        $events = event::where('ueberschrift' , $seoch)->get();
+        $eventSeorchName = substr ($eventSeorch , 0, -10);
+        $dateFor = substr ($eventSeorch, -10);
+        $seoch = str_replace('_' , ' ' , $eventSeorchName);
+        $events = event::where('ueberschrift' , $seoch)->where('datumvon' , $dateFor)->get();
 
         /*
         $abteilungs          = SportSection::where('status' , '>' , '1')

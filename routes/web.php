@@ -90,7 +90,7 @@ Route::resources([
 ]);
 */
 
-Route::get('Anfahrt', function () {
+Route::get('/Anfahrt', function () {
     return view('anfahrt');
 });
 

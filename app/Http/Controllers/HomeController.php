@@ -95,19 +95,12 @@ class HomeController extends Controller
         $sportSectionSearch = str_replace('_' , ' ' , $sportSectionSeorch);
         $sportSectionNames  = SportSection::where('abteilung' , $sportSectionSearch)->get();
 
-        /*
-        $abteilungs          = SportSection::where('status' , '>' , '1')
-            ->where('sportSection_id' , NULL)
-            ->orderby('abteilung')
-            ->get();
-        */
-
         foreach($sportSectionNames as $sportSectionName) {
             $sportSectionsId = $sportSectionName->id;
         }
-        $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->where('' , )->get();
+        $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
+
         return view('home.sportSectionShow' , compact('sportSectionNames' , 'sportTeamNames' , 'sportSectionSearch'));
-        //return view('home.sportSectionShow' , compact('sportSectionNames' , 'sportTeamNames' , 'abteilungs' , 'sportSectionSearch'));
     }
 
     public function eventShow($eventSeorch)
@@ -117,13 +110,6 @@ class HomeController extends Controller
         $seoch = str_replace('_' , ' ' , $eventSeorchName);
         $events = event::where('ueberschrift' , $seoch)->where('datumvon' , $dateFor)->get();
 
-        /*
-        $abteilungs          = SportSection::where('status' , '>' , '1')
-            ->where('sportSection_id' , NULL)
-            ->orderby('abteilung')
-            ->get();
-        */
-        //return view('home.eventShow' , compact('events' , 'abteilungs'));
         return view('home.eventShow' , compact('events'));
     }
 

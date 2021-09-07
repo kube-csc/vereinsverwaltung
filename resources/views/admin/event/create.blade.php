@@ -102,15 +102,14 @@
                                 <div class="my-4" >
                                       <label for="name">Event Gruppe:</label><br>
                                       <select name="eventGroup_id">
-                                          <optgroup>
-                                              @foreach ($eventGroups as $eventGroup)
-                                              <option value="{{ $eventGroup->id }}"
-                                                  @if( old('eventGroup_id') == $eventGroup->id )
-                                                   selected
-                                                  @endif
-                                              >{{ $eventGroup->termingruppe }}</option>
-                                              @endforeach
-                                          </optgroup>
+                                          <option value="">keine Event Gruppe</option>
+
+                                             @foreach ($eventGroups as $eventGroup)
+                                              <option value="{{ $eventGroup->id }}">
+                                                {{ $eventGroup->termingruppe }}
+                                              </option>
+                                             @endforeach
+
                                       </select>
                                </div>
                                <div class="py-2">

@@ -29,11 +29,15 @@
      <ul>
       <li>Ausgabe der Vereinsbeschreibung</li>
       <li>Presendation der Abteilung mit deren Mannschaften</li>
+      <li>Presendation der kommenden Events</li>
+      <li>Presendation der vergangenden Events</li>
+      <li>Presendation des Teams</li>
       <li>Kontakt des Vereins inc. Map</li>
     </ul>
 </li>
-  <li>Presendation der Abteilung</li>
-  <li>Presendation der Mannschaften</li>
+  <li>Detail Presendation der Abteilung</li>
+  <li>Detail Presendation der Mannschaften</li>
+  <li>Detail Presendation des Event</li>
   <li>Impresssum</li>
   <li>Datenschutzerklärung</li>
   <li>Footer</li>

@@ -23,7 +23,7 @@
 */ ?>
 
   <!-- Favicons -->
-  <link href="favicon.png" rel="icon">
+  <link href="/favicon.png" rel="icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -349,21 +349,21 @@
   </body>
 
   <!-- BotMan WebDrive -->
-  <link rel="stylesheet" type="text/css" href="chat.min.css">
+  <link rel="stylesheet" type="text/css" href="/asset/vendor/botman/chat.min.css">
   <script>
       var botmanWidget = {
-          frameEndpoint: 'chat.php',
+          frameEndpoint: '/asset/vendor/botman/chat.php',
           placeholderText: "Sende eine Nachricht...",
           introMessage: "✋ Hollo, ich bin der KEL ChatBot",
           title: 'KEL ChatBot',
           mainColor: "#1148e0",
-          headerTextColor: "#333",
+          headerTextColor: "#FFFFFF",
           bubbleBackground: "#1148e0",
-          bubbleAvatarUrl: "asset/img/chatbot.jpg",   //https://www.istockphoto.com/
+          bubbleAvatarUrl: "/asset/img/chatbot.jpg",   //https://www.istockphoto.com/
           mobileHeight: "75%",
 
       };
   </script>
-  <script src='widget.js'></script>
+  <script src='/asset/vendor/botman/widget.js'></script>
 
   </html>

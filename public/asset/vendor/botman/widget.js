@@ -859,18 +859,22 @@
             boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.2)",
             overflow: "hidden"
         },
+        // Chat Bot Icon auf der  Homepage
         r = {
             position: "fixed",
             //bottom: "0px",
-            bottom: "50px", //KEl Optimierung
+            bottom: "90px", //KEl Optimierung Höhe vom unteren Bildschirmrand
             //right: "20px",
-            right: "15px", //KEl Optimierung
+            right: "15px", //KEl Optimierung Rechsverschriebung
             zIndex: 2147483647,
-            minWidth: "400px",
+            // minWidth: "400px",
+            minWidth: "40px", //KEl Optimierung Breite der Box
             boxSizing: "content-box",
             overflow: "hidden",
-            minHeight: "120px"
-        },
+            //minHeight: "120px",
+            minHeight: "50px", //KEl Optimierung Höhe der Box
+            //background: "black"  //box sichtbar
+          },
         i = {
             position: "fixed",
             bottom: "0px",
@@ -879,7 +883,7 @@
             minWidth: "400px",
             boxSizing: "content-box",
             overflow: "hidden",
-            minHeight: "120px"
+            minHeight: "120px",
         },
         a = {
             position: "fixed",
@@ -912,24 +916,29 @@
             justifyContent: "center",
             position: "absolute",
             //top: "38px",
-            top: "65px",  //KEl Optimierung
+            top: "5px",  //KEl Optimierung  Höhe des Chat Picture in der Box
             //right: "20px",
             right: "0px",  //KEl Optimierung
             //height: "60px",
-            height: "40px",  //KEl Optimierung
+            height: "38px",  //KEl Optimierung
             //width: "60px",
-            width: "40px",  //KEl Optimierung
+            width: "38px",  //KEl Optimierung
             border: 0,
             borderRadius: "50%",
             boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.2)"
         },
+        // ChatBot ICon in der Mobilversion
         u = {
             display: "block",
             position: "absolute",
-            top: "46px",
-            right: "20px",
-            height: "52px",
-            width: "52px",
+            //top: "46px",
+            top: "0px", //KEl Optimierung
+            //right: "20px",
+            right: "15px", //KEl Optimierung
+            //height: "52px",
+            height: "40px", //KEl Optimierung
+            //width: "52px",
+            width: "40px", //KEl Optimierung
             border: 0,
             borderRadius: "50%",
             boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.2)"

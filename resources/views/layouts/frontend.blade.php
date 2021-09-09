@@ -326,24 +326,25 @@
   <!-- Template Main JS File -->
   <script src="{{ asset('asset/js/main.js') }}"></script>
 
-  </body>
+</body>
 
-<!-- BotMan WebDrive -->
-<link rel="stylesheet" type="text/css" href="/asset/vendor/botman/chat.min.css">
-<script>
-    var botmanWidget = {
-        frameEndpoint: '/asset/vendor/botman/chat.php',
-        placeholderText: "Sende eine Nachricht...",
-        introMessage: "✋ Hollo, ich bin der KEL ChatBot",
-        title: 'KEL ChatBot',
-        mainColor: "#1148e0",
-        headerTextColor: "#FFFFFF",
-        bubbleBackground: "#1148e0",
-        bubbleAvatarUrl: "/asset/img/chatbot.jpg",   //https://www.istockphoto.com/
-        mobileHeight: "75%",
-
-    };
-</script>
-<script src='/asset/vendor/botman/widget.js'></script>
+    <!-- BotMan WebDrive -->
+    @if(env('Verein_ChatBot')=='ja')
+        <link rel="stylesheet" type="text/css" href="/asset/vendor/botman/chat.min.css">
+        <script>
+            var botmanWidget = {
+                frameEndpoint: '/asset/vendor/botman/chat.php',
+                placeholderText: "Sende eine Nachricht...",
+                introMessage: "✋ Hollo, ich bin der KEL ChatBot",
+                title: 'KEL ChatBot',
+                mainColor: "#1148e0",
+                headerTextColor: "#FFFFFF",
+                bubbleBackground: "#1148e0",
+                bubbleAvatarUrl: "/asset/img/chatbot.jpg",   //https://www.istockphoto.com/
+                mobileHeight: "75%",
+            };
+        </script>
+        <script src='/asset/vendor/botman/widget.js'></script>
+    @endif
 
 </html>

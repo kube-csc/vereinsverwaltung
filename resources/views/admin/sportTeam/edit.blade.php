@@ -26,7 +26,7 @@
               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Mannschaft ändern</div>
+                        <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Mannschaft bearbeitern</div>
                       </div>
 
                       <div class="ml-12">
@@ -66,11 +66,11 @@
                                     <small class="form-text text-danger">{!! $errors->first('bild') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <textarea rows="25" cols="250" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $ausgabetext }}</textarea>
+                                    <textarea rows="25" cols="200" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $ausgabetext }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                 </div>
                                 <div class="py-2">
-                                <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">ändern Mannschaft</button>
+                                <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderungen speichern</button>
                                 </div>
                              </form>
                              <br>

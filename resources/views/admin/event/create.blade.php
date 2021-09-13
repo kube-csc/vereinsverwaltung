@@ -49,20 +49,56 @@
                                 <div>
                                     <label for="name">Eventname:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ueberschrift') ? 'bg-red-300' : '' }}"
-                                    id="ueberschrift" placeholder="Event Name" name="ueberschrift" value="{{ old('ueberschrift') }}">
+                                           id="ueberschrift" placeholder="Event Name" name="ueberschrift" value="{{ old('ueberschrift') }}">
                                     <small class="form-text text-danger">{!! $errors->first('ueberschrift') !!}</small>
                                 </div>
                                 <div>
                                     <label for="name">Start Termin:</label>
                                     <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumvon') ? 'bg-red-300' : '' }}"
-                                    id="datumvon" placeholder="Event Startdatum" name="datumvon" value="{{ old('datumvon') }}">
+                                           id="datumvon" placeholder="Event Startdatum" name="datumvon" value="{{ old('datumvon') }}">
                                     <small class="form-text text-danger">{!! $errors->first('datumvon') !!}</small>
                                 </div>
                                 <div>
                                     <label for="name">End Termin:</label>
                                     <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumbis') ? 'bg-red-300' : '' }}"
-                                    id="datumbis" placeholder="Event Enddatum" name="datumbis" value="{{ old('datumbis') }}">
+                                           id="datumbis" placeholder="Event Enddatum" name="datumbis" value="{{ old('datumbis') }}">
                                     <small class="form-text text-danger">{!! $errors->first('datumbis') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">Start Anmeldestarttermin:</label>
+                                    <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumvona') ? 'bg-red-300' : '' }}"
+                                           id="datumvona" placeholder="Event Anmeldestarttermin" name="datumvona" value="{{ old('datumvona') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('datumvona') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">End Anmeldeendtermin:</label>
+                                    <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumbisa') ? 'bg-red-300' : '' }}"
+                                           id="datumbisa" placeholder="Event Anmeldeschluss" name="datumbisa" value="{{ old('datumbisa') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('datumbisa') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">Ansprechpartner:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ansprechpartner') ? 'bg-red-300' : '' }}"
+                                           id="ansprechpartner" placeholder="Ansprechparter" name="ansprechpartner" value="{{ old('ansprechpartner') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('ansprechpartner') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">Telefon:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('telefon') ? 'bg-red-300' : '' }}"
+                                           id="telefon" placeholder="Telefonnummer" name="telefon" value="{{ old('telefon') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('telefon') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">E-Mail:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('email') ? 'bg-red-300' : '' }}"
+                                           id="email" placeholder="E-Mail" name="email" value="{{ old('email') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('email') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">Homepage:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('homepage') ? 'bg-red-300' : '' }}"
+                                           id="homepage" placeholder="Homepage" name="homepage" value="{{ old('email') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('homepage') !!}</small>
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Beschreibung:</label>
@@ -71,8 +107,13 @@
                                 </div>
                                 <div class="my-4" >
                                   <label for="name">Nachbericht:</label>
-                                  <textarea rows="25" cols="250" name="nachbericht" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('nachbericht') }}</textarea>
+                                  <textarea rows="25" cols="200" name="nachbericht" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('nachbericht') }}</textarea>
                                   <small class="form-text text-danger">{!! $errors->first('nachbericht') !!}</small>
+                                </div>
+                                <div class="my-4" >
+                                  <label for="name">Anmeldetext:</label>
+                                  <textarea rows="25" cols="200" name="anmeldetext" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('anmeldetext') }}</textarea>
+                                  <small class="form-text text-danger">{!! $errors->first('anmeldetext') !!}</small>
                                 </div>
                                 <div class="my-4" >
                                     @if (!isset($sportSection_id))
@@ -88,7 +129,7 @@
                                             @endif
                                             <option value="{{ $sportSection->id }}"
                                             @if ($sportSection->status == 1)
-                                                 selected
+                                             selected
                                             @endif
                                             >{{ $sportSection->abteilung }}</option>
                                         @endforeach
@@ -125,7 +166,6 @@
 
                       </div>
                   </div>
-
 
               </div>
 

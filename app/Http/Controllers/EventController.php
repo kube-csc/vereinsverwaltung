@@ -73,9 +73,14 @@ class EventController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-              'ueberschrift'   => 'required|max:50',
-              'datumvon'       => 'required|date',
-              'datumbis'       => 'required|date|after_or_equal:datumvon'
+              'ueberschrift'     => 'required|max:50',
+              'datumvon'         => 'required|date',
+              'datumbis'         => 'required|date|after_or_equal:datumvon',
+              'datumvona'        => 'required|date',
+              'datumbisa'        => 'required|date|after_or_equal:datumvona',
+              'ansprechpartner'  => 'max:50',
+              'telefon'          => 'max:25',
+              'email'            => 'max:50',
             ]
         );
 
@@ -83,7 +88,13 @@ class EventController extends Controller
             'ueberschrift'     => $request->ueberschrift,
             'datumvon'         => $request->datumvon,
             'datumbis'         => $request->datumbis,
+            'datumvona'        => $request->datumvona,
+            'datumbisa'        => $request->datumbisa,
             'beschreibung'     => $request->beschreibung,
+            'anmeldetext'      => $request->anmeldetext,
+            'ansprechpartner'  => $request->ansprechpartner,
+            'telefon'          => $request->telefon,
+            'email'            => $request->email,
             'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
@@ -141,18 +152,29 @@ class EventController extends Controller
     public function update(Request $request, $event_id)
     {
         $request->validate([
-              'ueberschrift'         => 'required|max:50',
-              'datumvon'             => 'required|date',
-              'datumbis'             => 'required|date|after_or_equal:datumvon'
+                'ueberschrift'         => 'required|max:50',
+                'datumvon'             => 'required|date',
+                'datumbis'             => 'required|date|after_or_equal:datumvon',
+                'datumvona'            => 'required|date',
+                'datumbisa'            => 'required|date|after_or_equal:datumvona',
+                'ansprechpartner'      => 'max:50',
+                'telefon'              => 'max:25',
+                'email'                => 'max:50',
             ]
         );
-     // todo: sportSection_id bearbeiten
+
         Event::find($event_id)->update([
             'ueberschrift'     => $request->ueberschrift,
             'datumvon'         => $request->datumvon,
             'datumbis'         => $request->datumbis,
+            'datumvona'        => $request->datumvona,
+            'datumbisa'        => $request->datumbisa,
             'beschreibung'     => $request->beschreibung,
-            'nachtermin'      => $request->nachbericht,
+            'anmeldetext'      => $request->anmeldetext,
+            'ansprechpartner'  => $request->ansprechpartner,
+            'telefon'          => $request->telefon,
+            'email'            => $request->email,
+            'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
             'bearbeiter_id'    => Auth::user()->id,

@@ -17,7 +17,7 @@
 
                   <div class="mt-6 text-gray-500">
                     @php
-                      // TODO: Beschreibungstext überarbeiten
+                      // ToDo: Beschreibungstext überarbeiten
                     @endphp
                     Bitte gebe die Daten der Abteilung ein.
                   </div>
@@ -35,41 +35,82 @@
                               <form autocomplete="off" action="{{ url('Event/update/'.$event->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
-                                  // TODO:  @method('PUT') in Hobby Projekt noch mal erlernen
+                                  // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                 <div class="my-4" >
                                     <label for="name">Eventname:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ueberschrift') ? 'bg-red-300' : '' }}"
-                                    id="ueberschrift" placeholder="Event Name" name="ueberschrift" value="{{ old('ueberschrift') ?? $event->ueberschrift }}">
+                                           id="ueberschrift" placeholder="Event Name" name="ueberschrift" value="{{ old('ueberschrift') ?? $event->ueberschrift }}">
                                     <small class="form-text text-danger">{!! $errors->first('ueberschrift') !!}</small>
                                 </div>
                                 <div>
                                     <label for="name">Start Termin:</label>
                                     <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumvon') ? 'bg-red-300' : '' }}"
-                                    id="datumvon" placeholder="Event Startdatum" name="datumvon" value="{{ old('datumvon') ?? $event->datumvon }}">
+                                           id="datumvon" placeholder="Event Startdatum" name="datumvon" value="{{ old('datumvon') ?? $event->datumvon }}">
                                     <small class="form-text text-danger">{!! $errors->first('datumvon') !!}</small>
                                 </div>
                                 <div>
-                                    <label for="name">End Termin:</label>
-                                    <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumbis') ? 'bg-red-300' : '' }}"
-                                    id="datumbis" placeholder="Event Enddatum" name="datumbis" value="{{ old('datumbis') ?? $event->datumbis }}">
-                                    <small class="form-text text-danger">{!! $errors->first('datumbis') !!}</small>
+                                     <label for="name">End Termin:</label>
+                                     <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumbis') ? 'bg-red-300' : '' }}"
+                                            id="datumbis" placeholder="Event Enddatum" name="datumbis" value="{{ old('datumbis') ?? $event->datumbis }}">
+                                     <small class="form-text text-danger">{!! $errors->first('datumbis') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">Start Anmeldestarttermin:</label>
+                                    <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumvona') ? 'bg-red-300' : '' }}"
+                                           id="datumvona" placeholder="Event Anmeldestarttermin" name="datumvona" value="{{ old('datumvona') ?? $event->datumvona }}">
+                                    <small class="form-text text-danger">{!! $errors->first('datumvona') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">Event Anmeldeschluss:</label>
+                                    <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumbisa') ? 'bg-red-300' : '' }}"
+                                           id="datumbisa" placeholder="Event Anmeldeschluss" name="datumbisa" value="{{ old('datumbisa') ?? $event->datumbisa }}">
+                                    <small class="form-text text-danger">{!! $errors->first('datumbisa') !!}</small>
+                                </div>
+                                <div>
+                                     <label for="name">Ansprechpartner:</label>
+                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ansprechpartner') ? 'bg-red-300' : '' }}"
+                                            id="ansprechpartner" placeholder="Ansprechparter" name="ansprechpartner" value="{{ old('ansprechpartner') ?? $event->ansprechpartner }}">
+                                     <small class="form-text text-danger">{!! $errors->first('ansprechpartner') !!}</small>
+                                </div>
+                                <div>
+                                     <label for="name">Telefon:</label>
+                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('telefon') ? 'bg-red-300' : '' }}"
+                                            id="telefon" placeholder="Telefonnummer" name="telefon" value="{{ old('telefon') ?? $event->telefon }}">
+                                     <small class="form-text text-danger">{!! $errors->first('telefon') !!}</small>
+                                </div>
+                                <div>
+                                     <label for="name">E-Mail:</label>
+                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('email') ? 'bg-red-300' : '' }}"
+                                           id="email" placeholder="E-Mail" name="email" value="{{ old('email') ?? $event->email }}">
+                                     <small class="form-text text-danger">{!! $errors->first('email') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">Homepage:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('homepage') ? 'bg-red-300' : '' }}"
+                                           id="homepage" placeholder="Homepage" name="homepage" value="{{ old('homepage') ?? $event->homepage }}">
+                                    <small class="form-text text-danger">{!! $errors->first('homepage') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <label for="name">Ankündigung:</label>
-                                    <textarea rows="25" cols="250" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->beschreibung }}</textarea>
-                                    <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
+                                     <label for="name">Ankündigung:</label>
+                                     <textarea rows="25" cols="200" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->beschreibung }}</textarea>
+                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <label for="name">Nachbericht:</label>
-                                    <textarea rows="25" cols="250" name="nachbericht" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->nachtermin }}</textarea>
-                                    <small class="form-text text-danger">{!! $errors->first('nachbericht') !!}</small>
+                                     <label for="name">Nachbericht:</label>
+                                     <textarea rows="25" cols="200" name="nachbericht" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->nachtermin }}</textarea>
+                                     <small class="form-text text-danger">{!! $errors->first('nachbericht') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <label for="name">Abteilung / Mannschaft:</label><br>
-                                    <select name="sportSection_id">
-                                    <optgroup label="Abeilung:">
-                                    @php $firsttime = 0 @endphp
+                                    <label for="name">Anmeldetext:</label>
+                                    <textarea rows="25" cols="200" name="anmeldetext" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->anmeldetext }}</textarea>
+                                    <small class="form-text text-danger">{!! $errors->first('anmeldetext') !!}</small>
+                                </div>
+                                <div class="my-4" >
+                                     <label for="name">Abteilung / Mannschaft:</label><br>
+                                     <select name="sportSection_id">
+                                     <optgroup label="Abeilung:">
+                                     @php $firsttime = 0 @endphp
                                         @foreach ($sportSections as $sportSection)
                                             @if ($sportSection->sportSections_id > 0 && $firsttime == 0)
                                                 @php $firsttime = 1 @endphp
@@ -112,9 +153,9 @@
                              </form>
                              <br>
                               @if($event->datumbis >= date("d.m.Y", strtotime(now())) )
-                                  <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                                 <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                               @else
-                                  <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventvergangenheit/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                                 <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventvergangenheit/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                               @endif
                             </div>
                           </div>
@@ -126,6 +167,5 @@
 
             </div>
         </div>
-    </div>    @php   // TODO:  Wird der div benötigt?
-              @endphp
+
 </x-app-layout>

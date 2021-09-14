@@ -25,15 +25,15 @@
                         <div class="icon"><i class="bx bxl-dribbble"></i></div>
 
                         <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
+                        @if(isset($eventPast->eventGroupName->termingruppe))
+                            <p class="description">
+                                {{$eventPast->eventGroupName->termingruppe}}
+                            </p>
+                        @endif
                         @if($eventPast->datumvon == $eventPast->datumbis)
                             <p>am {{ date("d.m.Y", strtotime($eventPast->datumvon)) }}</p>
                         @else
                             <p>von {{ date("d.m.Y", strtotime($eventPast->datumvon)) }} bis {{ date("d.m.Y", strtotime($eventPast->datumbis)) }}</p>
-                        @endif
-                        @if(isset($eventPast->eventGroupName->termingruppe))
-                            <p class="description">
-                             {{$eventPast->eventGroupName->termingruppe}}
-                            </p>
                         @endif
                         @php
                             $abgeschnitten=0;

@@ -22,10 +22,10 @@ class CreateEventsTable extends Migration
     			$table->string('veranstaltung', 50)->default('');   // TODO: wird nicht mehr benötigt
     			$table->string('ueberschrift', 50)->default('');
     			$table->text('beschreibung')->nullable();
-    			$table->string('Ansprechparten', 50)->default('');
-    			$table->string('telefon', 25)->default('');
-    			$table->string('email', 50)->default('');
-    			$table->string('homepage')->default('');
+    			$table->string('ansprechparter', 50)->nullable();
+    			$table->string('telefon', 25)->nullable();
+    			$table->string('email', 50)->nullable();
+    			$table->string('homepage')->nullable();
     			//$table->unsignedBigInteger('gruppe');
           $table->unsignedBigInteger('sportSection_id')->nullable();    //TODO: Das Feld soll die Gruppe ablösen
     			$table->char('startseite', 1)->default('');

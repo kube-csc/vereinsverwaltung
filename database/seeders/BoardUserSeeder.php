@@ -32,11 +32,21 @@ class BoardUserSeeder extends Seeder
                     array(
                         'id' => '2',
                         'board_id' => '1',
-                        'position' => '1',
+                        'position' => '2',
                         'nummer' => '2',
                         'user_id' => '2',
                         'vorstandsbild' => 'team-2.jpg',
                         'vorstandsemail' => 'vorstand2@verein.de',
+                    ),
+
+                    array(
+                        'id' => '3',
+                        'board_id' => '2',
+                        'position' => '1',
+                        'nummer' => '1',
+                        'user_id' => '3',
+                        'vorstandsbild' => 'team-2.jpg',
+                        'vorstandsemail' => 'trainer@verein.de',
                     ),
                 ]);
     }

@@ -1,12 +1,10 @@
 <?php
-$abteilung_event_link ='';
-
-$textlaengeabteilung=550;
+$textlaengeabteilung=350;
 $textlaenge=$abteilungsCount/2*($textlaengeabteilung+50);
 if ($textlaenge<1000)
-{
+ {
   $textlaenge=1000;
-}
+ }
 
 $i=0;
 foreach ( $abteilungHomes as $abteilungHome)
@@ -38,7 +36,9 @@ foreach ( $abteilungHomes as $abteilungHome)
                 <h3>{{ $abteilungHome->abteilung }}</h3>
                 {!! $ausgabetext !!}
                 @if ($abgeschnitten==1)
-                  <a href="/Abteilung/detail/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about-btn">mehr<i class="bx bx-chevron-right"></i></a>
+                    <div class="read-more">
+                      <a href="/Abteilung/detail/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about-btn">mehr<i class="bx bx-chevron-right"></i></a>
+                    </div>
                 @endif
              </div>
             </div>
@@ -51,9 +51,11 @@ foreach ( $abteilungHomes as $abteilungHome)
   <div class="icon-boxes d-flex flex-column justify-content-center">
         <?php
         $i=0;
+        $time=-100;
         foreach ($abteilungs as $abteilung)
           {
             ++$i;
+            $time=$time+100;
             if ($i==1)
             {
               ?>
@@ -68,7 +70,11 @@ foreach ( $abteilungHomes as $abteilungHome)
               textmax($ausgabetext,$sollang,$abgeschnitten);
              }
           ?>
-          <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
+          @if($i==1 )
+           <div class="col-md-6 icon-box" data-aos="fade-up">
+          @else
+           <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="{{ $time }}">
+          @endif
             <a href="Abteilung/detail/{{ str_replace(' ' , '_' , $abteilung->abteilung) }}"><i class="bx bx-receipt"></i></a>
             <h4>{{ $abteilung->abteilung }}</h4>
             <?php
@@ -99,7 +105,7 @@ foreach ( $abteilungHomes as $abteilungHome)
                @endif
               @if ($abgeschnitten==1 | $first==1)
                 <div class="read-more">
-                  <a href="Abteilung/detail/{{ str_replace(' ', '_', $abteilung->abteilung) }}"><i class="icofont-arrow-right"></i> weiter</a>
+                  <a href="Abteilung/detail/{{ str_replace(' ', '_', $abteilung->abteilung) }}">mehr<i class="icofont-arrow-right"></i></a>
                 </div>
               @endif
            </p>

@@ -7,8 +7,13 @@
             @php
               //ToDo: Text bearbeiten
             @endphp
-            <h2>Vergange Termine</h2>
-            <p>Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
+            <h2>Vergangende Termine</h2>
+            @php
+                //ToDo: Text eingeben Vergangende Termine
+            @endphp
+            <p>
+                Text ?
+            </p>
         </div>
 
         <div class="row">
@@ -39,8 +44,10 @@
                            <p class="description">
                             {!! $ausgabetext !!}
                            </p>
-                        @if ($abgeschnitten==1)
-                            <a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}" class="about-btn">mehr<i class="bx bx-chevron-right"></i></a>
+                        @if($abgeschnitten==1)
+                            <a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}" class="about-btn">mehr
+                                <i class="bx bx-chevron-right"></i>
+                            </a>
                         @endif
 
                     </div>

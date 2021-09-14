@@ -22,7 +22,7 @@ use App\Http\Controllers\BotmanQuestionController;
 
 //HomePage
 Route::get('/', [HomeController::class, 'index']);
-Route::get('/Abteilung/detail/{sportTeam}',  [HomeController::class, 'sportSectionShow']);
+Route::get('/Abteilung/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
 Route::get('/Event/detail/{event}',          [HomeController::class, 'eventShow']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {

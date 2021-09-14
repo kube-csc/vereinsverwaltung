@@ -17,7 +17,7 @@
 
                   <div class="mt-6 text-gray-500">
                     @php
-                      // TODO: Beschreibungstext überarbeiten
+                      // ToDo: Beschreibungstext überarbeiten
                     @endphp
                     Bitte gebe die Daten der Abteilung ein.
                   </div>
@@ -35,7 +35,7 @@
                               <form autocomplete="off" action="{{ url('Event/update/'.$event->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
-                                  // TODO:  @method('PUT') in Hobby Projekt noch mal erlernen
+                                  // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                 <div class="my-4" >
                                     <label for="name">Eventname:</label>
@@ -153,9 +153,9 @@
                              </form>
                              <br>
                               @if($event->datumbis >= date("d.m.Y", strtotime(now())) )
-                                 <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                                 <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                               @else
-                                 <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventvergangenheit/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                                 <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventvergangenheit/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                               @endif
                             </div>
                           </div>

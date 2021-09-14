@@ -16,17 +16,21 @@
 
         <div class="row">
             @php
-            $delay=100;
+            $delay=50;
             $delayname ="data-aos-delay=\"".$delay."\"";
             @endphp
             @foreach($boards as $board)
             <div class="col-lg-3 col-md-6" >
-                <div class="member" data-aos="fade-up" {{$delay == 100 ? '' : 'data-aos-delay='.$delay}}>
+                @if($delay == 50)
+                    <div class="member" data-aos="fade-up">
+                @else
+                    <div class="member" data-aos="fade-up" data-aos-delay="{{$delay}}">
+                @endif
                     <div class="pic">
                     @if(isset($board->vorstandsbild))
-                       <img src="storage/team/{{ $board->vorstandsbild }}" class="img-fluid" alt="">
+                       <img src="/storage/team/{{ $board->vorstandsbild }}" class="img-fluid" alt="">
                     @else
-                       <img src="asset/img/teamleer.jpg" class="img-fluid" alt="">
+                       <img src="/asset/img/teamleer.jpg" class="img-fluid" alt="">
                     @endif
                     </div>
                     <div class="member-info">
@@ -37,7 +41,7 @@
                             <span>{{ $board->postenweiblich }}</span>
                         @endif
                         <div class="social">
-                            @php /*
+                            @php /* ToDo: Socialmedia für Teams
                             <a href=""><i class="icofont-twitter"></i></a>
                             <a href=""><i class="icofont-facebook"></i></a>
                             <a href=""><i class="icofont-instagram"></i></a>

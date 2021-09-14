@@ -1,11 +1,3 @@
-@extends('layouts.headFrontend')
-
-@section('title' ,'Starteite')
-
-@section('content')
-
-    <main id="main">
-
     <!-- ======= About Section ======= -->
         <section id="about" class="about">
             <div class="container">
@@ -15,10 +7,11 @@
                     <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                         <div class="content">
                             <!-- ======= Facebook======= -->
-                            <center>
-                                <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('Verein_Domain')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
-                            </center>
-
+                            @if(env('Verein_Sozialmediaanzeigen')=='ja')
+                             <center>
+                               <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('Verein_Domain')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                             </center>
+                            @endif
                             <h3>{{ $sportSectionName->abteilung }}</h3>
                             @if($sportSectionName->event_id)
                               {!! $sportSectionName->event->beschreibung !!}
@@ -61,7 +54,7 @@
                                        {!! $ausgabetext !!}
                                        @if ($abgeschnitten==1)
                                          <div class="read-more">
-                                           <a href="/Abteilung/detail/{{ str_replace(' ', '_', $abteilung->abteilung) }}"><i class="icofont-arrow-right"></i> weiter</a>
+                                           <a href="/Abteilung/detail/{{ str_replace(' ', '_', $abteilung->abteilung) }}">weiter<i class="icofont-arrow-right"></i></a>
                                          </div>
                                        @endif
                                        </p>
@@ -86,21 +79,4 @@
         </section><!-- End About Section -->
 
 
-    </main><!-- End #main -->
-
-@endsection
-
-@php
-    function textmax(&$beschreibung,$sollang,&$abgeschnitten)
-    {
-     $abgeschnitten=0;
-     $laenge=strlen($beschreibung);
-     if ($laenge>$sollang)
-      {
-        $beschreibung=substr($beschreibung,0,$sollang);
-        $beschreibung=$beschreibung."...";
-        $abgeschnitten=1;
-      }
-    }
-@endphp
 

@@ -44,7 +44,7 @@
                                     <small class="form-text text-danger">{!! $errors->first('termingruppe') !!}</small>
                                 </div>
                                 <div class="py-2">
-                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">speichern</button>
+                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
                                 </div>
                              </form>
                              <br>

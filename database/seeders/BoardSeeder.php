@@ -20,16 +20,24 @@ class BoardSeeder extends Seeder
         ->insert(
           [
               array(
-                      'id' => '1',
-                      'sportSection_id' => '1',
-                      'position' => '10',
-                      'user_id' => '1',
-                      'postenmaenlich' => 'Vorsitzender',
-                      'postenweiblich' => 'Vorsitzende',
-                      'visible' => '1'
+                    'id' => '1',
+                    'sportSection_id' => '1',
+                    'position' => '10',
+                    'user_id' => '1',
+                    'postenmaenlich' => 'Vorsitzender',
+                    'postenweiblich' => 'Vorsitzende',
+                    'visible' => '1'
                    ),
-
-        ]);
+              array(
+                    'id' => '2',
+                    'sportSection_id' => '5',
+                    'position' => '10',
+                    'user_id' => '2',
+                    'postenmaenlich' => 'Trainer',
+                    'postenweiblich' => 'Trainerin',
+                    'visible' => '1'
+              ),
+          ]);
 
     }
 }

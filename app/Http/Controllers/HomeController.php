@@ -90,7 +90,8 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function sportSectionShow($sportSectionSeorch)
+    //public function sportSectionShow($sportSectionSeorch)
+    public function homeSportSelect($sportSectionSeorch)
     {
         $sportSectionSearch = str_replace('_' , ' ' , $sportSectionSeorch);
         $sportSectionNames  = SportSection::where('abteilung' , $sportSectionSearch)->get();
@@ -100,7 +101,36 @@ class HomeController extends Controller
         }
         $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
 
-        return view('home.sportSectionShow' , compact('sportSectionNames' , 'sportTeamNames' , 'sportSectionSearch'));
+        $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now())
+            ->where('verwendung' , 0)
+            ->where('sportSection_id' , $sportSectionsId)
+            ->orderby('datumvon')
+            ->limit(4)
+            ->get();
+
+        $eventsPast         = Event::where('datumvon' , '<=' , Carbon::now())
+            ->where('nachtermin' , '!=' , '')
+            ->where('verwendung' , 0)
+            ->where('sportSection_id' , $sportSectionsId)
+            ->orderby('datumvon' , 'DESC')
+            ->limit(4)
+            ->get();
+
+        $boards=board::where('sportSection_id' , $sportSectionsId)
+            ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
+            ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
+            ->get();
+        //dd($boards);
+        return view('home.homeSportSelect')->with(
+            [
+                'sportSectionNames'      => $sportSectionNames,
+                'sportTeamNames'         => $sportTeamNames,
+                'sportSectionSearch'     => $sportSectionSearch,
+                'eventsFuture'           => $eventsFuture,
+                'eventsPast'             => $eventsPast,
+                'boards'                 => $boards
+            ]
+        );
     }
 
     public function eventShow($eventSeorch)

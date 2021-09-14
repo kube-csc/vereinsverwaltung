@@ -57,14 +57,21 @@
    <li>git clone  https://github.com/kube-csc/vereinsverwaltung.git</li>
    <li>.env Datei Ausfüllen Es werden auch Informationen über den Verein abgefragt</li>
    <li>composer.phar install</li>
-   <li>php artisan storage:link</li>
-   <li>php artisan migrate:fresh --seed Datenbank mir Demodaten</li>
+   <li>php artisan storage:link<br>
+      anlegen der Unterordner unter "public/storage"
+      <ul>
+         <li>header</li>
+         <li>team</li>  
+     </ul>
+    </li>
+   <li>php artisan migrate:fresh --seed Datenbank mit Demodaten</li>
 </ul>
 
 <h2>Update</h2>
 <ul>
    <li>git pull origin main</li>
-   <li>php artisan migrate:fresh --seed</li>
+   <li>php artisan migrate:fresh --seed (solange noch eine eigenden Daten eingeben worden)</li>
+   <li>php artisan migrate (Wenn noch keine eigenden Daten vorhanden sind kann fresh --seed verwendet werden.)</li>
 </ul>
 
 <br>

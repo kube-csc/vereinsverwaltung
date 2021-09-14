@@ -39,8 +39,12 @@
   <!-- Template Main CSS File -->
   <link href="{{ asset('asset/css/style.css') }}" rel="stylesheet">
 
+ @php
+  /*
   <!-- Laravell app.style.ss-->
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+  */
+  @endphp
 
   <?php // TODO: boxicons über webpack einbinden ?>
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">

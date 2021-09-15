@@ -215,7 +215,8 @@ class EventSeeder extends Seeder
                                     'datumbisa' => NULL,
                                     'veranstaltung' => '',
                                     'ueberschrift' => 'Eventsersie 2',
-                                    'beschreibung' => 'Hier steht die Beschreibung von der Eventserie 2',
+                                    'beschreibung' => 'Hier steht die Beschreibung von der Eventserie 2.
+                                     Das Event ist ein Event der Mannschaft 2.',
                                     'ansprechparter' => 'Teamleiter',
                                     'telefon' => '23456 7890543',
                                     'email' => 'teamleiter@email.de',
@@ -223,8 +224,42 @@ class EventSeeder extends Seeder
                                     'sportSection_id' => '5',
                                     'startseite' => '',
                                     'nachtermin' => 'Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic q
-                                    Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic q
-                                    ',
+                                    Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea.
+                                    Quia fugiat sit in iste officiis commodi quidem hic q',
+                                    'anmeldetext' => '',
+                                    'onlinemeldung' => '0',
+                                    'created_at' => '2021-03-28 13:06:42',
+                                    'regatta' => 0,
+                                    'verwendung' => 0,
+                                    'eventGroup_id' => 2,
+                                    'einverstaendnis' => '',
+                                    'teilnehmer' => 0,
+                                    'teilnehmermax' => 0,
+                                    'autor_id' => 1,
+                                    'bearbeiter_id' => 1,
+                                    'updated_at' => '2021-03-28 13:06:42',
+                                    'freigabe' => '',
+                                ),
+                                7 =>
+                                array (
+                                    'id' => 8,
+                                    'datumvon' => '2050-06-12',
+                                    'datumbis' => '2050-06-12',
+                                    'datumvona' => NULL,
+                                    'datumbisa' => NULL,
+                                    'veranstaltung' => '',
+                                    'ueberschrift' => 'Eventsersie 3',
+                                    'beschreibung' => 'Hier steht die Beschreibung von der Eventserie 3.
+                                     Das Event ist für alle Abteilungen eingestellt.',
+                                    'ansprechpartner' => 'Teamleiter',
+                                    'telefon' => '23456 7890543',
+                                    'email' => 'teamleiter@email.de',
+                                    'homepage' => 'Homepage',
+                                    'sportSection_id' => NULL,
+                                    'startseite' => '',
+                                    'nachtermin' => 'Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic q
+                                     Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate.
+                                     Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic',
                                     'anmeldetext' => '',
                                     'onlinemeldung' => '0',
                                     'created_at' => '2021-03-28 13:06:42',
@@ -240,7 +275,5 @@ class EventSeeder extends Seeder
                                     'freigabe' => '',
                                 ),
                     ));
-
-
     }
 }

@@ -109,11 +109,18 @@
                                 <div class="my-4" >
                                      <label for="name">Abteilung / Mannschaft:</label><br>
                                      <select name="sportSection_id">
+                                         <!-- ToDo: Verbesserung Old Wert behaten bei Valiedierungsfehler -->
+                                         <option value=""
+                                             @if ($event->sportSection_id == NULL)
+                                                 selected
+                                             @endif
+                                             >Alle Abteilungen/Mannschaften
+                                         </option>
                                      <optgroup label="Abeilung:">
-                                     @php $firsttime = 0 @endphp
+                                     @php ($firsttime = 0)
                                         @foreach ($sportSections as $sportSection)
-                                            @if ($sportSection->sportSections_id > 0 && $firsttime == 0)
-                                                @php $firsttime = 1 @endphp
+                                            @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
+                                                @php ($firsttime = 1)
                                                 </optgroup>
                                                 <optgroup label="Mannschaft:">
                                             @endif
@@ -128,8 +135,8 @@
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Event Gruppe:</label><br>
-                                    <select name="eventGroup_id">
-
+                                    <!-- ToDo: Verbesserung Old Wert behaten bei Valiedierungsfehler -->
+                                            <select name="eventGroup_id">
                                             <option value=""
                                                 @if( $event->eventGroup_id == NULL )
                                                   selected

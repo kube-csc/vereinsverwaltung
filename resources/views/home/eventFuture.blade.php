@@ -6,10 +6,8 @@
             @php
                 //ToDo: Text bearbeiten
             @endphp
-            <h2>Anstehende Termine</h2>
-            <p>Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem.
-                Quia fugiat sit in iste officiis commodi quidem hic quas.
-            </p>
+            <h2>Die neusten Meldungen</h2>
+            <p>Text ?</p>
         </div>
         <div class="row">
             @foreach($eventsFuture as $eventFuture)
@@ -26,14 +24,14 @@
                         @else
                           <p>von {{ date("d.m.Y", strtotime($eventFuture->datumvon)) }} bis {{ date("d.m.Y", strtotime($eventFuture->datumbis)) }}</p>
                         @endif
-                        @if(isset($eventFuture->datumbisa) and $eventFuture->datumbisa == Illuminate\Support\Carbon::now())
-                          <p>am {{ date("d.m.Y", strtotime($eventFuture->datumvon)) }}</p>
-                        @else
-                          <p>
-                           <b>Anmeldezeitraum:</b><br>
-                              von {{ date("d.m.Y", strtotime($eventFuture->datumvon)) }}<br>
-                              bis {{ date("d.m.Y", strtotime($eventFuture->datumbis)) }}
-                          </p>
+                        @if($eventFuture->datumbisa <= Illuminate\Support\Carbon::now() && isset($eventFuture->datumbisa))
+                            <p>
+                                <b>Anmeldezeitraum:</b><br>
+                                @if(isset($eventFuture->datumvona))
+                                    von {{ date("d.m.Y", strtotime($eventFuture->datumvona)) }}<br>
+                                @endif
+                                bis {{ date("d.m.Y", strtotime($eventFuture->datumbisa)) }}
+                            </p>
                         @endif
                         @if(isset($eventFuture->homepage))
                           <p>
@@ -56,7 +54,9 @@
                           <b>E-Mail:</b><br>
                           {{ $eventFuture->email }}
                         @endif
-                         </p>
+                        @if(isset($eventFuture->ansprechparter) or isset($eventFuture->telefon) or isset($eventFuture->email))
+                          </p>
+                        @endif
                         @php
                           $abgeschnitten=0;
                           $ausgabetext=$eventFuture->beschreibung;

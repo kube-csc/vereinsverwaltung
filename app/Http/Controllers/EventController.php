@@ -98,6 +98,7 @@ class EventController extends Controller
             'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
+            'verwendung'       => '0',
             'bearbeiter_id'    => Auth::user()->id,
             'autor_id'         => Auth::user()->id,
             'updated_at'       => Carbon::now(),
@@ -170,10 +171,13 @@ class EventController extends Controller
             'datumvona'        => $request->datumvona,
             'datumbisa'        => $request->datumbisa,
             'beschreibung'     => $request->beschreibung,
+<<<<<<< .merge_file_a25604
             'anmeldetext'      => $request->anmeldetext,
             'ansprechpartner'  => $request->ansprechpartner,
             'telefon'          => $request->telefon,
             'email'            => $request->email,
+=======
+>>>>>>> .merge_file_a05932
             'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,

@@ -3,7 +3,6 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Event - Dashboard') }}
         </h2>
-        </h2>
     </x-slot>
 
     <div class="py-12">
@@ -16,7 +15,7 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                    Bitte gebe eine neues Event ein.
+                    Bitte gebe ein neues Event ein.
                   </div>
 
               </div>
@@ -119,11 +118,12 @@
                                     @if (!isset($sportSection_id))
                                     <label for="name">Abteilung / Mannschaft:</label><br>
                                     <select name="sportSection_id">
-                                    <optgroup label="Abeilung:">
-                                    @php $firsttime = 0 @endphp
+                                            <option value="">Alle Abteilungen/Mannschaften</option>
+                                     <optgroup label="Abeilung:">
+                                      @php ($firsttime = 0)
                                         @foreach ($sportSections as $sportSection)
-                                            @if ($sportSection->sportSections_id > 0 && $firsttime == 0)
-                                                @php $firsttime = 1 @endphp
+                                            @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
+                                                @php ($firsttime = 1)
                                                 </optgroup>
                                                 <optgroup label="Mannschaft:">
                                             @endif
@@ -133,7 +133,7 @@
                                             @endif
                                             >{{ $sportSection->abteilung }}</option>
                                         @endforeach
-                                    </optgroup>
+                                     </optgroup>
                                     </select>
 
                                     @else

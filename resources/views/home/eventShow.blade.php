@@ -28,29 +28,51 @@
                         @else
                             <p>von {{ date("d.m.Y", strtotime($event->datumvon)) }} bis {{ date("d.m.Y", strtotime($event->datumbis)) }}</p>
                         @endif
-                        @if($event->ansprechparten > Illuminate\Support\Carbon::now())
-                            @if(isset($event->ansprechparten) && $event->ansprechparten <> '')
-                                Ansprechpartner: {!! $event->ansprechparten !!}<br>
+                        @if($event->datumbisa <= Illuminate\Support\Carbon::now() && isset($event->datumbisa))
+                            <p>
+                                <b>Anmeldezeitraum:</b><br>
+                                @if(isset($event->datumvona))
+                                 von {{ date("d.m.Y", strtotime($event->datumvona)) }}<br>
+                                @endif
+                                 bis {{ date("d.m.Y", strtotime($event->datumbisa)) }}
+                            </p>
+                        @endif
+                        @if(isset($event->homepage))
+                            <p>
+                                <b>Homepage:</b><br>
+                                {{ $event->homepage }}
+                            </p>
+                        @endif
+                        @if($event->datumbis > Illuminate\Support\Carbon::now())
+                            @if(isset($event->ansprechparter) or isset($event->telefon) or isset($event->email))
+                                <p>
+                                    <b>Ansprechpartner:</b><br>
+                                    @endif
+                                    @if(isset($event->ansprechparter))
+                                        {{ $event->ansprechparter }}<br>
+                                    @endif
+                                    @if(isset($event->telefon))
+                                        <b>Telefon:</b><br>
+                                        {{ $event->telefon }}<br>
+                                    @endif
+                                    @if(isset($event->email))
+                                        <b>E-Mail:</b><br>
+                                        {{ $event->email }}
+                                    @endif
+                                    @if(isset($event->ansprechparter) or isset($event->telefon) or isset($event->email))
+                                </p>
                             @endif
-                            @if(isset($event->telefon) && $event->telefon <> '')
-                                Telefon: {!! $event->telefon !!}<br>
-                            @endif
-                            @if(isset($event->email) && $event->email <> '')
-                                Email: {!! $event->email !!}</br>
-                            @endif
-                            @if(isset($event->homepage) && $event->homepage <> '')
-                                Homepage: {!! $event->homepage !!}</br>
-                            @endif
-                            {!! $event->beschreibung !!}
+                                <p>
+                                  {!! $event->beschreibung !!}
+                                </p>
                         @endif
                         @if($event->datumvon < Illuminate\Support\Carbon::now())
                             @if(isset($event->homepage) && $event->homepage <> '')
-                                Homepage: {!! $event->homepage !!}<br>
+                               <p>Homepage: {!! $event->homepage !!}</p>
                             @endif
-                            {!! $event->nachtermin !!}
+                                    <p>{!! $event->nachtermin !!}</p>
                         @endif
-                        </p>
-                        </div>
+                       </div>
                     </div>
              @php
              }

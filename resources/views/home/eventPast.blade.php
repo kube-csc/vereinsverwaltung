@@ -7,7 +7,7 @@
             @php
               //ToDo: Text bearbeiten
             @endphp
-            <h2>Vergangende Termine</h2>
+            <h2>Die neusten Berichte, Fotos und Videos</h2>
             @php
                 //ToDo: Text eingeben Vergangende Termine
             @endphp

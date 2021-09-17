@@ -44,7 +44,7 @@
   <!-- Laravell app.style.ss-->
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
   */
-  @endphp
+ @endphp
 
   <?php // TODO: boxicons über webpack einbinden ?>
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
@@ -280,29 +280,26 @@
           </form>
           <br>
           */ ?>
-          <h4>Links</h4>
+          <h4>Informationen</h4>
           <ul>
-           <li><a href="/Anfahrt"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+           <li><a href="/Anfahrt"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // ToDo: Anzeige akiv im Menu bearbeiten ?>
+           <li><a href=""><i class="bx bxs-note"></i>Beiträge</a></li>  <?php // ToDo: noch nicht feritg?>
+           <li><a href=""><i class="bx bxs-note"></i>Übernachtungskosten</a></li> <?php // ToDo: noch nicht feritg?>
           </ul>
           <br>
           <h4>Dokumente</h4>
           <ul>
-           <li><a href="https://www.kel-datteln.de/download/vereinssatzung2010.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinssatzung 2010</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
+           <li><a href="https://www.kel-datteln.de/download/vereinssatzung2010.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinssatzung 2010</a></li> <?php // ToDo: Akiv Menu bearbeiten ?>
            <li><a href="https://www.kel-datteln.de/download/Sportkleidung_2019.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinskleidung</a></li>
           </ul>
           <br>
           <h4>Intern</h4>
           <ul>
-            <?php /* TODO: Anmeldung alte Seite
-               <li><a href="http://www.kel-datteln.de/passwort/password.php" target="_blank"><i class="bx bx-log-in"></i>Login (alte Seite)</a></li> <?php // TODO: Akiv Menu bearbeiten ?>
-            */ ?>
-           <li><a href="http://{{ str_replace('_', ' ', env('Verein_Domain')) }}/passwort/login.php"><i class="bx bx-log-in"></i>Login (altes System)</a></li> <?php // TODO: Löschen wenn neues Backend Fertig ist ?>
            <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Login</a></li>
-
-           @if (Route::has('register'))
+           <?php // ToDo: Regestrieren noch nicht feritg ?>
+           @if (Route::has('register') && 1==2)
             <li><a href="{{ route('register') }}"><i class="bx bx-log-in"></i>Regestrieren</a></li>
            @endif
-
           </ul>
         </div>
       </div>

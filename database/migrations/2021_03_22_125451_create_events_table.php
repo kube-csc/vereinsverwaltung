@@ -33,7 +33,7 @@ class CreateEventsTable extends Migration
             $table->text('anmeldetext')->nullable();
             $table->char('onlinemeldung', 3)->nullable();
             $table->char('regatta')->default('');
-            $table->integer('verwendung')->default(0);
+            $table->integer('verwendung')->nullable();
                                                                     // 0 = Event / Termin
                                                                     // 1 =
                                                                     // 2 =

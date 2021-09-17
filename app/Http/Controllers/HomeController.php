@@ -83,7 +83,7 @@ class HomeController extends Controller
             ->where('verwendung' , 0)
             ->where(function ($query) use ($sportSectionsId) {
                 $query->where('sportSection_id' , $sportSectionsId)
-                      ->orwhere('sportSection_id' , NULL); // Events für allen Abteilunen/Mannschaften
+                      ->orwhere('sportSection_id' , NULL); // Events für allen Abteilungen/Mannschaften
                 })
             ->orderby('datumvon')
             ->limit(4)
@@ -94,7 +94,7 @@ class HomeController extends Controller
             ->where('verwendung' , 0)
             ->where(function ($query) use ($sportSectionsId) {
                 $query->where('sportSection_id' , $sportSectionsId)
-                    ->orwhere('sportSection_id' , NULL);  // Events für allen Abteilunen/Mannschaften
+                    ->orwhere('sportSection_id' , NULL);  // Events für allen Abteilungen/Mannschaften
                 })
             ->orderby('datumvon' , 'DESC')
             ->limit(4)

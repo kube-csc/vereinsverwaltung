@@ -29,13 +29,6 @@ class HomeController extends Controller
           ->get();
       $abteilungsCount     = $abteilungs->count();
 
-      /*
-      $sportSectionMenus   = SportSection::where('status' , '>' , '1')
-          ->where('sportSection_id' , NULL)
-          ->orderby('abteilung')
-          ->get();
-      */
-
       $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now())
           ->where('verwendung' , 0)
           ->orderby('datumvon')
@@ -54,27 +47,12 @@ class HomeController extends Controller
           ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
           ->get();
 
-       /*
-        $boards=board::select("bu.email as vorstandsemail",
-            "vorname",
-            "nachname",
-            "geschlecht",
-            "postenmaenlich",
-            "postenweiblich"
-        )
-            ->where('sportSection_id' , $sportSection_id)
-            ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
-            ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
-            ->get();
-       */
-
       return view('home.home')->with(
         [
          'abteilungHomes'      => $abteilungHomes,
          'abteilungHomesCount' => $abteilungHomesCount,
          'abteilungs'          => $abteilungs,
          'abteilungsCount'     => $abteilungsCount,
-         //'sportSectionMenus'   => $sportSectionMenu,
          'boards'              => $boards,
          'eventsFuture'        => $eventsFuture,
          'eventsPast'          => $eventsPast,
@@ -101,17 +79,23 @@ class HomeController extends Controller
         }
         $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
 
-        $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now())
+        $eventsFuture   = Event::where('datumbis' , '>=' , Carbon::now())
             ->where('verwendung' , 0)
-            ->where('sportSection_id' , $sportSectionsId)
+            ->where(function ($query) use ($sportSectionsId) {
+                $query->where('sportSection_id' , $sportSectionsId)
+                      ->orwhere('sportSection_id' , NULL); // Events für allen Abteilunen/Mannschaften
+                })
             ->orderby('datumvon')
             ->limit(4)
             ->get();
 
-        $eventsPast         = Event::where('datumvon' , '<=' , Carbon::now())
+        $eventsPast    = Event::where('datumvon' , '<=' , Carbon::now())
             ->where('nachtermin' , '!=' , '')
             ->where('verwendung' , 0)
-            ->where('sportSection_id' , $sportSectionsId)
+            ->where(function ($query) use ($sportSectionsId) {
+                $query->where('sportSection_id' , $sportSectionsId)
+                    ->orwhere('sportSection_id' , NULL);  // Events für allen Abteilunen/Mannschaften
+                })
             ->orderby('datumvon' , 'DESC')
             ->limit(4)
             ->get();
@@ -120,7 +104,7 @@ class HomeController extends Controller
             ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
             ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
             ->get();
-        //dd($boards);
+
         return view('home.homeSportSelect')->with(
             [
                 'sportSectionNames'      => $sportSectionNames,

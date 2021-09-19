@@ -54,14 +54,29 @@ class EventController extends Controller
                                                                  ->orderby('sportSection_id')
                                                                  ->orderby('abteilung')
                                                                  ->get();
+
         $eventGroups = eventGroup::orderby('termingruppe')
             ->get();
+
         return view('admin.event.create' , compact('sportSections' , 'eventGroups'));
     }
 
     public function createSportSection($sportSection_id)
     {
-        return view('admin.event.create' , compact('sportSection_id'));
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
+            ->orderby('sportSection_id')
+            ->orderby('abteilung')
+            ->get();
+
+        $eventGroups = eventGroup::orderby('termingruppe')
+            ->get();
+
+        return view('admin.event.create')->with(
+            [
+                'sportSection_id'  => $sportSection_id,
+                'sportSections'    => $sportSections,
+                'eventGroups'      => $eventGroups,
+            ]);
     }
 
     /**
@@ -140,6 +155,7 @@ class EventController extends Controller
 
         $eventGroups = eventGroup::orderby('termingruppe')
             ->get();
+
         return view('admin.event.edit' , compact('event' , 'sportSections' , 'eventGroups'));
     }
 

@@ -51,10 +51,11 @@
                                     <small class="form-text text-danger">{!! $errors->first('mannschaft') !!}</small>
                                 </div>
                                 <div class="py-2">
-                                <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neue Mannschaft</button>
+                                <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neue Mannschaft anlegen</button>
                                 </div>
                             </form>
-
+                                <br>
+                                <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Mannschaft/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                             </div>
                           </div>
 

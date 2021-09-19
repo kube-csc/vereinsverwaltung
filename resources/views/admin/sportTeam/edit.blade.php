@@ -35,7 +35,7 @@
                               <form autocomplete="off" action="{{ url('Mannschaft/update/'.$sportTeam->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
-                                  // TODO:  @method('PUT') in Hobby Projekt noch mal erlernen
+                                  // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                 <div class="my-4" >
                                     <label for="name">Mannschaftsname:</label>
@@ -74,7 +74,7 @@
                                 </div>
                              </form>
                              <br>
-                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Mannschaft/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Mannschaft/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                             </div>
                           </div>
 

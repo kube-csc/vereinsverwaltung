@@ -118,9 +118,11 @@
                                     @if (!isset($sportSection_id))
                                     <label for="name">Abteilung / Mannschaft:</label><br>
                                     <select name="sportSection_id">
-                                            <option value="">Alle Abteilungen/Mannschaften</option>
+                                            <option value="">Alle Abteilungen / Mannschaften</option>
                                      <optgroup label="Abeilung:">
-                                      @php ($firsttime = 0)
+                                      @php
+                                       $firsttime = 0;
+                                      @endphp
                                         @foreach ($sportSections as $sportSection)
                                             @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
                                                 @php ($firsttime = 1)
@@ -154,12 +156,12 @@
                                       </select>
                                </div>
                                <div class="py-2">
-                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Event speichern</button>
+                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Event anlegen</button>
                                </div>
 
                             </form>
                             <br>
-                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Event/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
 
                             </div>
                           </div>

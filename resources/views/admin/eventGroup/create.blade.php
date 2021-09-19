@@ -51,11 +51,11 @@
                                     <small class="form-text text-danger">{!! $errors->first('termingruppe') !!}</small>
                                 </div>
                                 <div class="py-2">
-                                <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neue Event Gruppe</button>
+                                <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neue Event Gruppe anlegen</button>
                                 </div>
                             </form>
                             <br>
-                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventgruppe/alle"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventgruppe/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                            </div>
                           </div>
 

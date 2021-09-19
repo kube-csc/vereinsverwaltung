@@ -109,18 +109,23 @@
                                 <div class="my-4" >
                                      <label for="name">Abteilung / Mannschaft:</label><br>
                                      <select name="sportSection_id">
-                                         <!-- ToDo: Verbesserung Old Wert behaten bei Valiedierungsfehler -->
+                                         <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
                                          <option value=""
                                              @if ($event->sportSection_id == NULL)
                                                  selected
                                              @endif
-                                             >Alle Abteilungen/Mannschaften
+                                             >Alle Abteilungen / Mannschaften
                                          </option>
                                      <optgroup label="Abeilung:">
-                                     @php ($firsttime = 0)
+                                     @php
+                                      $firsttime = 0;
+                                     @endphp
+
                                         @foreach ($sportSections as $sportSection)
                                             @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
-                                                @php ($firsttime = 1)
+                                                @php
+                                                 $firsttime = 1;
+                                                @endphp
                                                 </optgroup>
                                                 <optgroup label="Mannschaft:">
                                             @endif
@@ -130,32 +135,33 @@
                                             @endif
                                             >{{ $sportSection->abteilung }}</option>
                                         @endforeach
+
                                     </optgroup>
                                     </select>
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Event Gruppe:</label><br>
-                                    <!-- ToDo: Verbesserung Old Wert behaten bei Valiedierungsfehler -->
-                                            <select name="eventGroup_id">
-                                            <option value=""
-                                                @if( $event->eventGroup_id == NULL )
-                                                  selected
-                                                @endif
-                                            >keine Event Gruppe</option>
+                                      <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
+                                      <select name="eventGroup_id">
+                                        <option value=""
+                                            @if( $event->eventGroup_id == NULL )
+                                              selected
+                                            @endif
+                                        >keine Event Gruppe</option>
 
-                                            @foreach ($eventGroups as $eventGroup)
-                                                <option value="{{ $eventGroup->id }}"
-                                                      @if( $event->eventGroup_id == $eventGroup->id )
-                                                         selected
-                                                      @endif
-                                                >{{ $eventGroup->termingruppe }}</option>
-                                            @endforeach
+                                        @foreach ($eventGroups as $eventGroup)
+                                            <option value="{{ $eventGroup->id }}"
+                                                  @if( $event->eventGroup_id == $eventGroup->id )
+                                                     selected
+                                                  @endif
+                                            >{{ $eventGroup->termingruppe }}</option>
+                                        @endforeach
 
-                                    </select>
+                                      </select>
                                 </div>
 
                                 <div class="py-2">
-                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">speichern</button>
+                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
                                 </div>
                              </form>
                              <br>
@@ -174,6 +180,4 @@
 
             </div>
         </div>
-    </div>    @php   // TODO:  Wird der div benötigt?
-              @endphp
 </x-app-layout>

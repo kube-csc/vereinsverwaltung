@@ -3,11 +3,11 @@
  <section id="services" class="services">
     <div class="container">
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
+            <h2>Die neusten Meldungen</h2>
             @php
                 //ToDo: Text bearbeiten
+//             //<p>Text ?</p>
             @endphp
-            <h2>Die neusten Meldungen</h2>
-            <p>Text ?</p>
         </div>
         <div class="row">
             @foreach($eventsFuture as $eventFuture)
@@ -22,7 +22,8 @@
                         @if($eventFuture->datumvon == $eventFuture->datumbis)
                           <p>am {{ date("d.m.Y", strtotime($eventFuture->datumvon)) }}</p>
                         @else
-                          <p>von {{ date("d.m.Y", strtotime($eventFuture->datumvon)) }} bis {{ date("d.m.Y", strtotime($eventFuture->datumbis)) }}</p>
+                          <p>von {{ date("d.m.Y", strtotime($eventFuture->datumvon)) }}<br>
+                             bis {{ date("d.m.Y", strtotime($eventFuture->datumbis)) }}</p>
                         @endif
                         @if($eventFuture->datumbisa <= Illuminate\Support\Carbon::now() && isset($eventFuture->datumbisa))
                             <p>
@@ -30,7 +31,7 @@
                                 @if(isset($eventFuture->datumvona))
                                     von {{ date("d.m.Y", strtotime($eventFuture->datumvona)) }}<br>
                                 @endif
-                                bis {{ date("d.m.Y", strtotime($eventFuture->datumbisa)) }}
+                                    bis {{ date("d.m.Y", strtotime($eventFuture->datumbisa)) }}
                             </p>
                         @endif
                         @if(isset($eventFuture->homepage))

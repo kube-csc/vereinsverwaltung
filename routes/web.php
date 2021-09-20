@@ -21,9 +21,10 @@ use App\Http\Controllers\BotmanQuestionController;
 */
 
 //HomePage
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/',                              [HomeController::class, 'index']);
 Route::get('/Abteilung/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
 Route::get('/Event/detail/{event}',          [HomeController::class, 'eventShow']);
+Route::get('/Information/{event}',           [HomeController::class, 'instructionShow']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');
@@ -84,6 +85,12 @@ Route::get('/Eventgruppe/softDelete/{eventGroup_id}',  [EventGroupController::cl
 Route::get('/Eventgruppe/aktiv/{sportSection_id}',     [EventGroupController::class, 'aktiv'])         ->name('eventGroup.aktiv');
 Route::get('/Eventgruppe/inaktiv/{sportSection_id}',   [EventGroupController::class, 'inaktiv'])       ->name('eventGroup.inaktiv');
 
+//Route::resource('instruction.', 'InstructionController');
+Route::get('/Instruction/alle',                        [InstructionController::class, 'index'])        ->name('instruction.index');
+Route::get('/Instruction/edit/{instruction_id}',       [InstructionController::class, 'edit'])         ->name('instruction.edit');
+Route::post('/Instruction/update/{instruction_id}',    [InstructionController::class, 'update'])       ->name('instruction.update');
+Route::get('/Instruction/aktiv/{instruction_id}',      [InstructionController::class, 'aktiv'])        ->name('instruction.aktiv');
+Route::get('/Instruction/inaktiv/{instruction_id}',    [InstructionController::class, 'inaktiv'])      ->name('instruction.inaktiv');
 /*
 Route::resources([
     'instruction' => InstructionController::class,
@@ -97,12 +104,6 @@ Route::get('/Anfahrt', function () {
 Route::get('/Impressum', function () {
     return view('impressum');
 });
-
-Route::get('/Datenschutzerklaerung', function () {
-    return view('instruction.datenschutzerklaerung');
-});
-
-Route::get('/Datenschutzerklaerung', [InstructionController::class, 'datenschutz']);
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

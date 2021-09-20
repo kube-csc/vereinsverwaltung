@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\board;
 use App\Models\Event;
 use App\Models\SportSection;
+use App\Models\instruction;
 use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
@@ -105,16 +106,14 @@ class HomeController extends Controller
             ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
             ->get();
 
-        return view('home.homeSportSelect')->with(
-            [
+        return view('home.homeSportSelect')->with([
                 'sportSectionNames'      => $sportSectionNames,
                 'sportTeamNames'         => $sportTeamNames,
                 'sportSectionSearch'     => $sportSectionSearch,
                 'eventsFuture'           => $eventsFuture,
                 'eventsPast'             => $eventsPast,
                 'boards'                 => $boards
-            ]
-        );
+            ]);
     }
 
     public function eventShow($eventSeorch)
@@ -125,6 +124,14 @@ class HomeController extends Controller
         $events = event::where('ueberschrift' , $seoch)->where('datumvon' , $dateFor)->get();
 
         return view('home.eventShow' , compact('events'));
+    }
+
+    public function instructionShow($instructionSeorch)
+    {
+        $seoch = str_replace('_' , ' ' , $instructionSeorch);
+        $instructions = instruction::where('ueberschrift' , $seoch)->get();
+
+        return view('instruction.show' , compact('instructions'));
     }
 
 }

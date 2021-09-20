@@ -55,14 +55,15 @@
                                          </a>
                                       </div>
                                   </div>
-                                   <p>von {{ date("d.m.Y", strtotime($event->datumvon)) }} bis {{ date("d.m.Y", strtotime($event->datumbis)) }}</p>
+                                   <p>von {{ date("d.m.Y", strtotime($event->datumvon)) }}<br>
+                                      bis {{ date("d.m.Y", strtotime($event->datumbis)) }}</p>
                               </div>
                               @endforeach
 
                               {{ $events->links() }}
-                              
+
                              <br>
-                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                             </div>
                           </div>
 

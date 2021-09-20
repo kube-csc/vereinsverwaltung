@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class instruction extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'beschreibung',
+        'visible',
+    ];
 }

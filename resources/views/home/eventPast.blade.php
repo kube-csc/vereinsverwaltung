@@ -4,17 +4,12 @@
     <div class="container">
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
-            @php
-              //ToDo: Text bearbeiten
-            @endphp
             <h2>Die neusten Berichte, Fotos und Videos</h2>
             @php
                 //ToDo: Text eingeben Vergangende Termine
+               //<p>Text</p>
             @endphp
-            <p>
-                Text ?
-            </p>
-        </div>
+           </div>
 
         <div class="row">
 
@@ -33,7 +28,8 @@
                         @if($eventPast->datumvon == $eventPast->datumbis)
                             <p>am {{ date("d.m.Y", strtotime($eventPast->datumvon)) }}</p>
                         @else
-                            <p>von {{ date("d.m.Y", strtotime($eventPast->datumvon)) }} bis {{ date("d.m.Y", strtotime($eventPast->datumbis)) }}</p>
+                            <p>von {{ date("d.m.Y", strtotime($eventPast->datumvon)) }}<br>
+                               bis {{ date("d.m.Y", strtotime($eventPast->datumbis)) }}</p>
                         @endif
                         @php
                             $abgeschnitten=0;

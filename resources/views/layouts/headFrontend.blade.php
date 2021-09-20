@@ -283,8 +283,8 @@
           <h4>Informationen</h4>
           <ul>
            <li><a href="/Anfahrt"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // ToDo: Anzeige akiv im Menu bearbeiten ?>
-           <li><a href=""><i class="bx bxs-note"></i>Beiträge</a></li>  <?php // ToDo: noch nicht feritg?>
-           <li><a href=""><i class="bx bxs-note"></i>Übernachtungskosten</a></li> <?php // ToDo: noch nicht feritg?>
+           <li><a href="/Information/Beiträge"><i class='bx bx-link'></i>Beiträge</a></li>  <?php // ToDo: noch nicht feritg?>
+           <li><a href="/Information/Übernachtungskosten"><i class="bx bx-link"></i>Übernachtungskosten</a></li> <?php // ToDo: noch nicht feritg?>
           </ul>
           <br>
           <h4>Dokumente</h4>
@@ -320,7 +320,7 @@
       Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       <br><br>
       */?>
-      <a href="/Datenschutzerklaerung">Datenschutzerklärung</a> |
+      <a href="/Information/Datenschutzerklärung">Datenschutzerklärung</a> |
       <a href="/Impressum">Impressum</a>
     </div>
   </div>

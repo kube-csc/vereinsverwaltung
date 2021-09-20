@@ -153,6 +153,15 @@
                                       </div>
                                   </div>
 
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('Instruction/alle')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">Bearbeiten der Informationsseiten</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
                               </div>
 
                          </div>

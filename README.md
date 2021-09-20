@@ -38,9 +38,14 @@
   <li>Detail Presendation der Abteilung</li>
   <li>Detail Presendation der Mannschaften</li>
   <li>Detail Presendation des Event</li>
-  <li>Impresssum</li>
-  <li>Datenschutzerklärung</li>
-  <li>Footer</li>
+  <li>Footer
+    <ul>
+        <li>Beiträge</li>
+        <li>Übernachtungskosten</li>
+        <li>Impresssum</li>
+        <li>Datenschutzerklärung</li>
+    </ul>
+  </li>
 </ul>
 
 <h2>Backend</h2>
@@ -49,7 +54,15 @@
   <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
   <li>Eingabe und Bearbeitung von Events</li>
-  <li>Eingabe und Bearbeitung von Events Gruppen</li>
+  <li>Eingabe und Bearbeitung von Event Gruppen</li>
+  <li>Informationsseiten (können noch nicht unsibar geschaltet werden) 
+    <ul>
+        <li>Beiträge</li>
+        <li>Übernachtungskosten</li>
+        <li>Impresssum</li>
+        <li>Datenschutzerklärung</li>
+    </ul>
+  </li>
 </ul>
 
 <h2>Installation</h2>

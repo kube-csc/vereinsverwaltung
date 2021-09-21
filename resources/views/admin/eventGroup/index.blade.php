@@ -44,33 +44,35 @@
 
                               @foreach ( $eventGroups as $eventGroup )
                               <div class="rounded border shadow p-3 my-2 {{$eventGroup->id == $eventGroup->id ? 'bg-blue-200' : ''}}" onclick="window.location.replace('{{ $eventGroup->id }}')">
-                                  <div class="flex justify-between my-2">
-                                    <div class="flex">
-
-                                      <p class="font-bold text-lg">{{ $eventGroup->termingruppe }}</p>
-                                      <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $eventGroup->updated_at->diffForHumans() }}</p>
-                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/edit/'.$eventGroup->id) }}">
-                                          <box-icon name='edit' type='solid'></box-icon>
-                                         </a>
-                                         @if($eventGroup['visible']==1)
+                                  <div class="justify-between my-2">
+                                    <div>
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/edit/'.$eventGroup->id) }}">
+                                            <box-icon name='edit' type='solid'></box-icon>
+                                        </a>
+                                        @if($eventGroup['visible']==1)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/inaktiv/'.$eventGroup->id) }}">
                                                 <box-icon name='show'  type='solid'></box-icon>
                                             </a>
-                                         @endif
-                                         @if($eventGroup['visible']==0)
+                                        @endif
+                                        @if($eventGroup['visible']==0)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/aktiv/'.$eventGroup->id) }}">
                                                 <box-icon name='hide' type='solid'></box-icon>
                                             </a>
-                                         @endif
-                                         @php
-                                             //ToDo: Count mit einer lösung im Controller
-                                             $eventCount = DB::table('events')->where('eventGroup_id' , $eventGroup->id)->count();
-                                         @endphp
-                                         @if($eventCount==0)
-                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/softDelete/'.$eventGroup->id) }}">
-                                               <box-icon type='solid' name='x-square'></box-icon>
-                                             </a>
-                                         @endif
+                                        @endif
+                                        @php
+                                            //ToDo: Count mit einer lösung im Controller
+                                            $eventCount = DB::table('events')->where('eventGroup_id' , $eventGroup->id)->count();
+                                        @endphp
+                                        @if($eventCount==0)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/softDelete/'.$eventGroup->id) }}">
+                                                <box-icon type='solid' name='x-square'></box-icon>
+                                            </a>
+                                        @endif
+                                    </div>
+
+                                      <div class="flex">
+                                      <p class="font-bold text-lg">{{ $eventGroup->termingruppe }}</p>
+                                      <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $eventGroup->updated_at->diffForHumans() }}</p>
                                     </div>
                                   </div>
                               </div>

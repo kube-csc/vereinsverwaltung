@@ -46,17 +46,21 @@
 
                               @foreach ( $events as $event)
                               <div class="rounded border shadow p-3 my-2 {{$event->id == $event->id ? 'bg-blue-200' : ''}}" onclick="">
-                                  <div class="flex justify-between my-2">
+                                  <div>
+                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Event/edit/'.$event->id) }}">
+                                      <box-icon name='edit' type='solid'></box-icon>
+                                    </a>
+                                  </div>
+                                  <div class="justify-between my-2">
                                     <div class="flex">
                                       <p class="font-bold text-lg">{{ $event->ueberschrift }}</p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $event->updated_at->diffForHumans() }}</p>
-                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Event/edit/'.$event->id) }}">
-                                          <box-icon name='edit' type='solid'></box-icon>
-                                         </a>
-                                      </div>
+                                    </div>
+                                    <div class="flex">
+                                         von {{ date("d.m.Y", strtotime($event->datumvon)) }} bis {{ date("d.m.Y", strtotime($event->datumbis)) }}
+                                    </div>
                                   </div>
-                                   <p>von {{ date("d.m.Y", strtotime($event->datumvon)) }}<br>
-                                      bis {{ date("d.m.Y", strtotime($event->datumbis)) }}</p>
+
                               </div>
                               @endforeach
 

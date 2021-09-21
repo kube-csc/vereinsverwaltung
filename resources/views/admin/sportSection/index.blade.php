@@ -53,42 +53,45 @@
 
                               @foreach ( $sportSections as $sportSection )
                               <div class="rounded border shadow p-3 my-2 {{$sportSection->id == $sportSection->id ? 'bg-blue-200' : ''}}" onclick="window.location.replace('sportSectionSportTeam/{{ $sportSection->id }}')">
-                                  <div class="flex justify-between my-2">
+                                  <div class="justify-between my-2">
+                                   <div>
+                                       <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/edit/'.$sportSection->id) }}">
+                                           <box-icon name='edit' type='solid'></box-icon>
+                                       </a>
+                                       @if($sportSection['status']==2)
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/start/'.$sportSection->id) }}">
+                                               <box-icon name='pin' type='solid'></box-icon>
+                                           </a>
+                                       @endif
+                                       @if($sportSection['status']==2)
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/inaktiv/'.$sportSection->id) }}">
+                                               <box-icon name='show'  type='solid'></box-icon>
+                                           </a>
+                                       @endif
+                                       @if($sportSection['status']==0)
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/aktiv/'.$sportSection->id) }}">
+                                               <box-icon name='hide' type='solid'></box-icon>
+                                           </a>
+                                           <!-- <i class="fas fa-times text-red-200 hover:text-red-600 cursor-pointer">inaktiv</i> -->
+                                       @endif
+                                       @if ($sportSection['event_id']==0)
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/softDelete/'.$sportSection->id) }}">
+                                               <box-icon type='solid' name='x-square'></box-icon>
+                                           </a>
+                                       @endif
+                                       @if ($sportSection['status']>0)
+                                           <a href="{{ url('Mannschaft/neu/'.$sportSection->id) }}">
+                                               <box-icon type='solid' name='user-plus'></box-icon>
+                                           </a>
+                                           <a href="{{ url('Abteilungsevent/neu/'.$sportSection->id) }}">
+                                               <box-icon type='solid' name='calendar-plus'></box-icon>
+                                           </a>
+                                       @endif
+                                   </div>
+
                                     <div class="flex">
                                       <p class="font-bold text-lg">{{ $sportSection->abteilung }}</p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $sportSection->updated_at->diffForHumans() }}</p>
-                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/edit/'.$sportSection->id) }}">
-                                          <box-icon name='edit' type='solid'></box-icon>
-                                         </a>
-                                          @if($sportSection['status']==2)
-                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/start/'.$sportSection->id) }}">
-                                             <box-icon name='pin' type='solid'></box-icon>
-                                            </a>
-                                          @endif
-                                          @if($sportSection['status']==2)
-                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/inaktiv/'.$sportSection->id) }}">
-                                             <box-icon name='show'  type='solid'></box-icon>
-                                            </a>
-                                          @endif
-                                          @if($sportSection['status']==0)
-                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/aktiv/'.$sportSection->id) }}">
-                                             <box-icon name='hide' type='solid'></box-icon>
-                                            </a>
-                                            <!-- <i class="fas fa-times text-red-200 hover:text-red-600 cursor-pointer">inaktiv</i> -->
-                                          @endif
-                                          @if ($sportSection['event_id']==0)
-                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/softDelete/'.$sportSection->id) }}">
-                                             <box-icon type='solid' name='x-square'></box-icon>
-                                           </a>
-                                          @endif
-                                          @if ($sportSection['status']>0)
-                                           <a href="{{ url('Mannschaft/neu/'.$sportSection->id) }}">
-                                             <box-icon type='solid' name='user-plus'></box-icon>
-                                           </a>
-                                           <a href="{{ url('Abteilungsevent/neu/'.$sportSection->id) }}">
-                                            <box-icon type='solid' name='calendar-plus'></box-icon>
-                                           </a>
-                                          @endif
                                     </div>
                                   </div>
                                   @if($sportSection->bild)

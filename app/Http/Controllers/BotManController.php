@@ -51,11 +51,24 @@ class BotManController extends Controller
                   ]);
               }
              else {
-                 $bot->reply('Die Frage war kurz um sie zu für die nachbearbitung fest zu halten.');
+                 $bot->reply('Die Frage war kurz um sie zu für die nachbearbeitung fest zu halten.');
              }
          }
-       );
+        );
 
+        $botman->hears('Mein Name ist {name}', function ($bot, $name){
+            $bot->userStorage()->save([
+                'name' => $name
+            ]);
+            $bot->reply('Hello ' . $name);
+         }
+        );
+
+        $botman->hears('Sage mein Name' , function ($bot) {
+           $name = $bot->userStorage()->get('name');
+           $bot->reply('Dein Name ist '. $name);
+         }
+        );
 
        $botmanQuests = botmanQuestion::all();
        foreach ($botmanQuests as $botmanQuest){
@@ -64,8 +77,8 @@ class BotManController extends Controller
           $botman->hears( $question , function ($bot) {
             $bot->reply('Gefunden');
            }
-         );
-        }
+        );
+       }
 
        $botman->listen();
     }

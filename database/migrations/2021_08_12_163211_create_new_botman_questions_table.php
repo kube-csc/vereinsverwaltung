@@ -17,6 +17,8 @@ class CreateNewBotmanQuestionsTable extends Migration
             $table->id();
             $table->string('question');
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('botmanuser_id')->nullable();
+            $table->string('chatUserName')->nullable();
             $table->SoftDeletes();
             $table->timestamps();
 
@@ -33,6 +35,9 @@ class CreateNewBotmanQuestionsTable extends Migration
      */
     public function down()
     {
+        Schema::table('new_botman_questions', function (Blueprint $table) {
+            $table->dropForeign('user_id');
+        });
         Schema::dropIfExists('new_botman_questions');
     }
 }

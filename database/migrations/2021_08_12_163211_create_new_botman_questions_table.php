@@ -19,6 +19,7 @@ class CreateNewBotmanQuestionsTable extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('botmanuser_id')->nullable();
             $table->string('chatUserName')->nullable();
+            $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->SoftDeletes();
             $table->timestamps();
 

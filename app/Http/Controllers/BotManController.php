@@ -15,7 +15,7 @@ use App\Models\botmanQuestion;
 use App\Models\botmanAnswer;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BotManController extends Controller
@@ -52,6 +52,7 @@ class BotManController extends Controller
                      else {
                          $userID=Auth::user()->id;
                          $botmanuserId=Null;
+                         $chatUserName = Auth::user()->vorname.' '.Auth::user()->nachname;
                      }
 
                      DB::table('new_botman_questions')
@@ -62,6 +63,7 @@ class BotManController extends Controller
                                      'user_id'       => $userID,
                                      //'botmanuser_id' => $botmanuserId,
                                      'chatUserName'   => $chatUserName,
+                                     'visible'       => '0',
                                      'created_at'    => Carbon::now(),
                                      'updated_at'    => Carbon::now(),
                                  )
@@ -99,7 +101,8 @@ class BotManController extends Controller
             $bot->userStorage()->save([
                 'name' => $name
             ]);
-            $bot->reply('Hallo ' . $name);
+            $bot->reply('Hallo ' . $name.'.');
+            $bot->reply('Wie kann ich helfen?.');
          }
         );
 
@@ -137,8 +140,8 @@ class BotManController extends Controller
 
             $name = $answer->getText();
             if($name <> '') {
-                $this->say('Schön, Sie kennenzulernen ' . $name);
-              }
+                $this->say('Schön, Dich kennenzulernen ' . $name);
+               }
         });
     }
 

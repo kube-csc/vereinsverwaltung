@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\HomeController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\SportTeamController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
+use App\Http\Controllers\NewBotmanQuestionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,7 +22,7 @@ use App\Http\Controllers\BotmanQuestionController;
 |
 */
 
-//HomePage
+//LandingPage
 Route::get('/',                              [HomeController::class, 'index']);
 Route::get('/Abteilung/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
 Route::get('/Event/detail/{event}',          [HomeController::class, 'eventShow']);
@@ -91,11 +93,12 @@ Route::get('/Instruction/edit/{instruction_id}',       [InstructionController::c
 Route::post('/Instruction/update/{instruction_id}',    [InstructionController::class, 'update'])       ->name('instruction.update');
 Route::get('/Instruction/aktiv/{instruction_id}',      [InstructionController::class, 'aktiv'])        ->name('instruction.aktiv');
 Route::get('/Instruction/inaktiv/{instruction_id}',    [InstructionController::class, 'inaktiv'])      ->name('instruction.inaktiv');
-/*
-Route::resources([
-    'instruction' => InstructionController::class,
-]);
-*/
+
+//Route::resource('instruction.', 'NewBotmanQuestionController');
+Route::get('/newBotmanQuestion/alle',                            [NewBotmanQuestionController::class, 'index'])     ->name('newBotmanQuestion.index');
+Route::get('/newBotmanQuestion/aktiv/{newBotmanQuestionId}',     [NewBotmanQuestionController::class, 'aktiv'])     ->name('newBotmanQuestion.aktiv');
+Route::get('/newBotmanQuestion/inaktiv/{newBotmanQuestionId}',   [NewBotmanQuestionController::class, 'inaktiv'])   ->name('newBotmanQuestion.inaktiv');
+Route::get('/newBotmanQuestion/softDelete/{newBotmanQuestionId}',[NewBotmanQuestionController::class, 'softDelete']);
 
 Route::get('/Anfahrt', function () {
     return view('anfahrt');

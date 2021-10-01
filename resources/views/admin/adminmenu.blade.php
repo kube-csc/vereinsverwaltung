@@ -85,7 +85,6 @@
 
                           </div>
 
-
                       </div>
                   </div>
 
@@ -99,7 +98,7 @@
 
                             <div style="text-align: left">
 
-                              <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('')">
+                              <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('newBotmanQuestion/alle')">
                                   <div class="flex justify-between my-2">
                                     <div class="flex">
                                       <p class="font-bold text-lg">neue Fragen bearbeiten</p>

@@ -41,6 +41,11 @@ class CreateBotmanQuestionBotmanAnswersTable extends Migration
      */
     public function down()
     {
+        Schema::table('botman_question_botman_answers', function (Blueprint $table) {
+            $table->dropForeign('question_id');
+            $table->dropForeign('answer_id');
+        });
+
         Schema::dropIfExists('botman_question_botman_answers');
     }
 }

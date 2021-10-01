@@ -4,9 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\newBotmanQuestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class NewBotmanQuestionController extends Controller
 {
+    public function aktiv($newBotmanQuestionId)
+    {
+        newBotmanQuestion::find($newBotmanQuestionId)->update([
+            'visible'      => '0',
+            'updated_at'   => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Frage wurde sichtbar geschaltet.');
+    }
+
+    public function inaktiv($newBotmanQuestionId)
+    {
+        newBotmanQuestion::find($newBotmanQuestionId)->update([
+            'visible'      => '1',
+            'updated_at'   => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Frage wurde unsichtbar geschaltet.');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +33,11 @@ class NewBotmanQuestionController extends Controller
      */
     public function index()
     {
-        //
+        $newBotmanQuestions = newBotmanQuestion::all();
+        return view('admin.newBotmanQuestion.index')->with(
+            [
+                'newBotmanQuestions' => $newBotmanQuestions,
+            ]);
     }
 
     /**
@@ -81,5 +104,16 @@ class NewBotmanQuestionController extends Controller
     public function destroy(newBotmanQuestion $newBotmanQuestion)
     {
         //
+    }
+
+    public function softDelete($newBotmanQuestionId)
+    {
+        $delete = newBotmanQuestion::find($newBotmanQuestionId)->delete();
+
+        return redirect('/newBotmanQuestion/alle')->with(
+            [
+                'success' => 'Die Frage wurde gelöscht.'
+            ]
+        );
     }
 }

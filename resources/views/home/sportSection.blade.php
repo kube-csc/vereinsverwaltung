@@ -19,112 +19,117 @@ foreach ( $abteilungHomes as $abteilungHome)
        $ausgabetext=$abteilungHome->event->beschreibung;
        textmax($ausgabetext,$textlaenge,$abgeschnitten);
       }
-
       ?>
       <!-- ======= About Section ======= -->
       <section id="about" class="about">
         <div class="container">
-
           <div class="row no-gutters">
             <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
               <div class="content">
                 <!-- ======= Facebook======= -->
                 <center>
-                <div class="fb-like" data-href="http://www.{{ str_replace('_', ' ', env('Verein_Domain')) }}" data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                 <div class="fb-like" data-href="http://www.{{ str_replace('_', ' ', env('Verein_Domain')) }}"
+                     data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial">
+                 </div>
                 </center>
 
                 <h3>{{ $abteilungHome->abteilung }}</h3>
                 {!! $ausgabetext !!}
                 @if ($abgeschnitten==1)
                     <div class="read-more">
-                      <a href="/Abteilung/detail/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about-btn">mehr<i class="bx bx-chevron-right"></i></a>
+                      <a href="/Abteilung/detail/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about-btn">
+                          mehr<i class="bx bx-chevron-right"></i>
+                      </a>
                     </div>
                 @endif
-             </div>
+              </div>
             </div>
-      @php
-     }
-  }
- @endphp
+           @php
+           }
+          }
+          @endphp
 
-<div class="col-xl-7 d-flex align-items-stretch">
-  <div class="icon-boxes d-flex flex-column justify-content-center">
-        <?php
-        $i=0;
-        $time=-100;
-        foreach ($abteilungs as $abteilung)
-          {
-            ++$i;
-            $time=$time+100;
-            if ($i==1)
-            {
+          @if($abteilungHome->domain != $_SERVER["HTTP_HOST"]  or $abteilungHome->status == 1)
+           <div class="col-xl-7 d-flex align-items-stretch">
+            <div class="icon-boxes d-flex flex-column justify-content-center">
+            <?php
+            $i=0;
+            $time=-100;
+            foreach ($abteilungs as $abteilung)
+              {
+                ++$i;
+                $time=$time+100;
+                if ($i==1)
+                {
+                  ?>
+                  <div class="row">
+                  <?php
+                }
+                $abgeschnitten=0;
+                if ($abteilung->event_id>0)
+                {
+                  $ausgabetext=$abteilung->event->beschreibung;
+                  $sollang=500;
+                  textmax($ausgabetext,$sollang,$abgeschnitten);
+                }
               ?>
-              <div class="row">
-              <?php
-            }
-            $abgeschnitten=0;
-            if ($abteilung->event_id>0)
-            {
-              $ausgabetext=$abteilung->event->beschreibung;
-              $sollang=500;
-              textmax($ausgabetext,$sollang,$abgeschnitten);
-             }
-          ?>
-          @if($i==1 )
-           <div class="col-md-6 icon-box" data-aos="fade-up">
-          @else
-           <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="{{ $time }}">
-          @endif
-            <a href="Abteilung/detail/{{ str_replace(' ' , '_' , $abteilung->abteilung) }}"><i class="bx bx-receipt"></i></a>
-            <h4>{{ $abteilung->abteilung }}</h4>
-            <?php
-            if ($abteilung->event_id>0)
-             {
-            ?>
-              {!! $ausgabetext !!}
-              @php
-               $sportTeams = DB::table('sport_sections')->where('sportSection_id' , $abteilung->id)->get();
-               $first=0;
-              @endphp
-
-              @foreach($sportTeams as $sportTeam)
-                @if ($first==0)
-                    <br>
-                      <h5><b>Mit den Mannschaften:</b></h5>
-                   <ul>
-                    @php
-                     $first=1;
-                    @endphp
-                @endif
-                 <li>
-                {{ $sportTeam->abteilung }}
-                 </li>
-              @endforeach
-               @if ($first==1)
-                  </ul>
-               @endif
-              @if ($abgeschnitten==1 | $first==1)
-                <div class="read-more">
-                  <a href="Abteilung/detail/{{ str_replace(' ', '_', $abteilung->abteilung) }}">mehr<i class="icofont-arrow-right"></i></a>
-                </div>
+              @if($i==1 )
+               <div class="col-md-6 icon-box" data-aos="fade-up">
+              @else
+               <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="{{ $time }}">
               @endif
-           </p>
-            <?php
-            }
+                <a href="Abteilung/detail/{{ str_replace(' ' , '_' , $abteilung->abteilung) }}">
+                    <i class="bx bx-receipt"></i>
+                </a>
+                <h4>{{ $abteilung->abteilung }}</h4>
+                <?php
+                if ($abteilung->event_id>0)
+                 {
+                ?>
+                  {!! $ausgabetext !!}
+                  @php
+                   $sportTeams = DB::table('sport_sections')->where('sportSection_id' , $abteilung->id)->get();
+                   $first=0;
+                  @endphp
+
+                  @foreach($sportTeams as $sportTeam)
+                    @if ($first==0)
+                        <br>
+                          <h5><b>Mit den Mannschaften:</b></h5>
+                       <ul>
+                        @php
+                         $first=1;
+                        @endphp
+                    @endif
+                     <li>
+                    {{ $sportTeam->abteilung }}
+                     </li>
+                  @endforeach
+                   @if ($first==1)
+                      </ul>
+                   @endif
+                  @if ($abgeschnitten==1 | $first==1)
+                    <div class="read-more">
+                      <a href="Abteilung/detail/{{ str_replace(' ', '_', $abteilung->abteilung) }}"><i class="icofont-arrow-right"></i></a>
+                    </div>
+                  @endif
+               </p>
+                <?php
+              }
+                ?>
+              </div>
+              <?php
+               if ($i==2)
+               {
+                $i=0;
+                ?>
+                </div>
+               <?php
+               }
+             }
             ?>
-          </div>
-          <?php
-      if ($i==2)
-      {
-        $i=0;
-        ?>
-        </div>
-      <?php
-      }
-        }
-        ?>
-      </div><!-- End .content-->
-    </div>
-  </div>
-  </div>
-</section><!-- End About Section -->
+             </div><!-- End .content-->
+            </div>
+           </div>
+          @endif
+      </section><!-- End About Section -->

@@ -3,18 +3,17 @@
  <section id="services" class="services">
     <div class="container">
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
-            <h2>Die neusten Meldungen</h2>
+            <h2>Termine</h2>
             @php
                 //ToDo: Text bearbeiten
 //             //<p>Text ?</p>
             @endphp
         </div>
         <div class="row">
-            @foreach($eventsFuture as $eventFuture)
+              @foreach($eventsFuture as $eventFuture)
                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                     <div class="icon-box" data-aos="fade-up">
                         <div class="icon"><i class="bx bxl-dribbble"></i></div>
-
                         <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
                         @if(isset($eventFuture->eventGroupName->termingruppe))
                           <p class="description">{{$eventFuture->eventGroupName->termingruppe}}</p>
@@ -23,7 +22,8 @@
                           <p>am {{ date("d.m.Y", strtotime($eventFuture->datumvon)) }}</p>
                         @else
                           <p>von {{ date("d.m.Y", strtotime($eventFuture->datumvon)) }}<br>
-                             bis {{ date("d.m.Y", strtotime($eventFuture->datumbis)) }}</p>
+                             bis {{ date("d.m.Y", strtotime($eventFuture->datumbis)) }}
+                          </p>
                         @endif
                         @if($eventFuture->datumbisa <= Illuminate\Support\Carbon::now() && isset($eventFuture->datumbisa))
                             <p>
@@ -64,9 +64,15 @@
                           $textlaenge=300;
                           textmax($ausgabetext,$textlaenge,$abgeschnitten);
                         @endphp
-                        <p class="description">{{$ausgabetext}}</p>
+                        <p class="description">
+                            {!! $ausgabetext !!}
+                        </p>
                         @if ($abgeschnitten==1)
-                          <a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}" class="about-btn">mehr<i class="bx bx-chevron-right"></i></a>
+                           <div class="read-more">
+                             <a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}" class="about-btn">
+                                 <i class="bx bx-chevron-right"></i>
+                             </a>
+                           </div>
                         @endif
                     </div>
                 </div>

@@ -11,7 +11,7 @@ class NewBotmanQuestionController extends Controller
     public function aktiv($newBotmanQuestionId)
     {
         newBotmanQuestion::find($newBotmanQuestionId)->update([
-            'visible'      => '0',
+            'visible'      => '1',
             'updated_at'   => Carbon::now()
         ]);
         return Redirect()->back()->with('success' , 'Frage wurde sichtbar geschaltet.');
@@ -20,7 +20,7 @@ class NewBotmanQuestionController extends Controller
     public function inaktiv($newBotmanQuestionId)
     {
         newBotmanQuestion::find($newBotmanQuestionId)->update([
-            'visible'      => '1',
+            'visible'      => '0',
             'updated_at'   => Carbon::now()
         ]);
         return Redirect()->back()->with('success' , 'Frage wurde unsichtbar geschaltet.');

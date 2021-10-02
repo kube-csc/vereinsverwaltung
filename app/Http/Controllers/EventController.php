@@ -20,7 +20,7 @@ class EventController extends Controller
     {
         $events = event::where([
             ['verwendung' , '0'],
-            ['datumbis' ,'>=', Carbon::now()]
+            ['datumbis' ,'>=', Carbon::now()->toDateString()]
           ])
             ->orderby('datumbis')
             ->paginate(5);
@@ -34,7 +34,7 @@ class EventController extends Controller
     {
         $events = event::where([
              ['verwendung' , '0'],
-             ['datumbis' ,'<=', Carbon::now()]
+             ['datumbis' ,'<=', Carbon::now()->toDateString()]
            ])
              ->orderby('datumbis')
              ->paginate(5);

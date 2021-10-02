@@ -30,13 +30,13 @@ class HomeController extends Controller
           ->get();
       $abteilungsCount     = $abteilungs->count();
 
-      $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now())
+      $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now()->toDateString())
           ->where('verwendung' , 0)
           ->orderby('datumvon')
           ->limit(4)
           ->get();
 
-      $eventsPast         = Event::where('datumvon' , '<=' , Carbon::now())
+      $eventsPast         = Event::where('datumvon' , '<=' , Carbon::now()->toDateString())
           ->where('nachtermin' , '!=' , '')
           ->where('verwendung' , 0)
           ->orderby('datumvon' , 'DESC')
@@ -80,7 +80,7 @@ class HomeController extends Controller
         }
         $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
 
-        $eventsFuture   = Event::where('datumbis' , '>=' , Carbon::now())
+        $eventsFuture   = Event::where('datumbis' , '>=' , Carbon::now()->toDateString())
             ->where('verwendung' , 0)
             ->where(function ($query) use ($sportSectionsId) {
                 $query->where('sportSection_id' , $sportSectionsId)
@@ -90,7 +90,7 @@ class HomeController extends Controller
             ->limit(4)
             ->get();
 
-        $eventsPast    = Event::where('datumvon' , '<=' , Carbon::now())
+        $eventsPast    = Event::where('datumvon' , '<=' , Carbon::now()->toDateString())
             ->where('nachtermin' , '!=' , '')
             ->where('verwendung' , 0)
             ->where(function ($query) use ($sportSectionsId) {

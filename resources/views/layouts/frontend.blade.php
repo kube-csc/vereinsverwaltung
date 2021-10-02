@@ -149,7 +149,7 @@
                   // TODO: Active im Menu funktioniert noch nicht
               @endphp
 
-              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/#services">Event</a></li>
+              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/#services">Termine</a></li>
               <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
 
               <!-- <li><a href="#portfolio">Portfolio</a></li> -->

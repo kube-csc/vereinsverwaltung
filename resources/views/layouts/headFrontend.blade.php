@@ -238,12 +238,21 @@
             <li><a href="https://www.facebook.com/PinkDragons45711" class="facebook" target="_blank"><i class="bx bxl-facebook"></i>Pink Dragons</a></li>
           </ul>
           <br>
-          <h4>Weitere Seiten</h4>
+          <h4>Weitere Webseiten</h4>
           <ul>
             <li><a href="http://www.kel-datteln.de/index.php?sprung=regatta/eventausgabe.php&amp;menu=regatta&amp;terminsammler=1" target="_blank" class="bx bx-link-external">Rennsportregatta</a></li>
             <li><a href="http://www.day-of-dragons.de" target="_blank" class="bx bx-link-external">Day of Dragons</a></li>
             <li><a href="http://sup.kel-datteln.de"    target="_blank" class="bx bx-link-external">SUP Kurse</a></li>
             <li><a href="http://oc.kel-datteln.de"     target="_blank" class="bx bx-link-external">Outrigger für Vereinsmitglieder Buchen</a></li>
+          </ul>
+          <h4>Abteilungen Webseiten der KEL</h4>
+          <ul>
+              <li><a href="http://dragons.kel-datteln.de" target="_blank" class="bx bx-link-external">Drachenboot</a></li>
+              <li><a href="http://jugend.kel-datteln.de"  target="_blank" class="bx bx-link-external">Kanujugend</a></li>
+              <li><a href="http://ocean.kel-datteln.de"   target="_blank" class="bx bx-link-external">Ocean</a></li>
+              <li><a href="http://pink.kel-datteln.de"    target="_blank" class="bx bx-link-external">Pink Dragons</a></li>
+              <li><a href="http://renn.kel-datteln.de"    target="_blank" class="bx bx-link-external">Kanurennsport</a></li>
+              <li><a href="http://wander.kel-datteln.de"  target="_blank" class="bx bx-link-external">Kanuwandern</a></li>
           </ul>
         </div>
 

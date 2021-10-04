@@ -22,7 +22,7 @@ class EventController extends Controller
             ['verwendung' , '0'],
             ['datumbis' ,'>=', Carbon::now()->toDateString()]
           ])
-            ->orderby('datumbis')
+            ->orderby('datumbis' , 'desc')
             ->paginate(5);
 
         return view('admin.event.index')->with([
@@ -36,7 +36,7 @@ class EventController extends Controller
              ['verwendung' , '0'],
              ['datumbis' ,'<=', Carbon::now()->toDateString()]
            ])
-             ->orderby('datumbis')
+             ->orderby('datumbis' , 'desc')
              ->paginate(5);
         return view('admin.event.index')->with([
             'events' => $events

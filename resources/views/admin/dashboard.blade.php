@@ -27,11 +27,10 @@
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-                                                        <a  href="{{ url('/Adminmenu') }}">Zum Internen Bereich</a>
+                                                        Zum Internen Bereich
                                                     </p>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -39,12 +38,20 @@
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
                                 <div class="flex items-center">
-                                      <div class="ml-4 text-lg leading-7 font-semibold"> </div>
+                                      <div class="ml-4 text-lg leading-7 font-semibold">Homepage</div>
                                 </div>
 
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/')">
+                                            <div class="justify-between my-2">
+                                                <div class="flex">
+                                                    <p class="font-bold text-lg">
+                                                        Homepage
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

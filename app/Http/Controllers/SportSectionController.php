@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-//use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Intervention\Image\Facades\Image;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\SportSection;
 use App\Models\Event;
@@ -111,9 +110,11 @@ class SportSectionController extends Controller
       $sportSection= new sportSection(
         [
           'abteilung'        => $request->abteilung,
+          'nachtermin'       => $request->nachtermin,
           'event_id'         => NULL,
-          'sportSection_id' => 0,
+          'sportSection_id'  => 0,
           'status'           => 2,
+          'bearbeiter_id'    => Auth::user()->id,
           'user_id'          => Auth::user()->id,
           'updated_at'       => Carbon::now(),
           'created_at'       => Carbon::now()
@@ -150,14 +151,22 @@ class SportSectionController extends Controller
       $sportSection = SportSection::find($sportSection_id);
 
       if ($sportSection->event_id>0) {
-       //$event = DB::table('events')->find($sportSection->event_id);
        $event = Event::find($sportSection->event_id);
-       $ausgabetext=$event->beschreibung ;
+       $ausgabetext=$event->beschreibung;
+       $nachtermin=$event->nachtermin;
       }
       else {
         $ausgabetext='';
       }
-      return view('admin.sportSection.edit',compact('sportSection' , 'ausgabetext'));
+     // return view('admin.sportSection.edit',compact('sportSection' , 'ausgabetext'));
+
+        return view('admin.sportSection.edit')->with(
+            [
+                'sportSection' =>  $sportSection,
+                'ausgabetext'  =>  $ausgabetext,
+                'nachtermin'   =>  $nachtermin,
+            ]
+        );
     }
 
     /**
@@ -183,6 +192,7 @@ class SportSectionController extends Controller
         'abteilung'         => $request->abteilung,
         'farbe'             => $request->farbe,
         'domain'            => $request->domain,
+        'bearbeiter_id'     => Auth::user()->id,
         'updated_at'        => Carbon::now()
       ]);
 
@@ -200,11 +210,12 @@ class SportSectionController extends Controller
         }
       }
 
-      if ($request->beschreibung<>'') {
+      if ($request->beschreibung<>'' | $request->nachtermin<>'') {
         $sportSection = SportSection::find($SportTeam_id);
         if ($sportSection->event_id>0){
           Event::find($sportSection->event_id)->update([
             'beschreibung'      => $request->beschreibung,
+            'nachtermin'        => $request->nachtermin,
             'bearbeiter_id'     => Auth::user()->id,
             'updated_at'        => Carbon::now()
           ]);
@@ -212,6 +223,7 @@ class SportSectionController extends Controller
         else{
           $createdEvent= new Event([
               'beschreibung'     => $request->beschreibung,
+              'nachtermin'       => $request->nachtermin,
               'SportTeam_id'     => $request->SportTeam_id,
               'verwendung'       => 4,                       //4 = Abteilungsbeschreibung
               'autor_id'         => Auth::user()->id,

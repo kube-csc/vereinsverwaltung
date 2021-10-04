@@ -8,6 +8,7 @@ use App\Http\Controllers\SportSectionController;
 use App\Http\Controllers\EventGroupController;
 use App\Http\Controllers\SportTeamController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
@@ -99,6 +100,19 @@ Route::get('/newBotmanQuestion/alle',                            [NewBotmanQuest
 Route::get('/newBotmanQuestion/aktiv/{newBotmanQuestionId}',     [NewBotmanQuestionController::class, 'aktiv'])     ->name('newBotmanQuestion.aktiv');
 Route::get('/newBotmanQuestion/inaktiv/{newBotmanQuestionId}',   [NewBotmanQuestionController::class, 'inaktiv'])   ->name('newBotmanQuestion.inaktiv');
 Route::get('/newBotmanQuestion/softDelete/{newBotmanQuestionId}',[NewBotmanQuestionController::class, 'softDelete']);
+
+//Route::resource('board.', 'BoardController');
+Route::get('/Team/alle',                            [BoardController::class, 'index'])     ->name('board.index');
+Route::get('/Team/neu',                             [BoardController::class, 'create'])    ->name('board.create');
+Route::post('/Team/speichern',                      [BoardController::class, 'store'])     ->name('board.store');
+Route::get('/Team/aktiv/{board_id}',                [BoardController::class, 'aktiv'])     ->name('board.aktiv');
+Route::get('/Team/inaktiv/{board_id}',              [BoardController::class, 'inaktiv'])   ->name('board.inaktiv');
+Route::get('/Team/maxtop/{board_id}',               [BoardController::class, 'maxtop'])    ->name('board.maxtop');
+Route::get('/Team/top/{board_id}',                  [BoardController::class, 'top'])       ->name('board.top');
+Route::get('/Team/down/{board_id}',                 [BoardController::class, 'down'])      ->name('board.down');
+Route::get('/Team/maxdown/{board_id}',              [BoardController::class, 'maxdown'])   ->name('board.maxdown');
+Route::get('/Team/edit/{board_id}',                 [BoardController::class, 'edit'])      ->name('board.edit');
+Route::post('/Team/update/{board_id}',              [BoardController::class, 'update'])    ->name('board.update');
 
 Route::get('/Anfahrt', function () {
     return view('anfahrt');

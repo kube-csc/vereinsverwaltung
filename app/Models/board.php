@@ -11,6 +11,8 @@ class board extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $guarded = [];
+
     public function boardUserName()
     {
         return $this->belongsTo(User::class, 'user_id');

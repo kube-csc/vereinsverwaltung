@@ -33,7 +33,7 @@ class SportSectionController extends Controller
             'status'      => '2',
             'updated_at'  => Carbon::now()
           ]);
-     return Redirect()->back()->with('success' , 'Abteilung wurde sichtbar geschaltet.');
+     return Redirect()->back()->with('success' , 'Die Abteilung wurde sichtbar geschaltet.');
     }
 
     public function inaktiv($sportSection_id)
@@ -42,7 +42,7 @@ class SportSectionController extends Controller
             'status'      => '0',
             'updated_at'  => Carbon::now()
           ]);
-     return Redirect()->back()->with('success' , 'Abteilung wurde unsichtbar geschaltet.');
+     return Redirect()->back()->with('success' , 'Die Abteilung wurde unsichtbar geschaltet.');
     }
 
     public function start($sportSection_id)
@@ -55,7 +55,7 @@ class SportSectionController extends Controller
             'status'      => '1',
             'updated_at'  => Carbon::now()
           ]);
-     return Redirect()->back()->with('success' , 'Abteilung wurde Startseite festgelegt.');
+     return Redirect()->back()->with('success' , 'Die Abteilung wurde Startseite festgelegt.');
     }
 
     public function sportSectionSportTeam($sportSection_id)
@@ -157,16 +157,16 @@ class SportSectionController extends Controller
       }
       else {
         $ausgabetext='';
+        $nachtermin='';
       }
-     // return view('admin.sportSection.edit',compact('sportSection' , 'ausgabetext'));
 
-        return view('admin.sportSection.edit')->with(
-            [
-                'sportSection' =>  $sportSection,
-                'ausgabetext'  =>  $ausgabetext,
-                'nachtermin'   =>  $nachtermin,
-            ]
-        );
+      return view('admin.sportSection.edit')->with(
+           [
+               'sportSection' =>  $sportSection,
+               'ausgabetext'  =>  $ausgabetext,
+               'nachtermin'   =>  $nachtermin,
+           ]
+       );
     }
 
     /**

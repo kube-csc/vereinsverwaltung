@@ -35,11 +35,16 @@
                                 <?php
                                 }
                                 $abgeschnitten=0;
+                                $textlaengeabteilung=300;
                                 if ($abteilung->event_id>0)
                                 {
-                                    $ausgabetext=$abteilung->event->beschreibung;
-                                    $sollang=500;
-                                    textmax($ausgabetext,$sollang,$abgeschnitten);
+                                    if($abteilung->event->nachtermin == ''){
+                                        $ausgabetext=$abteilung->event->beschreibung;
+                                    }
+                                    else{
+                                        $ausgabetext=$abteilung->event->nachtermin;
+                                    }
+                                    textmax($ausgabetext,$textlaengeabteilung,$abgeschnitten);
                                 }
                                 ?>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">

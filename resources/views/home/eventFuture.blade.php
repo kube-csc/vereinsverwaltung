@@ -70,7 +70,7 @@
                         @if ($abgeschnitten==1)
                            <div class="read-more">
                              <a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}" class="about-btn">
-                                 <i class="bx bx-chevron-right"></i>
+                                 mehr<i class="bx bx-chevron-right"></i>
                              </a>
                            </div>
                         @endif

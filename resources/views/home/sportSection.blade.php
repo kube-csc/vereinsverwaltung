@@ -26,13 +26,13 @@ foreach ( $abteilungHomes as $abteilungHome)
           <div class="row no-gutters">
             <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
               <div class="content">
-                <!-- ======= Facebook======= -->
-                <center>
-                 <div class="fb-like" data-href="http://www.{{ str_replace('_', ' ', env('Verein_Domain')) }}"
-                     data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial">
-                 </div>
-                </center>
-
+              @if(env('Verein_Sozialmediaanzeigen')=='ja')
+                  <!-- ======= Facebook======= -->
+                  <!-- ToDo: Facebook funktioniert nicht -->
+                      <center>
+                          <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('Verein_Domain')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                      </center>
+                @endif
                 <h3>{{ $abteilungHome->abteilung }}</h3>
                 {!! $ausgabetext !!}
                 @if ($abgeschnitten==1)

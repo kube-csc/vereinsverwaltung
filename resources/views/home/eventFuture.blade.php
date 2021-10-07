@@ -4,14 +4,27 @@
     <div class="container">
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
             <h2>Termine</h2>
+            @if($eventsFuture->count()>4)
+               <div class="read-more">
+                 <a href="">alle Termine<i class="icofont-arrow-right"></i></a>
+               </div>
+            @endif
             @php
                 //ToDo: Text bearbeiten
 //             //<p>Text ?</p>
             @endphp
         </div>
         <div class="row">
-              @foreach($eventsFuture as $eventFuture)
-                <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
+             @php
+             $countMax=$eventsFuture->count();
+             $count=5;
+             @endphp
+             @foreach($eventsFuture as $eventFuture)
+                 @php
+                  --$count;
+                 @endphp
+               @if( $count != 0 && $countMax != 6)
+                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                     <div class="icon-box" data-aos="fade-up">
                         <div class="icon"><i class="bx bxl-dribbble"></i></div>
                         <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
@@ -76,6 +89,7 @@
                         @endif
                     </div>
                 </div>
+                @endif
             @endforeach
         </div>
     </div>

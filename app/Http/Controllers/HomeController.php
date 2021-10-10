@@ -33,14 +33,14 @@ class HomeController extends Controller
       $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now()->toDateString())
           ->where('verwendung' , 0)
           ->orderby('datumvon')
-          ->limit(4)
+          ->limit(5)
           ->get();
 
       $eventsPast         = Event::where('datumvon' , '<=' , Carbon::now()->toDateString())
           ->where('nachtermin' , '!=' , '')
           ->where('verwendung' , 0)
           ->orderby('datumvon' , 'DESC')
-          ->limit(4)
+          ->limit(5)
           ->get();
 
       $boards=board::where('sportSection_id' , $sportSection_id)
@@ -132,6 +132,16 @@ class HomeController extends Controller
         $instructions = instruction::where('ueberschrift' , $seoch)->get();
 
         return view('instruction.show' , compact('instructions'));
+    }
+
+    public function eventFutureAll()
+    {
+        return view('home.eventFutureAll');
+    }
+
+    public function eventPastAll()
+    {
+        return view('home.eventPastAll');
     }
 
 }

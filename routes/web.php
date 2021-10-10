@@ -27,6 +27,8 @@ Route::get('/',                              [HomeController::class, 'index']);
 Route::get('/Abteilung/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
 Route::get('/Event/detail/{event}',          [HomeController::class, 'eventShow']);
 Route::get('/Information/{event}',           [HomeController::class, 'instructionShow']);
+Route::get('/EventFuture',                   [HomeController::class, 'eventFutureAll']);
+Route::get('/EventPast',                     [HomeController::class, 'eventPastAll']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');

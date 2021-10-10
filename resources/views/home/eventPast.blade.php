@@ -7,7 +7,7 @@
             <h2>Die neusten Berichte, Fotos und Videos</h2>
             @if($eventsPast->count()>4)
                 <div class="read-more">
-                    <a href="">alle Termine<i class="icofont-arrow-right"></i></a>
+                    <a href="{{ url('EventPast') }}">alle Termine<i class="icofont-arrow-right"></i></a>
                 </div>
             @endif
             @php

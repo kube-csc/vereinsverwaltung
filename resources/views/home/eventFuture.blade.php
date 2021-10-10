@@ -6,7 +6,7 @@
             <h2>Termine</h2>
             @if($eventsFuture->count()>4)
                <div class="read-more">
-                 <a href="">alle Termine<i class="icofont-arrow-right"></i></a>
+                 <a href="{{ url('EventFuture') }}">alle Termine<i class="icofont-arrow-right"></i></a>
                </div>
             @endif
             @php

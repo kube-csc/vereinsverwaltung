@@ -34,7 +34,7 @@
   <?php /* <link href="{{ asset('asset/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet"> */ ?>
   <link href="{{ asset('asset/vendor/venobox/venobox.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/owl.carousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('asset/vendor/aos/aos.css" rel="stylesheet') }}">
+  <link href="{{ asset('asset/vendor/aos/aos.css') }}" rel="stylesheet">
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('asset/css/style.css') }}" rel="stylesheet">
@@ -47,8 +47,6 @@
 
   <?php // TODO: boxicons über webpack einbinden ?>
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
-
-
 
   @include('layouts.header')
 
@@ -93,7 +91,6 @@
           ->orderby('abteilung')
           ->get();
       @endphp
-
 
       <nav class="nav-menu d-none d-lg-block">
 
@@ -151,7 +148,7 @@
                   </ul>   <!-- Abteilung -->
               </li>    <!-- Abteilung Mannschaft   -->
               @php
-                  // TODO: Active im Menu funktioniert noch nicht
+                  // ToDo: Active im Menu funktioniert noch nicht
               @endphp
 
               <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/#services">Termine</a></li>

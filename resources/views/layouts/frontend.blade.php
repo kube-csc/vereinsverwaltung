@@ -34,7 +34,7 @@
   <?php /* <link href="{{ asset('asset/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet"> */ ?>
   <link href="{{ asset('asset/vendor/venobox/venobox.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/owl.carousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('asset/vendor/aos/aos.css" rel="stylesheet') }}">
+  <link href="{{ asset('asset/vendor/aos/aos.css') }}" rel="stylesheet">
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('asset/css/style.css') }}" rel="stylesheet">

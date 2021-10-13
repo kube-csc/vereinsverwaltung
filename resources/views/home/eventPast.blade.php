@@ -5,6 +5,11 @@
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
             <h2>Die neusten Berichte, Fotos und Videos</h2>
+            @if($eventsPast->count()>4)
+                <div class="read-more">
+                    <a href="{{ url('EventPast') }}">alle Termine<i class="icofont-arrow-right"></i></a>
+                </div>
+            @endif
             @php
                 //ToDo: Text eingeben Vergangende Termine
                //<p>Text</p>
@@ -12,9 +17,15 @@
            </div>
 
         <div class="row">
-
+            @php
+                $countMax=$eventsPast->count();
+                $count=5;
+            @endphp
             @foreach($eventsPast as $eventPast)
-
+               @php
+                 --$count;
+               @endphp
+               @if( $count != 0 && $countMax != 6)
                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                     <div class="icon-box" data-aos="fade-up">
                         <div class="icon"><i class="bx bxl-dribbble"></i></div>
@@ -48,7 +59,7 @@
 
                     </div>
                 </div>
-
+               @endif
             @endforeach
 
         </div>

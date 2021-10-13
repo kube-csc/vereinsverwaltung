@@ -7,6 +7,23 @@
                 //ToDo: Text eingeben Vergangende Termine
                //<p>Text</p>
             @endphp
+            <label>Filter: </label>
+            <input wire:model.debounce.1000ms="search" type="text">
+            <label>Monat: </label>
+            <input wire:model.debounce.2000ms="month" type="number">
+            <label>Jahr: </label>
+            <input wire:model.debounce.1000ms="year" type="number">
+            <p>
+                @if($search != "")
+                    Filter: {{ $search }}
+                @endif
+                @if($month != "")
+                    Monat: {{ $month }}
+                @endif
+                @if($year != "")
+                    Jahr: {{ $year }}
+                @endif
+            </p>
         </div>
 
         <div class="row">
@@ -56,7 +73,7 @@
             @endforeach
 
         </div>
-
+        <br>
         {{ $eventsPast->links('livewire.pagination') }}
 
     </div>

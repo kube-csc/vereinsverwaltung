@@ -28,6 +28,9 @@
                     <div class="icon-box" data-aos="fade-up">
                         <div class="icon"><i class="bx bxl-dribbble"></i></div>
                         <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
+                        @if(isset($eventFuture->sportSectionName->abteilung))
+                        <p class="description">{{ $eventFuture->sportSectionName->abteilung }}</p>
+                        @endif
                         @if(isset($eventFuture->eventGroupName->termingruppe))
                           <p class="description">{{$eventFuture->eventGroupName->termingruppe}}</p>
                         @endif

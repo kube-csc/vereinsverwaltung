@@ -87,7 +87,7 @@ class HomeController extends Controller
                       ->orwhere('sportSection_id' , NULL); // Events für allen Abteilungen/Mannschaften
                 })
             ->orderby('datumvon')
-            ->limit(4)
+            ->limit(5)
             ->get();
 
         $eventsPast    = Event::where('datumvon' , '<=' , Carbon::now()->toDateString())
@@ -95,10 +95,10 @@ class HomeController extends Controller
             ->where('verwendung' , 0)
             ->where(function ($query) use ($sportSectionsId) {
                 $query->where('sportSection_id' , $sportSectionsId)
-                    ->orwhere('sportSection_id' , NULL);  // Events für allen Abteilungen/Mannschaften
+                      ->orwhere('sportSection_id' , NULL);  // Events für allen Abteilungen/Mannschaften
                 })
             ->orderby('datumvon' , 'DESC')
-            ->limit(4)
+            ->limit(5)
             ->get();
 
         $boards=board::where('sportSection_id' , $sportSectionsId)

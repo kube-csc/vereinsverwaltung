@@ -44,7 +44,7 @@ class HomeController extends Controller
           ->get();
 
       $boards=board::where('sportSection_id' , $sportSection_id)
-          ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
+          ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
           ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
           ->get();
 
@@ -102,7 +102,7 @@ class HomeController extends Controller
             ->get();
 
         $boards=board::where('sportSection_id' , $sportSectionsId)
-            ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
+            ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
             ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
             ->get();
 

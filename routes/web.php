@@ -113,6 +113,7 @@ Route::get('/Team/down/{board_id}',                 [BoardController::class, 'do
 Route::get('/Team/maxdown/{board_id}',              [BoardController::class, 'maxdown'])   ->name('board.maxdown');
 Route::get('/Team/edit/{board_id}',                 [BoardController::class, 'edit'])      ->name('board.edit');
 Route::post('/Team/update/{board_id}',              [BoardController::class, 'update'])    ->name('board.update');
+Route::get('/Team/Abteilung/{board_id}',            [BoardController::class, 'boardBoardUser']);
 
 Route::get('/Anfahrt', function () {
     return view('anfahrt');

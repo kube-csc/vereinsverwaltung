@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\board;
+use App\Models\boardUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,11 @@ class BoardController extends Controller
 {
     public function __construct(){
         $this->middleware('auth');
+    }
+
+    public function boardSelected($board_id)
+    {
+        $this->active = $board_id;
     }
 
     public function aktiv($boardId)
@@ -52,7 +58,6 @@ class BoardController extends Controller
             ]);
             $positionNew=$positionNew+10;
         }
-
         return Redirect()->back()->with('success' , 'Posten wurde zur Top Position verschoben.');
     }
 
@@ -76,7 +81,6 @@ class BoardController extends Controller
             ]);
             $positionNew=$positionNew+10;
         }
-
         return Redirect()->back()->with('success' , 'Der Posten wurde eine Position nach oben verschoben.');
     }
 
@@ -100,7 +104,6 @@ class BoardController extends Controller
             ]);
             $positionNew=$positionNew+10;
         }
-
         return Redirect()->back()->with('success' , 'Posten wurde eine Position nach unten verschoben.');
     }
 
@@ -122,11 +125,9 @@ class BoardController extends Controller
         foreach ($boards as $board){
             board::find($board->id)->update([
                 'position'      => $positionNew,
-
             ]);
             $positionNew=$positionNew+10;
         }
-
         return Redirect()->back()->with('success' , 'Posten wurde zur letzten Position verschoben.');
     }
 
@@ -135,6 +136,20 @@ class BoardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function boardBoardUser($board_id)
+    {
+        $boards = board::orderby('position')->paginate(5);
+        $boardName= board::find($board_id);
+        $boardUsers = boardUser::where('board_id' , $board_id)->orderby('position')->paginate(5);
+        return view('admin.board.boardUsersIndex')->with(
+            [
+                'boards'         => $boards,
+                'boardUsers'     => $boardUsers,
+                'boardIdSelecte' => $board_id,
+                'boardUserName'  => $boardName->postenmaenlich." / ".$boardName->postenweiblich,
+            ]);
+    }
+
     public function index()
     {
         $boards = board::orderby('position')->paginate(5);

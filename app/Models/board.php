@@ -13,14 +13,12 @@ class board extends Model
 
     protected $guarded = [];
 
-    public function boardUserName()
+    public function boardCradeName()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     public function boardUsers(){
         return $this->belongsToMany('App\Models\User');
-
-        //return $this->belongsToMany('App\Hobby');
     }
 }

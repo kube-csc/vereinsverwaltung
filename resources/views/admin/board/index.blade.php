@@ -55,7 +55,7 @@
                                   @php
                                     --$boardmax;
                                   @endphp
-                              <div class="rounded border shadow p-3 my-2 {{$board->id == $board->id ? 'bg-blue-200' : ''}}" onclick="">
+                              <div class="rounded border shadow p-3 my-2 {{$board->id == $board->id  ? 'bg-blue-200' : ''}}" onclick="window.location.replace('/Team/Abteilung/{{ $board->id }}')">
                                   <div class="justify-between my-2">
                                    <div>
                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/edit/'.$board->id) }}">
@@ -98,7 +98,6 @@
                                       <p class="font-bold text-lg">
                                           {{ $board->postenmaenlich }}<br>
                                           {{ $board->postenweiblich }}
-                                      </p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">
                                           {{ $board->updated_at->diffForHumans() }}
                                       </p>

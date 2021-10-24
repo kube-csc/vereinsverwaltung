@@ -9,6 +9,7 @@ use App\Http\Controllers\EventGroupController;
 use App\Http\Controllers\SportTeamController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\BoardUserController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
@@ -113,7 +114,17 @@ Route::get('/Team/down/{board_id}',                 [BoardController::class, 'do
 Route::get('/Team/maxdown/{board_id}',              [BoardController::class, 'maxdown'])   ->name('board.maxdown');
 Route::get('/Team/edit/{board_id}',                 [BoardController::class, 'edit'])      ->name('board.edit');
 Route::post('/Team/update/{board_id}',              [BoardController::class, 'update'])    ->name('board.update');
-Route::get('/Team/Abteilung/{board_id}',            [BoardController::class, 'boardBoardUser']);
+//Route::get('/Team/Abteilung/{board_id}',              [BoardController::class, 'boardBoardUser']);
+
+//Route::resource('boardUser.', 'BoardUserController');
+Route::get('/Posten/{board_id}',                     [BoardUserController::class, 'index']);
+Route::get('/Posten/neu/{board_id}',                 [BoardUserController::class, 'create'])    ->name('boarduser.create');
+Route::get('/Posten/aktiv/{board_id}',               [BoardUserController::class, 'aktiv'])     ->name('board.aktiv');
+Route::get('/Posten/inaktiv/{board_id}',             [BoardUserController::class, 'inaktiv'])   ->name('board.inaktiv');
+Route::get('/Posten/maxtop/{board_id}',              [BoardUserController::class, 'maxtop'])    ->name('board.maxtop');
+Route::get('/Posten/top/{board_id}',                 [BoardUserController::class, 'top'])       ->name('board.top');
+Route::get('/Posten/down/{board_id}',                [BoardUserController::class, 'down'])      ->name('board.down');
+Route::get('/Posten/maxdown/{board_id}',             [BoardUserController::class, 'maxdown'])   ->name('board.maxdown');
 
 Route::get('/Anfahrt', function () {
     return view('anfahrt');

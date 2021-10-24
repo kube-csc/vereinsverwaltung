@@ -16,18 +16,20 @@ class CreateBoardUsersTable extends Migration
         Schema::create('board_users', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('board_id');
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('boardUser_id')->nullable();
             $table->integer('position');
-            $table->integer('nummer');
-            $table->string('vorstandsemail')->nullable();
+            $table->integer('nummer')->nullable();;
+            $table->string('postenemail')->nullable();
+            $table->string('postenbild')->nullable();
+            $table->boolean('visible')->default(true);  // true = 1 = sichtbar
+            $table->unsignedBigInteger('bearbeiter_id');
             $table->timestamps();
-            $table->string('vorstandsbild')->nullable();
 
-            $table->foreign('user_id')
+            $table->foreign('boardUser_id')
               ->references('id')->on('users');
 
             $table->foreign('board_id')
-                ->references('id')->on('boards');
+              ->references('id')->on('boards');
         });
     }
 
@@ -39,7 +41,7 @@ class CreateBoardUsersTable extends Migration
     public function down()
     {
         Schema::table('board_users', function (Blueprint $table) {
-            $table->dropForeign('user_id');
+            $table->dropForeign('boardUser_id');
             $table->dropForeign('board_id');
         });
 

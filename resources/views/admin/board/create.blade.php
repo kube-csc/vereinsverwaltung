@@ -49,13 +49,13 @@
                                     <label for="name">Postenmänlich:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('postenmaenlich') ? 'bg-red-300' : '' }}"
                                     id="postenmaenlich" placeholder="Postenmänlich" name="postenmaenlich" value="{{ old('postenmaenlich') }}">
-                                    <small class="form-text text-danger">{!! $errors->first('postenmaenlich') !!}</small>
+                                    <small class="form-text text-danger">{{ $errors->first('postenmaenlich') }}</small>
                                 </div>
                                 <div>
                                   <label for="name">Postenweiblich:</label>
                                   <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('postenweiblich') ? 'bg-red-300' : '' }}"
                                          id="postenweiblich" placeholder="Postenweiblich" name="postenweiblich" value="{{ old('postenweiblich') }}">
-                                  <small class="form-text text-danger">{!! $errors->first('postenweiblich') !!}</small>
+                                  <small class="form-text text-danger">{{ $errors->first('postenweiblich') }}</small>
                                 </div>
                                 <div class="py-2">
                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neuen Posten anlegen</button>

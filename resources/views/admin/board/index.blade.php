@@ -55,7 +55,7 @@
                                   @php
                                     --$boardmax;
                                   @endphp
-                              <div class="rounded border shadow p-3 my-2 {{$board->id == $board->id  ? 'bg-blue-200' : ''}}" onclick="window.location.replace('/Team/Abteilung/{{ $board->id }}')">
+                              <div class="rounded border shadow p-3 my-2 {{$board->id == $board->id  ? 'bg-blue-200' : ''}}" onclick="window.location.replace('/Posten/{{ $board->id }}')">
                                   <div class="justify-between my-2">
                                    <div>
                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/edit/'.$board->id) }}">
@@ -92,6 +92,9 @@
                                                <box-icon name='chevrons-down' ></box-icon>
                                            </a>
                                        @endif
+                                       <a href="{{ url('Posten/neu/'.$board->id) }}">
+                                           <box-icon type='solid' name='user-plus'></box-icon>
+                                       </a>
                                    </div>
 
                                     <div class="flex">

@@ -141,7 +141,7 @@ class BoardController extends Controller
         $boards = board::orderby('position')->paginate(5);
         $boardName= board::find($board_id);
         $boardUsers = boardUser::where('board_id' , $board_id)->orderby('position')->paginate(5);
-        return view('admin.board.boardUsersIndex')->with(
+        return view('admin.boardUser.index')->with(
             [
                 'boards'         => $boards,
                 'boardUsers'     => $boardUsers,
@@ -166,7 +166,7 @@ class BoardController extends Controller
      */
     public function create()
     {
-        return view('admin.board.create');  //
+        return view('admin.board.create');
     }
 
     /**

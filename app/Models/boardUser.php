@@ -9,9 +9,11 @@ class boardUser extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function boardUserName()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'boardUser_id');
     }
 
     public function boardName(){

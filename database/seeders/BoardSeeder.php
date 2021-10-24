@@ -27,6 +27,7 @@ class BoardSeeder extends Seeder
                     'bearbeiter_id' => '1',
                     'postenmaenlich' => 'Vorsitzender',
                     'postenweiblich' => 'Vorsitzende',
+                    'abteilungsmail' => 'kel@kel-datteln.de',
                     'visible' => '1',
                     'created_at' => '2021-03-28 13:06:42',
                     'updated_at' => '2021-03-28 13:06:42'
@@ -39,6 +40,7 @@ class BoardSeeder extends Seeder
                     'bearbeiter_id' => '1',
                     'postenmaenlich' => 'Trainer',
                     'postenweiblich' => 'Trainerin',
+                    'abteilungsmail' => '',
                     'visible' => '1',
                     'created_at' => '2021-03-28 13:06:42',
                     'updated_at' => '2021-03-28 13:06:42'

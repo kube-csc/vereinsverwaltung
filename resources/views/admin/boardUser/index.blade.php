@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Team - Dashboard') }}
+            {{ __('Posten - Dashboard') }}
         </h2>
     </x-slot>
 
@@ -11,11 +11,11 @@
 
                 <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                     <div class="mt-8 text-2xl">
-                        Team
+                        Posten
                     </div>
 
                     <div class="mt-6 text-gray-500">
-                        In diesem Bereich werden das Team bearbeitet
+                        In diesem Bereich werden das Posten bearbeitet
                     </div>
 
                 </div>
@@ -55,7 +55,7 @@
                                         @php
                                             --$boardmax;
                                         @endphp
-                                        <div class="rounded border shadow p-3 my-2 {{$board->id == $boardIdSelecte ? 'bg-blue-300' : 'bg-blue-200'}}" onclick="window.location.replace('/Team/Abteilung/{{ $board->id }}')">
+                                        <div class="rounded border shadow p-3 my-2 {{$board->id == $boardIdSelecte ? 'bg-blue-300' : 'bg-blue-200'}}" onclick="window.location.replace('/Posten/{{ $board->id }}')">
                                             <div class="justify-between my-2">
                                                 <div>
                                                     <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/edit/'.$board->id) }}">
@@ -92,6 +92,9 @@
                                                             <box-icon name='chevrons-down' ></box-icon>
                                                         </a>
                                                     @endif
+                                                    <a href="{{ url('Posten/neu/'.$board->id) }}">
+                                                        <box-icon type='solid' name='user-plus'></box-icon>
+                                                    </a>
                                                 </div>
 
                                                 <div class="flex">
@@ -123,13 +126,76 @@
                                 <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Team {{ $boardUserName }}</div>
                             @endif
                         </div>
-
+                        <div class="my-4 flex">
+                            <a href="{{ url('Posten/neu/'.$boardIdSelecte) }}"><box-icon name='plus'></box-icon></a>
+                        </div>
+                        <div>
+                            @if (session()->has('successBoardUser'))
+                                <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
+                                    {!! session('successBoardUser') !!}
+                                </div>
+                            @endif
+                        </div>
+                        @php
+                            $boardUserMax=  $boardUsers->count();
+                        @endphp
                         @foreach ( $boardUsers as $boardUser)
+                            @php
+                                --$boardUserMax;
+                            @endphp
                             <div class="rounded border shadow p-3 my-2 bg-blue-200">
                                 <div class="justify-between my-2">
 
+                                    <div>
+                                        @php /*
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Posten/edit/'.$boardUser->id) }}">
+                                            <box-icon name='edit' type='solid'></box-icon>
+                                        </a>
+                                        */ @endphp
+                                        @if($boardUser['visible']==1)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Posten/inaktiv/'.$boardUser->id) }}">
+                                                <box-icon name='show'  type='solid'></box-icon>
+                                            </a>
+                                        @endif
+                                        @if($boardUser['visible']==0)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Posten/aktiv/'.$boardUser->id) }}">
+                                                <box-icon name='hide' type='solid'></box-icon>
+                                            </a>
+                                        @endif
+                                        @if ($boardUser['id']==0)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Posten/softDelete/'.$boardUser->id) }}">
+                                                <box-icon type='solid' name='x-square'></box-icon>
+                                            </a>
+                                        @endif
+                                        @if ($boardUser['position'] != 10)
+                                            <a href="{{ url('Posten/maxtop/'.$boardUser->id) }}">
+                                                <box-icon name='chevrons-up' ></box-icon>
+                                            </a>
+                                            <a href="{{ url('Posten/top/'.$boardUser->id) }}">
+                                                <box-icon name='chevron-up'></box-icon>
+                                            </a>
+                                        @endif
+                                        @if ($boardUserMax != 0)
+                                            <a href="{{ url('Posten/down/'.$boardUser->id) }}">
+                                                <box-icon name='chevron-down' ></box-icon>
+                                            </a>
+                                            <a href="{{ url('Posten/maxdown/'.$boardUser->id) }}">
+                                                <box-icon name='chevrons-down' ></box-icon>
+                                            </a>
+                                        @endif
+                                    </div>
+
                                     <div class="flex">
-                                        <p class="font-bold text-lg">{{ $boardUser->nummer }}) {{ $boardUser->boardUserName->nachname }} {{ $boardUser->boardUserName->vorname }}</p>
+                                        <p class="font-bold text-lg">
+                                           @if(isset($boardUser->nummer))
+                                             {{ $boardUser->nummer }})
+                                           @endif
+                                           @if(isset($boardUser->user_id))
+                                             {{ $boardUser->boardUserName->nachname }} {{ $boardUser->boardUserName->vorname }}
+                                           @else
+                                             noch nicht zugewiesen
+                                           @endif
+                                        </p>
                                         <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $boardUser->updated_at->diffForHumans() }}</p>
                                     </div>
                                 </div>

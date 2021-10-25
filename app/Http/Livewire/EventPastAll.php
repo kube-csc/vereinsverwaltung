@@ -22,6 +22,26 @@ class EventPastAll extends Component
         $this->year = $year;
     }
 
+    public function monthIncrease ()
+    {
+        ++$this->month;
+    }
+
+    public function monthDecrease ()
+    {
+        --$this->month;
+    }
+
+    public function yearIncrease()
+    {
+        ++$this->year;
+    }
+
+    public function yearDecrease()
+    {
+        --$this->year;
+    }
+
     public function render()
     {
         if(Str::length($this->year)>4)
@@ -70,6 +90,7 @@ class EventPastAll extends Component
             $eventsPast = event::where([
                 ['ueberschrift' , 'LIKE' , "%{$this->search}%"],
                 ['verwendung' , '0'],
+                ['nachtermin' , '!=' , ""],
                 ['datumvon' , 'LIKE' , "%{$this->year}%"],
                 ['datumbis' ,'<=', Carbon::now()->toDateString()]
             ])

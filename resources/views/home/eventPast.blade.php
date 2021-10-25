@@ -31,6 +31,9 @@
                         <div class="icon"><i class="bx bxl-dribbble"></i></div>
 
                         <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
+                        @if(isset($eventPast->sportSectionName->abteilung))
+                            <p class="description">{{ $eventPast->sportSectionName->abteilung }}</p>
+                        @endif
                         @if(isset($eventPast->eventGroupName->termingruppe))
                             <p class="description">
                                 {{$eventPast->eventGroupName->termingruppe}}

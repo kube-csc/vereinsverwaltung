@@ -18,7 +18,7 @@ class CreateBoardUsersTable extends Migration
             $table->unsignedBigInteger('board_id');
             $table->unsignedBigInteger('boardUser_id')->nullable();
             $table->integer('position');
-            $table->integer('nummer')->nullable();;
+            $table->integer('nummer')->nullable();
             $table->string('postenemail')->nullable();
             $table->string('postenbild')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar

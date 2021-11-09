@@ -63,12 +63,12 @@
                                                     </a>
                                                     @if($board['visible']==1)
                                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/inaktiv/'.$board->id) }}">
-                                                            <box-icon name='show'  type='solid'></box-icon>
+                                                            <box-icon name='show' ></box-icon>
                                                         </a>
                                                     @endif
                                                     @if($board['visible']==0)
                                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/aktiv/'.$board->id) }}">
-                                                            <box-icon name='hide' type='solid'></box-icon>
+                                                            <box-icon name='hide' ></box-icon>
                                                         </a>
                                                     @endif
                                                     @if ($board['id']==0)
@@ -92,9 +92,9 @@
                                                             <box-icon name='chevrons-down' ></box-icon>
                                                         </a>
                                                     @endif
-                                                    <a href="{{ url('Posten/neu/'.$board->id) }}">
-                                                        <box-icon type='solid' name='user-plus'></box-icon>
-                                                    </a>
+                                                        <a href="{{ url('Posten/neu/'.$board->id) }}">
+                                                            <box-icon name='plus'></box-icon>
+                                                        </a>
                                                 </div>
 
                                                 <div class="flex">
@@ -123,7 +123,7 @@
                     <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
                         <div class="flex items-center">
                             @if ($boardUserName<>'')
-                                <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Team {{ $boardUserName }}</div>
+                                <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Posten {{ $boardUserName }}</div>
                             @endif
                         </div>
                         <div class="my-4 flex">
@@ -147,19 +147,17 @@
                                 <div class="justify-between my-2">
 
                                     <div>
-                                        @php /*
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Posten/edit/'.$boardUser->id) }}">
                                             <box-icon name='edit' type='solid'></box-icon>
                                         </a>
-                                        */ @endphp
                                         @if($boardUser['visible']==1)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Posten/inaktiv/'.$boardUser->id) }}">
-                                                <box-icon name='show'  type='solid'></box-icon>
+                                                <box-icon name='show' ></box-icon>
                                             </a>
                                         @endif
                                         @if($boardUser['visible']==0)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Posten/aktiv/'.$boardUser->id) }}">
-                                                <box-icon name='hide' type='solid'></box-icon>
+                                                <box-icon name='hide' ></box-icon>
                                             </a>
                                         @endif
                                         @if ($boardUser['id']==0)
@@ -183,6 +181,9 @@
                                                 <box-icon name='chevrons-down' ></box-icon>
                                             </a>
                                         @endif
+                                        <a href="{{ url('Posten/zuordnen/'.$boardUser->id) }}">
+                                            <box-icon type='solid' name='user-plus'></box-icon>
+                                        </a>
                                     </div>
 
                                     <div class="flex">
@@ -190,7 +191,7 @@
                                            @if(isset($boardUser->nummer))
                                              {{ $boardUser->nummer }})
                                            @endif
-                                           @if(isset($boardUser->user_id))
+                                           @if(isset($boardUser->boardUser_id))
                                              {{ $boardUser->boardUserName->nachname }} {{ $boardUser->boardUserName->vorname }}
                                            @else
                                              noch nicht zugewiesen

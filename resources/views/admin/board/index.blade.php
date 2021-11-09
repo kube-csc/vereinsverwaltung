@@ -63,12 +63,12 @@
                                        </a>
                                        @if($board['visible']==1)
                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/inaktiv/'.$board->id) }}">
-                                               <box-icon name='show'  type='solid'></box-icon>
+                                               <box-icon name='show' ></box-icon>
                                            </a>
                                        @endif
                                        @if($board['visible']==0)
                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/aktiv/'.$board->id) }}">
-                                               <box-icon name='hide' type='solid'></box-icon>
+                                               <box-icon name='hide' ></box-icon>
                                            </a>
                                        @endif
                                        @if ($board['id']==0)
@@ -92,9 +92,9 @@
                                                <box-icon name='chevrons-down' ></box-icon>
                                            </a>
                                        @endif
-                                       <a href="{{ url('Posten/neu/'.$board->id) }}">
-                                           <box-icon type='solid' name='user-plus'></box-icon>
-                                       </a>
+                                           <a href="{{ url('Posten/neu/'.$board->id) }}">
+                                               <box-icon name='plus'></box-icon>
+                                           </a>
                                    </div>
 
                                     <div class="flex">

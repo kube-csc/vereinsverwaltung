@@ -210,9 +210,12 @@ class BoardUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($boardUserId)
     {
-        //
+        return view('admin.boardUser.edit')->with(
+        [
+            'boardUserId'=> $boardUserId,
+        ]);
     }
 
     /**
@@ -237,4 +240,13 @@ class BoardUserController extends Controller
     {
         //
     }
+
+    public function match($boardUserId)
+    {
+        return view('admin.boardUser.editUser')->with(
+            [
+                'boardUserId'=> $boardUserId,
+            ]);
+    }
+
 }

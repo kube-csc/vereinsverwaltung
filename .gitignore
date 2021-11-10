@@ -1,10 +1,11 @@
 /node_modules
 /public/hot
-/public/storage
+/public/storage/**/*_*.jpg
 /public/asset/img/portfolio
 /public/asset/img/team
 /public/asset/img/testimonials
 /storage/*.key
+/storage/botman/*.json
 /vendor
 /database/DB_Projekt_KEL
 /database/seeders_KEL

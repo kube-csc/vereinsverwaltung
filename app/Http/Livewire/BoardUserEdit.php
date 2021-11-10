@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\board;
 use App\Models\boardUser;
 use Livewire\Component;
 use Illuminate\Support\Carbon;
@@ -18,7 +19,7 @@ class BoardUserEdit extends Component
     {
         $this->validateOnly($field, [
             'newNummer'      => 'required|max:2',
-            //'newPostenemail' => 'email',  Todo: Verhindert das speichern wenn keine E-Mail eingeben wurde
+            //'newPostenemail' => 'email',  ToDo: Verhindert das speichern wenn keine E-Mail eingeben wurde
             ]);
     }
 
@@ -26,7 +27,7 @@ class BoardUserEdit extends Component
     {
        $this->validate([
            'newNummer'      => 'required|max:2',
-           //'newPostenemail' => 'email', Todo: Verhindert das speichern wenn keine E-Mail eingeben wurde
+           //'newPostenemail' => 'email', ToDo: Verhindert das speichern wenn keine E-Mail eingeben wurde
        ]);
        boardUser::find($this->boardUserId)->update([
             'nummer'           => $this->newNummer,
@@ -47,17 +48,19 @@ class BoardUserEdit extends Component
     public function mount()
     {
        $boardUser = boardUser::find($this->boardUserId);
-       $this->newNummer     =$boardUser->nummer;
-       $this->newPostenemail=$boardUser->postenemail;
-    }
+       $this->newNummer      = $boardUser->nummer;
+       $this->newPostenemail = $boardUser->postenemail;
+     }
 
     public function render()
     {
         $boardUser = boardUser::find($this->boardUserId);
+        $board     = board::find($boardUser->board_id);
         return view('livewire.board-user-edit')->with([
             'boardUserId'      => $this->boardUserId,
             'newNummer'        => $boardUser->nummer,
             'boardUser'        => $boardUser,
+            'board'            => $board,
         ]);
     }
 }

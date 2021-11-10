@@ -16,7 +16,8 @@ class boardUser extends Model
         return $this->belongsTo(User::class, 'boardUser_id');
     }
 
-    public function boardName(){
-        return $this->belongsToMany('App\Models\Board');
+    public function boardName()
+    {
+        return $this->belongsTo(User::class, 'board_id');
     }
 }

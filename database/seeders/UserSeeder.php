@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
              array('id' => '3',
                  'nachname' => 'Trainer',
                  'vorname' => 'Mannschaft 2',
-                 'geschlecht' => 'w',
+                 'geschlecht' => 'm',
                  'name' => 'Trainer',
                  'email' => 'info3@info.de',
                  'email_verified_at' => NULL,

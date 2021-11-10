@@ -16,29 +16,12 @@
                     </div>
 
                     <div class="mt-6 text-gray-500">
-                        @php
-                            // TODO: Beschreibungstext überarbeiten
-                        @endphp
-                        Bitte gebe die Daten des Posten ein.
+                        Bitte gebe die Daten des Posten ein.<br>
+                        Wenn ein Porträt in der Mitgliederverwaltung vorhanden ist wird dieses verwendet.
+                        <!-- ToDo: Anleitung bearbeiten -->
                     </div>
                 </div>
-
-                <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Posten bearbeiten</div> <!-- ToDo: Welcher Posten wird bearbeitet -->
-                        </div>
-
-                        <div class="ml-12">
-                            <div class="mt-2 text-sm text-gray-500">
-
                                 @livewire('board-user-match', ['boardUserId' => $boardUserId])
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
 
             </div>
 

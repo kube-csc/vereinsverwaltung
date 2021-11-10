@@ -44,8 +44,8 @@ class HomeController extends Controller
           ->get();
 
       $boards=board::where('sportSection_id' , $sportSection_id)
-          ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
-          ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
+          ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
+          ->join('users as us' , 'bu.boardUser_id' , '=' , 'us.id')
           ->get();
 
       return view('home.home')->with(
@@ -102,8 +102,8 @@ class HomeController extends Controller
             ->get();
 
         $boards=board::where('sportSection_id' , $sportSectionsId)
-            ->join('board_user as bu' , 'bu.board_id' , '=' , 'boards.id')
-            ->join('users as us' , 'bu.user_id' , '=' , 'us.id')
+            ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
+            ->join('users as us' , 'bu.boardUser_id' , '=' , 'us.id')
             ->get();
 
         return view('home.homeSportSelect')->with([

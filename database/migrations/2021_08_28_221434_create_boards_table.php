@@ -17,9 +17,11 @@ class CreateBoardsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('sportSection_id');
             $table->integer('position')->default(1);
+            $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');
             $table->string('postenmaenlich');
             $table->string('postenweiblich');
+            $table->string('abteilungsmail')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->SoftDeletes();
             $table->timestamps();
@@ -39,6 +41,10 @@ class CreateBoardsTable extends Migration
      */
     public function down()
     {
+        Schema::table('boards', function (Blueprint $table) {
+            $table->dropForeign('sportSection_id');
+            $table->dropForeign('user_id');
+        });
         Schema::dropIfExists('boards');
     }
 }

@@ -24,18 +24,26 @@ class BoardSeeder extends Seeder
                     'sportSection_id' => '1',
                     'position' => '10',
                     'user_id' => '1',
+                    'bearbeiter_id' => '1',
                     'postenmaenlich' => 'Vorsitzender',
                     'postenweiblich' => 'Vorsitzende',
-                    'visible' => '1'
+                    'abteilungsmail' => 'kel@kel-datteln.de',
+                    'visible' => '1',
+                    'created_at' => '2021-03-28 13:06:42',
+                    'updated_at' => '2021-03-28 13:06:42'
                    ),
               array(
                     'id' => '2',
                     'sportSection_id' => '5',
-                    'position' => '10',
+                    'position' => '20',
                     'user_id' => '2',
+                    'bearbeiter_id' => '1',
                     'postenmaenlich' => 'Trainer',
                     'postenweiblich' => 'Trainerin',
-                    'visible' => '1'
+                    'abteilungsmail' => '',
+                    'visible' => '1',
+                    'created_at' => '2021-03-28 13:06:42',
+                    'updated_at' => '2021-03-28 13:06:42'
               ),
           ]);
 

@@ -14,19 +14,23 @@ class BoardUserSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('board_user')->delete();
+        DB::table('board_users')->delete();
 
-        DB::table('board_user')
+        DB::table('board_users')
             ->insert(
                 [
                     array(
-                       'id' => '1',
-                       'board_id' => '1',
-                       'position' => '1',
-                       'nummer' => '1',
-                       'user_id' => '1',
-                       'vorstandsbild' => 'team-1.jpg',
-                       'vorstandsemail' => 'vorstand1@verein.de',
+                        'id' => '1',
+                        'board_id' => '1',
+                        'position' => '1',
+                        'nummer' => '1',
+                        'boardUser_id' => '1',
+                        'postenportraet' => 'posten-1.jpg',
+                        'postenemail' => 'vorstand1@verein.de',
+                        'bearbeiter_id' => 1,
+                        'visible' => '1',
+                        'created_at' => '2021-01-01 12:00:00',
+                        'updated_at' => '2021-01-01 12:00:00'
                    ),
 
                     array(
@@ -34,9 +38,13 @@ class BoardUserSeeder extends Seeder
                         'board_id' => '1',
                         'position' => '2',
                         'nummer' => '2',
-                        'user_id' => '2',
-                        'vorstandsbild' => 'team-2.jpg',
-                        'vorstandsemail' => 'vorstand2@verein.de',
+                        'boardUser_id' => '2',
+                        'postenportraet' => 'posten-2.jpg',
+                        'postenemail' => 'vorstand2@verein.de',
+                        'bearbeiter_id' => 1,
+                        'visible' => '1',
+                        'created_at' => '2021-01-01 12:00:00',
+                        'updated_at' => '2021-01-01 12:00:00'
                     ),
 
                     array(
@@ -44,9 +52,13 @@ class BoardUserSeeder extends Seeder
                         'board_id' => '2',
                         'position' => '1',
                         'nummer' => '1',
-                        'user_id' => '3',
-                        'vorstandsbild' => 'team-2.jpg',
-                        'vorstandsemail' => 'trainer@verein.de',
+                        'boardUser_id' => '3',
+                        'postenportraet' => 'posten-3.jpg',
+                        'bearbeiter_id' => 1,
+                        'visible' => '1',
+                        'postenemail' => 'trainer@verein.de',
+                        'created_at' => '2021-01-01 12:00:00',
+                        'updated_at' => '2021-01-01 12:00:00'
                     ),
                 ]);
     }

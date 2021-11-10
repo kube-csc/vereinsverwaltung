@@ -11,14 +11,14 @@ class board extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public function boardUserName()
+    protected $guarded = [];
+
+    public function boardCradeName()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     public function boardUsers(){
         return $this->belongsToMany('App\Models\User');
-
-        //return $this->belongsToMany('App\Hobby');
     }
 }

@@ -8,6 +8,8 @@ use App\Http\Controllers\SportSectionController;
 use App\Http\Controllers\EventGroupController;
 use App\Http\Controllers\SportTeamController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\BoardController;
+use App\Http\Controllers\BoardUserController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
@@ -101,6 +103,31 @@ Route::get('/newBotmanQuestion/alle',                            [NewBotmanQuest
 Route::get('/newBotmanQuestion/aktiv/{newBotmanQuestionId}',     [NewBotmanQuestionController::class, 'aktiv'])     ->name('newBotmanQuestion.aktiv');
 Route::get('/newBotmanQuestion/inaktiv/{newBotmanQuestionId}',   [NewBotmanQuestionController::class, 'inaktiv'])   ->name('newBotmanQuestion.inaktiv');
 Route::get('/newBotmanQuestion/softDelete/{newBotmanQuestionId}',[NewBotmanQuestionController::class, 'softDelete']);
+
+//Route::resource('board.', 'BoardController');
+Route::get('/Team/alle',                            [BoardController::class, 'index'])     ->name('board.index');
+Route::get('/Team/neu',                             [BoardController::class, 'create'])    ->name('board.create');
+Route::post('/Team/speichern',                      [BoardController::class, 'store'])     ->name('board.store');
+Route::get('/Team/aktiv/{board_id}',                [BoardController::class, 'aktiv'])     ->name('board.aktiv');
+Route::get('/Team/inaktiv/{board_id}',              [BoardController::class, 'inaktiv'])   ->name('board.inaktiv');
+Route::get('/Team/maxtop/{board_id}',               [BoardController::class, 'maxtop'])    ->name('board.maxtop');
+Route::get('/Team/top/{board_id}',                  [BoardController::class, 'top'])       ->name('board.top');
+Route::get('/Team/down/{board_id}',                 [BoardController::class, 'down'])      ->name('board.down');
+Route::get('/Team/maxdown/{board_id}',              [BoardController::class, 'maxdown'])   ->name('board.maxdown');
+Route::get('/Team/edit/{board_id}',                 [BoardController::class, 'edit'])      ->name('board.edit');
+Route::post('/Team/update/{board_id}',              [BoardController::class, 'update'])    ->name('board.update');
+
+//Route::resource('boardUser.', 'BoardUserController');
+Route::get('/Posten/{board_id}',                     [BoardUserController::class, 'index'])     ->name('boardUser.index');;
+Route::get('/Posten/neu/{board_id}',                 [BoardUserController::class, 'create'])    ->name('boardUser.create');
+Route::get('/Posten/aktiv/{boardUser_id}',           [BoardUserController::class, 'aktiv'])     ->name('boardUser.aktiv');
+Route::get('/Posten/inaktiv/{boardUser_id}',         [BoardUserController::class, 'inaktiv'])   ->name('boardUser.inaktiv');
+Route::get('/Posten/maxtop/{boardUser_id}',          [BoardUserController::class, 'maxtop'])    ->name('boardUser.maxtop');
+Route::get('/Posten/top/{boardUser_id}',             [BoardUserController::class, 'top'])       ->name('boardUser.top');
+Route::get('/Posten/down/{boardUser_id}',            [BoardUserController::class, 'down'])      ->name('boardUser.down');
+Route::get('/Posten/maxdown/{boardUser_id}',         [BoardUserController::class, 'maxdown'])   ->name('boardUser.maxdown');
+Route::get('/Posten/edit/{boardUser_id}',            [BoardUserController::class, 'edit'])      ->name('boardUser.edit');
+Route::get('/Posten/zuordnen/{boardUser_id}',        [BoardUserController::class, 'match'])     ->name('boardUser.match');
 
 Route::get('/Anfahrt', function () {
     return view('anfahrt');

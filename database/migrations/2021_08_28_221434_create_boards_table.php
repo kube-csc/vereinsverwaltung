@@ -19,8 +19,8 @@ class CreateBoardsTable extends Migration
             $table->integer('position')->default(1);
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('postenmaenlich');
-            $table->string('postenweiblich');
+            $table->string('postenMaenlich');
+            $table->string('postenWeiblich');
             $table->string('abteilungsmail')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->SoftDeletes();

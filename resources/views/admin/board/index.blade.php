@@ -15,7 +15,7 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich werden das Team bearbeitet
+                   In diesem Bereich wird das Team bearbeitet
                   </div>
 
               </div>
@@ -99,8 +99,8 @@
 
                                     <div class="flex">
                                       <p class="font-bold text-lg">
-                                          {{ $board->postenmaenlich }}<br>
-                                          {{ $board->postenweiblich }}
+                                          {{ $board->postenMaenlich }}<br>
+                                          {{ $board->postenWeiblich }}
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">
                                           {{ $board->updated_at->diffForHumans() }}
                                       </p>

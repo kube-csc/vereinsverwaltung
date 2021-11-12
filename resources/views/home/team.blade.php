@@ -27,18 +27,24 @@
                     <div class="member" data-aos="fade-up" data-aos-delay="{{$delay}}">
                 @endif
                     <div class="pic">
-                    @if(isset($board->vorstandsbild))
-                       <img src="/storage/team/{{ $board->vorstandsbild }}" class="img-fluid" alt="">
+                    @if(isset($board->postenPortraet))
+                       <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid" alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
                     @else
-                       <img src="/asset/img/teamleer.jpg" class="img-fluid" alt="">
+                        @if(isset($board->userPortraet))
+                            @php /*
+                          <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid" alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
+                           */ @endphp
+                        @else
+                          <img src="/asset/img/teamleer.jpg" class="img-fluid">
+                        @endif
                     @endif
                     </div>
                     <div class="member-info">
                         <h4>{{ $board->vorname }} {{ $board->nachname }}</h4>
                         @if($board->geschlecht=='m')
-                            <span>{{ $board->postenmaenlich }}</span>
+                            <span>{{ $board->postenMaenlich }}</span>
                         @else
-                            <span>{{ $board->postenweiblich }}</span>
+                            <span>{{ $board->postenWeiblich }}</span>
                         @endif
                         <div class="social">
                             @php /* ToDo: Socialmedia für Teams

@@ -20,7 +20,7 @@ class CreateBoardUsersTable extends Migration
             $table->integer('position');
             $table->integer('nummer')->nullable();
             $table->string('postenemail')->nullable();
-            $table->string('postenportraet')->nullable();
+            $table->string('postenPortraet')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->unsignedBigInteger('bearbeiter_id');
             $table->timestamps();

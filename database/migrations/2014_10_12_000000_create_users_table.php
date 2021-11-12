@@ -16,8 +16,8 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
           $table->id();
           //Vereinsverwaltung
-          $table->string('nachname', 40)->nullable();;
-          $table->string('vorname', 40)->nullable();;
+          $table->string('nachname', 40)->nullable();
+          $table->string('vorname', 40)->nullable();
           $table->string('geschlecht', 1)->nullable();
           $table->date('geburtsdatum')->nullable();
           $table->date('vereinseintritt')->nullable();
@@ -35,7 +35,7 @@ class CreateUsersTable extends Migration
           $table->foreignId('vorstand_id')->default(0);
           $table->text('beschreibung')->nullable();
           $table->string('telefon', 25)->default('');
-          $table->string('bild', 15)->default('');
+          $table->string('userPortraet', 15)->default('');
           $table->integer('pixx')->default(0);
           $table->integer('pixy')->default(0);
 

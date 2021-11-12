@@ -19,7 +19,7 @@
                     @php
                       // TODO: Beschreibungstext überarbeiten
                     @endphp
-                    Bitte gebe die Daten des Teammitglied ein.
+                    Bitte gebe die Daten des Teammitgliedes ein.
                   </div>
               </div>
 
@@ -38,16 +38,16 @@
                                   // TODO:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                 <div class="my-4" >
-                                    <label for="name">Postenmaenlich:</label>
-                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('postenmaenlich') ? 'bg-red-300' : '' }}"
-                                    id="postenmaenlich" placeholder="Postenmaenlich" name="postenmaenlich" value="{{ old('abteilung') ?? $board->postenmaenlich }}">
-                                    <small class="form-text text-danger">{!! $errors->first('postenmaenlich') !!}</small>
+                                    <label for="name">Posten (mänlich):</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('postenMaenlich') ? 'bg-red-300' : '' }}"
+                                    id="postenMaenlich" placeholder="Posten" name="postenMaenlich" value="{{ old('abteilung') ?? $board->postenMaenlich }}">
+                                    <small class="form-text text-danger">{!! $errors->first('postenMaenlich') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <label for="name">Postenweiblich:</label>
-                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('postenweiblich') ? 'bg-red-300' : '' }}"
-                                    id="postenweiblich" placeholder="Postenweiblich" name="postenweiblich" value="{{ old('postenweiblich') ?? $board->postenweiblich }}">
-                                    <small class="form-text text-danger">{!! $errors->first('postenweiblich') !!}</small>
+                                    <label for="name">Posten (weiblich):</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('postenWeiblich') ? 'bg-red-300' : '' }}"
+                                    id="postenWeiblich" placeholder="Posten" name="postenWeiblich" value="{{ old('postenWeiblich') ?? $board->postenWeiblich }}">
+                                    <small class="form-text text-danger">{!! $errors->first('postenWeiblich') !!}</small>
                                 </div>
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderungen speichern</button>

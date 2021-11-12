@@ -77,14 +77,14 @@ class BoardUserMatch extends Component
         $imageName          = $this->saveInmage();
         if(isset($imageName)){
             $oldPortrait = boardUser::find($this->boardUserId);
-            if(file_exists(public_path().'/storage/posten/'.$oldPortrait->postenportraet) and
-                $oldPortrait->postenportraet != '' and
-                $oldPortrait->postenportraet[6] != '-'){
-                unlink(public_path().'/storage/posten/'.$oldPortrait->postenportraet);
+            if(file_exists(public_path().'/storage/posten/'.$oldPortrait->postenPortraet) and
+                $oldPortrait->postenPortraet != '' and
+                $oldPortrait->postenPortraet[6] != '-'){
+                unlink(public_path().'/storage/posten/'.$oldPortrait->postenPortraet);
             }
 
             boardUser::find($this->boardUserId)->update([
-                'postenportraet' => $imageName
+                'postenPortraet' => $imageName
             ]);
 
             $this->deletionNote=0;
@@ -121,14 +121,17 @@ class BoardUserMatch extends Component
          return $name;
     }
 
-    public function saveInmage(){
-
+    public function saveInmage()
+    {
         if (!$this->image) {
             return null;
         }
-
+        //ToDo: heigthen und widen noch mal Testen finde erstmal keine Funktion
         $newImageName='posten_'.$this->boardUserId.'_'.str::random(4).'.jpg';
-             Image::make($this->image)->encode('jpg')->save(public_path().'/storage/posten/'.$newImageName);
+             Image::make($this->image)->encode('jpg')
+                                      ->heighten(600)
+                                      ->widen(600)
+                                      ->save(public_path().'/storage/posten/'.$newImageName);
              return $newImageName;
     }
 
@@ -140,7 +143,7 @@ class BoardUserMatch extends Component
 
     public function currentImageDelete(){
         boardUser::find($this->boardUserId)->update([
-            'postenportraet' => '',
+            'postenPortraet' => '',
             'bearbeiter_id'  => Auth::user()->id,
             'updated_at'     => Carbon::now()
         ]);
@@ -157,7 +160,7 @@ class BoardUserMatch extends Component
     {
         $boardUser  = boardUser::find($this->boardUserId);
         $this->userSelected = $boardUser->boardUser_id;
-        $this->currentImage = $boardUser->postenportraet;
+        $this->currentImage = $boardUser->postenPortraet;
     }
 
     public function render()

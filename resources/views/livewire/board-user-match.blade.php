@@ -2,7 +2,7 @@
     <div class="p-6">
         <div class="flex items-center">
             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
-                Posten {{ $boardUser->nummer > 0 ? $boardUser->nummer.')' : '' }} {{ $board->postenmaenlich }} / {{ $board->postenweiblich }}  bearbeiten
+                Posten {{ $boardUser->nummer > 0 ? $boardUser->nummer.')' : '' }} {{ $board->postenMaenlich }} / {{ $board->postenWeiblich }}  bearbeiten
             </div>
         </div>
 
@@ -88,6 +88,5 @@
             window.livewire.emit('fileUpload', reader.result)
         }
         reader.readAsDataURL(file);
-
     })
 </script>

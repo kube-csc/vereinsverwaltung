@@ -68,7 +68,7 @@ class BoardController extends Controller
         $positionNew=$board->position-11;
 
         board::find($boardId)->update([
-            'position'      => $positionNew,
+            'position'         => $positionNew,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
@@ -146,7 +146,7 @@ class BoardController extends Controller
                 'boards'         => $boards,
                 'boardUsers'     => $boardUsers,
                 'boardIdSelecte' => $board_id,
-                'boardUserName'  => $boardName->postenmaenlich." / ".$boardName->postenweiblich,
+                'boardUserName'  => $boardName->postenMaenlich." / ".$boardName->postenWeiblich,
             ]);
     }
 
@@ -179,8 +179,8 @@ class BoardController extends Controller
     {
         $request->validate(
             [
-                'postenmaenlich'         => 'required',
-                'postenweiblich'         => 'required'
+                'postenMaenlich'         => 'required',
+                'postenWeiblich'         => 'required'
             ]
         );
 
@@ -191,8 +191,8 @@ class BoardController extends Controller
 
         $board= new board(
             [
-                'postenmaenlich'   => $request->postenmaenlich,
-                'postenweiblich'   => $request->postenweiblich,
+                'postenMaenlich'   => $request->postenMaenlich,
+                'postenWeiblich'   => $request->postenWeiblich,
                 'visible'          => 1,
                 'position'         => $positionNew,
                 'sportSection_id'  => 1,
@@ -206,7 +206,7 @@ class BoardController extends Controller
 
         return redirect('/Team/alle')->with(
             [
-                'success' => 'Die Posten <b>' . $request->postenmaenlich.' / '.$request->postenweiblich.' wurden angelegt.'
+                'success' => 'Die Posten <b>' . $request->postenMaenlich.' / '.$request->postenWeiblich.' wurden angelegt.'
             ]
         );
     }
@@ -246,21 +246,21 @@ class BoardController extends Controller
     {
         $request->validate(
             [
-                'postenmaenlich'         => 'required',
-                'postenweiblich'         => 'required'
+                'postenMaenlich'         => 'required',
+                'postenWeiblich'         => 'required'
             ]
         );
 
         board::find($board_id)->update([
-            'postenmaenlich'    => $request->postenmaenlich,
-            'postenweiblich'    => $request->postenweiblich,
+            'postenMaenlich'    => $request->postenMaenlich,
+            'postenWeiblich'    => $request->postenWeiblich,
             'visible'           =>   '1',
             'updated_at'        => Carbon::now()
         ]);
 
         return redirect('/Team/alle')->with(
             [
-                'success' => 'Die Daten von der Team <b>' . $request->postenmaenlich.' / '.$request->postenweiblich.'.'
+                'success' => 'Die Daten von der Team <b>' . $request->postenMaenlich.' / '.$request->postenWeiblich.'.'
             ]
         );
     }

@@ -50,12 +50,19 @@
                                     </div>
                                     @php
                                         $boardmax=  $boards->count();
+
+                                        // ToDo: URl Parameter auslesen verbessern
+                                        $current_url = url()->full();
+                                        $page=explode("=",$current_url);
+                                        $count=count($page);
                                     @endphp
                                     @foreach ( $boards as $board )
                                         @php
                                             --$boardmax;
                                         @endphp
-                                        <div class="rounded border shadow p-3 my-2 {{$board->id == $boardIdSelecte ? 'bg-blue-300' : 'bg-blue-200'}}" onclick="window.location.replace('/Posten/{{ $board->id }}')">
+                                        <div class="rounded border shadow p-3 my-2 {{$board->id == $boardIdSelecte ? 'bg-blue-300' : 'bg-blue-200'}}"
+                                             onclick="window.location.replace('/Posten/{{ $board->id }}{{$count>1 ? '?page='.$page[1] : '' }}')">
+                                            <!-- ToDo: URl Parameter auslesen verbessern -->
                                             <div class="justify-between my-2">
                                                 <div>
                                                     <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/edit/'.$board->id) }}">
@@ -99,8 +106,8 @@
 
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-                                                        {{ $board->postenmaenlich }}<br>
-                                                        {{ $board->postenweiblich }}
+                                                        {{ $board->postenMaenlich }}<br>
+                                                        {{ $board->postenWeiblich }}
                                                     </p>
                                                     <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">
                                                         {{ $board->updated_at->diffForHumans() }}
@@ -194,7 +201,7 @@
                                            @if(isset($boardUser->boardUser_id))
                                              {{ $boardUser->boardUserName->nachname }} {{ $boardUser->boardUserName->vorname }}
                                            @else
-                                             noch nicht zugewiesen
+                                             noch kein Mitglied zugewiesen
                                            @endif
                                         </p>
                                         <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $boardUser->updated_at->diffForHumans() }}</p>

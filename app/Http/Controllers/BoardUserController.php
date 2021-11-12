@@ -144,7 +144,7 @@ class BoardUserController extends Controller
                 'boards'         => $boards,
                 'boardUsers'     => $boardUsers,
                 'boardIdSelecte' => $board_id,
-                'boardUserName'  => $boardName->postenmaenlich." / ".$boardName->postenweiblich,
+                'boardUserName'  => $boardName->postenMaenlich." / ".$boardName->postenWeiblich,
             ]);
     }
 

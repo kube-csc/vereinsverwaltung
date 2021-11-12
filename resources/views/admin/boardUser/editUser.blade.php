@@ -17,7 +17,7 @@
 
                     <div class="mt-6 text-gray-500">
                         Bitte gebe die Daten des Posten ein.<br>
-                        Wenn ein Porträt in der Mitgliederverwaltung vorhanden ist wird dieses verwendet.
+                        Wenn ein Porträt in der Mitgliederverwaltung vorhanden ist wird dieses bevorzugt verwendet.
                         <!-- ToDo: Anleitung bearbeiten -->
                     </div>
                 </div>

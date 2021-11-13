@@ -45,6 +45,19 @@ class BoardSeeder extends Seeder
                     'created_at' => '2021-03-28 13:06:42',
                     'updated_at' => '2021-03-28 13:06:42'
               ),
+              array(
+                  'id' => '3',
+                  'sportSection_id' => '1',
+                  'position' => '20',
+                  'user_id' => '2',
+                  'bearbeiter_id' => '1',
+                  'postenMaenlich' => 'Kassierer',
+                  'postenWeiblich' => 'Kassiererin',
+                  'abteilungsmail' => 'kasierer@verein.de',
+                  'visible' => '1',
+                  'created_at' => '2021-03-28 13:06:42',
+                  'updated_at' => '2021-03-28 13:06:42'
+              ),
           ]);
 
     }

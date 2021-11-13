@@ -192,7 +192,7 @@ class SportTeamController extends Controller
      }
    }
 
-   if ($request->beschreibung<>'') {
+   if ($request->beschreibung<>'' | $request->nachtermin<>''){
      $sportTeam = sportSection::find($sportTeam_id);
      if ($sportTeam->event_id>0){
        Event::find($sportTeam->event_id)->update([
@@ -220,7 +220,6 @@ class SportTeamController extends Controller
         $createdEvent->save();
 
         $newEventId  = $createdEvent->id;
-
         SportSection::find($sportTeam_id)->update([
          'event_id' => $newEventId
        ]);

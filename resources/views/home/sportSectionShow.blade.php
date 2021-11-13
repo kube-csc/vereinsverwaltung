@@ -6,9 +6,10 @@
                 @foreach ($sportSectionNames as $sportSectionName)
                     <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                         <div class="content">
-                            <!-- ======= Facebook======= -->
                             @if(env('Verein_Sozialmediaanzeigen')=='ja')
-                             <center>
+                             <!-- ======= Facebook======= -->
+                             <!-- ToDo: Facebook funktioniert nicht -->
+                                 <center>
                                <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('Verein_Domain')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
                              </center>
                             @endif
@@ -35,11 +36,16 @@
                                 <?php
                                 }
                                 $abgeschnitten=0;
+                                $textlaengeabteilung=300;
                                 if ($abteilung->event_id>0)
                                 {
-                                    $ausgabetext=$abteilung->event->beschreibung;
-                                    $sollang=500;
-                                    textmax($ausgabetext,$sollang,$abgeschnitten);
+                                    if($abteilung->event->nachtermin == ''){
+                                        $ausgabetext=$abteilung->event->beschreibung;
+                                    }
+                                    else{
+                                        $ausgabetext=$abteilung->event->nachtermin;
+                                    }
+                                    textmax($ausgabetext,$textlaengeabteilung,$abgeschnitten);
                                 }
                                 ?>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">

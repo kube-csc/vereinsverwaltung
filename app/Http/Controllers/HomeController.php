@@ -46,6 +46,7 @@ class HomeController extends Controller
       $boards=board::where('sportSection_id' , $sportSection_id)
           ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
           ->join('users as us' , 'bu.boardUser_id' , '=' , 'us.id')
+          ->orderby('boards.position')
           ->orderby('bu.position')
           ->get();
 
@@ -105,6 +106,7 @@ class HomeController extends Controller
         $boards=board::where('sportSection_id' , $sportSectionsId)
             ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
             ->join('users as us' , 'bu.boardUser_id' , '=' , 'us.id')
+            ->orderby('boards.position')
             ->orderby('bu.position')
             ->get();
 

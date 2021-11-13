@@ -22,6 +22,7 @@ class CreateSportSectionsTable extends Migration
             $table->string('bild')->nullable();
             $table->string('domain')->nullable();
             $table->string('farbe')->nullable();
+            $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');
             $table->SoftDeletes();
             $table->timestamps();

@@ -69,8 +69,13 @@
                                     <textarea rows="25" cols="200" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $ausgabetext }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                 </div>
+                                  <div class="my-4" >
+                                      <label for="name">Kurzbeschreibung:</label>
+                                      <textarea rows="25" cols="100" name="nachtermin" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $nachtermin }}</textarea>
+                                      <small class="form-text text-danger">{!! $errors->first('nachtermin') !!}</small>
+                                  </div>
                                 <div class="py-2">
-                                <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderungen speichern</button>
+                                   <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderungen speichern</button>
                                 </div>
                              </form>
                              <br>

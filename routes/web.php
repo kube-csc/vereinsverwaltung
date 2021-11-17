@@ -10,6 +10,7 @@ use App\Http\Controllers\SportTeamController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BoardUserController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
@@ -128,6 +129,16 @@ Route::get('/Posten/down/{boardUser_id}',            [BoardUserController::class
 Route::get('/Posten/maxdown/{boardUser_id}',         [BoardUserController::class, 'maxdown'])   ->name('boardUser.maxdown');
 Route::get('/Posten/edit/{boardUser_id}',            [BoardUserController::class, 'edit'])      ->name('boardUser.edit');
 Route::get('/Posten/zuordnen/{boardUser_id}',        [BoardUserController::class, 'match'])     ->name('boardUser.match');
+
+//Route::resource('Document.', 'DocumentController');
+Route::get('/Dokumente/alle',                        [DocumentController::class, 'index'])         ->name('document.index');;
+Route::get('/Dokumente/neu',                         [DocumentController::class, 'create'])        ->name('document.create');
+Route::post('/Dokumente/speichern',                  [DocumentController::class, 'store'])         ->name('document.store');
+Route::get('/Dokumente/edit/{document_id}',          [DocumentController::class, 'edit'])          ->name('document.edit');
+Route::post('/Dokumente/update/{document_id}',       [DocumentController::class, 'update'])        ->name('document.update');
+Route::get('/Dokumente/geloescht/{document_id}',     [DocumentController::class, 'documentDelete'])->name('document.documentDelete');
+Route::get('/Dokumente/aktiv/{document_id}',         [DocumentController::class, 'aktiv'])         ->name('document.aktiv');
+Route::get('/Dokumente/inaktiv/{document_id}',       [DocumentController::class, 'inaktiv'])       ->name('document.inaktiv');
 
 Route::get('/Anfahrt', function () {
     return view('anfahrt');

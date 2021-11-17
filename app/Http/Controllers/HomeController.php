@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\board;
+use App\Models\Document;
 use App\Models\Event;
 use App\Models\SportSection;
 use App\Models\instruction;
@@ -50,6 +51,8 @@ class HomeController extends Controller
           ->orderby('bu.position')
           ->get();
 
+      $documents = Document::all();
+
       return view('home.home')->with(
         [
          'abteilungHomes'      => $abteilungHomes,
@@ -57,6 +60,7 @@ class HomeController extends Controller
          'abteilungs'          => $abteilungs,
          'abteilungsCount'     => $abteilungsCount,
          'boards'              => $boards,
+         'documents'           => $documents,
          'eventsFuture'        => $eventsFuture,
          'eventsPast'          => $eventsPast,
          'serverdomain'        => $serverdomain
@@ -110,10 +114,13 @@ class HomeController extends Controller
             ->orderby('bu.position')
             ->get();
 
+        $documents = Document::all();
+
         return view('home.homeSportSelect')->with([
                 'sportSectionNames'      => $sportSectionNames,
                 'sportTeamNames'         => $sportTeamNames,
                 'sportSectionSearch'     => $sportSectionSearch,
+                'documents'              => $documents,
                 'eventsFuture'           => $eventsFuture,
                 'eventsPast'             => $eventsPast,
                 'boards'                 => $boards

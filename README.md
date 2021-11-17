@@ -44,6 +44,7 @@
         <li>Übernachtungskosten</li>
         <li>Impresssum</li>
         <li>Datenschutzerklärung</li>
+        <li>Dokumente aus dem Dokumentenmanagment werden angezeigt</li>
     </ul>
   </li>
 </ul>
@@ -55,6 +56,7 @@
   <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
   <li>Eingabe und Bearbeitung von Events</li>
   <li>Eingabe und Bearbeitung von Event Gruppen</li>
+  <li>Dokumentenmanagent</li>
   <li>Informationsseiten (können noch nicht unsibar geschaltet werden) 
     <ul>
         <li>Beiträge</li>

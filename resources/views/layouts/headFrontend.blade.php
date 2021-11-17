@@ -295,11 +295,20 @@
            <li><a href="/Information/Beiträge"><i class='bx bx-link'></i>Beiträge</a></li>  <?php // ToDo: noch nicht feritg?>
            <li><a href="/Information/Übernachtungskosten"><i class="bx bx-link"></i>Übernachtungskosten</a></li> <?php // ToDo: noch nicht feritg?>
           </ul>
-          <br>
-          <h4>Dokumente</h4>
-          <ul>
-           <li><a href="https://www.kel-datteln.de/download/vereinssatzung2010.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinssatzung 2010</a></li> <?php // ToDo: Akiv Menu bearbeiten ?>
-           <li><a href="https://www.kel-datteln.de/download/Sportkleidung_2019.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinskleidung</a></li>
+          @if($documents->count()>0)
+              <br>
+              <h4>Dokumente</h4>
+              <ul>
+                @foreach($documents as $document)
+                   <li><a href="/storage/document/{{$document->dokumentenFile}}" target="_blank"><i class="bx bxs-note"></i>{{$document->dokumentenName}}</a></li>
+                @endforeach
+                  @php
+                  /*
+                   <li><a href="https://www.kel-datteln.de/download/vereinssatzung2010.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinssatzung 2010</a></li>
+                   <li><a href="https://www.kel-datteln.de/download/Sportkleidung_2019.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinskleidung</a></li>
+                  */
+                  @endphp
+          @endif
           </ul>
           <br>
           <h4>Intern</h4>

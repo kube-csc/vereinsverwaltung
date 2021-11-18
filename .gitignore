@@ -1,6 +1,6 @@
 /node_modules
 /public/hot
-/public/storage/**/*_*.jpg
+/public/storage/**/*_*.*
 /public/asset/img/portfolio
 /public/asset/img/team
 /public/asset/img/testimonials

@@ -51,7 +51,11 @@ class HomeController extends Controller
           ->orderby('bu.position')
           ->get();
 
-      $documents = Document::all();
+      $documents = Document::where('footerStatus' , 1)
+                            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+                            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+                            ->where('dokumentenFile' ,'!=' , NULL)
+                            ->get();
 
       return view('home.home')->with(
         [
@@ -114,7 +118,11 @@ class HomeController extends Controller
             ->orderby('bu.position')
             ->get();
 
-        $documents = Document::all();
+        $documents = Document::where('footerStatus' , 1)
+                             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+                             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+                             ->where('dokumentenFile' ,'!=' , NULL)
+                             ->get();
 
         return view('home.homeSportSelect')->with([
                 'sportSectionNames'      => $sportSectionNames,

@@ -300,7 +300,7 @@
               <h4>Dokumente</h4>
               <ul>
                 @foreach($documents as $document)
-                   <li><a href="/storage/document/{{$document->dokumentenFile}}" target="_blank"><i class="bx bxs-note"></i>{{$document->dokumentenName}}</a></li>
+                   <li><a href="/storage/dokumente/{{$document->dokumentenFile}}" target="_blank"><i class="bx bxs-note"></i>{{$document->dokumentenName}}</a></li>
                 @endforeach
                   @php
                   /*

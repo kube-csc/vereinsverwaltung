@@ -143,14 +143,14 @@ class DocumentController extends Controller
             $extension = $request->documentFile->extension();
             $newDocumentName = 'dokument' . $documentId . '_' . str::random(4) . '.' . $extension;
             Storage::disk('public')->putFileAs(
-                'document/',
+                'dokumente/',
                 $request->documentFile,
                 $newDocumentName
             );
 
             $oldDocumentFile = Document::find($documentId);
             if(isset($oldDocumentFile->dokumentenFile)){
-                Storage::disk('public')->delete('document/'.$oldDocumentFile->dokumentenFile);
+                Storage::disk('public')->delete('dokumente/'.$oldDocumentFile->dokumentenFile);
             }
 
             Document::find($documentId)->update([
@@ -170,7 +170,7 @@ class DocumentController extends Controller
         // ToDo: Der Dokumentenname der neu im Feld eingeben wurde geht verlohren
         $deleteDocumentFile = Document::find($documentId);
         if(isset($deleteDocumentFile->dokumentenFile)){
-            Storage::disk('public')->delete('document/'.$deleteDocumentFile->dokumentenFile);
+            Storage::disk('public')->delete('dokumente/'.$deleteDocumentFile->dokumentenFile);
         }
         Document::find($documentId)->update(
             [

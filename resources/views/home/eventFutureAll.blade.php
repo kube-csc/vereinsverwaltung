@@ -1,4 +1,4 @@
-@extends('layouts.FrontendLivewire')
+@extends('layouts.frontendLivewire')
 
 @section('title' ,'Alle zukünftige Events')
 

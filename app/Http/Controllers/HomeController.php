@@ -171,12 +171,28 @@ class HomeController extends Controller
 
     public function eventFutureAll()
     {
-        return view('home.eventFutureAll');
+        $documents = Document::where('footerStatus' , 1)
+            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+            ->where('dokumentenFile' ,'!=' , NULL)
+            ->get();
+
+        return view('home.eventFutureAll')->with([
+            'documents'         => $documents
+        ]);
     }
 
     public function eventPastAll()
     {
-        return view('home.eventPastAll');
+        $documents = Document::where('footerStatus' , 1)
+            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+            ->where('dokumentenFile' ,'!=' , NULL)
+            ->get();
+
+        return view('home.eventPastAll')->with([
+            'documents'         => $documents
+        ]);
     }
 
 }

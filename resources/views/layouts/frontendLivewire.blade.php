@@ -273,8 +273,8 @@
             <h4>Informationen</h4>
             <ul>
                 <li><a href="/Anfahrt"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // ToDo: Anzeige akiv im Menu bearbeiten ?>
-                <li><a href="/Information/Beiträge"><i class="bx bx-link"></i>Beiträge</a></li>  <?php // ToDo: noch nicht feritg?>
-                <li><a href="/Information/Übernachtungskosten"><i class="bx bx-link"></i>Übernachtungskosten</a></li> <?php // ToDo: noch nicht feritg?>
+                <li><a href="/Information/Beiträge"><i class="bx bx-link"></i>Beiträge</a></li>  <?php // ToDo: noch nicht fertig?>
+                <li><a href="/Information/Übernachtungskosten"><i class="bx bx-link"></i>Übernachtungskosten</a></li> <?php // ToDo: noch nicht fertig?>
             </ul>
             @if($documents->count()>0)
                 <br>
@@ -283,18 +283,13 @@
                     @foreach($documents as $document)
                         <li><a href="/storage/dokumente/{{$document->dokumentenFile}}" target="_blank"><i class="bx bxs-note"></i>{{$document->dokumentenName}}</a></li>
                     @endforeach
-                    @php
-                        /*
-                         <li><a href="https://www.kel-datteln.de/download/vereinssatzung2010.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinssatzung 2010</a></li>
-                         <li><a href="https://www.kel-datteln.de/download/Sportkleidung_2019.pdf" target="_blank"><i class="bx bxs-note"></i>Vereinskleidung</a></li>
-                        */
-                    @endphp
-                    @endif
+                </ul>
+            @endif
             <br>
             <h4>Intern</h4>
             <ul>
                 <li><a href="{{ route('login') }}"><i class="bx bx-log-in"></i>Login</a></li>
-                <?php // ToDo: Regestrieren noch nicht feritg ?>
+                <?php // ToDo: Regestrieren noch nicht fertig ?>
                 @if (Route::has('register') && 1==2)
                     <li><a href="{{ route('register') }}"><i class="bx bx-log-in"></i>Regestrieren</a></li>
                 @endif

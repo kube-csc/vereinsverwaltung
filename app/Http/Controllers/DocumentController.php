@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\instruction;
+use App\Models\SportSection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -54,7 +56,19 @@ class DocumentController extends Controller
      */
     public function create()
     {
-        return view('admin.document.create');
+        $instructions = instruction::orderby('ueberschrift')->get();
+
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
+            ->orderby('sportSection_id')
+            ->orderby('abteilung')
+            ->get();
+
+        return view('admin.document.create')->with(
+            [
+                'instructions'  => $instructions,
+                'sportSections' => $sportSections
+            ]
+        );
     }
 
     /**
@@ -74,6 +88,8 @@ class DocumentController extends Controller
         $document= new Document(
             [
                 'dokumentenName'   => $request->documentName,
+                'instruction_id'   => $request->instruction_id,
+                'sportSection_id'  => $request->sportSection_id,
                 'visible'          => 1,
                 'footerStatus'     => 1,
                 'bearbeiter_id'    => Auth::user()->id,
@@ -112,7 +128,21 @@ class DocumentController extends Controller
     public function edit($documentId)
     {
         $document = Document::find($documentId);
-        return view('admin.document.edit',compact('document' ));
+
+        $instructions = instruction::orderby('ueberschrift')->get();
+
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
+            ->orderby('sportSection_id')
+            ->orderby('abteilung')
+            ->get();
+
+        return view('admin.document.edit',compact('document' ))->with(
+            [
+                'document'      => $document,
+                'instructions'  => $instructions,
+                'sportSections' => $sportSections,
+            ]
+        );
     }
 
     /**
@@ -132,6 +162,8 @@ class DocumentController extends Controller
 
         Document::find($documentId)->update([
             'dokumentenName'    => $request->dokumentenName,
+            'instruction_id'    => $request->instruction_id,
+            'sportSection_id'   => $request->sportSection_id,
             'footerStatus'      => '1',
             'visible'           => '1',
             'startDatum'        => Carbon::now(),

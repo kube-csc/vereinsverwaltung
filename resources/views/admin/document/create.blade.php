@@ -52,9 +52,54 @@
                                     id="dokumentName" placeholder="Dokumenten Name" name="documentName" value="{{ old('documentName') }}">
                                     <small class="form-text text-danger">{!! $errors->first('documentName') !!}</small>
                                 </div>
+
+                                <div class="my-4" >
+                                  <label for="name">Informationsseiten:</label><br>
+                                  <select name="instruction_id">
+                                      <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
+                                      <option value="" selected>
+                                          keine Zuordnung
+                                      </option>
+                                      @foreach ($instructions as $instruction)
+                                          <option value="{{ $instruction->id }}">
+                                            {{ $instruction->ueberschrift }}
+                                          </option>
+                                      @endforeach
+                                  </select>
+                                </div>
+
+                                <div class="my-4" >
+                                  <label for="name">Abteilung / Mannschaft:</label><br>
+                                  <select name="sportSection_id">
+                                      <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
+                                      <option value="" selected>
+                                          keine Zuordnung
+                                      </option>
+                                      <optgroup label="Abeilung:">
+                                          @php
+                                              $firsttime = 0;
+                                          @endphp
+
+                                          @foreach ($sportSections as $sportSection)
+                                              @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
+                                                  @php
+                                                      $firsttime = 1;
+                                                  @endphp
+                                      </optgroup>
+                                      <optgroup label="Mannschaft:">
+                                          @endif
+                                          <option value="{{ $sportSection->id }}">
+                                              {{ $sportSection->abteilung }}
+                                          </option>
+                                          @endforeach
+                                      </optgroup>
+                                  </select>
+                                </div>
+
                                 <div class="py-2">
                                   <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Dokument anlegen</button>
                                 </div>
+
                             </form>
                             <br>
                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu"><i class="fas fa-arrow-circle-up"></i>Zurück</a>

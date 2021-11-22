@@ -15,7 +15,20 @@
                             @endif
                             <h3>{{ $sportSectionName->abteilung }}</h3>
                             @if($sportSectionName->event_id)
+                              <p>
                               {!! $sportSectionName->event->beschreibung !!}
+                              </p>
+                            @endif
+
+                            @if($documents->count())
+                              <div>
+                                <b>Dokumente</b>
+                                @foreach($documents as $document)
+                                    <div>
+                                        <a href="/storage/dokumente/{{$document->dokumentenFile}}" target="_blank"><i class="bx bxs-note"></i>{{$document->dokumentenName}}</a>
+                                    </div>
+                                @endforeach
+                              </div>
                             @endif
 
                         </div>

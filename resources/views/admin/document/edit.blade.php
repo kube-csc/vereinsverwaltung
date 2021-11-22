@@ -66,6 +66,61 @@
                                          id="documentFile" name="documentFile" value="">
                                   <small class="form-text text-danger">{!! $errors->first('documentFile') !!}</small>
                                 </div>
+
+                                <div class="my-4" >
+                                  <label for="name">Informationsseiten:</label><br>
+                                  <select name="instruction_id">
+                                      <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
+                                      <option value=""
+                                              @if ($document->instruction_id == NULL)
+                                              selected
+                                          @endif
+                                      >keine Zuordnung
+                                      </option>
+                                          @foreach ($instructions as $instruction)
+                                           <option value="{{ $instruction->id }}"
+                                              @if ($document->instruction_id == $instruction->id)
+                                                  selected
+                                              @endif
+                                           >{{ $instruction->ueberschrift }}</option>
+                                          @endforeach
+                                  </select>
+                                </div>
+
+                                <div class="my-4" >
+                                  <label for="name">Abteilung / Mannschaft:</label><br>
+                                  <select name="sportSection_id">
+                                      <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
+                                      <option value=""
+                                              @if ($document->sportSection_id == NULL)
+                                              selected
+                                          @endif
+                                      >keine Zuordnung
+                                      </option>
+                                      <optgroup label="Abeilung:">
+                                          @php
+                                              $firsttime = 0;
+                                          @endphp
+
+                                          @foreach ($sportSections as $sportSection)
+                                              @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
+                                                  @php
+                                                      $firsttime = 1;
+                                                  @endphp
+                                      </optgroup>
+                                      <optgroup label="Mannschaft:">
+                                              @endif
+                                          <option value="{{ $sportSection->id }}"
+                                              @if ($document->sportSection_id == $sportSection->id)
+                                                  selected
+                                              @endif
+                                          >{{ $sportSection->abteilung }}</option>
+                                          @endforeach
+
+                                      </optgroup>
+                                  </select>
+                                </div>
+
                                 <div class="py-2">
                                    <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderungen speichern</button>
                                 </div>

@@ -69,7 +69,7 @@
     js = d.createElement(s); js.id = id;
     js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1";
     fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));</script>
+  }(footerDocument, 'script', 'facebook-jssdk'));</script>
 @endif
 
 <!-- ======= Header ======= -->
@@ -274,12 +274,12 @@
                 <li><a href="/Information/Beiträge"><i class="bx bx-link"></i>Beiträge</a></li>  <?php // ToDo: noch nicht fertig?>
                 <li><a href="/Information/Übernachtungskosten"><i class="bx bx-link"></i>Übernachtungskosten</a></li> <?php // ToDo: noch nicht fertig?>
             </ul>
-            @if($documents->count()>0)
+            @if($footerDocuments->count()>0)
                 <br>
                 <h4>Dokumente</h4>
                 <ul>
-                    @foreach($documents as $document)
-                        <li><a href="/storage/dokumente/{{$document->dokumentenFile}}" target="_blank"><i class="bx bxs-note"></i>{{$document->dokumentenName}}</a></li>
+                    @foreach($footerDocuments as $footerDocument)
+                        <li><a href="/storage/dokumente/{{$footerDocument->dokumentenFile}}" target="_blank"><i class="bx bxs-note"></i>{{$footerDocument->dokumentenName}}</a></li>
                     @endforeach
                 </ul>
             @endif

@@ -81,7 +81,7 @@ class DocumentController extends Controller
     {
         $request->validate(
             [
-                'documentName'  => 'required'
+                'documentName'  => 'required|max:45',
             ]
         );
 
@@ -91,7 +91,7 @@ class DocumentController extends Controller
                 'instruction_id'   => $request->instruction_id,
                 'sportSection_id'  => $request->sportSection_id,
                 'visible'          => 1,
-                'footerStatus'     => 1,
+                'footerStatus'     => $request->footerStatus,
                 'bearbeiter_id'    => Auth::user()->id,
                 'user_id'          => Auth::user()->id,
                 'updated_at'       => Carbon::now(),
@@ -156,7 +156,7 @@ class DocumentController extends Controller
     {
         $request->validate(
             [
-                'dokumentenName'  => 'required'
+                'dokumentenName'  => 'required|max:45',
             ]
         );
 
@@ -164,7 +164,7 @@ class DocumentController extends Controller
             'dokumentenName'    => $request->dokumentenName,
             'instruction_id'    => $request->instruction_id,
             'sportSection_id'   => $request->sportSection_id,
-            'footerStatus'      => '1',
+            'footerStatus'      => $request->footerStatus,
             'visible'           => '1',
             'startDatum'        => Carbon::now(),
             'endDatum'          => '2099-12-31',

@@ -45,7 +45,7 @@
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                 <div class="my-4" >
-                                  <label for="name">Dokumenten Name:</label>
+                                  <label for="Dokumentenname">Dokumenten Name:</label>
                                   <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('dokumentenName') ? 'bg-red-300' : '' }}"
                                          id="dokumentenName" placeholder="Dokumentenname" name="dokumentenName" value="{{ old('dokumentenName') ?? $document->dokumentenName  }}">
                                   <small class="form-text text-danger">{!! $errors->first('dokumentenName') !!}</small>
@@ -68,8 +68,19 @@
                                 </div>
 
                                 <div class="my-4" >
-                                  <label for="name">Informationsseiten:</label><br>
-                                  <select name="instruction_id">
+                                  <label for="footerStatus">Dokument angezeigt im Footer:</label><br>
+                                  <input type="checkbox" class="border rounded shadow p-2 mr-2 my-2 {{ $errors->has('footerStatus') ? 'bg-red-300' : '' }}"
+                                         id="footerStatus" name="footerStatus" value="1"
+                                         @if(old('footerStatus')==1 | $document->footerStatus==1)
+                                           checked
+                                         @endif
+                                  >
+                                  <small class="form-text text-danger">{!! $errors->first('footerStatus') !!}</small>
+                                </div>
+
+                                <div class="my-4" >
+                                  <label for="instruction_id">Informationsseiten:</label><br>
+                                  <select name="instruction_id" class="w-full border rounded shadow p-2 mr-2 my-2">
                                       <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
                                       <option value=""
                                               @if ($document->instruction_id == NULL)
@@ -88,8 +99,8 @@
                                 </div>
 
                                 <div class="my-4" >
-                                  <label for="name">Abteilung / Mannschaft:</label><br>
-                                  <select name="sportSection_id">
+                                  <label for="sportSection_id">Abteilung / Mannschaft:</label><br>
+                                  <select name="sportSection_id" class="w-full border rounded shadow p-2 mr-2 my-2">
                                       <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
                                       <option value=""
                                               @if ($document->sportSection_id == NULL)

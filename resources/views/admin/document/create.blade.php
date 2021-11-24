@@ -47,15 +47,26 @@
                               <form class="my-4" autocomplete="off" action="{{ route('document.store') }}" method="post">
                                 @csrf
                                 <div>
-                                    <label for="name">Dokumenten Name:</label>
+                                    <label for="dokumentName">Dokumenten Name:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('documentName') ? 'bg-red-300' : '' }}"
                                     id="dokumentName" placeholder="Dokumenten Name" name="documentName" value="{{ old('documentName') }}">
                                     <small class="form-text text-danger">{!! $errors->first('documentName') !!}</small>
                                 </div>
 
                                 <div class="my-4" >
-                                  <label for="name">Informationsseiten:</label><br>
-                                  <select name="instruction_id">
+                                  <label for="name">Dokument angezeigt im Footer:</label><br>
+                                  <input type="checkbox" class="border rounded shadow p-2 mr-2 my-2 {{ $errors->has('footerStatus') ? 'bg-red-300' : '' }}"
+                                         id="footerStatus" name="footerStatus" value="1"
+                                  @if(old('footerStatus')==1)
+                                   checked
+                                  @endif
+                                  >
+                                  <small class="form-text text-danger">{!! $errors->first('footerStatus') !!}</small>
+                                </div>
+
+                                <div class="my-4" >
+                                  <label for="instruction_id">Informationsseiten:</label><br>
+                                  <select name="instruction_id" class="w-full border rounded shadow p-2 mr-2 my-2">
                                       <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
                                       <option value="" selected>
                                           keine Zuordnung
@@ -69,8 +80,8 @@
                                 </div>
 
                                 <div class="my-4" >
-                                  <label for="name">Abteilung / Mannschaft:</label><br>
-                                  <select name="sportSection_id">
+                                  <label for="sportSection_id">Abteilung / Mannschaft:</label><br>
+                                  <select name="sportSection_id" class="w-full border rounded shadow p-2 mr-2 my-2">
                                       <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
                                       <option value="" selected>
                                           keine Zuordnung

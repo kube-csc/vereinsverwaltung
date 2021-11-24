@@ -17,12 +17,12 @@ class CreateDocumentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('instruction_id')->nullable();
             $table->unsignedBigInteger('sportSection_id')->nullable();
-            $table->string('dokumentenName','40');
+            $table->string('dokumentenName','45');
             $table->string('dokumentenFile')->nullable();
             $table->date('startDatum')->nullable();
             $table->date('endDatum')->nullable();
-            $table->boolean('footerStatus')->default(true);  // true = 1 = sichtbar
-            $table->boolean('visible')->default(true);       // true = 1 = sichtbar
+            $table->boolean('footerStatus')->nullable();      // true = 1 = wird im Footer angezeigt
+            $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');
             $table->SoftDeletes();

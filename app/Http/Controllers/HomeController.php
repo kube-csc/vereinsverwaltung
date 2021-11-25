@@ -247,4 +247,31 @@ class HomeController extends Controller
         ]);
     }
 
+    public function journey()
+    {
+        $footerDocuments = Document::where('footerStatus' , 1)
+            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+            ->where('visible' , 1)
+            ->where('dokumentenFile' ,'!=' , NULL)
+            ->get();
+
+        return view('home.journey')->with([
+            'footerDocuments'         => $footerDocuments
+        ]);
+    }
+
+    public function imprint()
+    {
+        $footerDocuments = Document::where('footerStatus' , 1)
+            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+            ->where('visible' , 1)
+            ->where('dokumentenFile' ,'!=' , NULL)
+            ->get();
+
+        return view('home.imprint')->with([
+            'footerDocuments'         => $footerDocuments
+        ]);
+    }
 }

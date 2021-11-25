@@ -32,6 +32,8 @@ Route::get('/Event/detail/{event}',          [HomeController::class, 'eventShow'
 Route::get('/Information/{event}',           [HomeController::class, 'instructionShow']);
 Route::get('/EventFuture',                   [HomeController::class, 'eventFutureAll']);
 Route::get('/EventPast',                     [HomeController::class, 'eventPastAll']);
+Route::get('/Anfahrt',                       [HomeController::class, 'journey']);
+Route::get('/Impressum',                     [HomeController::class, 'imprint']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');
@@ -140,13 +142,11 @@ Route::get('/Dokumente/geloescht/{document_id}',     [DocumentController::class,
 Route::get('/Dokumente/aktiv/{document_id}',         [DocumentController::class, 'aktiv'])         ->name('document.aktiv');
 Route::get('/Dokumente/inaktiv/{document_id}',       [DocumentController::class, 'inaktiv'])       ->name('document.inaktiv');
 
-Route::get('/Anfahrt', function () {
-    return view('anfahrt');
-});
-
+/*
 Route::get('/Impressum', function () {
     return view('impressum');
 });
+*/
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

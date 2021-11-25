@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\board;
-use App\Models\Document;
 use App\Models\Event;
 use App\Models\SportSection;
 use App\Models\instruction;
+use App\Models\Document;
 use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
 {
     public function index(){
 
-        $serverdomain        = $_SERVER["HTTP_HOST"];
+      $serverdomain        = $_SERVER["HTTP_HOST"];
 
       $abteilungHomes      = SportSection::where('status' , '1')
           ->orwhere('domain' , $serverdomain)

@@ -31,7 +31,7 @@
 
                             <div class="my-4 flex">
                                <a href="{{ route('event.create') }}">
-                                <box-icon type='solid' name='calendar-plus'></box-icon>
+                                <box-icon name='calendar-plus'></box-icon>
                               </a>
                             </div>
 
@@ -46,10 +46,18 @@
 
                               @foreach ( $events as $event)
                               <div class="rounded border shadow p-3 my-2 {{$event->id == $event->id ? 'bg-blue-200' : ''}}" onclick="">
-                                  <div>
-                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Event/edit/'.$event->id) }}">
-                                      <box-icon name='edit' type='solid'></box-icon>
-                                    </a>
+                                  <div class="justify-between my-2">
+                                      <div>
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Event/edit/'.$event->id) }}">
+                                              <box-icon name='edit' type='solid'></box-icon>
+                                        </a>
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/alle/'.$event->id) }}">
+                                          <box-icon name='image'></box-icon>
+                                        </a>
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/neu/'.$event->id) }}">
+                                            <box-icon name='image-add'></box-icon>
+                                        </a>
+                                      </div>
                                   </div>
                                   <div class="justify-between my-2">
                                     <div class="flex">

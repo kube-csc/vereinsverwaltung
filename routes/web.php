@@ -10,6 +10,7 @@ use App\Http\Controllers\SportTeamController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BoardUserController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;

@@ -94,6 +94,16 @@ Route::get('/Eventgruppe/softDelete/{eventGroup_id}',  [EventGroupController::cl
 Route::get('/Eventgruppe/aktiv/{sportSection_id}',     [EventGroupController::class, 'aktiv'])         ->name('eventGroup.aktiv');
 Route::get('/Eventgruppe/inaktiv/{sportSection_id}',   [EventGroupController::class, 'inaktiv'])       ->name('eventGroup.inaktiv');
 
+//Route::resource('report', 'ReportController');
+Route::get('/Bericht/alle/{event_id}',                 [ReportController::class, 'index'])             ->name('report.index');
+Route::get('/Bericht/neu/{event_id}',                  [ReportController::class, 'create'])            ->name('report.create');
+Route::post('/Bericht/speichern',                      [ReportController::class, 'store'])             ->name('report.store');
+Route::get('/Bericht/edit/{event_id}',                 [ReportController::class, 'edit'])              ->name('report.edit');
+Route::post('/Bericht/update/{event_id}',              [ReportController::class, 'update'])            ->name('report.update');
+Route::get('/Bericht/aktiv/{board_id}',                [ReportController::class, 'aktiv'])             ->name('report.aktiv');
+Route::get('/Bericht/inaktiv/{board_id}',              [ReportController::class, 'inaktiv'])           ->name('report.inaktiv');
+Route::get('/Bericht/picturedelete/{sportSection_id}', [ReportController::class, 'pictureDelete']);
+
 //Route::resource('instruction.', 'InstructionController');
 Route::get('/Instruction/alle',                        [InstructionController::class, 'index'])        ->name('instruction.index');
 Route::get('/Instruction/edit/{instruction_id}',       [InstructionController::class, 'edit'])         ->name('instruction.edit');

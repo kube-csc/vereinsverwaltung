@@ -9,17 +9,17 @@
             @endphp
             @php //ToDo: div class bearbeiten für filterabfrage und Filterausgabe @endphp
             <div class="col-md-6 d-flex align-items-md-center">
-                <div>
+                <div class="col-md-6">
                     <label>Filter</label>
                     <input wire:model.debounce.1000ms="search" maxlength="50" size="25">
                 </div>
-                <div>
+                <div class="col-md-6">
                     <i class="bx bx-chevron-up" wire:click="monthIncrease"></i></box-icon>
                     <label>Monat</label>
                     <i class="bx bx-chevron-down" wire:click="monthDecrease"></i>
-                    <input wire:model.debounce.2000ms="month" type="number">
+                    <input wire:model.debounce.1000ms="month" type="number">
                 </div>
-                <div>
+                <div class="col-md-6">
                     <i class="bx bx-chevron-up" wire:click="yearIncrease"></i>
                     </box-icon><label>Jahr</label>
                     <i class="bx bx-chevron-down" wire:click="yearDecrease"></i>
@@ -27,17 +27,17 @@
                 </div>
             </div>
             <div class="col-md-6 d-flex align-items-stretch ">
-                <div>
+                <div class="col-md-6">
                     @if($search != "")
                         Filter: {{ $search }}
                     @endif
                 </div>
-                <div>
+                <div class="col-md-6">
                     @if($month != "")
                         Monat: {{ $month }}
                     @endif
                 </div>
-                <div>
+                <div class="col-md-6">
                     @if($year != "")
                         Jahr: {{ $year }}
                     @endif
@@ -56,7 +56,23 @@
                 @if( $count != 0 && $countMax != 6)
                     <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                         <div class="icon-box" data-aos="fade-up">
-                            <div class="icon"><i class="bx bxl-dribbble"></i></div>
+                            @php
+                                /*
+                                 <div class="icon"><i class="bx bxl-dribbble"></i></div>
+                                */
+                                  // ToDo: Query abfrage im Controller verlegen
+                                  $reports  = DB::table('reports')->where('event_id' , $eventPast->id)
+                                              ->where('visible' , 1)
+                                              ->orderby('position')
+                                              ->limit(1)
+                                              ->get();
+                            @endphp
+
+                            <div>
+                                @foreach($reports as $report)
+                                    <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
+                                @endforeach
+                            </div>
 
                             <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
                             @if(isset($eventPast->sportSectionName->abteilung))

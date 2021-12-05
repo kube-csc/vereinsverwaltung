@@ -28,7 +28,23 @@
                @if( $count != 0 && $countMax != 6)
                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                     <div class="icon-box" data-aos="fade-up">
-                        <div class="icon"><i class="bx bxl-dribbble"></i></div>
+                        @php
+                            /*
+                             <div class="icon"><i class="bx bxl-dribbble"></i></div>
+                            */
+                              // ToDo: Query abfrage im Controller verlegen
+                              $reports  = DB::table('reports')->where('event_id' , $eventPast->id)
+                                          ->where('visible' , 1)
+                                          ->orderby('position')
+                                          ->limit(1)
+                                          ->get();
+                        @endphp
+
+                        <div>
+                            @foreach($reports as $report)
+                                <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
+                            @endforeach
+                        </div>
 
                         <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
                         @if(isset($eventPast->sportSectionName->abteilung))

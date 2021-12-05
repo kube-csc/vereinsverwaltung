@@ -8,6 +8,9 @@ use App\Http\Controllers\SportSectionController;
 use App\Http\Controllers\EventGroupController;
 use App\Http\Controllers\SportTeamController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\BoardController;
+use App\Http\Controllers\BoardUserController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
@@ -118,7 +121,7 @@ Route::get('/Team/edit/{board_id}',                 [BoardController::class, 'ed
 Route::post('/Team/update/{board_id}',              [BoardController::class, 'update'])    ->name('board.update');
 
 //Route::resource('boardUser.', 'BoardUserController');
-Route::get('/Posten/{board_id}',                     [BoardUserController::class, 'index'])     ->name('boardUser.index');;
+Route::get('/Posten/{board_id}',                     [BoardUserController::class, 'index'])     ->name('boardUser.index');
 Route::get('/Posten/neu/{board_id}',                 [BoardUserController::class, 'create'])    ->name('boardUser.create');
 Route::get('/Posten/aktiv/{boardUser_id}',           [BoardUserController::class, 'aktiv'])     ->name('boardUser.aktiv');
 Route::get('/Posten/inaktiv/{boardUser_id}',         [BoardUserController::class, 'inaktiv'])   ->name('boardUser.inaktiv');
@@ -130,7 +133,7 @@ Route::get('/Posten/edit/{boardUser_id}',            [BoardUserController::class
 Route::get('/Posten/zuordnen/{boardUser_id}',        [BoardUserController::class, 'match'])     ->name('boardUser.match');
 
 //Route::resource('Document.', 'DocumentController');
-Route::get('/Dokumente/alle',                        [DocumentController::class, 'index'])         ->name('document.index');;
+Route::get('/Dokumente/alle',                        [DocumentController::class, 'index'])         ->name('document.index');
 Route::get('/Dokumente/neu',                         [DocumentController::class, 'create'])        ->name('document.create');
 Route::post('/Dokumente/speichern',                  [DocumentController::class, 'store'])         ->name('document.store');
 Route::get('/Dokumente/edit/{document_id}',          [DocumentController::class, 'edit'])          ->name('document.edit');

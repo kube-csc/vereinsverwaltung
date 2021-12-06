@@ -24,10 +24,15 @@ class CreateReportsTable extends Migration
             $table->integer('pixy')->nullable();
             $table->string('filename')->nullable();
             $table->integer('player')->nullable();
-            $table->integer('typ')->default(1);             //        1 = jpg
+            $table->integer('typ')->default(1);                          //        1 = jpg
                                                                          //        2 = gif
                                                                          //        3 = png
                                                                          //       10 = pdf
+                                                                         //       11 = doc
+                                                                         //       12 = xls
+                                                                         //       13 = xlsx
+                                                                         //       20 = wmv
+                                                                         //       21 = mp4
             $table->boolean('visible')->default(true);      // true = 1 = sichtbar
             $table->boolean('startseite')->default(false);  // true = 1 = Leandingpage
             $table->unsignedBigInteger('bearbeiter_id');

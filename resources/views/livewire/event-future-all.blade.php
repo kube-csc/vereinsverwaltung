@@ -6,43 +6,57 @@
                 //ToDo: Text bearbeiten
                //<p>Text ?</p>
             @endphp
-                @php //ToDo: div class bearbeiten für filterabfrage und Filterausgabe @endphp
-                <div class="col-md-6 d-flex align-items-md-center">
-                    <div class="col-md-6">
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating">
                         <label>Filter</label>
-                        <input wire:model.debounce.1000ms="search" maxlength="50" size="25">
+                        <input class="form-control" wire:model.debounce.1000ms="search" maxlength="50" size="25">
                     </div>
-                    <div class="col-md-6">
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
                         <i class="bx bx-chevron-up" wire:click="monthIncrease"></i></box-icon>
                         <label>Monat</label>
                         <i class="bx bx-chevron-down" wire:click="monthDecrease"></i>
-                        <input wire:model.debounce.1000ms="month" type="number">
+                        <input class="form-control" wire:model.debounce.1000ms="month" type="number">
                     </div>
-                    <div class="col-md-6">
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
                         <i class="bx bx-chevron-up" wire:click="yearIncrease"></i>
                         </box-icon><label>Jahr</label>
                         <i class="bx bx-chevron-down" wire:click="yearDecrease"></i>
-                        <input wire:model.debounce.1000ms="year" type="number">
+                        <input class="form-control" wire:model.debounce.1000ms="year" type="number">
                     </div>
                 </div>
-                <div class="col-md-6 d-flex align-items-stretch ">
-                    <div class="col-md-6">
-                    @if($search != "")
+            </div>
+            @php /*
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating">
+                      @if($search != "")
                         Filter: {{ $search }}
-                    @endif
+                      @endif
                     </div>
-                    <div class="col-md-6">
-                    @if($month != "")
-                        Monat: {{ $month }}
-                    @endif
-                    </div>
-                    <div class="col-md-6">
-                    @if($year != "")
-                        Jahr: {{ $year }}
-                    @endif
-                    </DIV>
                 </div>
-
+                <div class="col-md">
+                    <div class="form-floating">
+                      @if($month != "")
+                        Monat: {{ $month }}
+                      @endif
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                      @if($year != "")
+                        Jahr: {{ $year }}
+                      @endif
+                    </div>
+                </div>
+            </div>
+            */
+            @endphp
+            <br>  <!-- ToDo: Bessere Formatierung -->
         <div class="row">
             @php
                 $countMax=$eventsFuture->count();
@@ -59,22 +73,23 @@
                                 /*
                                  <div class="icon"><i class="bx bxl-dribbble"></i></div>
                                 */
-                                 // ToDo: Query abfrage im Controller verlegen
-                                 $reports  = DB::table('reports')->where('event_id' , $eventFuture->id)
-                                             ->where('visible' , 1)
-                                             ->where('typ' , 1)
-                                             ->orderby('position')
-                                             ->limit(1)
-                                             ->get();
+                               // ToDo: Query abfrage im Controller verlegen
+                               $reports  = DB::table('reports')->where('event_id' , $eventFuture->id)
+                                           ->where('visible' , 1)
+                                           ->where('typ' , 1)
+                                           ->orderby('startseite' ,'desc')
+                                           ->orderby('position')
+                                           ->limit(1)
+                                           ->get();
                             @endphp
 
+                            <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
                             <div>
                                 @foreach($reports as $report)
                                     <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
                                 @endforeach
                             </div>
 
-                            <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
                             @if(isset($eventFuture->sportSectionName->abteilung))
                                 <p class="description">{{ $eventFuture->sportSectionName->abteilung }}</p>
                             @endif

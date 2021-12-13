@@ -41,6 +41,133 @@ class ReportController extends Controller
         return Redirect()->back()->with('success' , 'Bild wurde unsichtbar geschaltet.');
     }
 
+    public function start($reportId)
+    {
+        $report = report::find($reportId);
+        $eventID=$report->event_id;
+
+        report::where('startseite' , '1')
+                ->where('event_id' , $eventID)
+                ->update([
+                'startseite'       => 0,
+                'bearbeiter_id'    => Auth::user()->id,
+                'updated_at'       => Carbon::now()
+        ]);
+
+        report::find($reportId)->update([
+            'startseite'       => 1,
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Bild wurde an der Startseite angepint.');
+    }
+
+    public function maxtop($reportId)
+    {
+        report::find($reportId)->update([
+            'position'         => '0',
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+
+        $report=report::find($reportId);
+        $eventID=$report->event_id;
+
+        // ToDo verebessern der Updatefunktion
+        //board::all()->update(['position' => 'position']);
+
+        $reports = report::where('event_id' , $eventID)
+                          ->orderby('position')
+                          ->get();
+        $positionNew=10;
+        foreach ($reports as $report){
+            report::find($report->id)->update([
+                'position'         => $positionNew
+            ]);
+            $positionNew=$positionNew+10;
+        }
+        return Redirect()->back()->with('success' , 'Das Bild wurde zur Top Position verschoben.');
+    }
+
+    public function top($reportId)
+    {
+        $report = report::find($reportId);
+        $positionNew=$report->position-11;
+        $eventID=$report->event_id;
+
+        report::find($reportId)->update([
+            'position'         => $positionNew,
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+
+        $positionNew=10;
+        $reports = report::where('event_id' , $eventID)
+            ->orderby('position')
+            ->get();
+        foreach ($reports as $report){
+            report::find($report->id)->update([
+                'position'      => $positionNew
+            ]);
+            $positionNew=$positionNew+10;
+        }
+        return Redirect()->back()->with('success' , 'Das Bild wurde eine Position nach oben verschoben.');
+    }
+
+    public function down($reportId)
+    {
+        // ToDo verebessern der Updatefunktion
+        $report = report::find($reportId);
+        $positionNew=$report->position+11;
+        $eventID=$report->event_id;
+        report::find($reportId)->update([
+            'position'         => $positionNew,
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+
+        $reports = report::where('event_id' , $eventID)
+                      ->orderby('position')
+                      ->get();
+        $positionNew=10;
+        foreach ($reports as $report){
+            report::find($report->id)->update([
+                'position'      => $positionNew
+            ]);
+            $positionNew=$positionNew+10;
+        }
+        return Redirect()->back()->with('success' , 'Das Bild wurde eine Position nach unten verschoben.');
+    }
+
+    public function maxdown($reportId)
+    {
+        $reports = report::where('event_id' , $reportId)
+            ->orderby('position' , 'desc')
+            ->limit(1)
+            ->get();
+        foreach ($reports as $report){
+            $positionNew=$report->position+10;
+        }
+
+        report::find($reportId)->update([
+            'position'         => $positionNew,
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+
+        $reports = report::where('event_id' , $eventID)
+            ->orderby('position')
+            ->get();
+        $positionNew=10;
+        foreach ($reports as $report){
+            report::find($report->id)->update([
+                'position'      => $positionNew,
+            ]);
+            $positionNew=$positionNew+10;
+        }
+        return Redirect()->back()->with('success' , 'Das Bild wurde zur letzten Position verschoben.');
+    }
+
     public function index($event_id)
     {
         $reports = report::where('event_id' , $event_id)->orderby('position')->paginate(5);;

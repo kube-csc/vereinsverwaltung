@@ -35,19 +35,21 @@
                               // ToDo: Query abfrage im Controller verlegen
                               $reports  = DB::table('reports')->where('event_id' , $eventPast->id)
                                           ->where('visible' , 1)
+                                          ->where('typ' , 1)
+                                          ->orderby('startseite' , 'desc')
                                           ->orderby('position')
                                           ->limit(1)
                                           ->get();
                         @endphp
 
+                        <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
                         <div>
                             @foreach($reports as $report)
                                 <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
                             @endforeach
                         </div>
 
-                        <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
-                        @if(isset($eventPast->sportSectionName->abteilung))
+                       @if(isset($eventPast->sportSectionName->abteilung))
                             <p class="description">{{ $eventPast->sportSectionName->abteilung }}</p>
                         @endif
                         @if(isset($eventPast->eventGroupName->termingruppe))

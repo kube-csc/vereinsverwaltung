@@ -38,15 +38,20 @@
                                   </div>
                                   @endif
                               </div>
-
+                                @php
+                                    $reportMax=  $reports->count();
+                                @endphp
                               @foreach ( $reports as $report )
+                                @php
+                                    --$reportMax;
+                                @endphp
                               <div class="rounded border shadow p-3 my-2 bg-blue-200">
                                   <div class="justify-between my-2">
                                     <div>
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/edit/'.$report->id) }}">
                                             <box-icon name='edit'></box-icon>
                                         </a>
-                                        @if($report['visible']==2)
+                                        @if($report['startseite']==0)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/start/'.$report->id) }}">
                                                 <box-icon name='pin'></box-icon>
                                             </a>
@@ -71,9 +76,25 @@
                                                 <box-icon name='calendar-plus'></box-icon>
                                             </a>
                                         @endif
+                                        @if ($report['position'] != 10)
+                                            <a href="{{ url('Bericht/maxtop/'.$report->id) }}">
+                                                <box-icon name='chevrons-up' ></box-icon>
+                                            </a>
+                                            <a href="{{ url('Bericht/top/'.$report->id) }}">
+                                                <box-icon name='chevron-up'></box-icon>
+                                            </a>
+                                        @endif
+                                        @if ($reportMax != 0)
+                                            <a href="{{ url('Bericht/down/'.$report->id) }}">
+                                                <box-icon name='chevron-down' ></box-icon>
+                                            </a>
+                                            <a href="{{ url('Bericht/maxdown/'.$report->id) }}">
+                                                <box-icon name='chevrons-down' ></box-icon>
+                                            </a>
+                                        @endif
                                     </div>
                                     <div class="flex">
-                                      <p class="font-bold text-lg">{{ $report->titel }} </p>
+                                      <p class="font-bold text-lg">{{ $report->titel }}</p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $report->updated_at->diffForHumans() }}</p>
                                     </div>
                                   </div>

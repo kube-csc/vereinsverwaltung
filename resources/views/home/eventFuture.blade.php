@@ -34,18 +34,19 @@
                            $reports  = DB::table('reports')->where('event_id' , $eventFuture->id)
                                        ->where('visible' , 1)
                                        ->where('typ' , 1)
+                                       ->orderby('startseite' ,'desc')
                                        ->orderby('position')
                                        ->limit(1)
                                        ->get();
                         @endphp
 
+                        <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
                         <div>
                             @foreach($reports as $report)
                                 <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
                             @endforeach
                         </div>
 
-                        <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
                         @if(isset($eventFuture->sportSectionName->abteilung))
                         <p class="description">{{ $eventFuture->sportSectionName->abteilung }}</p>
                         @endif

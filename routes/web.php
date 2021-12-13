@@ -99,11 +99,16 @@ Route::get('/Eventgruppe/inaktiv/{sportSection_id}',   [EventGroupController::cl
 Route::get('/Bericht/alle/{event_id}',                 [ReportController::class, 'index'])             ->name('report.index');
 Route::get('/Bericht/neu/{event_id}',                  [ReportController::class, 'create'])            ->name('report.create');
 Route::post('/Bericht/speichern',                      [ReportController::class, 'store'])             ->name('report.store');
-Route::get('/Bericht/edit/{event_id}',                 [ReportController::class, 'edit'])              ->name('report.edit');
-Route::post('/Bericht/update/{event_id}',              [ReportController::class, 'update'])            ->name('report.update');
-Route::get('/Bericht/aktiv/{board_id}',                [ReportController::class, 'aktiv'])             ->name('report.aktiv');
-Route::get('/Bericht/inaktiv/{board_id}',              [ReportController::class, 'inaktiv'])           ->name('report.inaktiv');
-Route::get('/Bericht/picturedelete/{sportSection_id}', [ReportController::class, 'pictureDelete']);
+Route::get('/Bericht/edit/{report_id}',                [ReportController::class, 'edit'])              ->name('report.edit');
+Route::post('/Bericht/update/{report_id}',             [ReportController::class, 'update'])            ->name('report.update');
+Route::get('/Bericht/aktiv/{report_id}',               [ReportController::class, 'aktiv'])             ->name('report.aktiv');
+Route::get('/Bericht/inaktiv/{report_id}',             [ReportController::class, 'inaktiv'])           ->name('report.inaktiv');
+Route::get('/Bericht/picturedelete/{report_id}',       [ReportController::class, 'pictureDelete']);
+Route::get('/Bericht/maxtop/{report_id}',              [ReportController::class, 'maxtop'])            ->name('report.maxtop');
+Route::get('/Bericht/top/{report_id}',                 [ReportController::class, 'top'])               ->name('report.top');
+Route::get('/Bericht/down/{report_id}',                [ReportController::class, 'down'])              ->name('report.down');
+Route::get('/Bericht/maxdown/{report_id}',             [ReportController::class, 'maxdown'])           ->name('report.maxdown');
+Route::get('/Bericht/start/{report_id}',               [ReportController::class, 'start'])             ->name('report.start');
 
 //Route::resource('instruction.', 'InstructionController');
 Route::get('/Instruction/alle',                        [InstructionController::class, 'index'])        ->name('instruction.index');

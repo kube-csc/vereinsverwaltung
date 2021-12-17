@@ -89,13 +89,12 @@
           ->get();
       @endphp
 
-
       <nav class="nav-menu d-none d-lg-block">
 
           <ul>
               <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/#about">Home</a></li>
 
-              <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="/#about">Abteilung</a>
+              <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="/#about">{{env('Menue_Abteilung')}}</a>
                   <ul>
                       @foreach($abteilungMenus as $sportSectionMenu)
 
@@ -224,16 +223,24 @@
             <li><a href="http://sup.kel-datteln.de"    target="_blank" class="bx bx-link-external">SUP Kurse</a></li>
             <li><a href="http://oc.kel-datteln.de"     target="_blank" class="bx bx-link-external">Outrigger für Vereinsmitglieder Buchen</a></li>
           </ul>
-          <h4>Abteilungen Webseiten der KEL</h4>
-          <ul>
-              <li><a href="http://dragons.kel-datteln.de" target="_blank" class="bx bx-link-external">Drachenboot</a></li>
-              <li><a href="http://jugend.kel-datteln.de"  target="_blank" class="bx bx-link-external">Kanujugend</a></li>
-              <li><a href="http://ocean.kel-datteln.de"   target="_blank" class="bx bx-link-external">Ocean</a></li>
-              <li><a href="http://pink.kel-datteln.de"    target="_blank" class="bx bx-link-external">Pink Dragons</a></li>
-              <li><a href="http://renn.kel-datteln.de"    target="_blank" class="bx bx-link-external">Kanurennsport</a></li>
-              <li><a href="http://wander.kel-datteln.de"  target="_blank" class="bx bx-link-external">Kanuwandern</a></li>
-          </ul>
-        </div>
+
+          @php
+          $abteilungDomains  = DB::table('sport_sections')
+          ->where('status' , '>' , '1')
+          ->where('domain' , '!=' , '')
+          ->orderby('abteilung')
+          ->get();
+          $count=$abteilungDomains->count();
+          @endphp
+          @if($count>0)
+              <h4>Webseiten {{env('Menue_Abteilung')}}</h4>
+              <ul>
+                  @foreach($abteilungDomains as $abteilungDomain)
+                      <li><a href="http://{{$abteilungDomain->domain}}" target="_blank" class="bx bx-link-external">{{$abteilungDomain->abteilung}}</a></li>
+                  @endforeach
+              </ul>
+          @endif
+      </div>
 
 <?php /*
         <div class="col-lg-2 col-md-6 footer-links" data-aos="fade-up" data-aos-delay="150">

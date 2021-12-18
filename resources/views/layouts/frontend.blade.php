@@ -77,7 +77,7 @@
   <div class="container d-flex align-items-center">
 
     <div class="logo mr-auto">
-      <h1 class="text-light"><a href="/"><span>{{ str_replace('_' , ' ' , env('Verein_Domain')) }}</span></a></h1>
+      <h1 class="text-light"><a href="{{env('APP_URL')}}"><span>{{ str_replace('_' , ' ' , env('Verein_Domain')) }}</span></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.php"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
     </div>
@@ -145,16 +145,36 @@
                   </ul>   <!-- Abteilung -->
               </li>    <!-- Abteilung Mannschaft   -->
               @php
-                  // TODO: Active im Menu funktioniert noch nicht
+                  // ToDo: Active im Menu funktioniert noch nicht
               @endphp
 
-              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/#services">Termine</a></li>
+              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/EventFuture">Termine</a></li>
               <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
 
               <!-- <li><a href="#portfolio">Portfolio</a></li> -->
 
               <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="/#contact">Kontakt</a></li>
-              <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
+              @php
+                  $instructionMenus = DB::table('instructions')
+                    ->where('beschreibung' , '<>' , '')
+                    ->where('hauptmenu' , 1)
+                    ->where('visible' , 1)
+                    ->orderby('ueberschrift')
+                    ->get();
+                   $countinstructionMenu=$instructionMenus->count();
+              @endphp
+              @if($countinstructionMenu>0)
+                  <li class="drop-down"><a href="">Information</a>
+                      <ul>
+                          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
+                          @foreach($instructionMenus as $instructionMenu)
+                              <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Information/{{ $instructionMenu->ueberschrift }}">{{ $instructionMenu->ueberschrift }}</a></li>
+                          @endforeach
+                      </ul>
+                  </li>
+              @else
+                  <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
+              @endif
           </ul>
 
       </nav><!-- .nav-menu -->
@@ -223,23 +243,6 @@
             <li><a href="http://sup.kel-datteln.de"    target="_blank" class="bx bx-link-external">SUP Kurse</a></li>
             <li><a href="http://oc.kel-datteln.de"     target="_blank" class="bx bx-link-external">Outrigger für Vereinsmitglieder Buchen</a></li>
           </ul>
-
-          @php
-          $abteilungDomains  = DB::table('sport_sections')
-          ->where('status' , '>' , '1')
-          ->where('domain' , '!=' , '')
-          ->orderby('abteilung')
-          ->get();
-          $count=$abteilungDomains->count();
-          @endphp
-          @if($count>0)
-              <h4>Webseiten {{env('Menue_Abteilung')}}</h4>
-              <ul>
-                  @foreach($abteilungDomains as $abteilungDomain)
-                      <li><a href="http://{{$abteilungDomain->domain}}" target="_blank" class="bx bx-link-external">{{$abteilungDomain->abteilung}}</a></li>
-                  @endforeach
-              </ul>
-          @endif
       </div>
 
 <?php /*
@@ -267,20 +270,16 @@
         </div>
 */ ?>
         <div class="col-lg-4 col-md-6 footer-newsletter" data-aos="fade-up" data-aos-delay="150">
-        <?php /* TODO: Netsletter
-          <h4>Dein Newsletter</h4>
-          <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
-          <form action="" method="post">
-            <input type="email" name="email"><input type="submit" value="Subscribe">
-          </form>
-          <br>
-          */ ?>
-            <h4>Informationen</h4>
-            <ul>
-                <li><a href="/Anfahrt"><i class="bx bx-map"></i>Anfahrt</a></li> <?php // ToDo: Anzeige akiv im Menu bearbeiten ?>
-                <li><a href="/Information/Beiträge"><i class="bx bx-link"></i>Beiträge</a></li>  <?php // ToDo: noch nicht fertig?>
-                <li><a href="/Information/Übernachtungskosten"><i class="bx bx-link"></i>Übernachtungskosten</a></li> <?php // ToDo: noch nicht fertig?>
-            </ul>
+            @php
+              /* ToD@o: Netsletter
+              <h4>Dein Newsletter</h4>
+              <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+              <form action="" method="post">
+                <input type="email" name="email"><input type="submit" value="Subscribe">
+              </form>
+              <br>
+              */
+            @endphp
             @if($footerDocuments->count()>0)
                 <br>
                 <h4>Dokumente</h4>
@@ -290,6 +289,25 @@
                     @endforeach
                 </ul>
             @endif
+
+            @php
+                $abteilungDomains  = DB::table('sport_sections')
+                ->where('status' , '>' , '1')
+                ->where('domain' , '!=' , '')
+                ->orderby('abteilung')
+                ->get();
+                $count=$abteilungDomains->count();
+            @endphp
+            @if($count>0)
+                <br>
+                <h4>Webseiten {{env('Menue_Abteilung')}}</h4>
+                <ul>
+                    @foreach($abteilungDomains as $abteilungDomain)
+                        <li><a href="http://{{$abteilungDomain->domain}}" target="_blank" class="bx bx-link-external">{{$abteilungDomain->abteilung}}</a></li>
+                    @endforeach
+                </ul>
+            @endif
+
             <br>
             <h4>Intern</h4>
             <ul>

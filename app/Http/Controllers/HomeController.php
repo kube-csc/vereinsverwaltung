@@ -166,6 +166,16 @@ class HomeController extends Controller
 
     public function eventShow($eventSeorch)
     {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -179,8 +189,9 @@ class HomeController extends Controller
         $events = event::where('ueberschrift' , $seoch)->where('datumvon' , $dateFor)->get();
 
         return view('home.eventShow')->with([
-            'events'      => $events,
-            'footerDocuments'   => $footerDocuments
+            'events'                      => $events,
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
         ]);
     }
 

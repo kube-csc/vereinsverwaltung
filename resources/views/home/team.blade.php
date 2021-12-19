@@ -4,7 +4,7 @@
     <div class="container">
 
         <div class="section-title" data-aos="fade-in" data-aos-delay="100">
-            <h2>Team</h2>
+            <h2>{{$sportSectionTeamName}}</h2>
             @php /*
                  ToDo: Text muss noch bearbeitet werden
                  */

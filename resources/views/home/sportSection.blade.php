@@ -83,9 +83,8 @@ foreach ( $abteilungHomes as $abteilungHome)
                <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="{{ $time }}">
               @endif
                 <a href="Abteilung/detail/{{ str_replace(' ' , '_' , $abteilung->abteilung) }}">
-                    <i class="bx bx-receipt"></i>
+                  <h4>{{ $abteilung->abteilung }}</h4>
                 </a>
-                <h4>{{ $abteilung->abteilung }}</h4>
                 <?php
                 if ($abteilung->event_id>0)
                  {

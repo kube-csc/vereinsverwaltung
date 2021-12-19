@@ -17,7 +17,7 @@
 
                   <div class="mt-6 text-gray-500">
                     @php
-                      // TODO: Beschreibungstext überarbeiten
+                      // ToDo: Beschreibungstext überarbeiten
                     @endphp
                     Bitte gebe die Daten der Mannschaft ein.
                   </div>
@@ -42,6 +42,12 @@
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('abteilung') ? 'bg-red-300' : '' }}"
                                     id="abteilung" placeholder="Abteilung" name="abteilung" value="{{ old('abteilung') ?? $sportTeam->abteilung }}">
                                     <small class="form-text text-danger">{!! $errors->first('abteilung') !!}</small>
+                                </div>
+                                <div class="my-4" >
+                                    <label for="abteilungTeamBezeichnung">Team Bezeichnung:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('abteilungTeamBezeichnung') ? 'bg-red-300' : '' }}"
+                                    id="abteilungTeamBezeichnung" placeholder="Team Bezeichnung" name="abteilungTeamBezeichnung" value="{{ old('abteilungTeamBezeichnung') ?? $sportTeam->abteilungTeamBezeichnung }}">
+                                    <small class="form-text text-danger">{!! $errors->first('abteilungTeamBezeichnung') !!}</small>
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Domain:</label>

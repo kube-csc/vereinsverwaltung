@@ -15,7 +15,8 @@ class CreateSportSectionsTable extends Migration
     {
         Schema::create('sport_sections', function (Blueprint $table) {
             $table->id();
-            $table->string('abteilung','40');
+            $table->string('abteilung','45');
+            $table->string('abteilungTeamBezeichnung','45');
             $table->unsignedBigInteger('event_id')->nullable();
             $table->unsignedBigInteger('sportSection_id')->nullable();
             $table->integer('status');

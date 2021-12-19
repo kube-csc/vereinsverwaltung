@@ -50,6 +50,12 @@
                                     id="abteilung" placeholder="Mannschaftsname" name="mannschaft" value="{{ old('mannschaft') }}">
                                     <small class="form-text text-danger">{!! $errors->first('mannschaft') !!}</small>
                                 </div>
+                                <div>
+                                    <label for="abteilungTeamBezeichnung">Team Bezeichnung:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('abteilungTeamBezeichnung') ? 'bg-red-300' : '' }}"
+                                    id="abteilungTeamBezeichnung" placeholder="Team Bezeichnung" name="abteilungTeamBezeichnung" value="{{ old('abteilungTeamBezeichnung') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('abteilungTeamBezeichnung') !!}</small>
+                                </div>
                                 <div class="py-2">
                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neue Mannschaft anlegen</button>
                                 </div>

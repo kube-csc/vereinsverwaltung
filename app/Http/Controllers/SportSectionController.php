@@ -103,21 +103,22 @@ class SportSectionController extends Controller
 
       $request->validate(
         [
-          'abteilung'         => 'required|max:40'
+          'abteilung'                => 'required|max:45',
+          'abteilungTeamBezeichnung' => 'required|max:45'
         ]
       );
 
       $sportSection= new sportSection(
         [
-          'abteilung'        => $request->abteilung,
-          'nachtermin'       => $request->nachtermin,
-          'event_id'         => NULL,
-          'sportSection_id'  => 0,
-          'status'           => 2,
-          'bearbeiter_id'    => Auth::user()->id,
-          'user_id'          => Auth::user()->id,
-          'updated_at'       => Carbon::now(),
-          'created_at'       => Carbon::now()
+          'abteilung'                 => $request->abteilung,
+          'abteilungTeamBezeichnung'  => $request->abteilungTeamBezeichnung,
+          'event_id'                  => NULL,
+          'sportSection_id'           => NULL,
+          'status'                    => 2,
+          'bearbeiter_id'             => Auth::user()->id,
+          'user_id'                   => Auth::user()->id,
+          'updated_at'                => Carbon::now(),
+          'created_at'                => Carbon::now()
         ]
        );
       $sportSection->save();
@@ -180,20 +181,22 @@ class SportSectionController extends Controller
     {
       $request->validate(
         [
-          'abteilung'         => 'required|max:40',
-          'farbe'             => 'max:255',
-          'domain'            => 'max:255',
-        //'domain'            => 'sometimes|url'  //todo: Leere Felder wird nicht akzepiert
-          'bild'              => 'mimes:jpeg,jpg,bmp,png,gif'
+          'abteilung'                => 'required|max:45',
+          'abteilungTeamBezeichnung' => 'required|max:45',
+          'farbe'                    => 'max:255',
+          'domain'                   => 'max:255',
+        //'domain'                   => 'sometimes|url'  //ToDo: Leere Felder wird nicht akzepiert
+          'bild'                     => 'mimes:jpeg,jpg,bmp,png,gif'
         ]
       );
 
       SportSection::find($SportTeam_id)->update([
-        'abteilung'         => $request->abteilung,
-        'farbe'             => $request->farbe,
-        'domain'            => $request->domain,
-        'bearbeiter_id'     => Auth::user()->id,
-        'updated_at'        => Carbon::now()
+        'abteilung'                 => $request->abteilung,
+        'abteilungTeamBezeichnung'  => $request->abteilungTeamBezeichnung,
+        'farbe'                     => $request->farbe,
+        'domain'                    => $request->domain,
+        'bearbeiter_id'             => Auth::user()->id,
+        'updated_at'                => Carbon::now()
       ]);
 
       $messagePicture='';
@@ -201,7 +204,7 @@ class SportSectionController extends Controller
         $newPictureName=$this->saveInmage($request->bild , $SportTeam_id);
         if($newPictureName<>''){
           SportSection::find($SportTeam_id)->update([
-            'bild'         => $newPictureName
+            'bild'  => $newPictureName
           ]);
           $messagePicture='<br>Das Headerbild wurde hochgeladen.';
         }

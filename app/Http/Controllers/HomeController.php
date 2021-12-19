@@ -14,7 +14,6 @@ class HomeController extends Controller
     public function index(){
 
       $serverdomain        = $_SERVER["HTTP_HOST"];
-
       $abteilungHomes      = SportSection::where('status' , '1')
           ->orwhere('domain' , $serverdomain)
           ->orderby('status')
@@ -23,6 +22,8 @@ class HomeController extends Controller
 
       foreach ($abteilungHomes as $abteilungHome) {
             $sportSection_id = $abteilungHome->id;
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+            $sportSectionTeamName= $abteilungHome->abteilungTeamBezeichnung;
         }
 
       $abteilungs          = SportSection::where('status' , '>' , '1')
@@ -60,21 +61,24 @@ class HomeController extends Controller
             ->where('dokumentenFile' ,'!=' , NULL)
             ->get();
 
+
+
         return view('home.home')->with(
             [
-                'abteilungHomes'      => $abteilungHomes,
-                'abteilungHomesCount' => $abteilungHomesCount,
-                'abteilungs'          => $abteilungs,
-                'abteilungsCount'     => $abteilungsCount,
-                'boards'              => $boards,
-                'footerDocuments'     => $footerDocuments,
-                'eventsFuture'        => $eventsFuture,
-                'eventsPast'          => $eventsPast,
-                'serverdomain'        => $serverdomain
+                'abteilungHomes'              => $abteilungHomes,
+                'abteilungHomesCount'         => $abteilungHomesCount,
+                'abteilungs'                  => $abteilungs,
+                'abteilungsCount'             => $abteilungsCount,
+                'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu,
+                'sportSectionTeamName'        => $sportSectionTeamName,
+                'boards'                      => $boards,
+                'footerDocuments'             => $footerDocuments,
+                'eventsFuture'                => $eventsFuture,
+                'eventsPast'                  => $eventsPast,
+                'serverdomain'                => $serverdomain
             ]
         );
     }
-
 
     /**
      * Display the specified resource.
@@ -82,7 +86,6 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    //public function sportSectionShow($sportSectionSeorch)
     public function homeSportSelect($sportSectionSeorch)
     {
         $sportSectionSearch = str_replace('_' , ' ' , $sportSectionSeorch);
@@ -90,8 +93,19 @@ class HomeController extends Controller
 
         foreach($sportSectionNames as $sportSectionName) {
             $sportSectionsId = $sportSectionName->id;
+            $sportSectionTeamName = $sportSectionName->abteilungTeamBezeichnung;
         }
         $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
+
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
 
         $eventsFuture   = Event::where('datumbis' , '>=' , Carbon::now()->toDateString())
             ->where('verwendung' , 0)
@@ -123,6 +137,12 @@ class HomeController extends Controller
             ->orderby('bu.position')
             ->get();
 
+        $documents = Document::where('sportSection_id' , $sportSectionsId)
+            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+            ->where('dokumentenFile' ,'!=' , NULL)
+            ->get();
+
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -130,26 +150,32 @@ class HomeController extends Controller
             ->where('dokumentenFile' ,'!=' , NULL)
             ->get();
 
-        $documents = Document::where('sportSection_id' , $sportSectionsId)
-            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
-            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
-            ->where('dokumentenFile' ,'!=' , NULL)
-            ->get();
-
         return view('home.homeSportSelect')->with([
-            'sportSectionNames'      => $sportSectionNames,
-            'sportTeamNames'         => $sportTeamNames,
-            'sportSectionSearch'     => $sportSectionSearch,
-            'documents'              => $documents,
-            'footerDocuments'        => $footerDocuments,
-            'eventsFuture'           => $eventsFuture,
-            'eventsPast'             => $eventsPast,
-            'boards'                 => $boards
+            'sportSectionNames'           => $sportSectionNames,
+            'sportTeamNames'              => $sportTeamNames,
+            'sportSectionSearch'          => $sportSectionSearch,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu,
+            'sportSectionTeamName'        => $sportSectionTeamName,
+            'documents'                   => $documents,
+            'footerDocuments'             => $footerDocuments,
+            'eventsFuture'                => $eventsFuture,
+            'eventsPast'                  => $eventsPast,
+            'boards'                      => $boards
         ]);
     }
 
     public function eventShow($eventSeorch)
     {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -163,13 +189,24 @@ class HomeController extends Controller
         $events = event::where('ueberschrift' , $seoch)->where('datumvon' , $dateFor)->get();
 
         return view('home.eventShow')->with([
-            'events'      => $events,
-            'footerDocuments'   => $footerDocuments
+            'events'                      => $events,
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
         ]);
     }
 
     public function instructionShow($instructionSeorch)
     {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -190,37 +227,26 @@ class HomeController extends Controller
                              ->where('dokumentenFile' ,'!=' , NULL)
                              ->get();
 
-        /*
-        where('instruction_id' , null)
-            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
-            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
-            ->where('visible' , 1)
-            ->where('dokumentenFile' ,'!=' , NULL)
-            ->get();
-        */
-
-        /*
-           $eventsPast    = Event::where('datumvon' , '<=' , Carbon::now()->toDateString())
-            ->where('nachtermin' , '!=' , '')
-            ->where('verwendung' , 0)
-            ->where(function ($query) use ($sportSectionsId) {
-                $query->where('sportSection_id' , $sportSectionsId)
-                    ->orwhere('sportSection_id' , NULL);  // Events für allen Abteilungen/Mannschaften
-            })
-            ->orderby('datumvon' , 'DESC')
-            ->limit(5)
-            ->get();
-         */
-
         return view('instruction.show')->with([
-            'documents'         => $documents,
-            'instructions'      => $instructions,
-            'footerDocuments'   => $footerDocuments
+            'documents'                   => $documents,
+            'instructions'                => $instructions,
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
         ]);
     }
 
     public function eventFutureAll()
     {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -228,13 +254,26 @@ class HomeController extends Controller
             ->where('dokumentenFile' ,'!=' , NULL)
             ->get();
 
+        $documents = $this->journey();
+
         return view('home.eventFutureAll')->with([
-            'footerDocuments'         => $footerDocuments
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
         ]);
     }
 
     public function eventPastAll()
     {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -243,12 +282,24 @@ class HomeController extends Controller
             ->get();
 
         return view('home.eventPastAll')->with([
-            'footerDocuments'         => $footerDocuments
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
         ]);
     }
 
+
     public function journey()
     {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -257,12 +308,23 @@ class HomeController extends Controller
             ->get();
 
         return view('home.journey')->with([
-            'footerDocuments'         => $footerDocuments
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
         ]);
     }
 
     public function imprint()
     {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -271,7 +333,8 @@ class HomeController extends Controller
             ->get();
 
         return view('home.imprint')->with([
-            'footerDocuments'         => $footerDocuments
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
         ]);
     }
 }

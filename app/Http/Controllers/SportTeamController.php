@@ -85,21 +85,22 @@ class SportTeamController extends Controller
 
     $request->validate(
      [
-       'mannschaft'         => 'required|max:40'
+         'abteilung'                => 'required|max:45',
+         'abteilungTeamBezeichnung' => 'required|max:45'
      ]
     );
 
     $SportTeam= new sportSection(
      [
-       'abteilung'        => $request->mannschaft,
-       'nachtermin'       => $request->nachtermin,
-       'event_id'         => NULL,
-       'sportSection_id'  => $request->sportSection_id,
-       'status'           => 2,
-       'bearbeiter_id'    => Auth::user()->id,
-       'user_id'          => Auth::user()->id,
-       'updated_at'       => Carbon::now(),
-       'created_at'       => Carbon::now()
+       'abteilung'                 => $request->mannschaft,
+       'abteilungTeamBezeichnung'  => $request->abteilungTeamBezeichnung,
+       'event_id'                  => NULL,
+       'sportSection_id'           => $request->sportSection_id,
+       'status'                    => 2,
+       'bearbeiter_id'             => Auth::user()->id,
+       'user_id'                   => Auth::user()->id,
+       'updated_at'                => Carbon::now(),
+       'created_at'                => Carbon::now()
      ]
     );
     $SportTeam->save();
@@ -162,20 +163,22 @@ class SportTeamController extends Controller
  {
    $request->validate(
      [
-       'abteilung'         => 'required|max:40',
-       'farbe'             => 'max:255',
-       'domain'            => 'max:255',
-       //'domain'            => 'sometimes|url'  //ToDo: Lehre Felder wird nicht akzepiert
-       'bild'              => 'mimes:jpeg,jpg,bmp,png,gif'
+       'abteilung'                => 'required|max:45',
+       'abteilungTeamBezeichnung' => 'required|max:45',
+       'farbe'                    => 'max:255',
+       'domain'                   => 'max:255',
+       //'domain'                 => 'sometimes|url'  //ToDo: Lehre Felder wird nicht akzepiert
+       'bild'                     => 'mimes:jpeg,jpg,bmp,png,gif'
      ]
    );
 
    SportSection::find($sportTeam_id)->update([
-     'abteilung'         => $request->abteilung,
-     'farbe'             => $request->farbe,
-     'domain'            => $request->domain,
-     'bearbeiter_id'     => Auth::user()->id,
-     'updated_at'        => Carbon::now()
+     'abteilung'                 => $request->abteilung,
+     'abteilungTeamBezeichnung'  => $request->abteilungTeamBezeichnung,
+     'farbe'                     => $request->farbe,
+     'domain'                    => $request->domain,
+     'bearbeiter_id'             => Auth::user()->id,
+     'updated_at'                => Carbon::now()
    ]);
 
    $messagePicture='';

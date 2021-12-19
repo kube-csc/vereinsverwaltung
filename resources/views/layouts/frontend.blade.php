@@ -149,7 +149,7 @@
               @endphp
 
               <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/EventFuture">Termine</a></li>
-              <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">Team</a></li>
+              <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">{{$sportSectionTeamNameMenu}}</a></li>
 
               <!-- <li><a href="#portfolio">Portfolio</a></li> -->
 
@@ -164,7 +164,7 @@
                    $countinstructionMenu=$instructionMenus->count();
               @endphp
               @if($countinstructionMenu>0)
-                  <li class="drop-down"><a href="">Information</a>
+                  <li class="drop-down"><a href="">Informationen</a>
                       <ul>
                           <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
                           @foreach($instructionMenus as $instructionMenu)

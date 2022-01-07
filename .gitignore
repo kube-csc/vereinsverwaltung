@@ -1,6 +1,7 @@
 /node_modules
 /public/hot
 /public/storage/**/*_*.*
+/public/daten/
 /public/asset/img/portfolio
 /public/asset/img/team
 /public/asset/img/testimonials

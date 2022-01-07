@@ -390,4 +390,31 @@ class ReportController extends Controller
             'success' => 'Das Bild'. $deletePictureFilename .' vom Event wurde gelöscht'
         ]);
     }
+
+    public function takeover()
+    {
+        $reports = report::where('image', Null)
+            ->where('bild', '!=', '')
+            ->limit(2)
+            ->get();
+
+        foreach ($reports as $report) {
+
+            $newordner = date('Y', strtotime($report->created_at));
+
+            /*
+                        report::find($reportID)->update([
+                            'image'     => $newImage,
+                            'ordner'   => $newOrdner
+                        ]);
+            */
+        }
+
+
+        return view('admin.report.takeover')->with(
+            [
+                'reports' =>  $reports,
+            ]
+        );
+    }
 }

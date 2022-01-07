@@ -19,7 +19,9 @@ class CreateReportsTable extends Migration
             $table->integer('position')->default(10);
             $table->string('titel', 45);
             $table->text('kommentar')->nullable();
+            $table->string('ordner', 100)->nullable();
             $table->string('bild', 100)->nullable();
+            $table->string('image', 100)->nullable();
             $table->integer('pixx')->nullable();
             $table->integer('pixy')->nullable();
             $table->string('filename')->nullable();

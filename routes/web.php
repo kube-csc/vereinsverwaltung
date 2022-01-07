@@ -109,6 +109,8 @@ Route::get('/Bericht/top/{report_id}',                 [ReportController::class,
 Route::get('/Bericht/down/{report_id}',                [ReportController::class, 'down'])              ->name('report.down');
 Route::get('/Bericht/maxdown/{report_id}',             [ReportController::class, 'maxdown'])           ->name('report.maxdown');
 Route::get('/Bericht/start/{report_id}',               [ReportController::class, 'start'])             ->name('report.start');
+// TEMP: Route nur für die Übername der Bilder zuständig
+Route::get('/Berichtbilder/uebernehmen',               [ReportController::class, 'takeover'])          ->name('report.takeover');
 
 //Route::resource('instruction.', 'InstructionController');
 Route::get('/Instruction/alle',                        [InstructionController::class, 'index'])        ->name('instruction.index');

@@ -47,12 +47,17 @@
                             <span>{{ $board->postenWeiblich }}</span>
                         @endif
                         <div class="social">
-                            @php /* ToDo: Socialmedia für Teams
+                            @php
+                            /*
+                            ToDo: Socialmedia für Teams
                             <a href=""><i class="icofont-twitter"></i></a>
                             <a href=""><i class="icofont-facebook"></i></a>
                             <a href=""><i class="icofont-instagram"></i></a>
                             <a href=""><i class="icofont-linkedin"></i></a>
-                            */ @endphp
+                            */
+                            @endphp
+                            @php
+                            /*
                             @if(isset($board->vorstandsemail))
                              <a href=""><i class="icofont-mail"></i>{{ $board->vorstandsemail }}</a>
                             @else
@@ -60,6 +65,8 @@
                                 <a href=""><i class="icofont-mail"></i>{{ $board->email }}</a>
                               @endif
                             @endif
+                            */
+                            @endphp
                         </div>
                     </div>
                 </div>

@@ -1,8 +1,8 @@
 <h1>Internetauftritt von Vereine</h1>
 <p>
- Ausgelegt für ein Kanuverein mit verschiedenen Abteilungen
+ Ausgelegt für ein Kanuverein mit verschiedenen Abteilungen/Sportarten
 </p>
-<h2>Beispiel der Abteilungen:</h2> 
+<h2>Beispiel der Abteilungen/Sportarten:</h2> 
     <ul>
       <li>Jugend</li>
       <li>Wandersport</li>
@@ -10,6 +10,8 @@
       <li>Drachenboot mit drei Mannschaften</li>
       <li>SUP</li>
     </ul>
+
+<a href="https://test.kel-datteln.de">Beispiel eines Frontend</a>
 
 <h2>Installierte Programme</h2>
 <ul>
@@ -24,7 +26,7 @@
 
 <h2>Frontend</h2>
 <ul>
-<li>Header abhänig von den Seiten</li>
+<li>Header Abhänigig von den Abteilungen / Sportarten</li>
 <li>Leanding Page
      <ul>
       <li>Ausgabe der Vereinsbeschreibung</li>
@@ -35,16 +37,21 @@
       <li>Kontakt des Vereins inc. Map</li>
     </ul>
 </li>
-  <li>Detail Presendation der Abteilung</li>
+  <li>Detail Presendation der Abteilung / Sportart</li>
   <li>Detail Presendation der Mannschaften</li>
   <li>Detail Presendation des Event</li>
-  <li>Footer
+  <li>Informationen
     <ul>
+        <li>Anfahrt</li>
         <li>Beiträge</li>
         <li>Übernachtungskosten</li>
+    </ul>
+  </li>
+  <li>Footer
+    <ul>
+        <li>Dokumente aus dem Dokumentenmanagment werden angezeigt</li>
         <li>Impresssum</li>
         <li>Datenschutzerklärung</li>
-        <li>Dokumente aus dem Dokumentenmanagment werden angezeigt</li>
     </ul>
   </li>
 </ul>
@@ -57,7 +64,8 @@
   <li>Eingabe und Bearbeitung von Events</li>
   <li>Eingabe und Bearbeitung von Event Gruppen</li>
   <li>Dokumentenmanagent</li>
-  <li>Informationsseiten (können noch nicht unsibar geschaltet werden) 
+  <li>Anfahrt</li>
+  <li>Informationsseiten
     <ul>
         <li>Beiträge</li>
         <li>Übernachtungskosten</li>
@@ -70,13 +78,19 @@
 <h2>Installation</h2>
 <ul>
    <li>git clone  https://github.com/kube-csc/vereinsverwaltung.git</li>
-   <li>.env Datei Ausfüllen Es werden auch Informationen über den Verein abgefragt</li>
+   <li>.env Datei Ausfüllen Es werden auch Informationen über den Verein abgefragt
+     <ul>
+      <li></li>
+     </ul>
+   </li>
    <li>composer.phar install</li>
    <li>php artisan storage:link<br>
       anlegen der Unterordner unter "public/storage"
       <ul>
+         <li>dokumente</li>
+         <li>eventImage</li>
          <li>header</li>
-         <li>team</li>  
+         <li>posten</li>  
      </ul>
     </li>
    <li>php artisan migrate:fresh --seed Datenbank mit Demodaten</li>
@@ -85,8 +99,8 @@
 <h2>Update</h2>
 <ul>
    <li>git pull origin main</li>
-   <li>php artisan migrate:fresh --seed (solange noch eine eigenden Daten eingeben worden)</li>
-   <li>php artisan migrate (Wenn noch keine eigenden Daten vorhanden sind kann fresh --seed verwendet werden.)</li>
+   <li>php artisan migrate:fresh --seed (solange noch eine eigenden Daten in der Datenbank eingeben worden sind)</li>
+   <li>php artisan migrate (Wenn noch keine eigenden Daten in der Datenbank vorhanden sind kann fresh --seed verwendet werden.)</li>
 </ul>
 
 <br>

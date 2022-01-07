@@ -28,7 +28,7 @@ class ReportController extends Controller
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
-        return Redirect()->back()->with('success' , 'Bild wurde sichtbar geschaltet.');
+        return Redirect()->back()->with('success' , 'Das Bild wurde sichtbar geschaltet.');
     }
 
     public function inaktiv($reportId)
@@ -38,7 +38,7 @@ class ReportController extends Controller
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
-        return Redirect()->back()->with('success' , 'Bild wurde unsichtbar geschaltet.');
+        return Redirect()->back()->with('success' , 'Das Bild wurde unsichtbar geschaltet.');
     }
 
     public function start($reportId)
@@ -59,7 +59,7 @@ class ReportController extends Controller
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
-        return Redirect()->back()->with('success' , 'Bild wurde an der Startseite angepint.');
+        return Redirect()->back()->with('success' , 'Das Bild wurde an der Startseite festgelegt.');
     }
 
     public function maxtop($reportId)
@@ -86,7 +86,7 @@ class ReportController extends Controller
             ]);
             $positionNew=$positionNew+10;
         }
-        return Redirect()->back()->with('success' , 'Das Bild wurde zur Top Position verschoben.');
+        return Redirect()->back()->with('success' , 'Das Bild wurde zur obersten Position verschoben.');
     }
 
     public function top($reportId)
@@ -232,10 +232,10 @@ class ReportController extends Controller
                 );
                 $report->save();
 
-                $messagePicture='<br>Das Headerbild wurde hochgeladen.';
+                $messagePicture='<br>Das HeBild wurde hochgeladen.';
             }
             else {
-                $messagePicture='<br>Das Headerbild hat ein Hochformat und könnte deswegen nicht hochgeladen werden.';
+                $messagePicture='<br>Kein Bild vorhanden.';
             }
         }
 
@@ -390,4 +390,5 @@ class ReportController extends Controller
             'success' => 'Das Bild'. $deletePictureFilename .' vom Event wurde gelöscht'
         ]);
     }
+
 }

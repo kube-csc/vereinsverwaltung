@@ -4,12 +4,16 @@
     $full_url=str_replace('http://', '', $full_url);
     $ip = getenv ("REMOTE_ADDR");
     if($ip != 1){
-         $backlink = Illuminate\Support\Facades\DB::table('backlinks')->where('backlink', $full_url)->first();
+         $backlink = Illuminate\Support\Facades\DB::table('backlinks')
+         ->where('backlink', $full_url)
+         ->where('visible', 1)
+         ->first();
 
          if($backlink ==  Null){
              Illuminate\Support\Facades\DB::table('backlinks')->insert([
                     'ip'                  => $ip,
                     'backlink'            => $full_url,
+                    'visible'             => '1',
                     'nichtgefundenAnzahl' => 1,
                     'nichtgefundenDatum'  => Illuminate\Support\Carbon::now(),
                     'created_at'          => Illuminate\Support\Carbon::now(),

@@ -18,10 +18,14 @@ class CreateBacklinksTable extends Migration
             $table->text('ip');
             $table->text('backlink');
             $table->text('neueUrl')->nullable();
-            $table->dateTime('nichtgefundenDatum')->nullable();
+            $table->boolean('visible')->default(true);      // true = 1 = sichtbar
+            $table->unsignedBigInteger('bearbeiter_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->timestamp('nichtgefundenDatum')->nullable();
             $table->integer('nichtgefundenAnzahl')->nullable();
-            $table->dateTime('weiterleitDatum')->nullable();
+            $table->timestamp('weiterleitDatum')->nullable();
             $table->integer('weiterleitAnzahl')->nullable();
+            $table->SoftDeletes();
             $table->timestamps();
         });
     }
@@ -33,6 +37,7 @@ class CreateBacklinksTable extends Migration
      */
     public function down()
     {
+
         Schema::dropIfExists('backlinks');
     }
 }

@@ -15,6 +15,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
+use App\Http\Controllers\BacklinksController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -148,7 +149,7 @@ Route::get('/Posten/maxdown/{boardUser_id}',         [BoardUserController::class
 Route::get('/Posten/edit/{boardUser_id}',            [BoardUserController::class, 'edit'])      ->name('boardUser.edit');
 Route::get('/Posten/zuordnen/{boardUser_id}',        [BoardUserController::class, 'match'])     ->name('boardUser.match');
 
-//Route::resource('Document.', 'DocumentController');
+//Route::resource('Dokumente.', 'DocumentController');
 Route::get('/Dokumente/alle',                        [DocumentController::class, 'index'])         ->name('document.index');
 Route::get('/Dokumente/neu',                         [DocumentController::class, 'create'])        ->name('document.create');
 Route::post('/Dokumente/speichern',                  [DocumentController::class, 'store'])         ->name('document.store');
@@ -158,11 +159,17 @@ Route::get('/Dokumente/geloescht/{document_id}',     [DocumentController::class,
 Route::get('/Dokumente/aktiv/{document_id}',         [DocumentController::class, 'aktiv'])         ->name('document.aktiv');
 Route::get('/Dokumente/inaktiv/{document_id}',       [DocumentController::class, 'inaktiv'])       ->name('document.inaktiv');
 
-/*
-Route::get('/Impressum', function () {
-    return view('impressum');
-});
-*/
+//Route::resource('Backlink.', 'BacklinksController');
+Route::get('/Backlink/alle',                         [BacklinksController::class, 'index'])         ->name('backlink.index');
+Route::get('/Backlink/relevant',                     [BacklinksController::class, 'indexRelevant']) ->name('backlink.indexRelevant');
+Route::get('/Backlink/benutzt',                      [BacklinksController::class, 'indexUsed'])     ->name('backlink.indexUsed');
+Route::get('/Backlink/neu',                          [BacklinksController::class, 'create'])        ->name('backlink.create');
+Route::post('/Backlink/speichern',                   [BacklinksController::class, 'store'])         ->name('backlink.store');
+Route::get('/Backlink/aktiv/{backlink_id}',          [BacklinksController::class, 'aktiv'])         ->name('backlink.aktiv');
+Route::get('/Backlink/inaktiv/{backlink_id}',        [BacklinksController::class, 'inaktiv'])       ->name('backlink.inaktiv');
+Route::get('/Backlink/softDelete/{backlink_id}',     [BacklinksController::class, 'softDelete']);
+Route::get('/Backlink/edit/{document_id}',          [BacklinksController::class, 'edit'])          ->name('backlink.edit');
+Route::post('/Backlink/update/{backlink_id}',        [BacklinksController::class, 'update'])        ->name('backlink.update');
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

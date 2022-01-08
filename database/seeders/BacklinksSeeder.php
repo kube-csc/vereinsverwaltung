@@ -18,7 +18,7 @@ class BacklinksSeeder extends Seeder
 
         DB::table('backlinks')
             ->insert([
-                array('id' => '1','ip' => '127.0.0.1','backlink' => 'www.alteseite.de','neueUrl' => 'https://www.beispiel.de','nichtgefundenDatum' => '2022-01-07 17:35:50','nichtgefundenAnzahl' => '1','weiterleitAnzahl' => '0','created_at' => '2022-01-07 17:30:05','updated_at' => '2022-01-07 17:30:05')
+                array('id' => '1','ip' => '127.0.0.1','backlink' => 'www.alteseite.de','neueUrl' => 'https://www.beispiel.de','visible' => '1','nichtgefundenDatum' => '2022-01-07 17:35:50','nichtgefundenAnzahl' => '1','weiterleitAnzahl' => '0','created_at' => '2022-01-07 17:30:05','updated_at' => '2022-01-07 17:30:05')
         ]);
     }
 }

@@ -25,10 +25,9 @@ use App\Http\Controllers\NewBotmanQuestionController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 //LandingPage
 Route::get('/',                              [HomeController::class, 'index']);
-Route::get('/Abteilung/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
+Route::get('/'.env('Menue_Abteilung').'/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
 Route::get('/Event/detail/{event}',          [HomeController::class, 'eventShow']);
 Route::get('/Information/{event}',           [HomeController::class, 'instructionShow']);
 Route::get('/EventFuture',                   [HomeController::class, 'eventFutureAll']);

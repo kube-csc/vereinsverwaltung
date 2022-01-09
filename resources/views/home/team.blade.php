@@ -28,15 +28,10 @@
                 @endif
                     <div class="pic">
                     @if(isset($board->postenPortraet))
-                       <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid" alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
-                    @else
-                        @if(isset($board->userPortraet))
-                            @php /*
-                          <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid" alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
-                           */ @endphp
-                        @else
-                          <img src="/asset/img/teamleer.jpg" class="img-fluid">
-                        @endif
+                       <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid"
+                            alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
+                     @else
+                       <img src="/asset/img/postenLeer.jpg" class="img-fluid">
                     @endif
                     </div>
                     <div class="member-info">

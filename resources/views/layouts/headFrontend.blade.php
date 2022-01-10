@@ -23,7 +23,7 @@
 */ ?>
 
   <!-- Favicons -->
-  <link href="/favicon.png" rel="icon">
+  <link href="/favicon.ico" rel="icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -111,7 +111,7 @@
                             $first=0;
                           @endphp
                           <li class="{{$sportTeamMenuCount > 0 ? 'drop-down' : ''}}">
-                              <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
+                              <a href="/{{env('Menue_Abteilung')}}/detail/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
                                  {{ $sportSectionMenu->abteilung }}
                               </a>
 
@@ -123,14 +123,14 @@
                                           @endphp
                                           <!-- ToDo: Wird für die mobile Version verwendet. Der Link, der eine Ebende höher ist, funktioniert nicht. -->
                                           <li>
-                                              <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
+                                              <a href="/{{env('Menue_Abteilung')}}/detail/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
                                                   {{ $sportSectionMenu->abteilung }}
                                               </a>
                                           </li>
                                           <!-- End -->
                                   @endif
                                           <li>
-                                              <a href="/Abteilung/detail/{{ str_replace(' ', '_', $sportTeamMenu->abteilung) }}">
+                                              <a href="/{{env('Menue_Abteilung')}}/detail/{{ str_replace(' ', '_', $sportTeamMenu->abteilung) }}">
                                                   {{ $sportTeamMenu->abteilung }}
                                               </a>
                                           </li>
@@ -149,7 +149,8 @@
                   // ToDo: Active im Menu funktioniert noch nicht
               @endphp
 
-              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/EventFuture">Termine</a></li>
+              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/Termine">Termine</a></li>
+              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/Archiv">Archiv</a></li>
               <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">{{$sportSectionTeamNameMenu}}</a></li>
 
               <!-- <li><a href="#portfolio">Portfolio</a></li> -->

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\SportSection;
 use Livewire\Component;
 use App\Models\Event;
 use Illuminate\Support\Carbon;
@@ -15,11 +16,18 @@ class EventFutureAll extends Component
     public $month;
     public $year;
     public $search;
+    public $sportSection_id;
 
     public function mount()
     {
-       $year= Carbon::now()->format('Y');
-       $this->year = $year;
+       $this->year= Carbon::now()->format('Y');
+       if($this->year<1900  && $this->year!=Null){
+           $this->year=1900;
+       }
+       if($this->year>2050){
+           $this->year=2050;
+       }
+       $this->sportSection_id=0;
     }
 
     public function monthIncrease ()
@@ -35,11 +43,15 @@ class EventFutureAll extends Component
     public function yearIncrease()
     {
         ++$this->year;
+
     }
 
     public function yearDecrease()
     {
         --$this->year;
+        if($this->year<1900){
+            $this->year=Null;
+        }
     }
 
     public function render()
@@ -47,6 +59,13 @@ class EventFutureAll extends Component
         if(Str::length($this->year)>4)
         {
             $this->year=Carbon::now()->format('Y');
+        }
+
+        if($this->year<1900 && $this->year!=Null){
+            $this->year=1900;
+        }
+        if($this->year>2050){
+            $this->year=2050;
         }
 
         if($this->month > 12) {
@@ -57,48 +76,82 @@ class EventFutureAll extends Component
             $this->month = "";
         }
 
-        if($this->month < 1 and $this->month != "") {
+        if($this->month < 1 and $this->month != ""){
             $this->month = 1;
         }
 
-        if($this->month > 0) {
-            if($this->month > 9) {
+        if($this->month > 0){
+            if($this->month > 9){
                 $month = "-" . $this->month . "-";
             }
             else{
-                if(substr($this->month, 0, 1)=="0") {
+                if(substr($this->month, 0, 1)=="0"){
                     $month = "-" . $this->month . "-";
                 }
                 else{
                     $month = "-0" . $this->month . "-";
                 }
             }
-
-            $eventsFuture = event::where([
-                ['ueberschrift' , 'LIKE' , "%{$this->search}%"],
-                ['verwendung' , '0'],
-                ['datumvon' , 'LIKE' , "%{$month}%"],
-                ['datumvon' , 'LIKE' , "%{$this->year}%"],
-                ['datumbis' ,'>=', Carbon::now()->toDateString()]
-            ])
-                ->orderby('datumbis' , 'desc')
-                ->paginate(4);
+            if($this->sportSection_id>0){
+                $eventsFuture = event::where([
+                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
+                    ['verwendung', '0'],
+                    ['datumvon', 'LIKE', "%{$month}%"],
+                    ['datumvon', 'LIKE', "%{$this->year}%"],
+                    ['datumbis', '>=', Carbon::now()->toDateString()],
+                    ['sportSection_id', $this->sportSection_id]
+                ])
+                    ->orderby('datumbis', 'desc')
+                    ->paginate(4);
+            }
+            else{
+                $eventsFuture = event::where([
+                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
+                    ['verwendung', '0'],
+                    ['datumvon', 'LIKE', "%{$month}%"],
+                    ['datumvon', 'LIKE', "%{$this->year}%"],
+                    ['datumbis', '>=', Carbon::now()->toDateString()],
+                ])
+                    ->orderby('datumbis', 'desc')
+                    ->paginate(4);
+            }
         }
         else{
-
             $this->month = "";
-            $eventsFuture = event::where([
-                ['ueberschrift' , 'LIKE' , "%{$this->search}%"],
-                ['verwendung' , '0'],
-                ['datumvon' , 'LIKE' , "%{$this->year}%"],
-                ['datumbis' ,'>=', Carbon::now()->toDateString()]
-            ])
-                ->orderby('datumbis' , 'desc')
-                ->paginate(4);
+            if($this->sportSection_id>0){
+                $eventsFuture = event::where([
+                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
+                    ['verwendung', '0'],
+                    ['datumvon', 'LIKE', "%{$this->year}%"],
+                    ['datumbis', '>=', Carbon::now()->toDateString()],
+                    ['sportSection_id', $this->sportSection_id]
+                ])
+                    ->orderby('datumbis', 'desc')
+                    ->paginate(4);
+            }
+            else{
+                $eventsFuture = event::where([
+                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
+                    ['verwendung', '0'],
+                    ['datumvon', 'LIKE', "%{$this->year}%"],
+                    ['datumbis', '>=', Carbon::now()->toDateString()],
+                ])
+                    ->orderby('datumbis', 'desc')
+                    ->paginate(4);
+            }
         }
 
+        $eventsFutureCount=$eventsFuture->count();
+
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
+            ->orderby('sportSection_id')
+            ->orderby('abteilung')
+            ->get();
+
         return view('livewire.event-future-all' , [
-            'eventsFuture' => $eventsFuture ,
+            'eventsFuture'      => $eventsFuture,
+            'eventsFutureCount' => $eventsFutureCount,
+            'sportSections'     => $sportSections
         ]);
     }
 }

@@ -26,16 +26,15 @@ use App\Http\Controllers\BacklinksController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 //LandingPage
-Route::get('/',                              [HomeController::class, 'index']);
-Route::get('/Abteilung/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
-Route::get('/Event/detail/{event}',          [HomeController::class, 'eventShow']);
-Route::get('/Information/{event}',           [HomeController::class, 'instructionShow']);
-Route::get('/EventFuture',                   [HomeController::class, 'eventFutureAll']);
-Route::get('/EventPast',                     [HomeController::class, 'eventPastAll']);
-Route::get('/Anfahrt',                       [HomeController::class, 'journey']);
-Route::get('/Impressum',                     [HomeController::class, 'imprint']);
+Route::get('/',                                                    [HomeController::class, 'index']);
+Route::get('/'.env('Menue_Abteilung').'/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
+Route::get('/Event/detail/{event}',                                [HomeController::class, 'eventShow']);
+Route::get('/Information/{event}',                                 [HomeController::class, 'instructionShow']);
+Route::get('/Termine',                                             [HomeController::class, 'eventFutureAll']);
+Route::get('/Archiv',                                              [HomeController::class, 'eventPastAll']);
+Route::get('/Anfahrt',                                             [HomeController::class, 'journey']);
+Route::get('/Impressum',                                           [HomeController::class, 'imprint']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');

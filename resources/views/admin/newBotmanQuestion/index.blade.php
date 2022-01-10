@@ -30,7 +30,7 @@
                           <div class="mt-2 text-sm text-gray-500">
 
                             <div class="my-4 flex">
-                               <a href="{{ route('sportSection.create') }}"><box-icon name='plus'></box-icon></a>
+                               <a href=""><box-icon name='plus'></box-icon></a>
                             </div>
 
                             <div style="text-align: left">

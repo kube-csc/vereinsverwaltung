@@ -39,7 +39,7 @@
                               </div>
 
                               @foreach ( $instructions as $instruction )
-                              <div class="rounded border shadow p-3 my-2 {{$instruction->id == $instruction->id ? 'bg-blue-200' : ''}}" onclick="window.location.replace('{{ $instruction->id }}')">
+                              <div class="rounded border shadow p-3 my-2 {{$instruction->id == $instruction->id ? 'bg-blue-200' : ''}}">
                                   <div class="justify-between my-2">
                                     <div>
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/edit/'.$instruction->id) }}">

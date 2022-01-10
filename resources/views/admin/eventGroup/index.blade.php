@@ -43,7 +43,7 @@
                               </div>
 
                               @foreach ( $eventGroups as $eventGroup )
-                              <div class="rounded border shadow p-3 my-2 {{$eventGroup->id == $eventGroup->id ? 'bg-blue-200' : ''}}" onclick="window.location.replace('{{ $eventGroup->id }}')">
+                              <div class="rounded border shadow p-3 my-2 {{$eventGroup->id == $eventGroup->id ? 'bg-blue-200' : ''}}">
                                   <div class="justify-between my-2">
                                     <div>
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/edit/'.$eventGroup->id) }}">

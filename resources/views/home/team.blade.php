@@ -28,15 +28,10 @@
                 @endif
                     <div class="pic">
                     @if(isset($board->postenPortraet))
-                       <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid" alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
-                    @else
-                        @if(isset($board->userPortraet))
-                            @php /*
-                          <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid" alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
-                           */ @endphp
-                        @else
-                          <img src="/asset/img/teamleer.jpg" class="img-fluid">
-                        @endif
+                       <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid"
+                            alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
+                     @else
+                       <img src="/asset/img/postenLeer.jpg" class="img-fluid">
                     @endif
                     </div>
                     <div class="member-info">
@@ -47,12 +42,17 @@
                             <span>{{ $board->postenWeiblich }}</span>
                         @endif
                         <div class="social">
-                            @php /* ToDo: Socialmedia für Teams
+                            @php
+                            /*
+                            ToDo: Socialmedia für Teams
                             <a href=""><i class="icofont-twitter"></i></a>
                             <a href=""><i class="icofont-facebook"></i></a>
                             <a href=""><i class="icofont-instagram"></i></a>
                             <a href=""><i class="icofont-linkedin"></i></a>
-                            */ @endphp
+                            */
+                            @endphp
+                            @php
+                            /*
                             @if(isset($board->vorstandsemail))
                              <a href=""><i class="icofont-mail"></i>{{ $board->vorstandsemail }}</a>
                             @else
@@ -60,6 +60,8 @@
                                 <a href=""><i class="icofont-mail"></i>{{ $board->email }}</a>
                               @endif
                             @endif
+                            */
+                            @endphp
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\SportSection;
 use Livewire\Component;
 use App\Models\Event;
 use Illuminate\Support\Carbon;
@@ -15,11 +16,18 @@ class EventPastAll extends Component
     public $month;
     public $year;
     public $search;
+    public $sportSection_id;
 
     public function mount()
     {
-        $year= Carbon::now()->format('Y');
-        $this->year = $year;
+        $this->year= Carbon::now()->format('Y');
+        if($this->year<1900  && $this->year!=Null){
+            $this->year=1900;
+        }
+        if($this->year>2050){
+            $this->year=2050;
+        }
+        $this->sportSection_id=0;
     }
 
     public function monthIncrease ()
@@ -49,6 +57,13 @@ class EventPastAll extends Component
             $this->year=Carbon::now()->format('Y');
         }
 
+        if($this->year<1900 && $this->year!=Null){
+            $this->year=1900;
+        }
+        if($this->year>2050){
+            $this->year=2050;
+        }
+
         if($this->month > 12) {
             $this->month = 12;
         }
@@ -61,8 +76,8 @@ class EventPastAll extends Component
             $this->month = 1;
         }
 
-        if($this->month > 0) {
-            if($this->month > 9) {
+        if($this->month > 0){
+            if($this->month > 9){
                 $month = "-" . $this->month . "-";
             }
             else{
@@ -73,33 +88,68 @@ class EventPastAll extends Component
                     $month = "-0" . $this->month . "-";
                 }
             }
-
-            $eventsPast = event::where([
-                ['ueberschrift' , 'LIKE' , "%{$this->search}%"],
-                ['verwendung' , '0'],
-                ['datumvon' , 'LIKE' , "%{$month}%"],
-                ['datumvon' , 'LIKE' , "%{$this->year}%"],
-                ['datumbis' ,'<=', Carbon::now()->toDateString()]
-            ])
-                ->orderby('datumbis' , 'desc')
-                ->paginate(4);
+            if($this->sportSection_id>0){
+                $eventsPast = event::where([
+                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
+                    ['verwendung', '0'],
+                    ['datumvon', 'LIKE', "%{$month}%"],
+                    ['datumvon', 'LIKE', "%{$this->year}%"],
+                    ['datumbis', '<=', Carbon::now()->toDateString()],
+                    ['sportSection_id', $this->sportSection_id]
+                ])
+                    ->orderby('datumbis', 'desc')
+                    ->paginate(4);
+            }
+            else{
+                $eventsPast = event::where([
+                    ['ueberschrift' , 'LIKE' , "%{$this->search}%"],
+                    ['verwendung' , '0'],
+                    ['datumvon' , 'LIKE' , "%{$month}%"],
+                    ['datumvon' , 'LIKE' , "%{$this->year}%"],
+                    ['datumbis' ,'<=', Carbon::now()->toDateString()]
+                ])
+                    ->orderby('datumbis' , 'desc')
+                    ->paginate(4);
+            }
         }
         else{
-
             $this->month = "";
-            $eventsPast = event::where([
-                ['ueberschrift' , 'LIKE' , "%{$this->search}%"],
-                ['verwendung' , '0'],
-                ['nachtermin' , '!=' , ""],
-                ['datumvon' , 'LIKE' , "%{$this->year}%"],
-                ['datumbis' ,'<=', Carbon::now()->toDateString()]
-            ])
-                ->orderby('datumbis' , 'desc')
-                ->paginate(4);
+            if($this->sportSection_id>0) {
+                $eventsPast = event::where([
+                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
+                    ['verwendung', '0'],
+                    ['nachtermin', '!=', ""],
+                    ['datumvon', 'LIKE', "%{$this->year}%"],
+                    ['datumbis', '<=', Carbon::now()->toDateString()],
+                    ['sportSection_id', $this->sportSection_id]
+                ])
+                    ->orderby('datumbis', 'desc')
+                    ->paginate(4);
+            }
+            else{
+                $eventsPast = event::where([
+                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
+                    ['verwendung', '0'],
+                    ['nachtermin', '!=', ""],
+                    ['datumvon', 'LIKE', "%{$this->year}%"],
+                    ['datumbis', '<=', Carbon::now()->toDateString()]
+                ])
+                    ->orderby('datumbis', 'desc')
+                    ->paginate(4);
+            }
         }
 
+        $eventsPastCount=$eventsPast->count();
+
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
+            ->orderby('sportSection_id')
+            ->orderby('abteilung')
+            ->get();
+
         return view('livewire.event-past-all' , [
-            'eventsPast' => $eventsPast ,
+            'eventsPast' => $eventsPast,
+            'eventsPastCount' => $eventsPastCount,
+            'sportSections'     => $sportSections
         ]);
     }
 }

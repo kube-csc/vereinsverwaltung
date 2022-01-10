@@ -15,18 +15,42 @@
                 </div>
                 <div class="col-md">
                     <div class="form-floating">
-                        <i class="bx bx-chevron-up" wire:click="monthIncrease"></i></box-icon>
-                        <label>Monat</label>
                         <i class="bx bx-chevron-down" wire:click="monthDecrease"></i>
+                        <label>Monat</label>
+                        <i class="bx bx-chevron-up" wire:click="monthIncrease"></i></box-icon>
                         <input class="form-control" wire:model.debounce.1000ms="month" type="number">
                     </div>
                 </div>
                 <div class="col-md">
                     <div class="form-floating">
-                        <i class="bx bx-chevron-up" wire:click="yearIncrease"></i>
-                        </box-icon><label>Jahr</label>
                         <i class="bx bx-chevron-down" wire:click="yearDecrease"></i>
+                        </box-icon><label>Jahr</label>
+                        <i class="bx bx-chevron-up" wire:click="yearIncrease"></i>
                         <input class="form-control" wire:model.debounce.1000ms="year" type="number">
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        <label for="name">{{env('Menue_Abteilung')}} / Mannschaften:</label><br>
+                        <select wire:model="sportSection_id">
+                            <!-- name="sportSection_id"  -->
+                            <option value="" selected>Alle {{env('Menue_Abteilung')}} / Mannschaften</option>
+                            <optgroup label="Abeilung:">
+                                @php
+                                    $firsttime = 0;
+                                @endphp
+                                @foreach ($sportSections as $sportSection)
+                                    @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
+                                        @php
+                                            $firsttime = 1;
+                                        @endphp
+                            </optgroup>
+                            <optgroup label="Mannschaft:">
+                                @endif
+                                <option value="{{ $sportSection->id }}">{{ $sportSection->abteilung }}</option>
+                                @endforeach
+                            </optgroup>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -62,6 +86,13 @@
                 $countMax=$eventsFuture->count();
                 $count=5;
             @endphp
+            @if($eventsFutureCount==0)
+                <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
+                    <div class="icon-box" data-aos="fade-up">
+                       Für den eingestellten Filter sind keine Termine vorhanden.
+                    <div>
+                <div>
+            @endif
             @foreach($eventsFuture as $eventFuture)
                 @php
                     --$count;

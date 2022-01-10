@@ -148,7 +148,8 @@
                   // ToDo: Active im Menu funktioniert noch nicht
               @endphp
 
-              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/EventFuture">Termine</a></li>
+              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/Termine">Termine</a></li>
+              <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/Archiv">Archiv</a></li>
               <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">{{$sportSectionTeamNameMenu}}</a></li>
 
               <!-- <li><a href="#portfolio">Portfolio</a></li> -->

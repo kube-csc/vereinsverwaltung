@@ -1,7 +1,7 @@
 <section id="services" class="services"> <!-- ======= Services Section ======= -->
     <div class="container">
-        <div class="section-title" data-aos="fade-in" data-aos-delay="50">
-            <h2>Termine</h2>
+        <div class="section-title">
+            <h2>zukünftige Termine</h2>
             @php
                 //ToDo: Text bearbeiten
                //<p>Text ?</p>
@@ -9,7 +9,7 @@
             <div class="row g-2">
                 <div class="col-md">
                     <div class="form-floating">
-                        <label>Filter</label>
+                        <label>Event Filter</label>
                         <input class="form-control" wire:model.debounce.1000ms="search" maxlength="50" size="25">
                     </div>
                 </div>

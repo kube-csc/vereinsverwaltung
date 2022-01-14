@@ -60,8 +60,8 @@ class EventPastAll extends Component
         if($this->year<1900 && $this->year!=Null){
             $this->year=1900;
         }
-        if($this->year>2050){
-            $this->year=2050;
+        if($this->year>Carbon::now()->format('Y')){
+            $this->year=Carbon::now()->format('Y');
         }
 
         if($this->month > 12) {
@@ -88,16 +88,22 @@ class EventPastAll extends Component
                     $month = "-0" . $this->month . "-";
                 }
             }
+
             if($this->sportSection_id>0){
-                $eventsPast = event::where([
-                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
-                    ['verwendung', '0'],
-                    ['datumvon', 'LIKE', "%{$month}%"],
-                    ['datumvon', 'LIKE', "%{$this->year}%"],
-                    ['datumbis', '<=', Carbon::now()->toDateString()],
-                    ['sportSection_id', $this->sportSection_id]
-                ])
-                    ->orderby('datumbis', 'desc')
+                $sportSection_id = $this->sportSection_id;
+                $eventsPast = event::where('ueberschrift', 'LIKE', '%'.$this->search.'%')
+                    ->where('verwendung' , '0')
+                    ->where('datumvon' , 'LIKE' , '%'.$month.'%')
+                    ->where('datumbis' , '<=' , Carbon::now()->toDateString())
+                    ->where(function($quiet1) use($sportSection_id){
+                        $quiet1->where('sportSection_id' , $sportSection_id)
+                               ->orWhere('sportSection_id' , Null);
+                    })
+                    ->where(function($quiet2) use($year){
+                        $quiet2->where('datumvon' , 'LIKE' , '%'.$year.'%')
+                               ->orWhere('datumbis' , 'LIKE' , '%'.$year.'%');
+                    })
+                    ->orderby('datumbis' , 'desc')
                     ->paginate(4);
             }
             else{
@@ -114,16 +120,21 @@ class EventPastAll extends Component
         }
         else{
             $this->month = "";
-            if($this->sportSection_id>0) {
-                $eventsPast = event::where([
-                    ['ueberschrift', 'LIKE', "%{$this->search}%"],
-                    ['verwendung', '0'],
-                    ['nachtermin', '!=', ""],
-                    ['datumvon', 'LIKE', "%{$this->year}%"],
-                    ['datumbis', '<=', Carbon::now()->toDateString()],
-                    ['sportSection_id', $this->sportSection_id]
-                ])
-                    ->orderby('datumbis', 'desc')
+            $year = $this->year;
+            if($this->sportSection_id>0){
+                $sportSection_id = $this->sportSection_id;
+                $eventsPast = event::where('ueberschrift', 'LIKE', '%'.$this->search.'%')
+                    ->where('verwendung' , '0')
+                    ->where('datumbis' , '<=' , Carbon::now()->toDateString())
+                    ->where(function($quiet1) use($sportSection_id){
+                        $quiet1->where('sportSection_id' , $sportSection_id)
+                            ->orWhere('sportSection_id' , Null);
+                    })
+                    ->where(function($quiet2) use($year){
+                        $quiet2->where('datumvon' , 'LIKE' , '%'.$year.'%')
+                            ->orWhere('datumbis' , 'LIKE' , '%'.$year.'%');
+                    })
+                    ->orderby('datumbis' , 'desc')
                     ->paginate(4);
             }
             else{

@@ -116,7 +116,24 @@
                             <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
                             <div>
                                 @foreach($reports as $report)
-                                    <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
+                                    @if($report->image != Null)
+                                        @if (is_file($report->image))
+                                            <img src="/daten/image/{{$report->image}}" width="100%"/>
+                                        @else
+                                            @auth
+                                                <p class="text-danger">Image ist nicht auf dem Server</p>
+                                            @endauth
+                                        @endif
+                                    @endif
+                                    @if($report->bild != Null)
+                                        @if (is_file($report->bild))
+                                            <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
+                                        @else
+                                          @auth
+                                             <p class="text-danger">Bild ist nicht auf dem Server</p>
+                                          @endauth
+                                        @endif
+                                    @endif
                                 @endforeach
                             </div>
 

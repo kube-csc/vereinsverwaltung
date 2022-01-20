@@ -87,7 +87,7 @@
             @endphp
             @if($eventsPastCount==0)
                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-                    <div class="icon-box" data-aos="fade-up">
+                    <div class="icon-box">
                         Für den eingestellten Filter sind keine Termine vorhanden.
                     <div>
                 <div>
@@ -98,7 +98,7 @@
                 @endphp
                 @if( $count != 0 && $countMax != 6)
                     <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-                        <div class="icon-box" data-aos="fade-up">
+                        <div class="icon-box">
                             @php
                                 /*
                                  <div class="icon"><i class="bx bxl-dribbble"></i></div>

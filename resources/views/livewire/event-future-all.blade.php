@@ -1,7 +1,7 @@
 <section id="services" class="services"> <!-- ======= Services Section ======= -->
     <div class="container">
         <div class="section-title">
-            <h2>zukünftige Termine</h2>
+            <h2>Termine</h2>
             @php
                 //ToDo: Text bearbeiten
                //<p>Text ?</p>
@@ -88,7 +88,7 @@
             @endphp
             @if($eventsFutureCount==0)
                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-                    <div class="icon-box" data-aos="fade-up">
+                    <div class="icon-box">
                        Für den eingestellten Filter sind keine Termine vorhanden.
                     <div>
                 <div>
@@ -99,7 +99,7 @@
                 @endphp
                 @if( $count != 0 && $countMax != 6)
                     <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-                        <div class="icon-box" data-aos="fade-up">
+                        <div class="icon-box">
                             @php
                                 /*
                                  <div class="icon"><i class="bx bxl-dribbble"></i></div>

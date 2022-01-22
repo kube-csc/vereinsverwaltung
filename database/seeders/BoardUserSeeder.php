@@ -32,7 +32,6 @@ class BoardUserSeeder extends Seeder
                         'created_at' => '2021-01-01 12:00:00',
                         'updated_at' => '2021-01-01 12:00:00'
                    ),
-
                     array(
                         'id' => '2',
                         'board_id' => '1',
@@ -46,7 +45,6 @@ class BoardUserSeeder extends Seeder
                         'created_at' => '2021-01-01 12:00:00',
                         'updated_at' => '2021-01-01 12:00:00'
                     ),
-
                     array(
                         'id' => '3',
                         'board_id' => '2',
@@ -57,6 +55,19 @@ class BoardUserSeeder extends Seeder
                         'bearbeiter_id' => 1,
                         'visible' => '1',
                         'postenemail' => 'trainer@verein.de',
+                        'created_at' => '2021-01-01 12:00:00',
+                        'updated_at' => '2021-01-01 12:00:00'
+                    ),
+                    array(
+                        'id' => '4',
+                        'board_id' => '3',
+                        'position' => '20',
+                        'nummer' => '1',
+                        'boardUser_id' => '2',
+                        'postenPortraet' => 'posten-2.jpg',
+                        'bearbeiter_id' => 1,
+                        'visible' => '1',
+                        'postenemail' => '',
                         'created_at' => '2021-01-01 12:00:00',
                         'updated_at' => '2021-01-01 12:00:00'
                     ),

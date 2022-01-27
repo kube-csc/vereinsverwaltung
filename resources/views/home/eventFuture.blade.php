@@ -9,10 +9,6 @@
                  <a href="{{ url('/Termine') }}">alle Termine<i class="icofont-arrow-right"></i></a>
                </div>
             @endif
-            @php
-                //ToDo: Text bearbeiten
-//             //<p>Text ?</p>
-            @endphp
         </div>
         <div class="row">
              @php
@@ -39,16 +35,15 @@
                                        ->limit(1)
                                        ->get();
                         @endphp
-
-                        <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
+                        <h4 class="title">
+                          <a href="/Event/Berichte/{{$eventFuture->id}}">{{$eventFuture->ueberschrift}}</a></h4>
                         <div>
                             @foreach($reports as $report)
                                 <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
                             @endforeach
                         </div>
-
                         @if(isset($eventFuture->sportSectionName->abteilung))
-                        <p class="description">{{ $eventFuture->sportSectionName->abteilung }}</p>
+                          <p class="description">{{ $eventFuture->sportSectionName->abteilung }}</p>
                         @endif
                         @if(isset($eventFuture->eventGroupName->termingruppe))
                           <p class="description">{{$eventFuture->eventGroupName->termingruppe}}</p>
@@ -104,7 +99,7 @@
                         </p>
                         @if ($abgeschnitten==1)
                            <div class="read-more">
-                             <a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}" class="about-btn">
+                             <a href="/Event/Berichte/{{$eventFuture->id}}" class="about-btn">
                                  mehr<i class="bx bx-chevron-right"></i>
                              </a>
                            </div>

@@ -164,7 +164,7 @@ class HomeController extends Controller
         ]);
     }
 
-    public function eventShow($eventSeorch)
+    public function eventShow($eventId)
     {
         $serverdomain        = $_SERVER["HTTP_HOST"];
         $abteilungHomes      = SportSection::where('status' , '1')
@@ -183,10 +183,7 @@ class HomeController extends Controller
             ->where('dokumentenFile' ,'!=' , NULL)
             ->get();
 
-        $eventSeorchName = substr ($eventSeorch , 0, -10);
-        $dateFor = substr ($eventSeorch, -10);
-        $seoch = str_replace('_' , ' ' , $eventSeorchName);
-        $events = event::where('ueberschrift' , $seoch)->where('datumvon' , $dateFor)->get();
+        $events = event::where('id' , $eventId)->get();
 
         return view('home.eventShow')->with([
             'events'                      => $events,

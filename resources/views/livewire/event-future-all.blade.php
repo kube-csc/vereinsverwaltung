@@ -114,7 +114,7 @@
                                            ->get();
                             @endphp
 
-                            <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}">{{$eventFuture->ueberschrift}}</a></h4>
+                            <h4 class="title"><a href="/Event/Berichte/{{$eventFuture->id}}</a></h4>
                             <div>
                                 @foreach($reports as $report)
                                     <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
@@ -178,7 +178,7 @@
                             </p>
                             @if ($abgeschnitten==1)
                                 <div class="read-more">
-                                    <a href="/Event/detail/{{ str_replace(' ', '_', $eventFuture->ueberschrift) }}_{{$eventFuture->datumvon}}" class="about-btn">
+                                    <a href="/Event/Berichte/{{$eventFuture->id}}" class="about-btn">
                                         mehr<i class="bx bx-chevron-right"></i>
                                     </a>
                                 </div>

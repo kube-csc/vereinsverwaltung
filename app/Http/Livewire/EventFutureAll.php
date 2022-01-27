@@ -17,6 +17,10 @@ class EventFutureAll extends Component
     public $year;
     public $search;
     public $sportSection_id;
+    public $searchSave;
+    public $monthSave;
+    public $yearSave;
+    public $sportSection_idSave;
 
     public function mount()
     {
@@ -49,9 +53,6 @@ class EventFutureAll extends Component
     public function yearDecrease()
     {
         --$this->year;
-        if($this->year<1900){
-            $this->year=Null;
-        }
     }
 
     public function render()
@@ -62,6 +63,10 @@ class EventFutureAll extends Component
 
         if($this->year<Carbon::now()->format('Y') && $this->year!=Null){
             $this->year=Carbon::now()->format('Y');
+        }
+
+        if($this->year<1900){
+            $this->year=Null;
         }
 
         if($this->year>2050){
@@ -80,6 +85,24 @@ class EventFutureAll extends Component
             $this->month = 1;
         }
 
+       if($this->searchSave<>$this->search){
+            $this->searchSave=$this->search;
+            $this->resetPage();
+        }
+
+        if($this->yearSave<>$this->year){
+            $this->yearSave=$this->year;
+            $this->resetPage();
+        }
+
+        if($this->sportSection_idSave<>$this->sportSection_id){
+            $this->sportSection_idSave=$this->sportSection_id;
+            $this->resetPage();
+        }
+
+        $sportSection_id = $this->sportSection_id;
+        $year=$this->year;
+
         if($this->month > 0){
             if($this->month > 9){
                 $month = "-" . $this->month . "-";
@@ -93,20 +116,26 @@ class EventFutureAll extends Component
                 }
             }
 
-            $sportSection_id = $this->sportSection_id;
+            if($this->monthSave<>$month){
+                $this->monthSave=$month;
+                $this->resetPage();
+            }
 
             if($sportSection_id>0){
                 $eventsFuture = event::where('ueberschrift', 'LIKE', '%'.$this->search.'%')
                                         ->where('verwendung' , '0')
-                                        ->where('datumvon' , 'LIKE' , '%'.$month.'%')
                                         ->where('datumbis' , '>=' , Carbon::now()->toDateString())
-                                        ->where(function($quiet1) use($sportSection_id){
-                                            $quiet1->where('sportSection_id' , $sportSection_id)
-                                                   ->orWhere('sportSection_id' , Null);
+                                        ->where(function($quiet1) use($month){
+                                            $quiet1->where('datumvon' , 'LIKE' , '%'.$month.'%')
+                                                   ->orWhere('datumbis' , 'LIKE' , '%'.$month.'%');
                                         })
                                         ->where(function($quiet2) use($year){
                                             $quiet2->where('datumvon' , 'LIKE' , '%'.$year.'%')
                                                    ->orWhere('datumbis' , 'LIKE' , '%'.$year.'%');
+                                        })
+                                        ->where(function($quiet3) use($sportSection_id){
+                                            $quiet3->where('sportSection_id' , $sportSection_id)
+                                                   ->orWhere('sportSection_id' , Null);
                                         })
                                         ->orderby('datumvon' , 'desc')
                                         ->paginate(4);
@@ -114,8 +143,11 @@ class EventFutureAll extends Component
             else{
                 $eventsFuture = event::where('ueberschrift', 'LIKE', '%'.$this->search.'%')
                                         ->where('verwendung' , '0')
-                                        ->where('datumvon' , 'LIKE' , '%'.$month.'%')
                                         ->where('datumbis' , '>=' , Carbon::now()->toDateString())
+                                        ->where(function($quiet1) use($month){
+                                            $quiet1->where('datumvon' , 'LIKE' , '%'.$month.'%')
+                                                ->orWhere('datumbis' , 'LIKE' , '%'.$month.'%');
+                                        })
                                         ->where(function($quiet2) use($year){
                                             $quiet2->where('datumvon' , 'LIKE' , '%'.$year.'%')
                                                 ->orWhere('datumbis' , 'LIKE' , '%'.$year.'%');
@@ -126,8 +158,11 @@ class EventFutureAll extends Component
         }
         else{
             $this->month = "";
-            $year = $this->year;
-            $sportSection_id = $this->sportSection_id;
+
+            if($this->monthSave<>$this->month){
+                $this->monthSave=$this->month;
+                $this->resetPage();
+            }
 
             if($sportSection_id>0){
                 $eventsFuture = event::where('ueberschrift', 'LIKE', '%'.$this->search.'%')

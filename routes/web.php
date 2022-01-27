@@ -29,10 +29,10 @@ use App\Http\Controllers\BacklinksController;
 //LandingPage
 Route::get('/',                                                    [HomeController::class, 'index']);
 Route::get('/'.env('Menue_Abteilung').'/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
-Route::get('/Event/detail/{event}',                                [HomeController::class, 'eventShow']);
+Route::get('/Bericht/{event}',                                     [HomeController::class, 'eventShow']);
 Route::get('/Information/{event}',                                 [HomeController::class, 'instructionShow']);
 Route::get('/Termine',                                             [HomeController::class, 'eventFutureAll']);
-Route::get('/Archiv',                                              [HomeController::class, 'eventPastAll']);
+Route::get('/Berichte',                                            [HomeController::class, 'eventPastAll']);
 Route::get('/Anfahrt',                                             [HomeController::class, 'journey']);
 Route::get('/Impressum',                                           [HomeController::class, 'imprint']);
 

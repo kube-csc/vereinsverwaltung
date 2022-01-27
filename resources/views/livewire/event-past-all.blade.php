@@ -3,10 +3,6 @@
 
         <div class="section-title">
             <h2>Die neusten Berichte, Fotos und Videos</h2>
-            @php
-                //ToDo: Text eingeben Vergangende Termine
-               //<p>Text</p>
-            @endphp
             <div class="row g-2">
                 <div class="col-md">
                     <div class="form-floating">
@@ -28,7 +24,7 @@
                         </box-icon><label>Jahr</label>
                         <i class="bx bx-chevron-up" wire:click="yearIncrease"></i>
                         <input class="form-control" wire:model.debounce.1000ms="year" type="number">
-                    </div>
+                     </div>
                </div>
                 <div class="col-md">
                     <label for="name">{{env('Menue_Abteilung')}} / Mannschaften:</label><br>
@@ -113,7 +109,7 @@
                                           ->get();
                             @endphp
 
-                            <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
+                            <h4 class="title"><a href="/Bericht/{{$eventPast->id}}">{{$eventPast->ueberschrift}}</a></h4>
                             <div>
                                 @foreach($reports as $report)
                                     @if($report->image != Null)
@@ -161,7 +157,7 @@
                                 {!! $ausgabetext !!}
                             </p>
                             @if($abgeschnitten==1)
-                                <a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}" class="about-btn">mehr
+                                <a href="/Bericht/{{$eventPast->id}}" class="about-btn">mehr
                                     <i class="bx bx-chevron-right"></i>
                                 </a>
                             @endif

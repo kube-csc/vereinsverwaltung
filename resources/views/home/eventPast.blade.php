@@ -7,7 +7,7 @@
             <h2>Die neusten Berichte, Fotos und Videos</h2>
             @if($eventsPast->count()>4)
                 <div class="read-more">
-                    <a href="{{ url('Archiv') }}">alle Termine<i class="icofont-arrow-right"></i></a>
+                    <a href="{{ url('Berichte') }}">alle Termine<i class="icofont-arrow-right"></i></a>
                 </div>
             @endif
             @php
@@ -41,8 +41,7 @@
                                           ->limit(1)
                                           ->get();
                         @endphp
-
-                        <h4 class="title"><a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}">{{$eventPast->ueberschrift}}</a></h4>
+                        <h4 class="title"><a href="/Bericht/{{$eventPast->id}}">{{$eventPast->ueberschrift}}</a></h4>
                         <div>
                             @foreach($reports as $report)
                                 @if($report->image != Null)
@@ -90,7 +89,7 @@
                             {!! $ausgabetext !!}
                            </p>
                         @if($abgeschnitten==1)
-                            <a href="/Event/detail/{{ str_replace(' ', '_', $eventPast->ueberschrift) }}_{{$eventPast->datumvon}}" class="about-btn">mehr
+                            <a href="/Bericht/{{$eventPast->id}}" class="about-btn">mehr
                                 <i class="bx bx-chevron-right"></i>
                             </a>
                         @endif

@@ -117,10 +117,26 @@
                             <h4 class="title"><a href="/Bericht/{{$eventFuture->id}}">{{$eventFuture->ueberschrift}}</a></h4>
                             <div>
                                 @foreach($reports as $report)
-                                    <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
+                                    @if($report->image != Null)
+                                        @if (is_file('/daten/bilder/'.$report->image)==true)
+                                            <img src="/daten/bilder/{{$report->image}}" width="100%"/>
+                                        @else
+                                            @auth
+                                                <p class="text-danger">Image {{$report->image}} ist nicht auf dem Server vorhanden.</p>
+                                            @endauth
+                                        @endif
+                                    @endif
+                                    @if($report->bild != Null)
+                                        @if (is_file('/storage/eventImage/'.$report->bild))
+                                            <img src="/storage/eventImage/{{$report->bild}}" width="100%"/>
+                                        @else
+                                            @auth
+                                                <p class="text-danger">Bild {{$report->bild}} ist nicht auf dem Server vorhanden.</p>
+                                            @endauth
+                                        @endif
+                                    @endif
                                 @endforeach
                             </div>
-
                             @if(isset($eventFuture->sportSectionName->abteilung))
                                 <p class="description">{{ $eventFuture->sportSectionName->abteilung }}</p>
                             @endif

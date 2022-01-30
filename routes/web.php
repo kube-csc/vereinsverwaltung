@@ -28,7 +28,7 @@ use App\Http\Controllers\BacklinksController;
 */
 //LandingPage
 Route::get('/',                                                    [HomeController::class, 'index']);
-Route::get('/'.env('Menue_Abteilung').'/detail/{sportTeam}',  [HomeController::class, 'homeSportSelect']);
+Route::get('/'.env('Menue_Abteilung').'/{sportTeam}',          [HomeController::class, 'homeSportSelect']);
 Route::get('/Bericht/{event}',                                     [HomeController::class, 'eventShow']);
 Route::get('/Information/{event}',                                 [HomeController::class, 'instructionShow']);
 Route::get('/Termine',                                             [HomeController::class, 'eventFutureAll']);

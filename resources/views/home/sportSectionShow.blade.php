@@ -62,7 +62,7 @@
                                 }
                                 ?>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-                                    <a href="/Abteilung/detail/{{ str_replace(' ', '_', $abteilung->abteilung) }}">
+                                    <a href="/{{env('Menue_Abteilung')}}/{{ str_replace(' ', '_', $abteilung->abteilung) }}">
                                       <h4>{{ $abteilung->abteilung }}</h4>
                                     </a>
                                    <?php

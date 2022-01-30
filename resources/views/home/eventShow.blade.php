@@ -77,7 +77,8 @@
 
             </div>
 
-            <livewire:event-gallery />
+            <livewire:event-gallery :reportId="$event->id" />
+
 
         </div>
     </section><!-- End Portfolio Section -->

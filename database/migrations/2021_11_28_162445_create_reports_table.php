@@ -26,7 +26,7 @@ class CreateReportsTable extends Migration
             $table->integer('pixy')->nullable();
             $table->string('filename')->nullable();
             $table->integer('player')->nullable();
-            $table->integer('typ')->default(1);                          //        1 = jpg
+            $table->integer('typ')->default(1);             //        1 = jpg
                                                                          //        2 = gif
                                                                          //        3 = png
                                                                          //       10 = pdf
@@ -37,6 +37,7 @@ class CreateReportsTable extends Migration
                                                                          //       21 = mp4
             $table->boolean('visible')->default(true);      // true = 1 = sichtbar
             $table->boolean('startseite')->default(false);  // true = 1 = Leandingpage
+            $table->boolean('webseite')->default(false);    // true = 0 = das Bild wird nur angezeigt wenn der User im internen Bereich angemeldet ist.
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');
             $table->SoftDeletes();

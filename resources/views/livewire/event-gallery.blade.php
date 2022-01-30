@@ -1,104 +1,75 @@
+
+      @if($reports->count()>0)
         <div class="row" data-aos="fade-in">
             <div class="col-lg-12 d-flex justify-content-center">
-                <ul id="portfolio-flters">
-                    <li data-filter="*" class="filter-active">All</li>
-                    <li data-filter=".filter-app">App</li>
-                    <li data-filter=".filter-card">Card</li>
-                    <li data-filter=".filter-web">Web</li>
-                </ul>
+                @auth
+                    <ul id="portfolio-flters">
+                        <li data-filter=".filter-web">Web</li>
+                        <li data-filter=".filter-intern">Intern</li>
+                        <li data-filter="*" class="filter-active">All</li>
+                    </ul>
+                @elseguest
+                  @if($reports->count()>10)
+                    <ul id="portfolio-flters">
+                    @for ($i = 10; $i <= $reports->count(); $i=$i+10)
+                        <li data-filter=".filter-10">{{ $i }}</li>
+                    @endfor
+                        <li data-filter=".filter-10">{{ $i }}</li>
+                        <li data-filter="*" class="filter-active">All</li>
+                    </ul>
+                  @endif
+                @endauth
             </div>
         </div>
 
         <div class="row portfolio-container" data-aos="fade-up">
+          @php
+            $i=1;
+            $ii=10;
+          @endphp
+          @foreach($reports as $report)
+            @auth
+               @if($report->webseite=='0')
+                 <div class="col-lg-4 col-md-6 portfolio-item filter-intern">
+                    <div class="portfolio-wrap">
+                        <img src="/storage/eventImage/{{$report->bild}}" class="img-fluid" alt="">
+                        <div class="portfolio-links">
+                            <a href="/storage/eventImage/{{$report->bild}}" data-gall="portfolioGallery" class="venobox" title="{{$report->titel}}"><i class="bx bx-plus"></i></a>
 
-            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-1.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-1.jpg" data-gall="portfolioGallery" class="venobox" title="App 1"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
+                        </div>
+                    </div>
+                 </div>
+               @endif
+               @if($report->webseite=='1')
+                 <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+                    <div class="portfolio-wrap">
+                        <img src="/storage/eventImage/{{$report->bild}}" class="img-fluid" alt="">
+                        <div class="portfolio-links">
+                            <a href="/storage/eventImage/{{$report->bild}}" data-gall="portfolioGallery" class="venobox" title="{{$report->titel}}"><i class="bx bx-plus"></i></a>
+
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-web">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-2.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-2.jpg" data-gall="portfolioGallery" class="venobox" title="Web 3"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
+               @endif
+            @elseguest
+               @if($report->webseite=='1')
+                 <div class="col-lg-4 col-md-6 portfolio-item filter-{{ $ii }}">
+                    <div class="portfolio-wrap">
+                        <img src="/storage/eventImage/{{$report->bild}}" class="img-fluid" alt="">
+                        <div class="portfolio-links">
+                            <a href="/storage/eventImage/{{$report->bild}}" data-gall="portfolioGallery" class="venobox" title="{{$report->titel}}"><i class="bx bx-plus"></i></a>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-3.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-3.jpg" data-gall="portfolioGallery" class="venobox" title="App 2"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-card">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-4.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-4.jpg" data-gall="portfolioGallery" class="venobox" title="Card 2"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-web">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-5.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-5.jpg" data-gall="portfolioGallery" class="venobox" title="Web 2"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-6.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-6.jpg" data-gall="portfolioGallery" class="venobox" title="App 3"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-card">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-7.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-7.jpg" data-gall="portfolioGallery" class="venobox" title="Card 1"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-card">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-8.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-8.jpg" data-gall="portfolioGallery" class="venobox" title="Card 3"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 portfolio-item filter-web">
-                <div class="portfolio-wrap">
-                    <img src="/asset/img/portfolio/portfolio-9.jpg" class="img-fluid" alt="">
-                    <div class="portfolio-links">
-                        <a href="/asset/img/portfolio/portfolio-9.jpg" data-gall="portfolioGallery" class="venobox" title="Web 3"><i class="bx bx-plus"></i></a>
-                        <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                    </div>
-                </div>
-            </div>
-
+                 </div>
+                 @php
+                   $i= ++$i;
+                   if($i>10){
+                     $ii=$ii+10;
+                     $i=1;
+                   }
+                  @endphp
+               @endif
+            @endauth
+          @endforeach
         </div>
+      @endif

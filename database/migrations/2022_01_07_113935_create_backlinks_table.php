@@ -19,6 +19,12 @@ class CreateBacklinksTable extends Migration
             $table->text('backlink');
             $table->text('neueUrl')->nullable();
             $table->boolean('visible')->default(true);      // true = 1 = sichtbar
+            $table->integer('teilUrl')->default(0);         // = 1 = Teilurl Abgeschitten am ?
+                                                                         // = 2 Teilurl Abgeschitten am ? mit Verwendung des ersten Parameter
+                                                                         // = 3 Parameter austauschen
+
+                                                                         // = 4 ein Parameter verhinder das neu aufnehmen in der Datenbank
+            $table->text('prefixName')->nullable();
             $table->unsignedBigInteger('bearbeiter_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamp('nichtgefundenDatum')->nullable();

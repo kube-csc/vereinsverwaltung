@@ -1,4 +1,4 @@
-w<x-app-layout>
+<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Backlinks - Dashboard') }}
@@ -15,9 +15,9 @@ w<x-app-layout>
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich werden die Umleitung der Backlinks von vorherrigen Weblayouts angelegt und bearbeitet.
+                   In diesem Bereich werden die Umleitung der Backlinks von vorherigen Weblayouts angelegt und bearbeitet.
                       @php
-                          //ToDO: Texte Verbessern
+                          //ToDo: Texte Verbessern
                       @endphp
                   </div>
 
@@ -71,12 +71,31 @@ w<x-app-layout>
 
                                       <div class="flex">
                                       <p class="font-bold text-lg">{{ $backlink->backlink }}<br>
-                                          {{ $backlink->neueUrl }}<br>
-                                          Anzahl der Weiterleitungen: {{ $backlink->weiterleitAnzahl }}<br>
-                                          Letzte Weiterleitung: {{ $backlink->weiterleitDatum}}
-                                          @php
-                                          //ToDo: Datumausgabe verbessern
-                                          @endphp
+                                          @if($backlink->teilUrl!=3 or $backlink->teilUrl!=5)
+                                              Neue URL: {{ $backlink->neueUrl }}<br>
+                                          @endif
+                                          @if($backlink->teilUrl==1)
+                                              Parameter werden nicht berücksichtigt<br>
+                                          @endif
+                                          @if($backlink->teilUrl==2)
+                                              erster Parameter an der URl angehangen<br>
+                                          @endif
+                                          @if($backlink->teilUrl==3)
+                                              der Prefix {{ $backlink->prefixName }} <br>
+                                              wird durch {{ $backlink->neueUrl }} ersetzt<br>
+                                          @endif
+                                          @if($backlink->teilUrl==4)
+                                              den Parameter {{ $backlink->prefixName }} an der URl anhängen<br>
+                                          @endif
+                                          @if($backlink->teilUrl==5)
+                                              der Prefix {{ $backlink->prefixName }} verhinder das neu aufnehmen in der Datenbank<br>
+                                              Anzahl der nicht Weiterleitungen: {{ $backlink->nichtgefundenAnzahl }}<br>
+                                              Letzte Aufruf: {{ $backlink->nichtgefundenDatum}}<br>
+                                          @endif
+                                          @if($backlink->teilUrl!=5)
+                                              Anzahl der Weiterleitungen: {{ $backlink->weiterleitAnzahl }}<br>
+                                              Letzte Weiterleitung: {{ $backlink->weiterleitDatum}}
+                                          @endif
                                       </p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $backlink->updated_at->diffForHumans() }}</p>
                                     </div>

@@ -17,7 +17,7 @@
                   <div class="mt-6 text-gray-500">
                     Bitte gebe den neuen Backlink ein.
                   @php
-                      //ToDO: Texte Verbessern
+                      //ToDo: Texte Verbessern
                   @endphp
                   </div>
 
@@ -64,7 +64,7 @@
                                 </div>
                             </form>
                             <br>
-                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Eventgruppe/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
+                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Backlink/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                            </div>
                           </div>
 

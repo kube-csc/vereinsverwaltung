@@ -40,7 +40,9 @@ class BacklinksController extends Controller
      */
     public function index()
     {
-        $backlinks = backlinks::orderby('backlink')->paginate(5);
+        $backlinks = backlinks::where('neueUrl' , Null)
+            ->orderby('created_at' , 'DESC')
+            ->orderby('backlink')->paginate(5);
         return view('admin.backlink.index')->with(
             [
                 'backlinks' => $backlinks,
@@ -49,7 +51,8 @@ class BacklinksController extends Controller
 
     public function indexRelevant()
     {
-        $backlinks = backlinks::orderby('nichtgefundenAnzahl')
+        $backlinks = backlinks::where('neueUrl' , Null)
+            ->orderby('nichtgefundenAnzahl' , 'DESC')
             ->orderby('backlink')
             ->paginate(5);
 
@@ -61,10 +64,14 @@ class BacklinksController extends Controller
 
     public function indexUsed()
     {
-        $backlinks = backlinks::where('neueUrl' , '!=' , Null)
-            ->orderby('nichtgefundenAnzahl')
-            ->orderby('backlink')
-            ->paginate(5);
+        $i=0;
+        $backlinks = backlinks::where(function ($query) use ($i){
+                                    $query->where('neueUrl' , '!=', Null)
+                                          ->orwhere('prefixName' , '!=' , NULL);
+                                    })
+                               ->orderby('weiterleitAnzahl' , 'DESC')
+                               ->orderby('backlink')
+                               ->paginate(5);
 
         return view('admin.backlink.indexRelevantUsed')->with(
             [
@@ -151,21 +158,26 @@ class BacklinksController extends Controller
     {
         $request->validate(
             [
-                'backlink' => 'required|max:255',
-                'neueUrl'  => 'max:255'
+                'backlink'    => 'required|max:255',
+                'neueUrl'     => 'max:255',
+                'prefixName'  => 'max:255',
+                'prefixNummer'=> 'min:0|nax:10'
             ]
         );
 
         backlinks::find($backlink_id)->update([
             'backlink'         => $request->backlink,
             'neueUrl'          => $request->neueUrl,
+            'teilUrl'          => $request->teilUrl,
+            'prefixNummer'     => $request->prefixNumber,
+            'prefixName'       => $request->prefixName,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
 
         return redirect('/Backlink/alle')->with(
             [
-                'success' => 'Die Daten von Backlink<b>' . $request->backlink. '</b> wurden geändert.'
+              'success' => 'Die Daten von Backlink<b>' . $request->backlink. '</b> wurden geändert.'
             ]
         );
     }

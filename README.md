@@ -26,20 +26,20 @@
 
 <h2>Frontend</h2>
 <ul>
-<li>Header Abhänigig von den Abteilungen / Sportarten</li>
+<li>Header Abhängig von den Abteilungen / Sportarten</li>
 <li>Leanding Page
      <ul>
       <li>Ausgabe der Vereinsbeschreibung</li>
-      <li>Presendation der Abteilung mit deren Mannschaften</li>
-      <li>Presendation der kommenden Events</li>
-      <li>Presendation der vergangenden Events</li>
-      <li>Presendation des Teams</li>
+      <li>Präsentation der Abteilung mit deren Mannschaften</li>
+      <li>Präsentation der kommenden Events</li>
+      <li>Präsentation der vergangenden Events</li>
+      <li>Präsentation des Teams</li>
       <li>Kontakt des Vereins inc. Map</li>
     </ul>
 </li>
-  <li>Detail Presendation der Abteilung / Sportart</li>
-  <li>Detail Presendation der Mannschaften</li>
-  <li>Detail Presendation des Event</li>
+  <li>Detail Präsentation der Abteilung / Sportart</li>
+  <li>Detail Präsentation der Mannschaften</li>
+  <li>Detail Präsentation des Event</li>
   <li>Informationen
     <ul>
         <li>Anfahrt</li>
@@ -54,6 +54,7 @@
         <li>Datenschutzerklärung</li>
     </ul>
   </li>
+  <li>401 Errorseite oder Weiterleitung 301 zu dem im Backlink verwalteten Backend</li>
 </ul>
 
 <h2>Backend</h2>
@@ -63,7 +64,7 @@
   <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
   <li>Eingabe und Bearbeitung von Events</li>
   <li>Eingabe und Bearbeitung von Event Gruppen</li>
-  <li>Dokumentenmanagent</li>
+  <li>Dokumentenmanagement</li>
   <li>Anfahrt</li>
   <li>Informationsseiten
     <ul>
@@ -73,15 +74,13 @@
         <li>Datenschutzerklärung</li>
     </ul>
   </li>
+<li>Backlinkverwaltung Umleitung von Links die nicht mehr Existieren</li>
 </ul>
 
 <h2>Installation</h2>
 <ul>
    <li>git clone  https://github.com/kube-csc/vereinsverwaltung.git</li>
-   <li>.env Datei Ausfüllen Es werden auch Informationen über den Verein abgefragt
-     <ul>
-      <li></li>
-     </ul>
+   <li>.env Datei Ausfüllen (Es werden auch Informationen über den Verein abgefragt.)
    </li>
    <li>composer.phar install</li>
    <li>php artisan storage:link<br>

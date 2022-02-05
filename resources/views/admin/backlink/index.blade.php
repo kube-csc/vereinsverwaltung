@@ -17,7 +17,7 @@
                   <div class="mt-6 text-gray-500">
                    In diesem Bereich werden die Umleitung der Backlinks von vorherrigen Weblayouts angelegt und bearbeitet.
                       @php
-                          //ToDO: Texte Verbessern
+                          //ToDo: Texte Verbessern
                       @endphp
                   </div>
 
@@ -70,7 +70,9 @@
                                         </div>
 
                                       <div class="flex">
-                                        <p class="font-bold text-lg">{{ $backlink->backlink }}<br>{{ $backlink->neueUrl }}</p>
+                                        <p class="font-bold text-lg">{{ $backlink->backlink }}<br>
+                                            {{ $backlink->neueUrl }}<br>
+                                        </p>
                                         <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $backlink->updated_at->diffForHumans() }}</p>
                                     </div>
                                   </div>

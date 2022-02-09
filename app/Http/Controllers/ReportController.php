@@ -41,6 +41,26 @@ class ReportController extends Controller
         return Redirect()->back()->with('success' , 'Das Bild wurde unsichtbar geschaltet.');
     }
 
+    public function webaktiv($reportId)
+    {
+        report::find($reportId)->update([
+            'webseite'         => '1',
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Das Bild wurde für den öffendlichen Bereich sichtbar geschaltet.');
+    }
+
+    public function webinaktiv($reportId)
+    {
+        report::find($reportId)->update([
+            'webseite'         => '0',
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Das Bild wurde für den öffendlichen Bereich unsichtbar geschaltet.');
+    }
+
     public function start($reportId)
     {
         $report = report::find($reportId);

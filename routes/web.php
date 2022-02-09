@@ -103,6 +103,8 @@ Route::get('/Bericht/edit/{report_id}',                [ReportController::class,
 Route::post('/Bericht/update/{report_id}',             [ReportController::class, 'update'])            ->name('report.update');
 Route::get('/Bericht/aktiv/{report_id}',               [ReportController::class, 'aktiv'])             ->name('report.aktiv');
 Route::get('/Bericht/inaktiv/{report_id}',             [ReportController::class, 'inaktiv'])           ->name('report.inaktiv');
+Route::get('/Bericht/webaktiv/{report_id}',            [ReportController::class, 'webaktiv'])          ->name('report.webaktiv');
+Route::get('/Bericht/webinaktiv/{report_id}',          [ReportController::class, 'webinaktiv'])        ->name('report.webinaktiv');
 Route::get('/Bericht/picturedelete/{report_id}',       [ReportController::class, 'pictureDelete']);
 Route::get('/Bericht/maxtop/{report_id}',              [ReportController::class, 'maxtop'])            ->name('report.maxtop');
 Route::get('/Bericht/top/{report_id}',                 [ReportController::class, 'top'])               ->name('report.top');

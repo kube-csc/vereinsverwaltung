@@ -66,6 +66,17 @@
                                                 <box-icon name='hide'></box-icon>
                                             </a>
                                         @endif
+                                        @if($report['webseite']==0)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/webaktiv/'.$report->id) }}">
+                                                <box-icon name='home'></box-icon>
+                                            </a>
+                                        @endif
+                                        @if($report['webseite']==1)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/webinaktiv/'.$report->id) }}">
+                                                <box-icon name='world'></box-icon>
+                                                <!--<box-icon name='globe'></box-icon>-->
+                                            </a>
+                                        @endif
                                         @if ($report['event_id']==0)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/softDelete/'.$report->id) }}">
                                                 <box-icon name='x-square'></box-icon>

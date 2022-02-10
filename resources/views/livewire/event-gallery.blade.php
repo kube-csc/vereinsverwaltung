@@ -14,7 +14,7 @@
                     @for ($i = 10; $i <= $reports->count(); $i=$i+10)
                         <li data-filter=".filter-10">{{ $i }}</li>
                     @endfor
-                        <li data-filter=".filter-10">{{ $i }}</li>
+                        <li data-filter=".filter-{{ $i }}>{{ $i }}</li>
                         <li data-filter="*" class="filter-active">All</li>
                     </ul>
                   @endif

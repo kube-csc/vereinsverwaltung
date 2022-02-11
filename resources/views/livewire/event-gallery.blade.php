@@ -31,22 +31,36 @@
           @if($report->webseite=='0')
              <div class="col-lg-4 col-md-6 portfolio-item filter-intern">
                 <div class="portfolio-wrap">
-                    <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}>
-                    <div class="portfolio-links">
-                        <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
-
-                    </div>
+                    @if($report->bild != Null && !is_file('/storage/eventImage/'.$report->bild))
+                        <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <div class="portfolio-links">
+                            <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                        </div>
+                    @endif
+                    @if($report->image != Null && !is_file('/storage/eventImage/'.$report->image))
+                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <div class="portfolio-links">
+                            <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                        </div>
+                    @endif
                 </div>
              </div>
           @endif
           @if($report->webseite=='1')
              <div class="col-lg-4 col-md-6 portfolio-item filter-web">
                 <div class="portfolio-wrap">
-                    <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}>
-                    <div class="portfolio-links">
-                        <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
-
-                    </div>
+                    @if($report->bild != Null && !is_file('/storage/eventImage/'.$report->bild))
+                        <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <div class="portfolio-links">
+                            <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                        </div>
+                    @endif
+                    @if($report->image != Null && !is_file('/storage/eventImage/'.$report->image))
+                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <div class="portfolio-links">
+                            <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                        </div>
+                    @endif
                 </div>
             </div>
           @endif
@@ -54,11 +68,18 @@
           @if($report->webseite=='1')
              <div class="col-lg-4 col-md-6 portfolio-item filter-{{ $ii }}">
                 <div class="portfolio-wrap">
-                    <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}>
-                    <div class="portfolio-links">
-                        <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
-
-                    </div>
+                    @if($report->bild != Null && !is_file('/storage/eventImage/'.$report->bild))
+                       <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}">
+                       <div class="portfolio-links">
+                         <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                       </div>
+                    @endif
+                    @if($report->image != Null && !is_file('/storage/eventImage/'.$report->image))
+                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <div class="portfolio-links">
+                            <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                        </div>
+                    @endif
                 </div>
              </div>
              @php

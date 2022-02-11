@@ -28,7 +28,8 @@
                @if( $count != 0 && $countMax != 6)
                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                     <div class="icon-box" data-aos="fade-up">
-                        @php
+                        @auth
+                          @php
                             /*
                              <div class="icon"><i class="bx bxl-dribbble"></i></div>
                             */
@@ -40,7 +41,23 @@
                                           ->orderby('position')
                                           ->limit(1)
                                           ->get();
-                        @endphp
+                          @endphp
+                        @elseguest
+                          @php
+                            /*
+                             <div class="icon"><i class="bx bxl-dribbble"></i></div>
+                            */
+                              // ToDo: Query abfrage im Controller verlegen
+                              $reports  = DB::table('reports')->where('event_id' , $eventPast->id)
+                                          ->where('visible' , 1)
+                                          ->where('webseite' , 1)
+                                          ->where('typ' , 1)
+                                          ->orderby('startseite' , 'desc')
+                                          ->orderby('position')
+                                          ->limit(1)
+                                          ->get();
+                          @endphp
+                        @endauth
                         <h4 class="title"><a href="/Bericht/{{$eventPast->id}}">{{$eventPast->ueberschrift}}</a></h4>
                         <div>
                             @foreach($reports as $report)

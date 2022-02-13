@@ -351,7 +351,6 @@ class ReportController extends Controller
                 'success' => 'Die Daten von dem Bild <b>' . $request->titel . '</b> wurden geändert.'.$messagePicture
             ]
         );
-
     }
 
     /**
@@ -391,7 +390,7 @@ class ReportController extends Controller
             return  $newPictureName;
        }
 
-    // Bilder von reportImage löschen
+    // Bilder von reportBilder löschen
     public function pictureDelete($reportID){
         $reportImageName=report::find($reportID);
         $deletePictureName=$reportImageName->bild;
@@ -407,7 +406,28 @@ class ReportController extends Controller
         ]);
 
         return back()->with([
-            'success' => 'Das Bild'. $deletePictureFilename .' vom Event wurde gelöscht'
+            'success' => 'Das Bild'. $deletePictureFilename .' vom Event wurde gelöscht.'
+        ]);
+    }
+
+    // Bilder von reportImage löschen es sind die Bilder vom alten Ablageort
+    // Note: Ist überfüssig wenn keine alten daten übernommen wurden
+    public function imageDelete($reportID){
+        $reportImageName=report::find($reportID);
+        $deletePictureName=$reportImageName->image;
+        $deletePictureFilename=$reportImageName->filename;
+        if (file_exists('../public/daten/bilder/'.$deletePictureName)){
+            unlink('../public/daten/bilder/'.$deletePictureName);
+        }
+        report::find($reportID)->update([
+            'image'     => Null,
+            'pixx'      => 0,
+            'pixy'      => 0,
+            'filename'  => Null,
+        ]);
+
+        return back()->with([
+            'success' => 'Das Bild'. $deletePictureFilename .' vom Event wurde gelöscht.'
         ]);
     }
 
@@ -429,7 +449,6 @@ class ReportController extends Controller
                         ]);
             */
         }
-
 
         return view('admin.report.takeover')->with(
             [

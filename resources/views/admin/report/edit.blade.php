@@ -46,7 +46,11 @@
                                 <div class="my-4" >
                                     <label for="name">Bild:</label>
                                     @if($report->bild)
-                                     <img src="/storage/eventImage/{{$report->bild}}" />
+                                      <img src="/storage/eventImage/{{$report->bild}}" />
+                                    @endif
+                                    <!-- Note: Ist überfüssig wenn keine alten daten übernommen wurden-->
+                                    @if($report->image)
+                                      <img src="/daten/bilder/{{$report->image}}" />
                                     @endif
                                     <input type="file" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('image') ? 'bg-red-300' : '' }}"
                                     id="image" name="image" value="">

@@ -103,6 +103,17 @@
                                                 <box-icon name='chevrons-down' ></box-icon>
                                             </a>
                                         @endif
+                                        @if($report->bild)
+                                            <a href="{{ url('Bericht/picturedelete/'.$report->id) }}">
+                                                <box-icon name='x'></box-icon>
+                                            </a>
+                                        @endif
+                                       <!-- Note: Ist überfüssig wenn keine alten daten übernommen wurden-->
+                                        @if($report->image)
+                                            <a href="{{ url('Bericht/imagedelete/'.$report->id) }}">
+                                                <box-icon name='x'></box-icon>
+                                            </a>
+                                        @endif
                                     </div>
                                     <div class="flex">
                                       <p class="font-bold text-lg">{{ $report->titel }}</p>
@@ -110,10 +121,17 @@
                                     </div>
                                   </div>
                                   @if($report->bild)
-                                   <img src="/storage/eventImage/{{$report->bild}}" />
+                                   <img src="/storage/eventImage/{{ $report->bild }}" />
                                    <a href="{{ url('Bericht/picturedelete/'.$report->id) }}">
                                      <box-icon name='x'></box-icon>
                                    </a>
+                                  @endif
+                                  <!-- Note: Ist überfüssig wenn keine alten daten übernommen wurden-->
+                                  @if($report->image)
+                                      <img src="/daten/bilder/{{ $report->image }}" />
+                                      <a href="{{ url('Bericht/imagedelete/'.$report->id) }}">
+                                          <box-icon name='x'></box-icon>
+                                      </a>
                                   @endif
                               </div>
                               @endforeach
@@ -121,7 +139,7 @@
                               {{ $reports->links() }}
 
                               <br>
-                              <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu"><i class="fas fa-arrow-circle-up"></i> Zurück</a>
+                              <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
 
                             </div>
                           </div>

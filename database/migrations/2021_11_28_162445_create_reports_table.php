@@ -26,7 +26,7 @@ class CreateReportsTable extends Migration
             $table->integer('pixy')->nullable();
             $table->string('filename')->nullable();
             $table->integer('player')->nullable();
-            $table->integer('verwendung')->nullable();                   //        0 = alter Status wird als Bild gewertet
+            $table->integer('verwendung')->nullable();            //        0 = alter Status wird als Bild gewertet
                                                                          //        1 = Bild im Report
                                                                          //        2 = Ausschreibung
                                                                          //        3 = Programm
@@ -43,14 +43,16 @@ class CreateReportsTable extends Migration
                                                                          //       13 = xlsx
                                                                          //       20 = wmv
                                                                          //       21 = mp4
-            $table->integer('presse')->nullable();                       //        0 = alter Status wird als Presse gewertet
+            $table->integer('presse')->nullable();                //        0 = alter Status wird als Presse gewertet
             $table->text('quelle')->nullable();
             $table->timestamp('quellDatum')->nullable();
             $table->boolean('visible')->default(true);      // true = 1 = sichtbar
             $table->boolean('startseite')->default(false);  // true = 1 = Leandingpage
-            $table->boolean('webseite')->default(false);    // true = 0 = das Bild wird nur angezeigt wenn der User im internen Bereich angemeldet ist.
+            $table->boolean('webseite')->default(false);    // true = 0 = das Bild wird nur angezeigt, wenn der User im internen Bereich angemeldet ist.
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('freigeber_id');
+            $table->timestamp('letzteFreigabe')->nullable();
             $table->SoftDeletes();
             $table->timestamps();
         });

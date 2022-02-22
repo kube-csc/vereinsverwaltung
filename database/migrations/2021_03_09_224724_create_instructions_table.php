@@ -19,6 +19,8 @@ class CreateInstructionsTable extends Migration
             $table->text('beschreibung')->nullable();
             $table->boolean('hauptmenu');    // true = 1 = Hauptmenu
             $table->boolean('visible');      // true = 1 = sichtbar
+            $table->unsignedBigInteger('freigeber_id');
+            $table->timestamp('letzteFreigabe')->nullable();
             $table->timestamps();
         });
     }

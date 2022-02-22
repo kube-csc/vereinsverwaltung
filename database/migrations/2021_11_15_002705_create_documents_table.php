@@ -25,7 +25,7 @@ class CreateDocumentsTable extends Migration
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('freigeber_id');
+            $table->unsignedBigInteger('freigeber_id')->nullable();
             $table->timestamp('letzteFreigabe')->nullable();
             $table->SoftDeletes();
             $table->timestamps();

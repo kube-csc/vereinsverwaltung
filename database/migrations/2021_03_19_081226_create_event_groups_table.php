@@ -18,6 +18,8 @@ class CreateEventGroupsTable extends Migration
             $table->string('termingruppe', 50);
             $table->unsignedBigInteger('user_id')->nullable();
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
+            $table->unsignedBigInteger('freigeber_id')->nullable();
+            $table->timestamp('letzteFreigabe')->nullable();
             $table->SoftDeletes();
             $table->timestamps();
 

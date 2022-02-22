@@ -46,8 +46,9 @@ class CreateEventsTable extends Migration
             $table->unsignedBigInteger('autor_id')->nullable();
             $table->unsignedBigInteger('bearbeiter_id')->nullable();
             //$table->date('bearbeitungsdatum')->nullable();
-            $table->unsignedBigInteger('freigeber_id');
+            $table->unsignedBigInteger('freigeber_id')->nullable();
             $table->timestamp('letzteFreigabe')->nullable();
+            $table->char('freigabe', 1)->default('');
             $table->SoftDeletes();
             $table->timestamps();
 

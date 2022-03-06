@@ -43,9 +43,10 @@ class CreateEventsTable extends Migration
             $table->text('einverstaendnis')->nullable();
             $table->integer('teilnehmer')->default(0);
             $table->integer('teilnehmermax')->default(0);
+            $table->unsignedBigInteger('externerCalender_id')->nullable();
+            $table->text('externerCalenderEvent_id')->nullable();
             $table->unsignedBigInteger('autor_id')->nullable();
             $table->unsignedBigInteger('bearbeiter_id')->nullable();
-            //$table->date('bearbeitungsdatum')->nullable();
             $table->unsignedBigInteger('freigeber_id')->nullable();
             $table->timestamp('letzteFreigabe')->nullable();
             $table->char('freigabe', 1)->default('');

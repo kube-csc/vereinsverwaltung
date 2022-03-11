@@ -137,7 +137,7 @@ class EventFutureAll extends Component
                                             $quiet3->where('sportSection_id' , $sportSection_id)
                                                    ->orWhere('sportSection_id' , Null);
                                         })
-                                        ->orderby('datumvon' , 'desc')
+                                        ->orderby('datumvon')
                                         ->paginate(4);
             }
             else{
@@ -152,7 +152,7 @@ class EventFutureAll extends Component
                                             $quiet2->where('datumvon' , 'LIKE' , '%'.$year.'%')
                                                 ->orWhere('datumbis' , 'LIKE' , '%'.$year.'%');
                                         })
-                                        ->orderby('datumvon', 'desc')
+                                        ->orderby('datumvon')
                                         ->paginate(4);
               }
         }
@@ -176,7 +176,7 @@ class EventFutureAll extends Component
                                           $quiet2->where('datumvon' , 'LIKE' , '%'.$year.'%')
                                                  ->orWhere('datumbis' , 'LIKE' , '%'.$year.'%');
                                         })
-                                        ->orderby('datumbis' , 'desc')
+                                        ->orderby('datumbis')
                                         ->paginate(4);
             }
             else{
@@ -187,7 +187,7 @@ class EventFutureAll extends Component
                                             $quiet2->where('datumvon' , 'LIKE' , '%'.$year.'%')
                                                    ->orWhere('datumbis' , 'LIKE' , '%'.$year.'%');
                                         })
-                                        ->orderby('datumvon', 'desc')
+                                        ->orderby('datumvon')
                                         ->paginate(4);
             }
         }

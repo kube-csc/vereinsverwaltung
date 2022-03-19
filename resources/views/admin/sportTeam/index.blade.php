@@ -15,9 +15,9 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich werden die Abteilungen des Vereins angelegt und bearbeitet.
+                   In diesem Bereich werden die Mannschaften des Vereins angelegt und bearbeitet.
                    Für jede Mannschaft gibt es ein Beschreibungsfeld für Informationen.
-                   Mit einer eigenen Domain oder Subdomain kann jede v mit einem eigenen Kopfbild im Internet erscheinen. Es kann eine Akzentfarbe für jede Mannschaft gesetzt werden.
+                   Mit einer eigenen Domain oder Subdomain kann jede Mannschaft mit einem eigenen Kopfbild im Internet vorgestellt werden. Es kann eine Akzentfarbe für jede Mannschaft gesetzt werden.
                   </div>
 
               </div>

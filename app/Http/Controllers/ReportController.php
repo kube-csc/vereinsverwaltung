@@ -161,7 +161,12 @@ class ReportController extends Controller
 
     public function maxdown($reportId)
     {
-        $reports = report::where('event_id' , $reportId)
+        $report  = report::find($reportId);
+        $eventId = $report->event_id;
+
+        $reports = report::where('event_id' , $eventId)
+            ->where('verwendung' , '>' , '1')
+            ->where('verwendung' , '<' , '6')
             ->orderby('position' , 'desc')
             ->limit(1)
             ->get();
@@ -176,6 +181,8 @@ class ReportController extends Controller
         ]);
 
         $reports = report::where('event_id' , $eventID)
+            ->where('verwendung' , '>' , '1')
+            ->where('verwendung' , '<' , '6')
             ->orderby('position')
             ->get();
         $positionNew=10;
@@ -185,6 +192,7 @@ class ReportController extends Controller
             ]);
             $positionNew=$positionNew+10;
         }
+
         return Redirect()->back()->with('success' , 'Das Bild wurde zur letzten Position verschoben.');
     }
 

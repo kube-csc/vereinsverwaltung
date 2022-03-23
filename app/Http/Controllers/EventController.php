@@ -96,6 +96,7 @@ class EventController extends Controller
               'ansprechpartner'  => 'max:50',
               'telefon'          => 'max:25',
               'email'            => 'max:50',
+              'homepage'         => 'max:255',
             ]
         );
 
@@ -110,6 +111,7 @@ class EventController extends Controller
             'ansprechpartner'  => $request->ansprechpartner,
             'telefon'          => $request->telefon,
             'email'            => $request->email,
+            'homepage'         => $request->homepage,
             'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
@@ -177,6 +179,7 @@ class EventController extends Controller
                 'ansprechpartner'      => 'max:50',
                 'telefon'              => 'max:25',
                 'email'                => 'max:50',
+                'homepage'             => 'max:255',
             ]
         );
 
@@ -191,6 +194,7 @@ class EventController extends Controller
             'ansprechpartner'  => $request->ansprechpartner,
             'telefon'          => $request->telefon,
             'email'            => $request->email,
+            'homepage'         => $request->homepage,
             'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,

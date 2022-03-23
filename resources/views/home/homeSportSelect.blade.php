@@ -1,6 +1,6 @@
 @extends('layouts.headFrontend')
 
-@section('title' ,'Abteilung')
+@section('title' , str_replace('_' , ' ' , env('Menue_Abteilung')))
 
 @section('content')
 

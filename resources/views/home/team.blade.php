@@ -10,7 +10,8 @@
                  */
             @endphp
             <p>
-                Als Kontaktpersonen stehen zur Verfügung.
+                Die Ansprechpartner der {{ str_replace('_' , ' ' , env('Verein_Name')) }} stehen Dir per E-Mail zur Verfügung.
+                Weitere Personen aus dem Team findest Du unter den {{ str_replace('_' , ' ' , env('Menue_Abteilung')) }} und auf der Startseite.
             </p>
         </div>
 
@@ -29,7 +30,7 @@
                     <div class="pic">
                     @if(isset($board->postenPortraet))
                        <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid"
-                            alt="{{ $board->geschlecht='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
+                            alt="{{ $board->geschlecht=='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
                      @else
                        <img src="/asset/img/postenLeer.jpg" class="img-fluid">
                     @endif
@@ -70,9 +71,7 @@
                 $delay=$delay+50;
             @endphp
             @endforeach
-
         </div>
-
     </div>
  </section><!-- End Team Section -->
 @endif

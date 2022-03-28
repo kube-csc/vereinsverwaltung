@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 //ToDo: Überprüfen ob alle use benötigt werden
 use App\Models\board;
 use App\Models\boardUser;
+use App\Models\BoardPortrait;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Intervention\Image\Facades\Image;
@@ -73,21 +74,45 @@ class BoardUserMatch extends Component
             'updated_at'       => Carbon::now()
         ]);
 
-        //$image          = $this->storeImage();
-        $imageName          = $this->saveInmage();
+        $imageName  = $this->saveInmage();
         if(isset($imageName)){
-            $oldPortrait = boardUser::find($this->boardUserId);
-            if(file_exists(public_path().'/storage/posten/'.$oldPortrait->postenPortraet) and
-                $oldPortrait->postenPortraet != '' and
-                $oldPortrait->postenPortraet[6] != '-'){
-                unlink(public_path().'/storage/posten/'.$oldPortrait->postenPortraet);
+            $boardUser    = boardUser::find($this->boardUserId);
+            $oldPortraits = BoardPortrait::where('id' , $boardUser->id)->get();
+
+            if ($oldPortraits->count()==0){
+                $boardPortrait = new BoardPortrait(
+                    [
+                        'postenPortraet_id'=> $boardUser->id,
+                        'postenPortraet'   => $imageName,
+                        'bearbeiter_id'    => Auth::user()->id,
+                        'user_id'          => Auth::user()->id,
+                        'visible'          => 1,
+                        'datumvon'         => Carbon::now(),
+                        'datumbis'         => Carbon::now(),
+                        'updated_at'       => Carbon::now(),
+                        'created_at'       => Carbon::now()
+                    ]
+                );
+                $boardPortrait->save();
+            }
+            else {
+                foreach ($oldPortraits as $oldPortrait) {
+                    if(file_exists(public_path().'/storage/posten/'.$oldPortrait->postenPortraet) and
+                        $oldPortrait->postenPortraet != '' and
+                        $oldPortrait->postenPortraet[6] != '-'){
+                        unlink(public_path().'/storage/posten/'.$oldPortrait->postenPortraet);
+                    }
+
+                    BoardPortrait::find($oldPortrait->id)->update([
+                        'postenPortraet'   => $imageName,
+                        'bearbeiter_id'    => Auth::user()->id,
+                        'updated_at'       => Carbon::now()
+                    ]);
+
+                }
             }
 
-            boardUser::find($this->boardUserId)->update([
-                'postenPortraet' => $imageName
-            ]);
-
-            $this->deletionNote=0;
+            $this->deletionNote=0; // es wird hier nicht zusätzlich eine Bildlöschung angestossen
         }
 
         $this->image = '';
@@ -140,33 +165,39 @@ class BoardUserMatch extends Component
         session()->flash('message', 'Löschvermerk für das Porträt gesetzt.');
     }
 
-
     public function currentImageDelete(){
-        boardUser::find($this->boardUserId)->update([
-            'postenPortraet' => '',
-            'bearbeiter_id'  => Auth::user()->id,
-            'updated_at'     => Carbon::now()
-        ]);
 
-        if(file_exists(public_path().'/storage/posten/'.$this->currentImage) and
-            $this->currentImage != '' and
-            $this->currentImage[6] != '-'){
-            unlink(public_path().'/storage/posten/'.$this->currentImage);
+        $boardUser    = boardUser::find($this->boardUserId);
+        $oldPortraits = BoardPortrait::where('id' , $boardUser->id)->get();
+
+        foreach($oldPortraits as $oldPortrait) {
+            BoardPortrait::find($oldPortrait->id)->update([
+                'postenPortraet' => Null,
+                'bearbeiter_id'  => Auth::user()->id,
+                'updated_at'     => Carbon::now()
+            ]);
+
+            if (file_exists(public_path() . '/storage/posten/' . $this->currentImage) and
+                $this->currentImage != '' and
+                $this->currentImage[6] != '-') {
+                unlink(public_path() . '/storage/posten/' . $this->currentImage);
+            }
         }
         $this->currentImage = '';
     }
 
     public function mount()
     {
-        $boardUser  = boardUser::find($this->boardUserId);
-        $this->userSelected = $boardUser->boardUser_id;
-        $this->currentImage = $boardUser->postenPortraet;
+        $boardUser     = boardUser::find($this->boardUserId);
+        $boardPortrait = boardPortrait::find($boardUser->id);
+        $this->userSelected   = $boardUser->boardUser_id;
+        $this->currentImage   = $boardPortrait->postenPortraet;
     }
 
     public function render()
     {
-        $boardUser  = boardUser::find($this->boardUserId);
-        $board      = board::find($boardUser->board_id);
+        $boardUser     = boardUser::find($this->boardUserId);
+        $board         = board::find($boardUser->board_id);
 
         $users      = user::where('deleted_at' , NULL)
                           ->where('vorname' , 'LIKE' , '%'.$this->searchUser.'%')

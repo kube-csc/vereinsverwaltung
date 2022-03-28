@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
        $this->call(EventSeeder::class);
        $this->call(BoardSeeder::class);
        $this->call(BoardUserSeeder::class);
+       $this->call(BoardPortraitSeeder::class);
        $this->call(DocumentSeeder::class);
        $this->call(ReportSeeder::class);
        $this->call(BacklinksSeeder::class);

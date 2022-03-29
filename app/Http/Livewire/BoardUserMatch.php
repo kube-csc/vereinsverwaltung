@@ -82,7 +82,7 @@ class BoardUserMatch extends Component
             if ($oldPortraits->count()==0){
                 $boardPortrait = new BoardPortrait(
                     [
-                        'postenUser_id'    => $boardUser->id,
+                        'postenUser_id'    => $boardUser->boardUser_id,
                         'postenPortraet'   => $imageName,
                         'bearbeiter_id'    => Auth::user()->id,
                         'user_id'          => Auth::user()->id,

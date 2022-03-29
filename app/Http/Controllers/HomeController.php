@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\board;
 use App\Models\Event;
+use App\Models\report;
 use App\Models\SportSection;
 use App\Models\instruction;
 use App\Models\Document;
@@ -48,6 +49,7 @@ class HomeController extends Controller
         $boards=board::where('sportSection_id' , $sportSection_id)
             ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
             ->join('users as us' , 'bu.boardUser_id' , '=' , 'us.id')
+            ->join('board_portraits as bp' , 'bu.boardUser_id' , '=' , 'bp.postenUser_id')
             ->where('boards.visible' , 1)
             ->where('bu.visible' , 1)
             ->orderby('boards.position')
@@ -131,6 +133,7 @@ class HomeController extends Controller
         $boards=board::where('sportSection_id' , $sportSectionsId)
             ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
             ->join('users as us' , 'bu.boardUser_id' , '=' , 'us.id')
+            ->join('board_portraits as bp' , 'bu.boardUser_id' , '=' , 'bp.postenUser_id')
             ->where('boards.visible' , 1)
             ->where('bu.visible' , 1)
             ->orderby('boards.position')
@@ -185,14 +188,25 @@ class HomeController extends Controller
 
         $events = event::where('id' , $eventId)->get();
 
+        $eventDokumentes = Report::where('event_id' , $eventId)
+            ->where('visible' , 1)
+            ->where('webseite' , 1)
+            ->where('verwendung' , '>' , 1)
+            ->where('verwendung' , '<' , 6)
+            ->where('typ' , '>' , 9)
+            ->where('typ' , '<' , 13)
+            ->orderby('position')
+            ->get();
+
         return view('home.eventShow')->with([
             'events'                      => $events,
             'footerDocuments'             => $footerDocuments,
-            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu,
+            'eventDokumentes'             => $eventDokumentes
         ]);
     }
 
-    public function instructionShow($instructionSeorch)
+    public function instructionShow($instructionSearch)
     {
         $serverdomain        = $_SERVER["HTTP_HOST"];
         $abteilungHomes      = SportSection::where('status' , '1')
@@ -211,8 +225,8 @@ class HomeController extends Controller
             ->where('dokumentenFile' ,'!=' , NULL)
             ->get();
 
-        $seoch = str_replace('_' , ' ' , $instructionSeorch);
-        $instructions = instruction::where('ueberschrift' , $seoch)->get();
+        $search = str_replace('_' , ' ' , $instructionSearch);
+        $instructions = instruction::where('ueberschrift' , $search)->get();
 
         foreach($instructions as $instruction){
             $instructionId = $instruction->id;

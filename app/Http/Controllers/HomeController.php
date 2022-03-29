@@ -13,33 +13,32 @@ use Illuminate\Support\Carbon;
 class HomeController extends Controller
 {
     public function index(){
-
-      $serverdomain        = $_SERVER["HTTP_HOST"];
-      $abteilungHomes      = SportSection::where('status' , '1')
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
           ->orwhere('domain' , $serverdomain)
           ->orderby('status')
           ->get();
-      $abteilungHomesCount = $abteilungHomes->count();
+        $abteilungHomesCount = $abteilungHomes->count();
 
-      foreach ($abteilungHomes as $abteilungHome) {
+        foreach ($abteilungHomes as $abteilungHome) {
             $sportSection_id = $abteilungHome->id;
             $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
             $sportSectionTeamName= $abteilungHome->abteilungTeamBezeichnung;
         }
 
-      $abteilungs          = SportSection::where('status' , '>' , '1')
+        $abteilungs          = SportSection::where('status' , '>' , '1')
           ->where('sportSection_id' , NULL)
           ->orderby('abteilung')
           ->get();
-      $abteilungsCount     = $abteilungs->count();
+        $abteilungsCount     = $abteilungs->count();
 
-      $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now()->toDateString())
+        $eventsFuture       = Event::where('datumbis' , '>=' , Carbon::now()->toDateString())
           ->where('verwendung' , 0)
           ->orderby('datumvon')
           ->limit(5)
           ->get();
 
-      $eventsPast         = Event::where('datumvon' , '<=' , Carbon::now()->toDateString())
+        $eventsPast         = Event::where('datumvon' , '<=' , Carbon::now()->toDateString())
           ->where('nachtermin' , '!=' , '')
           ->where('verwendung' , 0)
           ->orderby('datumvon' , 'DESC')
@@ -49,7 +48,7 @@ class HomeController extends Controller
         $boards=board::where('sportSection_id' , $sportSection_id)
             ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
             ->join('users as us' , 'bu.boardUser_id' , '=' , 'us.id')
-            ->join('board_portraits as bp' , 'bu.boardUser_id' , '=' , 'bp.postenUser_id')
+            ->leftjoin('board_portraits as bp' , 'bu.boardUser_id' , '=' , 'bp.postenUser_id')
             ->where('boards.visible' , 1)
             ->where('bu.visible' , 1)
             ->orderby('boards.position')
@@ -133,7 +132,7 @@ class HomeController extends Controller
         $boards=board::where('sportSection_id' , $sportSectionsId)
             ->join('board_users as bu' , 'bu.board_id' , '=' , 'boards.id')
             ->join('users as us' , 'bu.boardUser_id' , '=' , 'us.id')
-            ->join('board_portraits as bp' , 'bu.boardUser_id' , '=' , 'bp.postenUser_id')
+            ->leftjoin('board_portraits as bp' , 'bu.boardUser_id' , '=' , 'bp.postenUser_id')
             ->where('boards.visible' , 1)
             ->where('bu.visible' , 1)
             ->orderby('boards.position')

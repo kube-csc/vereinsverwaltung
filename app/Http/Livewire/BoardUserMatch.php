@@ -77,12 +77,12 @@ class BoardUserMatch extends Component
         $imageName  = $this->saveInmage();
         if(isset($imageName)){
             $boardUser    = boardUser::find($this->boardUserId);
-            $oldPortraits = BoardPortrait::where('id' , $boardUser->id)->get();
+            $oldPortraits = BoardPortrait::where('postenUser_id' , $boardUser->boardUser_id)->get();
 
             if ($oldPortraits->count()==0){
                 $boardPortrait = new BoardPortrait(
                     [
-                        'postenPortraet_id'=> $boardUser->id,
+                        'postenUser_id'    => $boardUser->id,
                         'postenPortraet'   => $imageName,
                         'bearbeiter_id'    => Auth::user()->id,
                         'user_id'          => Auth::user()->id,
@@ -97,10 +97,10 @@ class BoardUserMatch extends Component
             }
             else {
                 foreach ($oldPortraits as $oldPortrait) {
-                    if(file_exists(public_path().'/storage/posten/'.$oldPortrait->postenPortraet) and
+                    if(file_exists(public_path().'/storage/boardPortrait/'.$oldPortrait->postenPortraet) and
                         $oldPortrait->postenPortraet != '' and
                         $oldPortrait->postenPortraet[6] != '-'){
-                        unlink(public_path().'/storage/posten/'.$oldPortrait->postenPortraet);
+                        unlink(public_path().'/storage/boardPortrait/'.$oldPortrait->postenPortraet);
                     }
 
                     BoardPortrait::find($oldPortrait->id)->update([
@@ -108,10 +108,8 @@ class BoardUserMatch extends Component
                         'bearbeiter_id'    => Auth::user()->id,
                         'updated_at'       => Carbon::now()
                     ]);
-
                 }
             }
-
             $this->deletionNote=0; // es wird hier nicht zusätzlich eine Bildlöschung angestossen
         }
 
@@ -156,7 +154,7 @@ class BoardUserMatch extends Component
              Image::make($this->image)->encode('jpg')
                                       ->heighten(600)
                                       ->widen(600)
-                                      ->save(public_path().'/storage/posten/'.$newImageName);
+                                      ->save(public_path().'/storage/boardPortrait/'.$newImageName);
              return $newImageName;
     }
 
@@ -168,7 +166,7 @@ class BoardUserMatch extends Component
     public function currentImageDelete(){
 
         $boardUser    = boardUser::find($this->boardUserId);
-        $oldPortraits = BoardPortrait::where('id' , $boardUser->id)->get();
+        $oldPortraits = BoardPortrait::where('postenUser_id' , $boardUser->boardUser_id)->get();
 
         foreach($oldPortraits as $oldPortrait) {
             BoardPortrait::find($oldPortrait->id)->update([
@@ -177,10 +175,10 @@ class BoardUserMatch extends Component
                 'updated_at'     => Carbon::now()
             ]);
 
-            if (file_exists(public_path() . '/storage/posten/' . $this->currentImage) and
+            if (file_exists(public_path() . '/storage/boardPortrait/' . $this->currentImage) and
                 $this->currentImage != '' and
                 $this->currentImage[6] != '-') {
-                unlink(public_path() . '/storage/posten/' . $this->currentImage);
+                unlink(public_path() . '/storage/boardPortrait/' . $this->currentImage);
             }
         }
         $this->currentImage = '';
@@ -188,10 +186,12 @@ class BoardUserMatch extends Component
 
     public function mount()
     {
-        $boardUser     = boardUser::find($this->boardUserId);
-        $boardPortrait = boardPortrait::find($boardUser->id);
-        $this->userSelected   = $boardUser->boardUser_id;
-        $this->currentImage   = $boardPortrait->postenPortraet;
+        $boardUser      = boardUser::find($this->boardUserId);
+        $boardPortraits = boardPortrait::where('postenUser_id' , $boardUser->boardUser_id)->get();
+        foreach($boardPortraits as $boardPortrait){
+            $this->currentImage = $boardPortrait->postenPortraet;
+        }
+        $this->userSelected = $boardUser->boardUser_id;
     }
 
     public function render()

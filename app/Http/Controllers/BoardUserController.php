@@ -20,7 +20,7 @@ class BoardUserController extends Controller
             'visible'          => '1',
             'updated_at'       => Carbon::now()
         ]);
-        return Redirect()->back()->with('successBoardUser' , 'Posten wurde sichtbar geschaltet.');
+        return Redirect()->back()->with('successBoardUser' , 'Der Posten wurde sichtbar geschaltet.');
     }
 
     public function inaktiv($boardId)
@@ -29,9 +29,8 @@ class BoardUserController extends Controller
             'visible'          => '0',
             'updated_at'       => Carbon::now()
         ]);
-        return Redirect()->back()->with('successBoardUser' , 'Posten wurde unsichtbar geschaltet.');
+        return Redirect()->back()->with('successBoardUser' , 'Der Posten wurde unsichtbar geschaltet.');
     }
-
 
     public function maxtop($boardUserId)
     {
@@ -47,11 +46,12 @@ class BoardUserController extends Controller
         $positionNew=10;
         foreach ($boardUsers as $boardUser){
             boardUser::find($boardUser->id)->update([
-                'position' => $positionNew
+                'position'         => $positionNew,
+                'updated_at'       => Carbon::now()
             ]);
             $positionNew=$positionNew+10;
         }
-        return Redirect()->back()->with('successBoardUser' , 'Posten wurde zur Top Position verschoben.');
+        return Redirect()->back()->with('successBoardUser' , 'Der Posten wurde zur Top Position verschoben.');
     }
 
     public function top($boardUserId)
@@ -72,7 +72,8 @@ class BoardUserController extends Controller
         $boardUsers = boardUser::where('board_id',$boardId)->orderby('position')->get();
         foreach ($boardUsers as $boardUser){
             boardUser::find($boardUser->id)->update([
-                'position' => $positionNew
+                'position' => $positionNew,
+                'updated_at'       => Carbon::now()
             ]);
             $positionNew=$positionNew+10;
         }
@@ -96,11 +97,12 @@ class BoardUserController extends Controller
         $positionNew=10;
         foreach ($boardUsers as $boardUser){
             boardUser::find($boardUser->id)->update([
-                'position'  => $positionNew
+                'position'         => $positionNew,
+                'updated_at'       => Carbon::now()
             ]);
             $positionNew=$positionNew+10;
         }
-        return Redirect()->back()->with('successBoardUser' , 'Posten wurde eine Position nach unten verschoben.');
+        return Redirect()->back()->with('successBoardUser' , 'Der Posten wurde eine Position nach unten verschoben.');
     }
 
     public function maxdown($boardUserId)
@@ -122,11 +124,12 @@ class BoardUserController extends Controller
         $positionNew=10;
         foreach ($boardUsers as $boardUser){
             boardUser::find($boardUser->id)->update([
-                'position' => $positionNew,
+                'position'         => $positionNew,
+                'updated_at'       => Carbon::now()
             ]);
             $positionNew=$positionNew+10;
         }
-        return Redirect()->back()->with('successBoardUser' , 'Posten wurde zur letzten Position verschoben.');
+        return Redirect()->back()->with('successBoardUser' , 'Der Posten wurde zur letzten Position verschoben.');
     }
 
     /**

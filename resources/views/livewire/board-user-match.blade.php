@@ -40,24 +40,24 @@
                            </div>
                         @endforeach
                       </div>
-                            <div class="w-full rounded border shadow p-2 mr-2 my-2">
-                                <label for="postenbild">Neues Porträt:</label>
-                                @if($image)
-                                    <img src={{ $image }} width="200" />
+                      <div class="w-full rounded border shadow p-2 mr-2 my-2">
+                            <label for="postenbild">Neues Porträt:</label>
+                            @if($image)
+                                <img src={{ $image }} width="200" />
+                            @else
+                                @if($savedImage)
+                                  <img src={{ $savedImage }} width="200" />
                                 @else
-                                    @if($savedImage)
-                                      <img src={{ $savedImage }} width="200" />
-                                    @else
-                                      <p>kein Porträt zum hochladen vorhanden</p>
-                                    @endif
+                                  <p>kein Porträt zum hochladen vorhanden</p>
                                 @endif
-                                <input type="file" id="image" wire:change="$emit('fileChoosen')">
-                            </div>
+                            @endif
+                            <input type="file" id="image" wire:change="$emit('fileChoosen')">
+                        </div>
                         @if($currentImage!='')
                                <div class="w-full rounded border shadow p-2 mr-2 my-2">
                                     <label for="postenbild">Porträt:</label>
                                     <div class="flex ml-2">
-                                        <div class="flex-initial"><img src={{ '/storage/posten/'.$currentImage }} width="200" /></div>
+                                        <div class="flex-initial"><img src={{ '/storage/boardPortrait/'.$currentImage }} width="200" /></div>
                                         <div class="flex-initial ml-2 fas fa-times text-red-600 hover:text-red-00 cursor-pointer" wire:click="$emit('deletionNote')">x</div>
                                     </div>
                                </div>

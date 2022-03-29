@@ -21,7 +21,7 @@ class BoardPortraitSeeder extends Seeder
                 [
                     array(
                         'id' => '1',
-                        'postenPortraet_id' => '1',
+                        'postenUser_id' => '1',
                         'postenPortraet' => 'posten-1.jpg',
                         'datumvon' => '2005-05-21',
                         'datumbis' => '2020-05-22',
@@ -33,7 +33,7 @@ class BoardPortraitSeeder extends Seeder
                     ),
                     array(
                         'id' => '2',
-                        'postenPortraet_id' => '2',
+                        'postenUser_id' => '2',
                         'postenPortraet' => 'posten-1.jpg',
                         'datumvon' => '2005-05-21',
                         'datumbis' => '2020-05-22',
@@ -45,7 +45,7 @@ class BoardPortraitSeeder extends Seeder
                     ),
                     array(
                         'id' => '3',
-                        'postenPortraet_id' => '3',
+                        'postenUser_id' => '3',
                         'postenPortraet' => 'posten-3.jpg',
                         'datumvon' => '2005-05-21',
                         'datumbis' => '2020-05-22',

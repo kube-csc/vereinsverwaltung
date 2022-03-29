@@ -29,7 +29,7 @@
                 @endif
                     <div class="pic">
                     @if(isset($board->postenPortraet))
-                       <img src="/storage/posten/{{ $board->postenPortraet }}" class="img-fluid"
+                       <img src="/storage/boardPortrait/{{ $board->postenPortraet }}" class="img-fluid"
                             alt="{{ $board->geschlecht=='m' ? $board->postenMaenlich : $board->postenWeiblich }}">
                      @else
                        <img src="/asset/img/postenLeer.jpg" class="img-fluid">

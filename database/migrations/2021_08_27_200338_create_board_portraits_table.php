@@ -15,8 +15,8 @@ class CreateBoardPortraitsTable extends Migration
     {
         Schema::create('board_portraits', function (Blueprint $table){
             $table->id();
-            $table->string('postenPortraet_id');
-            $table->string('postenPortraet');
+            $table->string('postenUser_id');
+            $table->string('postenPortraet')->nullable();
             $table->date('datumvon');
             $table->date('datumbis');
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar

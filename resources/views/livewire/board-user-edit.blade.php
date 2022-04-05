@@ -20,8 +20,8 @@
                                 {{ session('message') }}
                             </div>
                         @endif
-                        <label for="number">Nummer (1 bis 99)
-                        <input id='number' type="number" size="2" min="1" max="99" maxlength="2" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="1"
+                        <label for="number">Nummer (0 bis 99)
+                        <input id='number' type="number" size="2" min="0" max="99" maxlength="2" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="1"
                                wire:model.debounce.500ms="newNummer">
                         <label for="positionEmail">E-Mail des Posten
                         <input id='positionEmail' type="email" size="2" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="E-Mail des Posten"

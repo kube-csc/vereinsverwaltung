@@ -169,6 +169,7 @@ class BoardUserController extends Controller
         $boardUser= new boardUser(
             [
                 'board_id'         => $boardId,
+                'user_id'          => Auth::user()->id,
                 'bearbeiter_id'    => Auth::user()->id,
                 'visible'          => 1,
                 'position'         => $positionUserNew,

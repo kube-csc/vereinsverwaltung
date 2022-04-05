@@ -15,20 +15,33 @@ class BoardUserEdit extends Component
     public $newNummer;
     public $newPostenemail;
 
+
+    // ToDo: Validate funktioniert nichtm die Valedierung wird in @board-use-edit.blade.php überprüft
+    /*
+    protected $rules = [
+        'newNummer' => 'required|min:6',
+        'newPostenemail' => 'required|email',
+    ];
+    */
+    /*
     public function updated($field)
     {
         $this->validateOnly($field, [
-            'newNummer'      => 'required|max:2',
-            //'newPostenemail' => 'email',  ToDo: Verhindert das speichern wenn keine E-Mail eingeben wurde
+            'newNummer'      => 'min:1|max:2',
+            'newPostenemail' => 'required|email',
             ]);
     }
+*/
 
     public function updateNummer()
     {
-       $this->validate([
-           'newNummer'      => 'required|max:2',
-           //'newPostenemail' => 'email', ToDo: Verhindert das speichern wenn keine E-Mail eingeben wurde
-       ]);
+
+       //$this->validateOnly($propertyName);
+
+       if($this->newNummer==''){
+           $this->newNummer=0;
+       }
+
        boardUser::find($this->boardUserId)->update([
             'nummer'           => $this->newNummer,
             'postenemail'      => $this->newPostenemail,

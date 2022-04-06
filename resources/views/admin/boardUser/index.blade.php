@@ -76,12 +76,12 @@
                                                             <box-icon name='hide' ></box-icon>
                                                         </a>
                                                     @endif
-                                                    @if ($board['id']==0)
+                                                    @if($board['id']==0)
                                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Team/softDelete/'.$board->id) }}">
                                                             <box-icon type='solid' name='x-square'></box-icon>
                                                         </a>
                                                     @endif
-                                                    @if ($board['position'] != 10)
+                                                    @if($board['position'] != 10)
                                                         <a href="{{ url('Team/maxtop/'.$board->id) }}">
                                                             <box-icon name='chevrons-up' ></box-icon>
                                                         </a>
@@ -89,7 +89,7 @@
                                                             <box-icon name='chevron-up'></box-icon>
                                                         </a>
                                                     @endif
-                                                    @if ($boardmax != 0)
+                                                    @if($board->id != $boardMaxID)
                                                         <a href="{{ url('Team/down/'.$board->id) }}">
                                                             <box-icon name='chevron-down' ></box-icon>
                                                         </a>
@@ -150,13 +150,7 @@
                                 </div>
                             @endif
                         </div>
-                        @php
-                            $boardUserMax=  $boardUsers->count();
-                        @endphp
                         @foreach ( $boardUsers as $boardUser)
-                            @php
-                                --$boardUserMax;
-                            @endphp
                             <div class="rounded border shadow p-3 my-2 bg-blue-200">
                                 <div class="justify-between my-2">
 
@@ -174,12 +168,12 @@
                                                 <box-icon name='hide' ></box-icon>
                                             </a>
                                         @endif
-                                        @if ($boardUser['id']==0)
+                                        @if($boardUser['id']==0)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Posten/softDelete/'.$boardUser->id) }}">
                                                 <box-icon type='solid' name='x-square'></box-icon>
                                             </a>
                                         @endif
-                                        @if ($boardUser['position'] != 10)
+                                        @if($boardUser['position'] != 10)
                                             <a href="{{ url('Posten/maxtop/'.$boardUser->id) }}">
                                                 <box-icon name='chevrons-up' ></box-icon>
                                             </a>
@@ -187,7 +181,8 @@
                                                 <box-icon name='chevron-up'></box-icon>
                                             </a>
                                         @endif
-                                        @if ($boardUserMax != 0)
+                                        ii
+                                        @if($boardUser->id != $boardUserMaxID)
                                             <a href="{{ url('Posten/down/'.$boardUser->id) }}">
                                                 <box-icon name='chevron-down' ></box-icon>
                                             </a>

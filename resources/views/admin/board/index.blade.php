@@ -15,7 +15,7 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich wird das Team bearbeitet
+                   In diesem Bereich wird das Team bearbeitet.
                   </div>
 
               </div>
@@ -48,13 +48,7 @@
                                   </div>
                                   @endif
                               </div>
-                              @php
-                               $boardmax=  $boards->count();
-                              @endphp
                               @foreach ( $boards as $board )
-                                  @php
-                                    --$boardmax;
-                                  @endphp
                               <div class="rounded border shadow p-3 my-2 {{$board->id == $board->id  ? 'bg-blue-200' : ''}}" onclick="window.location.replace('/Posten/{{ $board->id }}')">
                                   <div class="justify-between my-2">
                                    <div>
@@ -84,7 +78,7 @@
                                                <box-icon name='chevron-up'></box-icon>
                                            </a>
                                        @endif
-                                       @if ($boardmax != 0)
+                                       @if ($board->id != $boardMaxID)
                                            <a href="{{ url('Team/down/'.$board->id) }}">
                                                <box-icon name='chevron-down' ></box-icon>
                                            </a>

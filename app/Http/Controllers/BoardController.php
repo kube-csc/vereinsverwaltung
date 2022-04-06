@@ -140,14 +140,31 @@ class BoardController extends Controller
 
     public function boardBoardUser($board_id)
     {
-        $boards = board::orderby('position')->paginate(5);
-        $boardName= board::find($board_id);
-        $boardUsers = boardUser::where('board_id' , $board_id)
-            ->orderby('position')->paginate(5);
+        $boards         = board::orderby('position')->paginate(5);
+        $boardMaxs      = board::orderby('position')->get();
+        if($boardMaxs->count()>0){
+            $boardMaxID     = $boardMaxs->last()->id;
+        }
+        else{
+            $boardMaxID=0;
+        }
+
+        $boardName      = board::find($board_id);
+        $boardUsers     = boardUser::where('board_id' , $board_id)->orderby('position')->paginate(5);
+        $boardUserMaxs  = boardUser::orderby('position')->get();
+        if($boardUserMaxs->count()>0){
+            $boardUserMaxID = $boardUserMaxs->last()->id;
+        }
+        else{
+            $boardUserMaxID=0;
+        }
+
         return view('admin.boardUser.index')->with(
             [
                 'boards'         => $boards,
+                'boardMaxID'     => $boardMaxID,
                 'boardUsers'     => $boardUsers,
+                'boardUserMaxID' => $boardUserMaxID,
                 'boardIdSelecte' => $board_id,
                 'boardUserName'  => $boardName->postenMaenlich." / ".$boardName->postenWeiblich,
             ]);
@@ -156,9 +173,18 @@ class BoardController extends Controller
     public function index()
     {
         $boards = board::orderby('position')->paginate(5);
+        $boardMaxs = board::orderby('position')->get();
+        if($boardMaxs->count()>0){
+            $boardMaxID     = $boardMaxs->last()->id;
+        }
+        else{
+            $boardMaxID=0;
+        }
+
         return view('admin.board.index')->with(
             [
-                'boards' => $boards,
+                'boards'      => $boards,
+                'boardMaxID'  => $boardMaxID,
             ]);
     }
 

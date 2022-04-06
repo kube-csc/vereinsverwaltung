@@ -31,6 +31,10 @@ class CreateBoardsTable extends Migration
 
             $table->foreign('user_id')
                 ->references('id')->on('users');
+
+            $table->foreign('bearbeiter_id')
+                ->references('id')->on('users');
+
         });
     }
 
@@ -44,6 +48,7 @@ class CreateBoardsTable extends Migration
         Schema::table('boards', function (Blueprint $table) {
             $table->dropForeign('sportSection_id');
             $table->dropForeign('user_id');
+            $table->dropForeign('bearbeiter_id');
         });
         Schema::dropIfExists('boards');
     }

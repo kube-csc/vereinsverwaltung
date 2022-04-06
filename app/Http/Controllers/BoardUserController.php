@@ -42,7 +42,9 @@ class BoardUserController extends Controller
             'updated_at'       => Carbon::now()
         ]);
 
-        $boardUsers = boardUser::where('board_id',$boardId)->orderby('position')->get();
+        $boardUsers = boardUser::where('board_id',$boardId)
+            ->orderby('position')
+            ->get();
         $positionNew=10;
         foreach ($boardUsers as $boardUser){
             boardUser::find($boardUser->id)->update([
@@ -69,7 +71,9 @@ class BoardUserController extends Controller
         ]);
 
         $positionNew=10;
-        $boardUsers = boardUser::where('board_id',$boardId)->orderby('position')->get();
+        $boardUsers = boardUser::where('board_id',$boardId)
+            ->orderby('position')
+            ->get();
         foreach ($boardUsers as $boardUser){
             boardUser::find($boardUser->id)->update([
                 'position' => $positionNew,
@@ -110,7 +114,10 @@ class BoardUserController extends Controller
         $boardUser = boardUser::find($boardUserId);
         $boardId=$boardUser->board_id;
 
-        $boardUsers = boardUser::where('board_id',$boardId)->orderby('position' , 'desc')->limit(1)->get();
+        $boardUsers = boardUser::where('board_id',$boardId)
+            ->orderby('position' , 'desc')
+            ->limit(1)
+            ->get();
         foreach ($boardUsers as $boardUser){
             $positionNew=$boardUser->position+10;
         }
@@ -139,8 +146,8 @@ class BoardUserController extends Controller
      */
     public function index($board_id)
     {
-        $boards = board::orderby('position')->paginate(5);
-        $boardName= board::find($board_id);
+        $boards     = board::orderby('position')->paginate(5);
+        $boardName  = board::find($board_id);
         $boardUsers = boardUser::where('board_id' , $board_id)->orderby('position')->get();
         return view('admin.boardUser.index')->with(
             [
@@ -158,11 +165,14 @@ class BoardUserController extends Controller
      */
     public function create($boardId)
     {
-        $boardUsers = boardUser::where('board_id',$boardId)->orderby('position' , 'desc')->limit(1)->get();
+        $boardUsers = boardUser::where('board_id',$boardId)
+            ->orderby('position' , 'desc')
+            ->limit(1)
+            ->get();
         foreach ($boardUsers as $boardUser){
             $positionUserNew=$boardUser->position+10;
         }
-        if($positionUserNew==0){
+        if(!isset($positionUserNew)){
             $positionUserNew=10;
         }
 

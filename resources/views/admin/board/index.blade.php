@@ -96,15 +96,23 @@
                                                <box-icon name='plus'></box-icon>
                                            </a>
                                    </div>
-
-                                    <div class="flex">
+                                   <div class="flex">
                                       <p class="font-bold text-lg">
+                                          @php
+                                              $sportSections= DB::table('sport_sections')
+                                                ->where('id' , $board->sportSection_id)
+                                                ->get();
+                                          @endphp
+                                          @foreach($sportSections as $sportSection)
+                                              {{ $sportSection->abteilung }}
+                                          @endforeach
+                                          <br>
                                           {{ $board->postenMaenlich }}<br>
                                           {{ $board->postenWeiblich }}
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">
                                           {{ $board->updated_at->diffForHumans() }}
                                       </p>
-                                    </div>
+                                   </div>
                                   </div>
                                </div>
                               @endforeach
@@ -121,17 +129,12 @@
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
                       <div class="flex items-center">
+                        <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
 
-                       <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
-
-                         </div>
-
+                        </div>
                       </div>
-
                   </div>
-
               </div>
-
             </div>
         </div>
     </div>

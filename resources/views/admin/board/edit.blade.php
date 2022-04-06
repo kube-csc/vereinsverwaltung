@@ -31,7 +31,6 @@
 
                       <div class="ml-12">
                           <div class="mt-2 text-sm text-gray-500">
-
                               <form autocomplete="off" action="{{ url('Team/update/'.$board->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
@@ -49,6 +48,31 @@
                                     id="postenWeiblich" placeholder="Posten" name="postenWeiblich" value="{{ old('postenWeiblich') ?? $board->postenWeiblich }}">
                                     <small class="form-text text-danger">{!! $errors->first('postenWeiblich') !!}</small>
                                 </div>
+                                <div class="my-4" >
+                                      <label for="name">Abteilung / Mannschaft:</label><br>
+                                      <select name="sportSection_id">
+                                          <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
+                                          <optgroup label="Abeilung:">
+                                              @php
+                                                  $firsttime = 0;
+                                              @endphp
+                                              @foreach ($sportSections as $sportSection)
+                                                  @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
+                                                      @php
+                                                          $firsttime = 1;
+                                                      @endphp
+                                          </optgroup>
+                                          <optgroup label="Mannschaft:">
+                                              @endif
+                                              <option value="{{ $sportSection->id }}"
+                                                      @if ($board->sportSection_id == $sportSection->id)
+                                                      selected
+                                                  @endif
+                                              >{{ $sportSection->abteilung }}</option>
+                                              @endforeach
+                                          </optgroup>
+                                      </select>
+                                </div>
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderungen speichern</button>
                                 </div>
@@ -57,13 +81,9 @@
                              <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Team/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                             </div>
                           </div>
-
                       </div>
                   </div>
-
               </div>
-
         </div>
     </div>
-
 </x-app-layout>

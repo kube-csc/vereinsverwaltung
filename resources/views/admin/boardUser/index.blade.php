@@ -13,11 +13,9 @@
                     <div class="mt-8 text-2xl">
                         Posten
                     </div>
-
                     <div class="mt-6 text-gray-500">
                         In diesem Bereich werden das Posten bearbeitet
                     </div>
-
                 </div>
 
                 <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
@@ -106,6 +104,15 @@
 
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
+                                                        @php
+                                                            $sportSections= DB::table('sport_sections')
+                                                              ->where('id' , $board->sportSection_id)
+                                                              ->get();
+                                                        @endphp
+                                                        @foreach($sportSections as $sportSection)
+                                                        {{ $sportSection->abteilung }}
+                                                        @endforeach
+                                                        <br>
                                                         {{ $board->postenMaenlich }}<br>
                                                         {{ $board->postenWeiblich }}
                                                     </p>
@@ -195,8 +202,8 @@
 
                                     <div class="flex">
                                         <p class="font-bold text-lg">
-                                           @if(isset($boardUser->nummer))
-                                             {{ $boardUser->nummer }})
+                                           @if($boardUser->nummer > 0)
+                                             {{ $boardUser->nummer }}.
                                            @endif
                                            @if(isset($boardUser->boardUser_id))
                                              {{ $boardUser->boardUserName->nachname }} {{ $boardUser->boardUserName->vorname }}
@@ -209,11 +216,8 @@
                                 </div>
                             </div>
                         @endforeach
-
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>

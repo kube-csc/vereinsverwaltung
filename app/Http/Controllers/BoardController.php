@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\board;
 use App\Models\boardUser;
+use App\Models\SportSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +59,7 @@ class BoardController extends Controller
             ]);
             $positionNew=$positionNew+10;
         }
-        return Redirect()->back()->with('success' , 'Posten wurde zur Top Position verschoben.');
+        return Redirect()->back()->with('success' , 'Der Posten wurde zur Top Position verschoben.');
     }
 
     public function top($boardId)
@@ -128,7 +129,7 @@ class BoardController extends Controller
             ]);
             $positionNew=$positionNew+10;
         }
-        return Redirect()->back()->with('success' , 'Posten wurde zur letzten Position verschoben.');
+        return Redirect()->back()->with('success' , 'Der Posten wurde zur letzten Position verschoben.');
     }
 
     /**
@@ -136,11 +137,13 @@ class BoardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function boardBoardUser($board_id)
     {
         $boards = board::orderby('position')->paginate(5);
         $boardName= board::find($board_id);
-        $boardUsers = boardUser::where('board_id' , $board_id)->orderby('position')->paginate(5);
+        $boardUsers = boardUser::where('board_id' , $board_id)
+            ->orderby('position')->paginate(5);
         return view('admin.boardUser.index')->with(
             [
                 'boards'         => $boards,
@@ -166,7 +169,12 @@ class BoardController extends Controller
      */
     public function create()
     {
-        return view('admin.board.create');
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
+            ->orderby('sportSection_id')
+            ->orderby('abteilung')
+            ->get();
+
+        return view('admin.board.create' , compact('sportSections'));
     }
 
     /**
@@ -195,7 +203,7 @@ class BoardController extends Controller
                 'postenWeiblich'   => $request->postenWeiblich,
                 'visible'          => 1,
                 'position'         => $positionNew,
-                'sportSection_id'  => 1,
+                'sportSection_id'  => $request->sportSection_id,
                 'bearbeiter_id'    => Auth::user()->id,
                 'user_id'          => Auth::user()->id,
                 'updated_at'       => Carbon::now(),
@@ -231,8 +239,17 @@ class BoardController extends Controller
     public function edit($board_id)
     {
         $board = board::find($board_id);
+        $sportSections = SportSection::where('status' , '>' ,'0')->orderby('status')
+            ->orderby('sportSection_id')
+            ->orderby('abteilung')
+            ->get();
 
-        return view('admin.board.edit',compact('board' ));
+        return view('admin.board.edit')->with(
+                [
+                    'board'         => $board,
+                    'sportSections' => $sportSections
+                ]
+        );
     }
 
     /**
@@ -254,7 +271,9 @@ class BoardController extends Controller
         board::find($board_id)->update([
             'postenMaenlich'    => $request->postenMaenlich,
             'postenWeiblich'    => $request->postenWeiblich,
+            'sportSection_id'   => $request->sportSection_id,
             'visible'           =>   '1',
+            'bearbeiter_id'     => Auth::user()->id,
             'updated_at'        => Carbon::now()
         ]);
 

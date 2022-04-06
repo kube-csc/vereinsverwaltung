@@ -16,7 +16,7 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                    Bitte gebe eine die Daten von einen neuen Posten an.
+                    Bitte gebe die Daten von einem neuen Posten ein.
                   </div>
 
               </div>
@@ -56,6 +56,31 @@
                                   <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('postenWeiblich') ? 'bg-red-300' : '' }}"
                                          id="postenWeiblich" placeholder="Posten" name="postenWeiblich" value="{{ old('postenWeiblich') }}">
                                   <small class="form-text text-danger">{{ $errors->first('postenWeiblich') }}</small>
+                                </div>
+                                <div class="my-4" >
+                                  <label for="name">Abteilung / Mannschaft:</label><br>
+                                  <select name="sportSection_id">
+                                      <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
+                                      <optgroup label="Abeilung:">
+                                          @php
+                                              $firsttime = 0;
+                                          @endphp
+                                          @foreach ($sportSections as $sportSection)
+                                              @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
+                                                  @php
+                                                      $firsttime = 1;
+                                                  @endphp
+                                      </optgroup>
+                                      <optgroup label="Mannschaft:">
+                                          @endif
+                                          <option value="{{ $sportSection->id }}"
+                                              @if($loop->first)
+                                                  selected
+                                              @endif
+                                          >{{ $sportSection->abteilung }}</option>
+                                          @endforeach
+                                      </optgroup>
+                                  </select>
                                 </div>
                                 <div class="py-2">
                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neuen Posten anlegen</button>

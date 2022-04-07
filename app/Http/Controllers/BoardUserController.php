@@ -267,9 +267,23 @@ class BoardUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($boardUser_id)
     {
-        //
+        /*
+        ToDo: Rechte abfrage auf ergänzen
+        if (auth()->guest()){
+            abort(403);
+        }
+
+        abort_unless(Gate::allows('delete' , $hobby) , 403);
+        */
+
+        $boardUser = boardUser::find($boardUser_id);
+        $boardUser->delete();
+
+        return back()->with([
+            'successBoardUser' => 'Ein Posten wurden gelöscht.'
+        ]);
     }
 
     public function match($boardUserId)

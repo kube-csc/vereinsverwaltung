@@ -16,16 +16,13 @@
                     </div>
 
                     <div class="mt-6 text-gray-500">
-                        Bitte gebe die Daten des Posten ein.<br>
-                        Wenn ein Porträt in der Mitgliederverwaltung vorhanden ist wird dieses bevorzugt verwendet.
+                        Bitte gebe die Daten des Postens ein.<br>
+                        Wenn ein Porträt in der Mitgliederverwaltung vorhanden ist, wird dieses bevorzugt verwendet.
                         <!-- ToDo: Anleitung bearbeiten -->
                     </div>
                 </div>
                                 @livewire('board-user-match', ['boardUserId' => $boardUserId])
-
             </div>
-
         </div>
     </div>
-
 </x-app-layout>

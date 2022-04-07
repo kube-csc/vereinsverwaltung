@@ -34,10 +34,6 @@
                             */
                                 @endphp
 
-                                <div class="my-4 flex">
-                                    <a href="{{ route('board.create') }}"><box-icon name='plus'></box-icon></a>
-                                </div>
-
                                 <div style="text-align: left">
                                     <div>
                                         @if (session()->has('success'))
@@ -46,6 +42,11 @@
                                             </div>
                                         @endif
                                     </div>
+
+                                    <div class="my-4 flex">
+                                        <a href="{{ route('board.create') }}"><box-icon name='plus'></box-icon></a>
+                                    </div>
+
                                     @php
                                         $boardmax=  $boards->count();
 
@@ -100,6 +101,11 @@
                                                         <a href="{{ url('Posten/neu/'.$board->id) }}">
                                                             <box-icon name='plus'></box-icon>
                                                         </a>
+                                                    @if($boardIdSelecte == $board->id && $boardUsers->count() == 0)
+                                                        <a href="{{ url('Team/loeschen/'.$board->id) }}">
+                                                            <box-icon name='x'></box-icon>
+                                                        </a>
+                                                    @endif
                                                 </div>
 
                                                 <div class="flex">
@@ -140,9 +146,7 @@
                                 <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Posten {{ $boardUserName }}</div>
                             @endif
                         </div>
-                        <div class="my-4 flex">
-                            <a href="{{ url('Posten/neu/'.$boardIdSelecte) }}"><box-icon name='plus'></box-icon></a>
-                        </div>
+
                         <div>
                             @if (session()->has('successBoardUser'))
                                 <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
@@ -150,6 +154,11 @@
                                 </div>
                             @endif
                         </div>
+
+                        <div class="my-4 flex">
+                            <a href="{{ url('Posten/neu/'.$boardIdSelecte) }}"><box-icon name='plus'></box-icon></a>
+                        </div>
+
                         @foreach ( $boardUsers as $boardUser)
                             <div class="rounded border shadow p-3 my-2 bg-blue-200">
                                 <div class="justify-between my-2">
@@ -181,7 +190,6 @@
                                                 <box-icon name='chevron-up'></box-icon>
                                             </a>
                                         @endif
-                                        ii
                                         @if($boardUser->id != $boardUserMaxID)
                                             <a href="{{ url('Posten/down/'.$boardUser->id) }}">
                                                 <box-icon name='chevron-down' ></box-icon>
@@ -193,6 +201,11 @@
                                         <a href="{{ url('Posten/zuordnen/'.$boardUser->id) }}">
                                             <box-icon type='solid' name='user-plus'></box-icon>
                                         </a>
+                                        @if($boardUser->boardUser_id  == Null)
+                                            <a href="{{ url('Posten/loeschen/'.$boardUser->id) }}">
+                                                <box-icon name='x'></box-icon>
+                                            </a>
+                                        @endif
                                     </div>
 
                                     <div class="flex">

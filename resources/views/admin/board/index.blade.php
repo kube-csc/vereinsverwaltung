@@ -36,18 +36,25 @@
                             */
                            @endphp
 
-                            <div class="my-4 flex">
-                               <a href="{{ route('board.create') }}"><box-icon name='plus'></box-icon></a>
-                            </div>
-
                             <div style="text-align: left">
                               <div>
-                                  @if (session()->has('success'))
+                                  @if(session()->has('success'))
                                   <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
                                       {!! session('success') !!}
                                   </div>
+                                  @else
+                                    @if(isset($success))
+                                      <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
+                                          {!! $success !!}
+                                      </div>
+                                    @endif
                                   @endif
                               </div>
+
+                              <div class="my-4 flex">
+                                 <a href="{{ route('board.create') }}"><box-icon name='plus'></box-icon></a>
+                              </div>
+
                               @foreach ( $boards as $board )
                               <div class="rounded border shadow p-3 my-2 {{$board->id == $board->id  ? 'bg-blue-200' : ''}}" onclick="window.location.replace('/Posten/{{ $board->id }}')">
                                   <div class="justify-between my-2">

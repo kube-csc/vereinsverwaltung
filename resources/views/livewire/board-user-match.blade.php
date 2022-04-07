@@ -2,7 +2,7 @@
     <div class="p-6">
         <div class="flex items-center">
             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
-                Posten {{ $boardUser->nummer > 0 ? $boardUser->nummer.')' : '' }} {{ $board->postenMaenlich }} / {{ $board->postenWeiblich }}  bearbeiten
+                Posten {{ $boardUser->nummer > 0 ? $boardUser->nummer.')' : '' }} {{ $board->postenMaenlich }} / {{ $board->postenWeiblich }} bearbeiten
             </div>
         </div>
 
@@ -33,7 +33,8 @@
 
                             <label for="number">Filter Mitglieder:</label>
                             <input id='searchUser' type="text" class="w-full rounded border shadow p-2 mr-2 my-2" wire:model.debounce.500ms="searchUser">
-                            <box-icon name='minus' wire:click="$emit('userSelected', 0 )"></box-icon>
+                            <box-icon name='x' wire:click="$emit('userSelected', 0 )"></box-icon>
+
                         @foreach ($users as $user)
                            <div class="rounded border shadow p-3 my-2 {{ $userSelected == $user->id ? 'bg-blue-300' : 'bg-blue-200' }}" wire:click="$emit('userSelected',{{ $user->id }})">
                             {{ $user->vorname }} {{ $user->nachname }}
@@ -75,7 +76,6 @@
 
             </div>
         </div>
-
     </div>
 </div>
 

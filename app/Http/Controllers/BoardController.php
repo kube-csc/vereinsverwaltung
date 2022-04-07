@@ -185,7 +185,7 @@ class BoardController extends Controller
             [
                 'boards'      => $boards,
                 'boardMaxID'  => $boardMaxID,
-            ]);
+             ]);
     }
 
     /**
@@ -316,8 +316,26 @@ class BoardController extends Controller
      * @param  \App\Models\board  $board
      * @return \Illuminate\Http\Response
      */
-    public function destroy(board $board)
+    public function destroy($board_id)
     {
-        //
+        $board = board::find($board_id);
+        $board->delete();
+
+        $boards    = board::orderby('position')->paginate(5);
+        $boardMaxs = board::orderby('position')->get();
+        if($boardMaxs->count()>0){
+            $boardMaxID = $boardMaxs->last()->id;
+        }
+        else{
+            $boardMaxID=0;
+        }
+
+        return view('admin.board.index')->with(
+            [
+                'boards'      => $boards,
+                'boardMaxID'  => $boardMaxID,
+                'success'     => 'Das Team wurden gelöscht.'
+            ]);
+
     }
 }

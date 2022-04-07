@@ -39,10 +39,15 @@ class BoardUserMatch extends Component
         if ($userId==0)
             {
                 $this->userSelected = Null;
+                $this->currentImage = '';
+                session()->flash('message', 'Die Mitgliederzuordnung zum Posten wurde gelöscht.');
             }
         else
             {
                 $this->userSelected = $userId;
+                $boardPortraits = boardPortrait::where('postenUser_id' , $userId)->get();
+                $this->currentImage = $boardPortraits->last()->postenPortraet;
+                session()->flash('message', 'Die Mitglied wurde zum Posten zugeordnet.');
             }
     }
 
@@ -160,7 +165,7 @@ class BoardUserMatch extends Component
 
     public function deletionNote(){
       $this->deletionNote=1;
-        session()->flash('message', 'Löschvermerk für das Porträt gesetzt.');
+        session()->flash('message', 'Löschvermerk für das Porträt wurde gesetzt.');
     }
 
     public function currentImageDelete(){

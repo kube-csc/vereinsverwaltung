@@ -28,7 +28,7 @@ use App\Http\Controllers\BacklinksController;
 */
 //LandingPage
 Route::get('/',                                                    [HomeController::class, 'index']);
-Route::get('/'.env('Menue_Abteilung').'/{sportTeam}',          [HomeController::class, 'homeSportSelect']);
+Route::get('/'.env('Menue_Abteilung').'/{sportTeam}',              [HomeController::class, 'homeSportSelect']);
 Route::get('/Bericht/{event}',                                     [HomeController::class, 'eventShow']);
 Route::get('/Information/{event}',                                 [HomeController::class, 'instructionShow']);
 Route::get('/Termine',                                             [HomeController::class, 'eventFutureAll']);
@@ -140,6 +140,7 @@ Route::get('/Team/down/{board_id}',                 [BoardController::class, 'do
 Route::get('/Team/maxdown/{board_id}',              [BoardController::class, 'maxdown'])   ->name('board.maxdown');
 Route::get('/Team/edit/{board_id}',                 [BoardController::class, 'edit'])      ->name('board.edit');
 Route::post('/Team/update/{board_id}',              [BoardController::class, 'update'])    ->name('board.update');
+Route::get('/Team/loeschen/{board_id}',             [BoardController::class, 'destroy'])   ->name('board.destroy');
 
 //Route::resource('boardUser.', 'BoardUserController');
 Route::get('/Posten/{board_id}',                     [BoardUserController::class, 'index'])     ->name('boardUser.index');
@@ -152,6 +153,7 @@ Route::get('/Posten/down/{boardUser_id}',            [BoardUserController::class
 Route::get('/Posten/maxdown/{boardUser_id}',         [BoardUserController::class, 'maxdown'])   ->name('boardUser.maxdown');
 Route::get('/Posten/edit/{boardUser_id}',            [BoardUserController::class, 'edit'])      ->name('boardUser.edit');
 Route::get('/Posten/zuordnen/{boardUser_id}',        [BoardUserController::class, 'match'])     ->name('boardUser.match');
+Route::get('/Posten/loeschen/{boardUser_id}',        [BoardUserController::class, 'destroy'])   ->name('boardUser.destroy');
 
 //Route::resource('Dokumente.', 'DocumentController');
 Route::get('/Dokumente/alle',                        [DocumentController::class, 'index'])         ->name('document.index');

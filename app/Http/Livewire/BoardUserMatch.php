@@ -46,7 +46,9 @@ class BoardUserMatch extends Component
             {
                 $this->userSelected = $userId;
                 $boardPortraits = boardPortrait::where('postenUser_id' , $userId)->get();
-                $this->currentImage = $boardPortraits->last()->postenPortraet;
+                foreach($boardPortraits as $boardPortrait) {
+                    $this->currentImage = $boardPortrait->postenPortraet;
+                }
                 session()->flash('message', 'Die Mitglied wurde zum Posten zugeordnet.');
             }
     }

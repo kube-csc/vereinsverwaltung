@@ -1,8 +1,8 @@
 <h1>Internetauftritt von Vereine</h1>
 <p>
- Ausgelegt für ein Kanuverein mit verschiedenen Abteilungen/Sportarten
+ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
 </p>
-<h2>Beispiel der Abteilungen/Sportarten:</h2> 
+<h2>Beispiel der Abteilungen / Sportarten:</h2> 
     <ul>
       <li>Jugend</li>
       <li>Wandersport</li>
@@ -11,7 +11,7 @@
       <li>SUP</li>
     </ul>
 
-<a href="https://test.kel-datteln.de">Beispiel eines Frontend</a>
+<a href="https://neu.kel-datteln.de">Beispiel eines Frontend</a>
 
 <h2>Installierte Programme</h2>
 <ul>
@@ -26,21 +26,30 @@
 
 <h2>Frontend</h2>
 <ul>
-<li>Header Abhängig von den Abteilungen / Sportarten</li>
+<li>Header ist abhängig von den Abteilungen / Sportarten</li>
 <li>Leanding Page
      <ul>
       <li>Ausgabe der Vereinsbeschreibung</li>
       <li>Präsentation der Abteilung mit deren Mannschaften</li>
       <li>Präsentation der kommenden Events</li>
-      <li>Präsentation der vergangenden Events</li>
+      <li>Präsentation der vergangenen Events</li>
       <li>Präsentation des Teams</li>
       <li>Kontakt des Vereins inc. Map</li>
     </ul>
 </li>
-  <li>Detail Präsentation der Abteilung / Sportart</li>
-  <li>Detail Präsentation der Mannschaften</li>
-  <li>Detail Präsentation des Event</li>
-  <li>Informationen
+  <li>Präsentation der Abteilungen / Sportarten</li>
+  <li>Präsentation der Mannschaften</li>
+  <li>Präsentation des Events
+  <ul>
+    <li>Beschreibung der Events</li> 
+    <li>Bildergallery</li>
+    <li>Ausschreibungsunterlagen</li>
+    <li>Programmunterlagen</li>
+    <li>Ergebnislisten</li>
+    <li>Flyer</li>
+  </ul>
+  </li>
+  <li>Informationensseiten
     <ul>
         <li>Anfahrt</li>
         <li>Beiträge</li>
@@ -62,7 +71,12 @@
   <li>Eingabe und Bearbeitung der Vereinsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
-  <li>Eingabe und Bearbeitung von Events</li>
+  <li>Eingabe und Bearbeitung von Events
+      <ul>
+        <li>Eventbeschreibung</li> 
+        <li>Bildergallery</li>
+      </ul>
+  </li>
   <li>Eingabe und Bearbeitung von Event Gruppen</li>
   <li>Dokumentenmanagement</li>
   <li>Anfahrt</li>
@@ -74,13 +88,13 @@
         <li>Datenschutzerklärung</li>
     </ul>
   </li>
-<li>Backlinkverwaltung Umleitung von Links die nicht mehr Existieren</li>
+<li>Backlinksverwaltung Umleitung von Links die nicht mehr Existieren</li>
 </ul>
 
 <h2>Installation</h2>
 <ul>
-   <li>git clone  https://github.com/kube-csc/vereinsverwaltung.git</li>
-   <li>.env Datei Ausfüllen (Es werden auch Informationen über den Verein abgefragt.)
+   <li>git clone https://github.com/kube-csc/vereinsverwaltung.git</li>
+   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt.)
    </li>
    <li>composer.phar install</li>
    <li>php artisan storage:link<br>

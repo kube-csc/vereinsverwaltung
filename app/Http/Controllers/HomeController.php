@@ -194,6 +194,11 @@ class HomeController extends Controller
             ->where('verwendung' , '<' , 6)
             ->where('typ' , '>' , 9)
             ->where('typ' , '<' , 13)
+            ->where(function ($query) use ($eventId) {
+                $query->where('bild'  , "!=" , NULL)
+                    ->orwhere('image' , "!=" , NULL);
+            })
+            ->orderby('verwendung')
             ->orderby('position')
             ->get();
 

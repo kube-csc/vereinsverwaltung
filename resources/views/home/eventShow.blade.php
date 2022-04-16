@@ -27,35 +27,33 @@
                 @endif
                 @if($event->datumbisa <= Illuminate\Support\Carbon::now() && isset($event->datumbisa))
                     <p>
-                        <b>Anmeldezeitraum:</b><br>
+                        <b>Anmeldezeitraum: </b>
                         @if(isset($event->datumvona))
-                            von {{ date("d.m.Y", strtotime($event->datumvona)) }}<br>
+                            von {{ date("d.m.Y", strtotime($event->datumvona)) }}
                         @endif
                             bis {{ date("d.m.Y", strtotime($event->datumbisa)) }}
                     </p>
                 @endif
-
-                @if(isset($event->homepage))
+                @if(isset($event->homepage) && $event->homepage <> '')
                     <p>
-                        <b>Homepage:</b><br>
-                        {{ $event->homepage }}
+                        <b>Homepage: </b>
+                        <a href="http://{{ $event->homepage }}">Link</a>
                     </p>
                 @endif
-
                 @if($event->datumbis > Illuminate\Support\Carbon::now())
-                    @if(isset($event->ansprechparter) or isset($event->telefon) or isset($event->email))
+                    @if(isset($event->ansprechpartner) or isset($event->telefon) or isset($event->email))
                         <p>
-                            <b>Ansprechpartner:</b><br>
+                            <b>Ansprechpartner: </b>
                             @endif
-                            @if(isset($event->ansprechparter))
-                                {{ $event->ansprechparter }}<br>
+                            @if(isset($event->ansprechpartner))
+                                {{ $event->ansprechpartner }}<br>
                             @endif
                             @if(isset($event->telefon))
-                                <b>Telefon:</b><br>
+                                <b>Telefon: </b>
                                 {{ $event->telefon }}<br>
                             @endif
                             @if(isset($event->email))
-                                <b>E-Mail:</b><br>
+                                <b>E-Mail: </b>
                                 {{ $event->email }}
                             @endif
                             @if(isset($event->ansprechparter) or isset($event->telefon) or isset($event->email))
@@ -68,22 +66,52 @@
                 @endif
 
                 @if($event->datumvon < Illuminate\Support\Carbon::now())
-                    @if(isset($event->homepage) && $event->homepage <> '')
-                       <br>
-                       <p>Homepage: {!! $event->homepage !!}</p>
-                    @endif
                     <p>{!! $event->nachtermin !!}</p>
                 @endif
-
             </div>
-
+            @if($eventDokumentes->count()>0)
+                @php
+                   $groupflak=0;
+                   $verwendung = [
+                        "2" => "Ausschreibung",
+                        "3" => "Programm",
+                        "4" => "Ergebnisse",
+                        "5" => "Plakat / Flyer",
+                    ];
+                @endphp
+                <div>
+                    <b>Dokumente zum Downloaden:</b>
+                        @foreach($eventDokumentes as $eventDokumente)
+                        @if($loop->first)
+                            @php($groupflak=$eventDokumente->verwendung)
+                    <ul>
+                      <li>{{ $verwendung[$groupflak] }}</li>
+                      <ul>
+                        @else
+                            @if($eventDokumente->verwendung != $groupflak)
+                                @php($groupflak=$eventDokumente->verwendung)
+                      </ul>
+                    </ul>
+                    <ul>
+                      <li>{{ $verwendung[$groupflak] }}</li>
+                      <ul>
+                            @endif
+                        @endif
+                          @if( $eventDokumente->bild != NULL)
+                        <li><a href="/storage/eventDokumente/{{ $eventDokumente->bild }}">{{ $eventDokumente->titel }}</a></li>
+                          @else
+                        <li><a href="/daten/text/{{ $eventDokumente->image }}">{{ $eventDokumente->titel }}</a></li>
+                          @endif
+                        @endforeach
+                      </ul>
+                    </ul>
+                </div>
+            @endif
             <livewire:event-gallery :reportId="$event->id" />
-
 
         </div>
     </section><!-- End Portfolio Section -->
   @endforeach
 
   </main><!-- End #main -->
-
 @endsection

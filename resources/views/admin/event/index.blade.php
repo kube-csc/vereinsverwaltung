@@ -49,13 +49,16 @@
                                   <div class="justify-between my-2">
                                       <div>
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Event/edit/'.$event->id) }}">
-                                              <box-icon name='edit' type='solid'></box-icon>
+                                            <box-icon name='edit' type='solid'></box-icon>
                                         </a>
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/alle/'.$event->id) }}">
-                                          <box-icon name='image'></box-icon>
+                                            <box-icon name='image'></box-icon>
                                         </a>
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/neu/'.$event->id) }}">
                                             <box-icon name='image-add'></box-icon>
+                                        </a>
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('EventDokumente/'.$event->id) }}">
+                                            <box-icon name='file'></box-icon>
                                         </a>
                                       </div>
                                   </div>

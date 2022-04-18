@@ -34,15 +34,21 @@ class CreateReportsTable extends Migration
                                                                          //        5 = Plakat
                                                                          //        6 = Presse
                                                                          //        7 = Player
+
             $table->integer('typ')->default(1);             //        1 = jpg
                                                                          //        2 = gif
                                                                          //        3 = png
+                                                                         //        4 = bmp
+                                                                         //        5 = jpeg
                                                                          //       10 = pdf
                                                                          //       11 = doc
                                                                          //       12 = xls
                                                                          //       13 = xlsx
+                                                                         //       14 = docx
+                                                                         //       15 = odt
                                                                          //       20 = wmv
                                                                          //       21 = mp4
+
             $table->integer('presse')->nullable();                //        0 = alter Status wird als Presse gewertet
             $table->text('quelle')->nullable();
             $table->timestamp('quellDatum')->nullable();

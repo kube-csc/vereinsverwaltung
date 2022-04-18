@@ -12,6 +12,7 @@ use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BoardUserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EventDocumentController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
@@ -115,7 +116,7 @@ Route::get('/Bericht/start/{report_id}',               [ReportController::class,
 // TEMP: Route nur für die Übername der Bilder zuständig
 Route::get('/Berichtbilder/uebernehmen',               [ReportController::class, 'takeover'])          ->name('report.takeover');
 
-//Route::resource('instruction.', 'InstructionController');
+//Route::resource('instruction', 'InstructionController');
 Route::get('/Instruction/alle',                        [InstructionController::class, 'index'])        ->name('instruction.index');
 Route::get('/Instruction/edit/{instruction_id}',       [InstructionController::class, 'edit'])         ->name('instruction.edit');
 Route::post('/Instruction/update/{instruction_id}',    [InstructionController::class, 'update'])       ->name('instruction.update');
@@ -128,7 +129,7 @@ Route::get('/newBotmanQuestion/aktiv/{newBotmanQuestionId}',     [NewBotmanQuest
 Route::get('/newBotmanQuestion/inaktiv/{newBotmanQuestionId}',   [NewBotmanQuestionController::class, 'inaktiv'])   ->name('newBotmanQuestion.inaktiv');
 Route::get('/newBotmanQuestion/softDelete/{newBotmanQuestionId}',[NewBotmanQuestionController::class, 'softDelete']);
 
-//Route::resource('board.', 'BoardController');
+//Route::resource('board', 'BoardController');
 Route::get('/Team/alle',                            [BoardController::class, 'index'])     ->name('board.index');
 Route::get('/Team/neu',                             [BoardController::class, 'create'])    ->name('board.create');
 Route::post('/Team/speichern',                      [BoardController::class, 'store'])     ->name('board.store');
@@ -142,7 +143,7 @@ Route::get('/Team/edit/{board_id}',                 [BoardController::class, 'ed
 Route::post('/Team/update/{board_id}',              [BoardController::class, 'update'])    ->name('board.update');
 Route::get('/Team/loeschen/{board_id}',             [BoardController::class, 'destroy'])   ->name('board.destroy');
 
-//Route::resource('boardUser.', 'BoardUserController');
+//Route::resource('boardUser', 'BoardUserController');
 Route::get('/Posten/{board_id}',                     [BoardUserController::class, 'index'])     ->name('boardUser.index');
 Route::get('/Posten/neu/{board_id}',                 [BoardUserController::class, 'create'])    ->name('boardUser.create');
 Route::get('/Posten/aktiv/{boardUser_id}',           [BoardUserController::class, 'aktiv'])     ->name('boardUser.aktiv');
@@ -155,7 +156,7 @@ Route::get('/Posten/edit/{boardUser_id}',            [BoardUserController::class
 Route::get('/Posten/zuordnen/{boardUser_id}',        [BoardUserController::class, 'match'])     ->name('boardUser.match');
 Route::get('/Posten/loeschen/{boardUser_id}',        [BoardUserController::class, 'destroy'])   ->name('boardUser.destroy');
 
-//Route::resource('Dokumente.', 'DocumentController');
+//Route::resource('Dokumente', 'DocumentController');
 Route::get('/Dokumente/alle',                        [DocumentController::class, 'index'])         ->name('document.index');
 Route::get('/Dokumente/neu',                         [DocumentController::class, 'create'])        ->name('document.create');
 Route::post('/Dokumente/speichern',                  [DocumentController::class, 'store'])         ->name('document.store');
@@ -164,6 +165,25 @@ Route::post('/Dokumente/update/{document_id}',       [DocumentController::class,
 Route::get('/Dokumente/geloescht/{document_id}',     [DocumentController::class, 'documentDelete'])->name('document.documentDelete');
 Route::get('/Dokumente/aktiv/{document_id}',         [DocumentController::class, 'aktiv'])         ->name('document.aktiv');
 Route::get('/Dokumente/inaktiv/{document_id}',       [DocumentController::class, 'inaktiv'])       ->name('document.inaktiv');
+
+
+//Route::resource('EventDokumente', EventDocumentController::class);
+Route::get('/EventDokumente/{event_id}',                      [EventDocumentController::class, 'index'])                 ->name('eventDocument.index');
+Route::get('/EventDokumente/neu/{event_id}',                  [EventDocumentController::class, 'create'])                ->name('eventDocument.create');
+Route::post('/EventDokumente/speichern/{event_id}',           [EventDocumentController::class, 'store'])                 ->name('eventDocument.store');
+Route::get('/EventDokumente/edit/{document_id}',              [EventDocumentController::class, 'edit'])                  ->name('eventDocument.edit');
+Route::post('/EventDokumente/update/{document_id}',           [EventDocumentController::class, 'update'])                ->name('eventDocument.update');
+Route::get('/EventDokumente/geloescht/{document_id}',         [EventDocumentController::class, 'dokumentedelete'])       ->name('eventDocument.dokumentedelete');
+Route::get('/EventDokumente/alt/geloescht/{document_id}',     [EventDocumentController::class, 'dokumenteAltdelete'])    ->name('eventDocument.dokumentAltedelete');
+Route::get('/EventDokumente/aktiv/{document_id}',             [EventDocumentController::class, 'aktiv'])                 ->name('eventDocument.aktiv');
+Route::get('/EventDokumente/inaktiv/{document_id}',           [EventDocumentController::class, 'inaktiv'])               ->name('eventDocument.inaktiv');
+Route::get('/EventDokumente/webaktiv/{document_id}',          [EventDocumentController::class, 'webaktiv'])              ->name('eventDocument.webaktiv');
+Route::get('/EventDokumente/webinaktiv/{document_id}',        [EventDocumentController::class, 'webinaktiv'])            ->name('eventDocument.webinaktiv');
+Route::get('/EventDokumente/maxtop/{document_id}',            [EventDocumentController::class, 'maxtop'])                ->name('eventDocument.maxtop');
+Route::get('/EventDokumente/top/{document_id}',               [EventDocumentController::class, 'top'])                   ->name('eventDocument.top');
+Route::get('/EventDokumente/down/{document_id}',              [EventDocumentController::class, 'down'])                  ->name('eventDocument.down');
+Route::get('/EventDokumente/maxdown/{document_id}',           [EventDocumentController::class, 'maxdown'])               ->name('eventDocument.maxdown');
+Route::get('/EventDokumente/Eintrag/geloescht/{document_id}', [EventDocumentController::class, 'destroy'])               ->name('eventDocument.destroy');
 
 //Route::resource('Backlink.', 'BacklinksController');
 Route::get('/Backlink/alle',                         [BacklinksController::class, 'index'])         ->name('backlink.index');
@@ -174,7 +194,7 @@ Route::post('/Backlink/speichern',                   [BacklinksController::class
 Route::get('/Backlink/aktiv/{backlink_id}',          [BacklinksController::class, 'aktiv'])         ->name('backlink.aktiv');
 Route::get('/Backlink/inaktiv/{backlink_id}',        [BacklinksController::class, 'inaktiv'])       ->name('backlink.inaktiv');
 Route::get('/Backlink/softDelete/{backlink_id}',     [BacklinksController::class, 'softDelete']);
-Route::get('/Backlink/edit/{document_id}',          [BacklinksController::class, 'edit'])          ->name('backlink.edit');
+Route::get('/Backlink/edit/{backlink_id}',           [BacklinksController::class, 'edit'])          ->name('backlink.edit');
 Route::post('/Backlink/update/{backlink_id}',        [BacklinksController::class, 'update'])        ->name('backlink.update');
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);

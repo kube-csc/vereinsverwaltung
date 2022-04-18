@@ -100,7 +100,19 @@
                                                      @endif
                                                 </div>
                                                 <div class="flex">
-                                                    <p class="font-bold text-lg">{{ $report->titel }}</p>
+                                                    <p class="font-bold text-lg">
+                                                     @php
+                                                         $typOption=[
+                                                            '2'  => 'Ausschreibung',
+                                                            '3'  => 'Programm',
+                                                            '4'  => 'Ergebnisse',
+                                                            '5'  => 'Plakat / Flyer'
+                                                        ];
+                                                     @endphp
+                                                        {{ $typOption[$report->verwendung] }}
+                                                        <br>
+                                                        {{ $report->titel }}
+                                                    </p>
                                                     <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $report->updated_at->diffForHumans() }}</p>
                                                 </div>
                                             </div>

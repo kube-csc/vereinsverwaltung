@@ -43,10 +43,14 @@
   <ul>
     <li>Beschreibung der Events</li> 
     <li>Bildergallery</li>
-    <li>Ausschreibungsunterlagen</li>
-    <li>Programmunterlagen</li>
-    <li>Ergebnislisten</li>
-    <li>Flyer</li>
+    <li>Dokumente zum Herunterladen</li>
+      <ul>
+          <li>Ausschreibungsunterlagen</li>
+          <li>Programmunterlagen</li>
+          <li>Ergebnislisten</li>
+          <li>Flyer / Plakat</li>
+      </ul>
+    </ul>
   </ul>
   </li>
   <li>Informationensseiten
@@ -75,6 +79,13 @@
       <ul>
         <li>Eventbeschreibung</li> 
         <li>Bildergallery</li>
+        <li>Dokumente zum Herunterladen</li>
+          <ul>
+              <li>Ausschreibungsunterlagen</li>
+              <li>Programmunterlagen</li>
+              <li>Ergebnislisten</li>
+              <li>Flyer / Plakat</li>
+          </ul>
       </ul>
   </li>
   <li>Eingabe und Bearbeitung von Event Gruppen</li>
@@ -100,11 +111,13 @@
    <li>php artisan storage:link<br>
       anlegen der Unterordner unter "public/storage"
       <ul>
+         <li>boardPortrait</li> 
+         <li>botman</li> 
          <li>dokumente</li>
+         <li>eventDokumente</li>
          <li>eventImage</li>
          <li>header</li>
-         <li>posten</li>  
-     </ul>
+      </ul>
     </li>
    <li>php artisan migrate:fresh --seed Datenbank mit Demodaten</li>
 </ul>

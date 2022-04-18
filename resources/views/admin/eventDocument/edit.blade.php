@@ -49,7 +49,7 @@
                                         @if($report->bild)
                                             <a href="/storage/eventDokumente/{{$report->bild}}" target="_blank">{{$report->filename}}</a>
                                         @endif
-                                    <!-- Note: Ist überfüssig wenn keine alten daten übernommen wurden-->
+                                    <!-- Note: Ist überfüssig wenn keine alten Daten übernommen wurden-->
                                         @if($report->image)
                                             <a href="/daten/text/{{$report->image}}" target="_blank">{{$report->filename}}</a>
                                         @endif
@@ -58,8 +58,38 @@
                                         <small class="form-text text-danger">{!! $errors->first('documentFile') !!}</small>
                                     </div>
                                     <div class="my-4" >
+                                        <label for="verwendung">Dokumententyp:</label>
+                                        <br>
+                                        <select name="verwendung" class="w-full border rounded shadow p-2 mr-2 my-2">
+                                            <option value="2"
+                                                @if($report->verwendung == "2")
+                                                    selected
+                                                @endif
+                                                >Ausschreibung
+                                            </option>
+                                            <option value="3"
+                                                @if($report->verwendung == "3")
+                                                    selected
+                                                @endif
+                                                >Programm
+                                            </option>
+                                            <option value="4"
+                                                @if($report->verwendung == "4")
+                                                    selected
+                                                @endif
+                                                >Ergebnisse
+                                            </option>
+                                            <option value="5"
+                                                @if($report->verwendung == "3")
+                                                    selected
+                                                @endif
+                                                >Plakat / Flyer
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="my-4" >
                                         <label for="name">Kommentar der Datei:</label>
-                                        <textarea rows="25" cols="150" name="reportDocumentComment" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('reportDocumentComment') ?? $report->kommentar }}</textarea>
+                                        <textarea rows="15" cols="150" name="reportDocumentComment" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('reportDocumentComment') ?? $report->kommentar }}</textarea>
                                         <small class="form-text text-danger">{!! $errors->first('reportDocumentComment') !!}</small>
                                     </div>
                                     <div class="py-2">

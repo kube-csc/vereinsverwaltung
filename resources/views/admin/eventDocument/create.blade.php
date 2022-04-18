@@ -58,7 +58,7 @@
                                   <label for="verwendung">Dokumententyp:</label>
                                   <br>
                                   <select name="verwendung" class="w-full border rounded shadow p-2 mr-2 my-2">
-                                      <option value="2">Ausschreibung</option>
+                                      <option value="2" >Ausschreibung</option>
                                       <option value="3">Programm</option>
                                       <option value="4">Ergebnisse</option>
                                       <option value="5">Plakat / Flyer</option>

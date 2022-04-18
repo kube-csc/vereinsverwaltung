@@ -80,7 +80,7 @@
                     ];
                 @endphp
                 <div>
-                    <b>Dokumente zum Downloaden:</b>
+                    <b>Dokumente zum herunterladen:</b>
                         @foreach($eventDokumentes as $eventDokumente)
                         @if($loop->first)
                             @php($groupflak=$eventDokumente->verwendung)

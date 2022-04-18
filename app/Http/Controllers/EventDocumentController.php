@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\report;
-use App\Models\event;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -392,6 +392,7 @@ class EventDocumentController extends Controller
         report::find($reportId)->update([
             'titel'            => $request->reportTitleDocument,
             'kommentar'        => $request->reportDocumentComment,
+            'verwendung'       => $request->verwendung,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);

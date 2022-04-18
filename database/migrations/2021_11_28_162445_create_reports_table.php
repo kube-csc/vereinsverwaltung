@@ -35,7 +35,7 @@ class CreateReportsTable extends Migration
                                                                          //        6 = Presse
                                                                          //        7 = Player
 
-            $table->integer('typ')->default(1);             //        1 = jpg
+            $table->integer('typ')->default(1)->nullable(); //        1 = jpg
                                                                          //        2 = gif
                                                                          //        3 = png
                                                                          //        4 = bmp

@@ -8,6 +8,7 @@ use App\Models\SportSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class EventController extends Controller
 {
@@ -16,13 +17,17 @@ class EventController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $events = event::where([
             ['verwendung' , '0'],
             ['datumbis' ,'>=', Carbon::now()->toDateString()]
           ])
-            ->orderby('datumbis' , 'desc')
+            ->orderby('datumvon')
             ->paginate(5);
 
         return view('admin.event.index')->with([
@@ -36,11 +41,47 @@ class EventController extends Controller
              ['verwendung' , '0'],
              ['datumbis' ,'<=', Carbon::now()->toDateString()]
            ])
-             ->orderby('datumbis' , 'desc')
+             ->orderby('datumvon' , 'desc')
              ->paginate(5);
+
         return view('admin.event.index')->with([
             'events' => $events
           ]);
+    }
+
+    public function IndexRegatta()
+    {
+        $events = event::where([
+            ['id' , '!=' , Session::get('regattaSelectId')],
+            ['verwendung', '0'],
+            ['regatta', '1']
+        ])
+            ->orderby('datumbis', 'desc')
+            ->paginate(5);
+
+        return view('admin.event.indexRegatta')->with([
+            'events' => $events
+        ]);
+    }
+
+    public function selectRegatta($event_id)
+    {
+        $events = event::where([
+            ['id' , '!=' , $event_id],
+            ['verwendung' , '0'],
+            ['regatta' , '1']
+        ])
+            ->orderby('datumbis' , 'desc')
+            ->paginate(5);
+
+        $eventSelect=event::find($event_id);
+
+        Session::put('regattaSelectId' , $event_id);
+        Session::put('regattaSelectUeberschrift' , $eventSelect->ueberschrift);
+
+        return view('admin.event.indexRegatta')->with([
+            'events'      => $events,
+        ]);
     }
 
     /**
@@ -219,4 +260,35 @@ class EventController extends Controller
     {
         //
     }
+
+    public function regattaAktiv(Request $request, $event_id)
+    {
+        Event::find($event_id)->update([
+                'regatta' => 1,
+                'bearbeiter_id' => Auth::user()->id,
+                'updated_at' => Carbon::now()
+            ]
+        );
+
+        return redirect('/Regatta/alle')->with([
+                'success' => 'Für das Event wurde die Regattaverwaltung aktiviert.'
+            ]
+        );
+    }
+
+    public function regattaInaktiv(Request $request, $event_id)
+    {
+        Event::find($event_id)->update([
+                'regatta' => Null,
+                'bearbeiter_id' => Auth::user()->id,
+                'updated_at' => Carbon::now()
+            ]
+        );
+
+        return redirect('/Event/alle')->with([
+                'success' => 'Für das Event wurde die Regattaverwaltung deaktiviert.'
+            ]
+        );
+    }
+
 }

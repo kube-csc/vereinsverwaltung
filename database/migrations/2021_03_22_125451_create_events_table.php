@@ -19,22 +19,19 @@ class CreateEventsTable extends Migration
             $table->date('datumbis');
             $table->date('datumvona')->nullable();
             $table->date('datumbisa')->nullable();
-            $table->string('veranstaltung', 50)->default('');   // ToDo: wird nicht mehr benötigt
             $table->string('ueberschrift', 50)->default('');
             $table->text('beschreibung')->nullable();
             $table->string('ansprechpartner', 50)->nullable();
             $table->string('telefon', 25)->nullable();
             $table->string('email', 50)->nullable();
             $table->string('homepage')->nullable();
-            //$table->unsignedBigInteger('gruppe');
-            $table->unsignedBigInteger('sportSection_id')->nullable();    //ToDo: Das Feld soll die Gruppe ablösen
+            $table->unsignedBigInteger('sportSection_id')->nullable();
             $table->char('startseite', 1)->default('');
             $table->text('nachtermin')->nullable();
             $table->text('anmeldetext')->nullable();
             $table->char('onlinemeldung', 3)->nullable();
-            $table->char('regatta')->default('');
-            $table->integer('verwendung')->nullable();
-                                                                    // 0 = Event / Termin
+            $table->integer('regatta')->nullable();
+            $table->integer('verwendung')->default(0); // 0 = Event / Termin
                                                                     // 1 =
                                                                     // 2 =
                                                                     // 3 =
@@ -45,8 +42,8 @@ class CreateEventsTable extends Migration
             $table->integer('teilnehmermax')->default(0);
             $table->unsignedBigInteger('externerCalender_id')->nullable();
             $table->text('externerCalenderEvent_id')->nullable();
-            $table->unsignedBigInteger('autor_id')->nullable();
-            $table->unsignedBigInteger('bearbeiter_id')->nullable();
+            $table->unsignedBigInteger('autor_id');
+            $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('freigeber_id')->nullable();
             $table->timestamp('letzteFreigabe')->nullable();
             $table->char('freigabe', 1)->default('');

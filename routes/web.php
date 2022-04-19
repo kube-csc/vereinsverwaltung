@@ -85,10 +85,13 @@ Route::get('/Event/alle',                             [EventController::class, '
 Route::get('/Eventvergangenheit/alle',                [EventController::class, 'indexPast'])          ->name('event.indexPast');
 Route::get('/Event/neu',                              [EventController::class, 'create'])             ->name('event.create');
 Route::get('/Abteilungsevent/neu/{sportSection_id}',  [EventController::class, 'createSportSection']) ->name('event.createSportSection');
-//Route::get('/Mannschaftsevent/neu/{sportSection_id}', [EventController::class, 'createSportTeam'])  ->name('event.createSportTeam');
 Route::post('/Event/speichern',                       [EventController::class, 'store'])              ->name('event.store');
 Route::get('/Event/edit/{event_id}',                  [EventController::class, 'edit'])               ->name('event.edit');
 Route::post('/Event/update/{event_id}',               [EventController::class, 'update'])             ->name('event.update');
+Route::get('/Regatta/aktiv/{event_id}',               [EventController::class, 'regattaAktiv'])       ->name('event.regattaAktiv');
+Route::get('/Regatta/inaktiv/{event_id}',             [EventController::class, 'regattaInaktiv'])     ->name('event.regattaInaktiv');
+Route::get('/Regatta/alle',                           [EventController::class, 'indexRegatta'])       ->name('event.indexRegatta');
+Route::get('/Regatta/{event_id}',                     [EventController::class, 'selectRegatta'])      ->name('event.selectRegatta');
 
 //Route::resource('Eventgruppe', 'EventGroupController');
 Route::get('/Eventgruppe/alle',                        [EventGroupController::class, 'index'])         ->name('eventGroup.index');

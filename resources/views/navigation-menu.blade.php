@@ -24,6 +24,9 @@
                   <x-jet-nav-link href="{{ route('adminmenu') }}" :active="request()->routeIs('adminmenu')">
                       {{ __('Menue') }}
                   </x-jet-nav-link>
+                  <x-jet-nav-link href="{{ route('regattaMenu') }}" :active="request()->routeIs('regattaMenu')">
+                      {{ __('Regattaverwaltung') }}
+                  </x-jet-nav-link>
                   <x-jet-nav-link href="/">
                       {{ __('Homepage') }}
                   </x-jet-nav-link>

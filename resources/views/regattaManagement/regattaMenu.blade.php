@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('Regattaverwaltung') }}
         </h2>
     </x-slot>
 
@@ -11,23 +11,25 @@
 
                 <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
                     <div class="flex justify-center pt-8 sm:justify-start sm:pt-0 text-xl">
-                     Persönliches Deshboard
+                        Regattaverwaltung
                     </div>
 
                     <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                         <div class="grid grid-cols-1 md:grid-cols-2">
                             <div class="p-6">
                                 <div class="flex items-center">
-                                     <div class="ml-4 text-lg leading-7 font-semibold">Interne Bereich</div>
+                                    <div class="ml-4 text-lg leading-7 font-semibold">
+
+                                    </div>
                                 </div>
 
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Adminmenu')">
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/')">
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-                                                        Zum Internen Bereich
+
                                                     </p>
                                                 </div>
                                             </div>
@@ -38,7 +40,9 @@
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
                                 <div class="flex items-center">
-                                      <div class="ml-4 text-lg leading-7 font-semibold">Homepage</div>
+                                    <div class="ml-4 text-lg leading-7 font-semibold">
+
+                                    </div>
                                 </div>
 
                                 <div class="ml-12">
@@ -47,7 +51,7 @@
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-                                                        zur Homepage
+
                                                     </p>
                                                 </div>
                                             </div>
@@ -59,16 +63,17 @@
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700">
                                 <div class="flex items-center">
                                     <div class="ml-4 text-lg leading-7 font-semibold">
-                                    Regattaverwaltung</div>
+
+                                    </div>
                                 </div>
 
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Regattamenu')">
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/')">
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-                                                        Zur Regattaverwaltung
+
                                                     </p>
                                                 </div>
                                             </div>

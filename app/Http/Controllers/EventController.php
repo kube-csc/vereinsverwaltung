@@ -78,6 +78,7 @@ class EventController extends Controller
 
         Session::put('regattaSelectId' , $event_id);
         Session::put('regattaSelectUeberschrift' , $eventSelect->ueberschrift);
+        Session::put('regattaSelectRaceDate' , $eventSelect->datumvon);
 
         return view('admin.event.indexRegatta')->with([
             'events'      => $events,

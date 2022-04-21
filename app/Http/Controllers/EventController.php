@@ -261,6 +261,20 @@ class EventController extends Controller
         //
     }
 
+    public function regattaAktivSelect()
+    {
+        $events = event::where([
+            'verwendung'  => '0',
+            'regatta'  => Null,
+         ])
+            ->orderby('datumvon' , 'desc')
+            ->paginate(5);
+
+            return view('admin.event.indexRegattaAktiv')->with([
+            'events' => $events
+        ]);
+    }
+
     public function regattaAktiv(Request $request, $event_id)
     {
         Event::find($event_id)->update([

@@ -88,6 +88,7 @@ Route::get('/Abteilungsevent/neu/{sportSection_id}',  [EventController::class, '
 Route::post('/Event/speichern',                       [EventController::class, 'store'])              ->name('event.store');
 Route::get('/Event/edit/{event_id}',                  [EventController::class, 'edit'])               ->name('event.edit');
 Route::post('/Event/update/{event_id}',               [EventController::class, 'update'])             ->name('event.update');
+Route::get('/Regatta/wahl/aktiv',                     [EventController::class, 'regattaAktivSelect']) ->name('event.indexRegattaAktiv');
 Route::get('/Regatta/aktiv/{event_id}',               [EventController::class, 'regattaAktiv'])       ->name('event.regattaAktiv');
 Route::get('/Regatta/inaktiv/{event_id}',             [EventController::class, 'regattaInaktiv'])     ->name('event.regattaInaktiv');
 Route::get('/Regatta/alle',                           [EventController::class, 'indexRegatta'])       ->name('event.indexRegatta');

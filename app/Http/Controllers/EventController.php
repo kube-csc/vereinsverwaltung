@@ -64,27 +64,6 @@ class EventController extends Controller
         ]);
     }
 
-    public function selectRegatta($event_id)
-    {
-        $events = event::where([
-            ['id' , '!=' , $event_id],
-            ['verwendung' , '0'],
-            ['regatta' , '1']
-        ])
-            ->orderby('datumbis' , 'desc')
-            ->paginate(5);
-
-        $eventSelect=event::find($event_id);
-
-        Session::put('regattaSelectId' , $event_id);
-        Session::put('regattaSelectUeberschrift' , $eventSelect->ueberschrift);
-        Session::put('regattaSelectRaceDate' , $eventSelect->datumvon);
-
-        return view('admin.event.indexRegatta')->with([
-            'events'      => $events,
-        ]);
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -304,6 +283,29 @@ class EventController extends Controller
                 'success' => 'Für das Event wurde die Regattaverwaltung deaktiviert.'
             ]
         );
+    }
+
+    public function selectRegatta($event_id)
+    {
+        $events = event::where([
+            ['id' , '!=' , $event_id],
+            ['verwendung' , '0'],
+            ['regatta' , '1']
+        ])
+            ->orderby('datumbis' , 'desc')
+            ->paginate(5);
+
+        $eventSelect=event::find($event_id);
+
+        Session::put('regattaSelectId' , $event_id);
+        Session::put('regattaSelectUeberschrift' , $eventSelect->ueberschrift);
+        Session::put('regattaSelectRaceDate' , $eventSelect->datumvon);
+        Session::put('regattaSelectRaceDateForm' , $eventSelect->datumvon);
+        Session::put('regattaSelectRaceDateUntil' , $eventSelect->datumbis);
+
+        return view('admin.event.indexRegatta')->with([
+            'events'      => $events,
+        ]);
     }
 
 }

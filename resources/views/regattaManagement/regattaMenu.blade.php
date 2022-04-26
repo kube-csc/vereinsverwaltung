@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Regattaverwaltung') }} {{ Session::get('regattaSelectUeberschrift') }}
+            {{ __('Regattaverwaltung') }}: {{ Session::get('regattaSelectUeberschrift') }}
         </h2>
     </x-slot>
 
@@ -78,21 +78,39 @@
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700">
                                 <div class="flex items-center">
                                     <div class="ml-4 text-lg leading-7 font-semibold">
-
+                                       Rennen bearbeiten
                                     </div>
                                 </div>
 
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/')">
+                                        @if(Session::has('regattaSelectUeberschrift'))
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Rennen/neu')">
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-
+                                                       Rennen eingeben
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        @if(Session::has('regattaSelectUeberschrift'))
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Rennen/alle')">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex">
+                                                        <p class="font-bold text-lg">
+                                                            Rennen auswählen
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

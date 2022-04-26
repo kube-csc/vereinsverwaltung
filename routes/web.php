@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\HomeController;
@@ -13,6 +12,7 @@ use App\Http\Controllers\BoardUserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventDocumentController;
+use App\Http\Controllers\RaceController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
@@ -193,7 +193,7 @@ Route::get('/EventDokumente/down/{document_id}',              [EventDocumentCont
 Route::get('/EventDokumente/maxdown/{document_id}',           [EventDocumentController::class, 'maxdown'])               ->name('eventDocument.maxdown');
 Route::get('/EventDokumente/Eintrag/geloescht/{document_id}', [EventDocumentController::class, 'destroy'])               ->name('eventDocument.destroy');
 
-//Route::resource('Backlink.', 'BacklinksController');
+//Route::resource('Backlink', 'BacklinksController');
 Route::get('/Backlink/alle',                         [BacklinksController::class, 'index'])         ->name('backlink.index');
 Route::get('/Backlink/relevant',                     [BacklinksController::class, 'indexRelevant']) ->name('backlink.indexRelevant');
 Route::get('/Backlink/benutzt',                      [BacklinksController::class, 'indexUsed'])     ->name('backlink.indexUsed');
@@ -204,6 +204,13 @@ Route::get('/Backlink/inaktiv/{backlink_id}',        [BacklinksController::class
 Route::get('/Backlink/softDelete/{backlink_id}',     [BacklinksController::class, 'softDelete']);
 Route::get('/Backlink/edit/{backlink_id}',           [BacklinksController::class, 'edit'])          ->name('backlink.edit');
 Route::post('/Backlink/update/{backlink_id}',        [BacklinksController::class, 'update'])        ->name('backlink.update');
+
+//Route::resource('Rennen', 'RaceController');
+Route::get('/Rennen/alle',                            [RaceController::class, 'index'])     ->name('race.index');
+Route::get('/Rennen/neu',                             [RaceController::class, 'create'])    ->name('race.create');
+Route::post('/Rennen/speichern',                      [RaceController::class, 'store'])     ->name('race.store');
+Route::get('/Rennen/edit/{race_id}',                  [RaceController::class, 'edit'])      ->name('race.edit');
+Route::post('/Rennen/update/{document_id}',           [RaceController::class, 'update'])    ->name('race.update');
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

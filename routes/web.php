@@ -206,11 +206,21 @@ Route::get('/Backlink/edit/{backlink_id}',           [BacklinksController::class
 Route::post('/Backlink/update/{backlink_id}',        [BacklinksController::class, 'update'])        ->name('backlink.update');
 
 //Route::resource('Rennen', 'RaceController');
-Route::get('/Rennen/alle',                            [RaceController::class, 'index'])     ->name('race.index');
-Route::get('/Rennen/neu',                             [RaceController::class, 'create'])    ->name('race.create');
-Route::post('/Rennen/speichern',                      [RaceController::class, 'store'])     ->name('race.store');
-Route::get('/Rennen/edit/{race_id}',                  [RaceController::class, 'edit'])      ->name('race.edit');
-Route::post('/Rennen/update/{document_id}',           [RaceController::class, 'update'])    ->name('race.update');
+Route::get('/Rennen/alle',                            [RaceController::class, 'index'])           ->name('race.index');
+Route::get('/Rennen/neu',                             [RaceController::class, 'create'])          ->name('race.create');
+Route::post('/Rennen/speichern',                      [RaceController::class, 'store'])           ->name('race.store');
+Route::get('/Rennen/edit/{race_id}',                  [RaceController::class, 'edit'])            ->name('race.edit');
+Route::post('/Rennen/update/{race_id}',               [RaceController::class, 'update'])          ->name('race.update');
+Route::get('/Rennen/Programm',                        [RaceController::class, 'indexProgramm'])   ->name('race.indexProgramm');
+Route::get('/Rennen/ProgrammAll',                     [RaceController::class, 'indexProgrammAll'])->name('race.indexProgrammAll');
+Route::get('/Rennen/Programm/{race_id}',              [RaceController::class, 'editProgramm'])    ->name('race.editProgramm');
+Route::post('/Rennen/Programm/update/{race_id}',      [RaceController::class, 'updateProgramm'])  ->name('race.updateProgramm');
+Route::get('/Rennen/Programm/loeschen/{race_id}',     [RaceController::class, 'deleteProgramm'])  ->name('race.deleteProgramm');
+Route::get('/Rennen/Ergebnisse',                      [RaceController::class, 'indexResult'])     ->name('race.indexResult');
+Route::get('/Rennen/ErgebnisseAlle',                 [RaceController::class, 'indexResultAll'])  ->name('race.indexResultAll');
+Route::get('/Rennen/Ergebnis/{race_id}',              [RaceController::class, 'editResult'])      ->name('race.editResult');
+Route::post('/Rennen/Ergebnis/update/{race_id}',      [RaceController::class, 'updateResult'])    ->name('race.updateResult');
+Route::get('/Rennen/Ergebnis/loeschen/{race_id}',     [RaceController::class, 'deleteResult'])    ->name('race.deleteResult');
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

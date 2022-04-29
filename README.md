@@ -71,6 +71,7 @@
 </ul>
 
 <h2>Backend</h2>
+<h3>Vereinsverwaltung</h3>
 <ul>
   <li>Eingabe und Bearbeitung der Vereinsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
@@ -86,6 +87,7 @@
               <li>Ergebnislisten</li>
               <li>Flyer / Plakat</li>
           </ul>
+        <li>Regatta anlegen</li>  
       </ul>
   </li>
   <li>Eingabe und Bearbeitung von Event Gruppen</li>
@@ -101,6 +103,12 @@
   </li>
 <li>Backlinksverwaltung Umleitung von Links die nicht mehr Existieren</li>
 </ul>
+<h3>Regattaverwaltung</h3>
+<ul>
+<li>Regatta auswählen</li>
+<li>Rennen anlegen und bearbeiten</li>
+<li>Programm- und Ergebnissedokument für jedes Rennen hochladen</li>
+</ul>
 
 <h2>Installation</h2>
 <ul>
@@ -109,14 +117,15 @@
    </li>
    <li>composer.phar install</li>
    <li>php artisan storage:link<br>
-      anlegen der Unterordner unter "public/storage"
+      anlegen der Unterordner unter "public/storage/"
       <ul>
-         <li>boardPortrait</li> 
-         <li>botman</li> 
-         <li>dokumente</li>
-         <li>eventDokumente</li>
-         <li>eventImage</li>
-         <li>header</li>
+        <li>boardPortrait</li> 
+        <li>botman</li> 
+        <li>dokumente</li>
+        <li>eventDokumente</li>
+        <li>eventImage</li>
+        <li>header</li>
+        <li>raceDokumente</li>
       </ul>
     </li>
    <li>php artisan migrate:fresh --seed Datenbank mit Demodaten</li>
@@ -126,7 +135,7 @@
 <ul>
    <li>git pull origin main</li>
    <li>php artisan migrate:fresh --seed (solange noch eine eigenden Daten in der Datenbank eingeben worden sind)</li>
-   <li>php artisan migrate (Wenn noch keine eigenden Daten in der Datenbank vorhanden sind kann fresh --seed verwendet werden.)</li>
+   <li>php artisan migrate (Wenn keine eigenen Daten in der Datenbank vorhanden sind, kann "fresh --seed" verwendet werden.)</li>
 </ul>
 
 <br>

@@ -66,7 +66,7 @@
                                       <small class="form-text text-danger">{!! $errors->first('uhrzeit') !!}</small>
                                   </div>
                                   <div class="py-2">
-                                   <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
+                                     <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
                                   </div>
                              </form>
                              <br>

@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
        $this->call(DocumentSeeder::class);
        $this->call(ReportSeeder::class);
        $this->call(BacklinksSeeder::class);
+       $this->call(RaceSeeder::class);
     }
 }

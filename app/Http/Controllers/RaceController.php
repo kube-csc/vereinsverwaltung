@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class RaceController extends Controller
 {
@@ -24,13 +25,77 @@ class RaceController extends Controller
     public function index()
     {
         $races = Race::where([
+            'event_id' => Session::get('regattaSelectId'),
         ])
             ->orderby('datumvon')
             ->orderby('uhrzeit')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
-            'races' => $races
+            'races'  => $races,
+            'status' => 0
+        ]);
+    }
+
+    public function indexProgramm()
+    {
+        $races = Race::where([
+            ['event_id' , Session::get('regattaSelectId')],
+            ['programmDatei' , Null],
+        ])
+            ->orderby('datumvon')
+            ->orderby('uhrzeit')
+            ->paginate(5);
+
+        return view('regattaManagement.race.index')->with([
+            'races'  => $races,
+            'status' => 1
+        ]);
+    }
+
+    public function indexProgrammAll()
+    {
+        $races = Race::where([
+            ['event_id' , Session::get('regattaSelectId')]
+        ])
+            ->orderby('datumvon')
+            ->orderby('uhrzeit')
+            ->paginate(5);
+
+        return view('regattaManagement.race.index')->with([
+            'races'  => $races,
+            'status' => 1
+        ]);
+    }
+
+    public function indexResult()
+    {
+        $races = Race::where([
+            ['event_id' , Session::get('regattaSelectId')],
+            ['ergebnisDatei' , Null],
+        ])
+            ->orderby('datumvon')
+            ->orderby('uhrzeit')
+            ->paginate(5);
+
+        return view('regattaManagement.race.Index')->with([
+            'races'  => $races,
+            'status' => 2
+        ]);
+    }
+
+    public function indexResultAll()
+    {
+        $races = Race::where([
+            ['event_id' , Session::get('regattaSelectId')]
+        ])
+            ->orderby('datumvon')
+            ->orderby('uhrzeit')
+            ->paginate(5);
+
+        return view('regattaManagement.race.Index')->with([
+            'races'  => $races,
+            'status' => 2
         ]);
     }
 
@@ -108,8 +173,8 @@ class RaceController extends Controller
             $timeNew=$request->uhrzeit;
         }
 
-        Session::put('regattaSelectRaceDate' , $request->datumvon);
-        Session::put('regattaSelectRaceTime' , $request->uhrzeit);
+        Session::put('regattaSelectRaceDate'    , $request->datumvon);
+        Session::put('regattaSelectRaceTime'    , $request->uhrzeit);
         Session::put('regattaSelectRaceTimeNew' , $timeNew);
 
         return redirect('/Rennen/neu')->with([
@@ -140,6 +205,20 @@ class RaceController extends Controller
         $race = Race::find($raceid);
 
         return view('regattaManagement.race.edit' , compact('race'));
+    }
+
+    public function editProgramm($race_id)
+    {
+        $race = Race::find($race_id);
+
+        return view('regattaManagement.race.editProgramm' , compact('race'));
+    }
+
+    public function editResult($race_id)
+    {
+        $race = Race::find($race_id);
+
+        return view('regattaManagement.race.editResult' , compact('race'));
     }
 
     /**
@@ -174,6 +253,72 @@ class RaceController extends Controller
         );
     }
 
+    public function updateProgramm(Request $request, $race_id)
+    {
+         Race::find($race_id)->update([
+            'beschreibung'    => $request->beschreibung,
+            'updated_at'      => Carbon::now()
+        ]);
+
+        if($request->programmDatei){
+            $extension = $request->programmDatei->extension();
+            $newDocumentName = 'programm' . $race_id . '_' . str::random(4) . '.' . $extension;
+            Storage::disk('public')->putFileAs(
+                'raceDokumente/',
+                $request->programmDatei,
+                $newDocumentName
+            );
+
+            $oldDocumentFile = Race::find($race_id);
+            if(isset($oldDocumentFile->programmDatei)){
+                Storage::disk('public')->delete('raceDokument/'.$oldDocumentFile->programmDatei);
+            }
+
+            Race::find($race_id)->update([
+                'programmDatei'   => $newDocumentName,
+            ]);
+        }
+
+        return redirect('/Rennen/Programm')->with(
+            [
+                'success'  => 'Die Daten von den Rennen wurden gespeichert.'
+            ]
+        );
+    }
+
+    public function updateResult(Request $request, $race_id)
+    {
+        Race::find($race_id)->update([
+            'ergebnisBeschreibung' => $request->ergebnisBeschreibung,
+            'updated_at'           => Carbon::now()
+        ]);
+
+        if($request->ergebnisDatei){
+            $extension = $request->ergebnisDatei->extension();
+            $newDocumentName = 'ergebnis' . $race_id . '_' . str::random(4) . '.' . $extension;
+            Storage::disk('public')->putFileAs(
+                'raceDokumente/',
+                $request->ergebnisDatei,
+                $newDocumentName
+            );
+
+            $oldDocumentFile = Race::find($race_id);
+            if(isset($oldDocumentFile->ergebnisDatei)){
+                Storage::disk('public')->delete('raceDokument/'.$oldDocumentFile->ergebnisDatei);
+            }
+
+            Race::find($race_id)->update([
+                'ergebnisDatei'   => $newDocumentName,
+            ]);
+        }
+
+        return redirect('/Rennen/Ergebnisse')->with(
+            [
+                'success'  => 'Die Daten von den Rennen wurden gespeichert.'
+            ]
+        );
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -184,4 +329,45 @@ class RaceController extends Controller
     {
         //
     }
+
+    public function deleteProgramm($race_Id)
+    {
+        $deleteDocumentFile = Race::find($race_Id);
+        if(isset($deleteDocumentFile->programmDatei)){
+            Storage::disk('public')->delete('raceDokumente/'.$deleteDocumentFile->programmDatei);
+        }
+        Race::find($race_Id)->update(
+            [
+                'programmDatei' => Null,
+                'updated_at'    => Carbon::now()
+            ]);
+
+        $document = Race::find($race_Id);
+        return redirect('/Rennen/Programm')->with(
+            [
+                'success'  => 'Das Programmdokument <b>' . $document->programmDatei . '</b> wurden gelöscht.'
+            ]
+        );
+    }
+
+    public function deleteResult($race_Id)
+    {
+        $deleteDocumentFile = Race::find($race_Id);
+        if(isset($deleteDocumentFile->ergebnisDatei)){
+            Storage::disk('public')->delete('raceDokumente/'.$deleteDocumentFile->ergebnisDatei);
+        }
+        Race::find($race_Id)->update(
+            [
+                'ergebnisDatei' => Null,
+                'updated_at'    => Carbon::now()
+            ]);
+
+        $document = Race::find($race_Id);
+        return redirect('/Rennen/Ergebnisse')->with(
+            [
+                'success'  => 'Das Ergebnisdokument  <b>' . $document->ergebnisDatei . '</b> wurden gelöscht.'
+            ]
+        );
+    }
+
 }

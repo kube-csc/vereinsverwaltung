@@ -23,7 +23,14 @@
               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Rennen</div>
+                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
+                                @if($status==1)
+                                    Programm des
+                                @endif
+                                @if($status==2)
+                                    Ergebnisse des
+                                @endif
+                                    Rennen</div>
                       </div>
 
                       <div class="ml-12">
@@ -54,9 +61,16 @@
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/EinlaufFoto/'.$race->id) }}">
                                             <box-icon name='image'></box-icon>
                                         </a>
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Dokumente/'.$race->id) }}">
+                                        @if($status==1)
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Programm/'.$race->id) }}">
                                             <box-icon name='file'></box-icon>
                                         </a>
+                                        @endif
+                                        @if($status==2)
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Ergebnis/'.$race->id) }}">
+                                            <box-icon name='file'></box-icon>
+                                        </a>
+                                        @endif
                                       </div>
                                   </div>
                                   <div class="justify-between my-2">

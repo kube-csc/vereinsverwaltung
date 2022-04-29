@@ -56,23 +56,66 @@
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
                                 <div class="flex items-center">
                                     <div class="ml-4 text-lg leading-7 font-semibold">
-
+                                        Ergebniss Verwaltung
                                     </div>
                                 </div>
-
+                                @if(Session::has('regattaSelectUeberschrift'))
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/')">
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Rennen/Programm')">
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-
+                                                      Fehlende Rennaufstellung
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Rennen/ProgrammAll')">
+                                            <div class="justify-between my-2">
+                                                <div class="flex">
+                                                    <p class="font-bold text-lg">
+                                                        alle Rennaufstellung
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Rennen/Ergebnisse')">
+                                            <div class="justify-between my-2">
+                                                <div class="flex">
+                                                    <p class="font-bold text-lg">
+                                                        Fehlende Ergenbisse
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Rennen/ErgebnisseAlle')">
+                                            <div class="justify-between my-2">
+                                                <div class="flex">
+                                                    <p class="font-bold text-lg">
+                                                        alle Ergenbisse
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
                             </div>
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700">

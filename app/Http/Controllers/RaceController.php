@@ -37,7 +37,7 @@ class RaceController extends Controller
         ]);
     }
 
-    public function indexProgramm()
+    public function indexProgram()
     {
         $races = Race::where([
             ['event_id' , Session::get('regattaSelectId')],
@@ -53,7 +53,7 @@ class RaceController extends Controller
         ]);
     }
 
-    public function indexProgrammAll()
+    public function indexProgramAll()
     {
         $races = Race::where([
             ['event_id' , Session::get('regattaSelectId')]
@@ -207,11 +207,11 @@ class RaceController extends Controller
         return view('regattaManagement.race.edit' , compact('race'));
     }
 
-    public function editProgramm($race_id)
+    public function editProgram($race_id)
     {
         $race = Race::find($race_id);
 
-        return view('regattaManagement.race.editProgramm' , compact('race'));
+        return view('regattaManagement.race.editProgram' , compact('race'));
     }
 
     public function editResult($race_id)
@@ -253,7 +253,7 @@ class RaceController extends Controller
         );
     }
 
-    public function updateProgramm(Request $request, $race_id)
+    public function updateProgram(Request $request, $race_id)
     {
          Race::find($race_id)->update([
             'beschreibung'    => $request->beschreibung,
@@ -330,7 +330,7 @@ class RaceController extends Controller
         //
     }
 
-    public function deleteProgramm($race_Id)
+    public function deleteProgram($race_Id)
     {
         $deleteDocumentFile = Race::find($race_Id);
         if(isset($deleteDocumentFile->programmDatei)){

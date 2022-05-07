@@ -12,21 +12,22 @@
 
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
-                      Rennen: {{ old('ueberschrift') ?? $race->rennBezeichnung }}
+                      Rennen: {{ $race->nummer }}<br>
+                      {{ $race->rennBezeichnung }}
                   </div>
 
                   <div class="mt-6 text-gray-500">
                     @php
                       // ToDo: Beschreibungstext überarbeiten
                     @endphp
-                    Bitte bearbeiten das Ergebnisse des Rennen.
+                    Bitte bearbeite das Programm des Rennens.
                   </div>
               </div>
 
               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Ergebnisse des Rennen bearbeiten</div>
+                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Programm des Rennens bearbeiten</div>
                       </div>
 
                       <div class="ml-12">

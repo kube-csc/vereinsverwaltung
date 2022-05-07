@@ -78,7 +78,7 @@ class RaceController extends Controller
             ->orderby('uhrzeit')
             ->paginate(5);
 
-        return view('regattaManagement.race.Index')->with([
+        return view('regattaManagement.race.index')->with([
             'races'  => $races,
             'status' => 2
         ]);
@@ -93,7 +93,7 @@ class RaceController extends Controller
             ->orderby('uhrzeit')
             ->paginate(5);
 
-        return view('regattaManagement.race.Index')->with([
+        return view('regattaManagement.race.index')->with([
             'races'  => $races,
             'status' => 2
         ]);

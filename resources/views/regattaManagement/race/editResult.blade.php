@@ -12,21 +12,22 @@
 
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
-                      Rennen: {{ old('ueberschrift') ?? $race->rennBezeichnung }}
+                      Rennen: {{ $race->nummer }}<br>
+                      {{ $race->rennBezeichnung }}
                   </div>
 
                   <div class="mt-6 text-gray-500">
                     @php
                       // ToDo: Beschreibungstext überarbeiten
                     @endphp
-                    Bitte bearbeiten die Ergebnisse des Rennen.
+                    Bitte bearbeiten die Ergebnisse des Rennens.
                   </div>
               </div>
 
               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Ergebnisse des Rennen bearbeiten</div>
+                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Ergebnisse des Rennens bearbeiten</div>
                       </div>
 
                       <div class="ml-12">
@@ -38,7 +39,7 @@
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                 <div class="my-4" >
-                                    <label for="name">Beschreibung der Ergebnis:</label>
+                                    <label for="name">Beschreibung des Ergebnis:</label>
                                     <textarea rows="10" cols="200" name="ergebnisBeschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $race->ergebnisBeschreibung }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('ergebnisBeschreibung') !!}</small>
                                 </div>

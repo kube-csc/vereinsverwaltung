@@ -84,7 +84,7 @@
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $race->updated_at->diffForHumans() }}</p>
                                     </div>
                                     <div class="flex">
-                                         um {{ date("h:i", strtotime($race->uhrzeit)) }} Uhr am {{ date("d.m.Y", strtotime($race->datumvon)) }}
+                                         um {{ date("H:i", strtotime($race->rennUhrzeit)) }} Uhr am {{ date("d.m.Y", strtotime($race->rennDatum)) }}
                                     </div>
                                   </div>
 
@@ -111,9 +111,7 @@
                       </div>
 
                   </div>
-
               </div>
-
             </div>
         </div>
     </div>

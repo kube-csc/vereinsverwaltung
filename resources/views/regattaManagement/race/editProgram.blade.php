@@ -32,7 +32,13 @@
 
                       <div class="ml-12">
                           <div class="mt-2 text-sm text-gray-500">
-
+                              <div>
+                                  @if (session()->has('success'))
+                                      <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
+                                          {!! session('success') !!}
+                                      </div>
+                                  @endif
+                              </div>
                               <form autocomplete="off" action="{{ url('Rennen/Programm/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
@@ -49,7 +55,7 @@
 
                                     @if(isset($race->programmDatei))
                                         <div class="flex ml-2">
-                                            <div class="flex-initial"><a href="/storage/raceDokumente/{{ $race->programmDatei }}" target="_blank">{{ $race->programmDatei }}</a></div>
+                                            <div class="flex-initial"><a href="/storage/raceDokumente/{{ $race->programmDatei }}" target="_blank">{{ $race->fileProgrammDatei }}</a></div>
                                             <div class="flex-initial ml-2 fas fa-times text-red-600 hover:text-red-00 cursor-pointer">
                                                 <a href="/Rennen/Programm/loeschen/{{ $race->id }}">x</a>
                                             </div>

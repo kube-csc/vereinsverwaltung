@@ -35,9 +35,9 @@
 
                             <div style="text-align: left">
                               <div>
-                                  @if (session()->has('message'))
+                                  @if (session()->has('success'))
                                   <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
-                                      {{ session('message') }}
+                                      {!! session('success') !!}
                                   </div>
                                   @endif
                               </div>
@@ -58,16 +58,16 @@
                                 </div>
                                 <div>
                                     <label for="name">Datum:</label>
-                                    <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumvon') ? 'bg-red-300' : '' }}"
-                                           id="datumvon" name="datumvon" value="{{ Session::get('regattaSelectRaceDate') }}"
+                                    <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennDatum') ? 'bg-red-300' : '' }}"
+                                           id="rennDatum" name="rennDatum" value="{{ Session::get('regattaSelectRaceDate') }}"
                                            min="{{ Session::get('regattaSelectRaceDateForm') }}" max="{{ Session::get('regattaSelectRaceDateUntil') }}">
-                                    <small class="form-text text-danger">{!! $errors->first('datumvon') !!}</small>
+                                    <small class="form-text text-danger">{!! $errors->first('rennDatum') !!}</small>
                                 </div>
                                 <div>
                                     <label for="name">Zeit:</label>
-                                    <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('uhrzeit') ? 'bg-red-300' : '' }}"
-                                           id="uhrzeit" name="uhrzeit" value="{{ Session::get('regattaSelectRaceTimeNew') }}">
-                                    <small class="form-text text-danger">{!! $errors->first('uhrzeit') !!}</small>
+                                    <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
+                                           id="rennUhrzeit" name="rennUhrzeit" value="{{ Session::get('regattaSelectRaceTimeNew') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                 </div>
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Rennen anlegen</button>

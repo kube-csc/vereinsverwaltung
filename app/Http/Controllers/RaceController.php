@@ -27,8 +27,8 @@ class RaceController extends Controller
         $races = Race::where([
             'event_id' => Session::get('regattaSelectId'),
         ])
-            ->orderby('datumvon')
-            ->orderby('uhrzeit')
+            ->orderby('rennDatum')
+            ->orderby('rennUhrzeit')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
@@ -43,8 +43,8 @@ class RaceController extends Controller
             ['event_id' , Session::get('regattaSelectId')],
             ['programmDatei' , Null],
         ])
-            ->orderby('datumvon')
-            ->orderby('uhrzeit')
+            ->orderby('rennDatum')
+            ->orderby('rennUhrzeit')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
@@ -56,10 +56,11 @@ class RaceController extends Controller
     public function indexProgramAll()
     {
         $races = Race::where([
-            ['event_id' , Session::get('regattaSelectId')]
+            ['event_id' , Session::get('regattaSelectId')],
+            ['programmDatei' ,'!=' , Null],
         ])
-            ->orderby('datumvon')
-            ->orderby('uhrzeit')
+            ->orderby('rennDatum')
+            ->orderby('rennUhrzeit')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
@@ -74,8 +75,8 @@ class RaceController extends Controller
             ['event_id' , Session::get('regattaSelectId')],
             ['ergebnisDatei' , Null],
         ])
-            ->orderby('datumvon')
-            ->orderby('uhrzeit')
+            ->orderby('rennDatum')
+            ->orderby('rennUhrzeit')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
@@ -87,10 +88,11 @@ class RaceController extends Controller
     public function indexResultAll()
     {
         $races = Race::where([
-            ['event_id' , Session::get('regattaSelectId')]
+            ['event_id' , Session::get('regattaSelectId')],
+            ['ergebnisDatei' ,'!=' , Null],
         ])
-            ->orderby('datumvon')
-            ->orderby('uhrzeit')
+            ->orderby('rennDatum')
+            ->orderby('rennUhrzeit')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
@@ -118,8 +120,8 @@ class RaceController extends Controller
     public function store(Request $request) {
         $request->validate([
                   'rennBezeichnung'  => 'required|max:50',
-                  'datumvon'         => 'required|date',
-                  'uhrzeit'          => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
+                  'rennDatum'        => 'required|date',
+                  'rennUhrzeit'      => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
             ]
         );
 
@@ -127,8 +129,8 @@ class RaceController extends Controller
                 'event_id'         => Session::get('regattaSelectId'),
                 'nummer'           => $request->nummer,
                 'rennBezeichnung'  => $request->rennBezeichnung,
-                'datumvon'         => $request->datumvon,
-                'uhrzeit'          => $request->uhrzeit,
+                'rennDatum'        => $request->rennDatum,
+                'rennUhrzeit'      => $request->rennUhrzeit,
                 'bearbeiter_id'    => Auth::user()->id,
                 'autor_id'         => Auth::user()->id,
                 'updated_at'       => Carbon::now(),
@@ -139,10 +141,10 @@ class RaceController extends Controller
 
         if(Session::has('regattaSelectRaceTime')) {
             $to = \Carbon\Carbon::createFromFormat('H:i', Session::get('regattaSelectRaceTime'));
-            $from = \Carbon\Carbon::createFromFormat('H:i', $request->uhrzeit);
+            $from = \Carbon\Carbon::createFromFormat('H:i', $request->rennUhrzeit);
             $diff_in_minutes = $to->diffInMinutes($from);
             Session::put('regattaSelectRaceTimeDiff' , $diff_in_minutes);
-            $Teile=explode(":",$request->uhrzeit);
+            $Teile=explode(":",$request->rennUhrzeit);
             $stunde1=$Teile[0];
             $minute1=$Teile[1];
             if ($minute1+$diff_in_minutes<60){
@@ -170,11 +172,11 @@ class RaceController extends Controller
             $timeNew="$stunde1:$minute1";
         }
         else{
-            $timeNew=$request->uhrzeit;
+            $timeNew=$request->rennUhrzeit;
         }
 
-        Session::put('regattaSelectRaceDate'    , $request->datumvon);
-        Session::put('regattaSelectRaceTime'    , $request->uhrzeit);
+        Session::put('regattaSelectRaceDate'    , $request->rennDatum);
+        Session::put('regattaSelectRaceTime'    , $request->rennUhrzeit);
         Session::put('regattaSelectRaceTimeNew' , $timeNew);
 
         return redirect('/Rennen/neu')->with([
@@ -231,17 +233,17 @@ class RaceController extends Controller
     public function update(Request $request, $race_id)
     {
         $request->validate([
-                'rennBezeichnung'  => 'required|max:50',
-                'datumvon'         => 'required|date',
-                'uhrzeit'          => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
+                'rennBezeichnung'   => 'required|max:50',
+                'rennDatum'         => 'required|date',
+                'rennUhrzeit'       => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
             ]
         );
 
         Race::find($race_id)->update([
                 'nummer'           => $request->nummer,
                 'rennBezeichnung'  => $request->rennBezeichnung,
-                'datumvon'         => $request->datumvon,
-                'uhrzeit'          => $request->uhrzeit,
+                'rennDatum'        => $request->rennDatum,
+                'rennUhrzeit'      => $request->rennUhrzeit,
                 'bearbeiter_id'    => Auth::user()->id,
                 'updated_at'       => Carbon::now()
             ]
@@ -263,6 +265,7 @@ class RaceController extends Controller
         if($request->programmDatei){
             $extension = $request->programmDatei->extension();
             $newDocumentName = 'programm' . $race_id . '_' . str::random(4) . '.' . $extension;
+            $fileProgrammDatei=$request->file('programmDatei')->getClientOriginalName();
             Storage::disk('public')->putFileAs(
                 'raceDokumente/',
                 $request->programmDatei,
@@ -271,17 +274,18 @@ class RaceController extends Controller
 
             $oldDocumentFile = Race::find($race_id);
             if(isset($oldDocumentFile->programmDatei)){
-                Storage::disk('public')->delete('raceDokument/'.$oldDocumentFile->programmDatei);
+                Storage::disk('public')->delete('raceDokumente/'.$oldDocumentFile->programmDatei);
             }
 
             Race::find($race_id)->update([
-                'programmDatei'   => $newDocumentName,
+                'programmDatei'     => $newDocumentName,
+                'fileProgrammDatei' => $fileProgrammDatei,
             ]);
         }
 
         return redirect('/Rennen/Programm')->with(
             [
-                'success'  => 'Die Daten von den Rennen wurden gespeichert.'
+                'success'  => 'Die Daten des Rennens wurden gespeichert.'
             ]
         );
     }
@@ -296,6 +300,7 @@ class RaceController extends Controller
         if($request->ergebnisDatei){
             $extension = $request->ergebnisDatei->extension();
             $newDocumentName = 'ergebnis' . $race_id . '_' . str::random(4) . '.' . $extension;
+            $fileErgebnisDatei=$request->file('ergebnisDatei')->getClientOriginalName();
             Storage::disk('public')->putFileAs(
                 'raceDokumente/',
                 $request->ergebnisDatei,
@@ -304,17 +309,18 @@ class RaceController extends Controller
 
             $oldDocumentFile = Race::find($race_id);
             if(isset($oldDocumentFile->ergebnisDatei)){
-                Storage::disk('public')->delete('raceDokument/'.$oldDocumentFile->ergebnisDatei);
+                Storage::disk('public')->delete('raceDokumente/'.$oldDocumentFile->ergebnisDatei);
             }
 
             Race::find($race_id)->update([
-                'ergebnisDatei'   => $newDocumentName,
+                'ergebnisDatei'     => $newDocumentName,
+                'fileErgebnisDatei' => $fileErgebnisDatei
             ]);
         }
 
         return redirect('/Rennen/Ergebnisse')->with(
             [
-                'success'  => 'Die Daten von den Rennen wurden gespeichert.'
+                'success'  => 'Die Daten des Rennens wurden gespeichert.'
             ]
         );
     }
@@ -338,14 +344,15 @@ class RaceController extends Controller
         }
         Race::find($race_Id)->update(
             [
-                'programmDatei' => Null,
-                'updated_at'    => Carbon::now()
+                'programmDatei'     => Null,
+                'fileProgrammDatei' => Null,
+                'updated_at'        => Carbon::now()
             ]);
 
         $document = Race::find($race_Id);
         return redirect('/Rennen/Programm')->with(
             [
-                'success'  => 'Das Programmdokument <b>' . $document->programmDatei . '</b> wurden gelöscht.'
+                'success'  => 'Das Programm <b>' . $document->programmDatei . '</b> wurde gelöscht.'
             ]
         );
     }
@@ -358,14 +365,15 @@ class RaceController extends Controller
         }
         Race::find($race_Id)->update(
             [
-                'ergebnisDatei' => Null,
-                'updated_at'    => Carbon::now()
+                'ergebnisDatei'     => Null,
+                'fileErgebnisDatei' => Null,
+                'updated_at'        => Carbon::now()
             ]);
 
         $document = Race::find($race_Id);
-        return redirect('/Rennen/Ergebnisse')->with(
+        return redirect('Rennen/Ergebnis/'.$race_Id)->with(
             [
-                'success'  => 'Das Ergebnisdokument  <b>' . $document->ergebnisDatei . '</b> wurden gelöscht.'
+                'success'  => 'Das Ergebnisdokument  <b>' . $document->ergebnisDatei . '</b> wurde gelöscht.'
             ]
         );
     }

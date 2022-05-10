@@ -51,19 +51,19 @@
                                   </div>
                                   <div class="my-4" >
                                       <label for="name">Datum:</label>
-                                      <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumvon') ? 'bg-red-300' : '' }}"
-                                             id="datumvon" placeholder="Startzeit" name="datumvon" value="{{ old('datumvon') ?? $race->datumvon }}"
+                                      <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennDatum') ? 'bg-red-300' : '' }}"
+                                             id="rennDatum" placeholder="Startzeit" name="rennDatum" value="{{ old('rennDatum') ?? $race->rennDatum }}"
                                              min="{{ Session::get('regattaSelectRaceDateForm') }}" max="{{ Session::get('regattaSelectRaceDateUntil') }}">
-                                      <small class="form-text text-danger">{!! $errors->first('rennBezeichnung') !!}</small>
+                                      <small class="form-text text-danger">{!! $errors->first('rennDatum') !!}</small>
                                   </div>
                                   <div class="my-4" >
                                       @php
-                                         $uhrzeitAlt= substr($race->uhrzeit, 0, -3);
+                                         $rennUhrzeitAlt= substr($race->rennUhrzeit, 0, -3);
                                       @endphp
                                       <label for="name">Zeit:</label>
-                                      <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('uhrzeit') ? 'bg-red-300' : '' }}"
-                                             id="uhrzeit" placeholder="Startzeit" name="uhrzeit" value="{{ old('uhrzeit') ?? $uhrzeitAlt }}">
-                                      <small class="form-text text-danger">{!! $errors->first('uhrzeit') !!}</small>
+                                      <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
+                                             id="rennUhrzeit" placeholder="Startzeit" name="rennDatum" value="{{ old('rennUhrzeit') ?? $rennUhrzeitAlt }}">
+                                      <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                   </div>
                                   <div class="py-2">
                                      <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>

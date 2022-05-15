@@ -51,13 +51,23 @@
                                   @endif
                               </div>
 
-                              @foreach ( $races as $race)
-                              <div class="rounded border shadow p-3 my-2 {{$race->id == $race->id ? 'bg-blue-200' : ''}}" onclick="">
+                              @foreach ($races as $race)
+                              <div class="rounded border shadow p-3 my-2 bg-blue-200">
                                   <div class="justify-between my-2">
                                       <div>
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/edit/'.$race->id) }}">
                                             <box-icon name='edit' type='solid'></box-icon>
                                         </a>
+                                        @if($race['visible']==1)
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/inaktiv/'.$race->id) }}">
+                                            <box-icon name='show' ></box-icon>
+                                        </a>
+                                        @endif
+                                        @if($race['visible']==0)
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/aktiv/'.$race->id) }}">
+                                            <box-icon name='hide' ></box-icon>
+                                        </a>
+                                        @endif
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/EinlaufFoto/'.$race->id) }}">
                                             <box-icon name='image'></box-icon>
                                         </a>
@@ -76,7 +86,7 @@
                                   <div class="justify-between my-2">
                                     <div class="flex">
                                       <p class="font-bold text-lg">
-                                          @if($race->nummer != Null or $race->nummer!="")
+                                          @if($race->nummer!=Null or $race->nummer!="")
                                           {{ $race->nummer }}.
                                           @endif
                                           {{ $race->rennBezeichnung }}

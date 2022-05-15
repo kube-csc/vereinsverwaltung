@@ -12,20 +12,40 @@ use Illuminate\Support\Facades\Storage;
 
 class RaceController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
+    public function aktiv($raceId)
+    {
+        Race::find($raceId)->update([
+            'visible'          => '1',
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Das Rennen wurde sichtbar geschaltet.');
+    }
+
+    public function inaktiv($raceId)
+    {
+        Race::find($raceId)->update([
+            'visible'          => '0',
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
+        ]);
+        return Redirect()->back()->with('success' , 'Das Rennen wurde unsichtbar geschaltet.');
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
 
-    public function __construct(){
-        $this->middleware('auth');
-    }
-
     public function index()
     {
         $races = Race::where([
-            'event_id' => Session::get('regattaSelectId'),
+            'event_id' => Session::get('regattaSelectId')
         ])
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -40,8 +60,8 @@ class RaceController extends Controller
     public function indexProgram()
     {
         $races = Race::where([
-            ['event_id' , Session::get('regattaSelectId')],
-            ['programmDatei' , Null],
+            'event_id'      => Session::get('regattaSelectId'),
+            'programmDatei' => Null,
         ])
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -57,7 +77,7 @@ class RaceController extends Controller
     {
         $races = Race::where([
             ['event_id' , Session::get('regattaSelectId')],
-            ['programmDatei' ,'!=' , Null],
+            ['programmDatei' ,'!=' , Null]
         ])
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -73,7 +93,7 @@ class RaceController extends Controller
     {
         $races = Race::where([
             ['event_id' , Session::get('regattaSelectId')],
-            ['ergebnisDatei' , Null],
+            ['ergebnisDatei' , Null]
         ])
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -89,7 +109,7 @@ class RaceController extends Controller
     {
         $races = Race::where([
             ['event_id' , Session::get('regattaSelectId')],
-            ['ergebnisDatei' ,'!=' , Null],
+            ['ergebnisDatei' , '!=' , Null]
         ])
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -126,15 +146,17 @@ class RaceController extends Controller
         );
 
         $race= new Race([
-                'event_id'         => Session::get('regattaSelectId'),
-                'nummer'           => $request->nummer,
-                'rennBezeichnung'  => $request->rennBezeichnung,
-                'rennDatum'        => $request->rennDatum,
-                'rennUhrzeit'      => $request->rennUhrzeit,
-                'bearbeiter_id'    => Auth::user()->id,
-                'autor_id'         => Auth::user()->id,
-                'updated_at'       => Carbon::now(),
-                'created_at'       => Carbon::now()
+                'event_id'           => Session::get('regattaSelectId'),
+                'nummer'             => $request->nummer,
+                'rennBezeichnung'    => $request->rennBezeichnung,
+                'rennDatum'          => $request->rennDatum,
+                'rennUhrzeit'        => $request->rennUhrzeit,
+                'verspaetungUhrzeit' => $request->rennUhrzeit,
+                'visible'            => "1",
+                'bearbeiter_id'      => Auth::user()->id,
+                'autor_id'           => Auth::user()->id,
+                'updated_at'         => Carbon::now(),
+                'created_at'         => Carbon::now()
             ]
         );
         $race->save();
@@ -240,12 +262,13 @@ class RaceController extends Controller
         );
 
         Race::find($race_id)->update([
-                'nummer'           => $request->nummer,
-                'rennBezeichnung'  => $request->rennBezeichnung,
-                'rennDatum'        => $request->rennDatum,
-                'rennUhrzeit'      => $request->rennUhrzeit,
-                'bearbeiter_id'    => Auth::user()->id,
-                'updated_at'       => Carbon::now()
+                'nummer'             => $request->nummer,
+                'rennBezeichnung'    => $request->rennBezeichnung,
+                'rennDatum'          => $request->rennDatum,
+                'rennUhrzeit'        => $request->rennUhrzeit,
+                'verspaetungUhrzeit' => $request->rennUhrzeit,
+                'bearbeiter_id'      => Auth::user()->id,
+                'updated_at'         => Carbon::now()
             ]
         );
 

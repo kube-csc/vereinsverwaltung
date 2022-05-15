@@ -21,7 +21,8 @@ class CreateRacesTable extends Migration
             $table->integer('gruppe_id')->nullable();
             $table->date('rennDatum');
             $table->time('rennUhrzeit');
-            $table->time('verspaetungUhrzeit')->default('00:00:00');
+            $table->time('verspaetungUhrzeit');
+            $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->string('rennBezeichnung', 50);
             $table->text('beschreibung')->nullable();
             $table->text('ergebnisBeschreibung')->nullable();
@@ -38,8 +39,9 @@ class CreateRacesTable extends Migration
             $table->string('fileProgrammDatei')->nullable();
             $table->string('ergebnisDatei')->nullable();
             $table->string('fileErgebnisDatei')->nullable();
-            $table->unsignedBigInteger('autor_id')->nullable();
-            $table->unsignedBigInteger('bearbeiter_id')->nullable();
+            $table->unsignedBigInteger('autor_id');
+            $table->unsignedBigInteger('bearbeiter_id');
+            $table->SoftDeletes();
             $table->timestamps();
         });
     }

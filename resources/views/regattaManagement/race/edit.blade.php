@@ -52,7 +52,7 @@
                                   <div class="my-4" >
                                       <label for="name">Datum:</label>
                                       <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennDatum') ? 'bg-red-300' : '' }}"
-                                             id="rennDatum" placeholder="Startzeit" name="rennDatum" value="{{ old('rennDatum') ?? $race->rennDatum }}"
+                                             id="rennDatum" name="rennDatum" value="{{ old('rennDatum') ?? $race->rennDatum }}"
                                              min="{{ Session::get('regattaSelectRaceDateForm') }}" max="{{ Session::get('regattaSelectRaceDateUntil') }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennDatum') !!}</small>
                                   </div>
@@ -62,7 +62,7 @@
                                       @endphp
                                       <label for="name">Zeit:</label>
                                       <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
-                                             id="rennUhrzeit" placeholder="Startzeit" name="rennDatum" value="{{ old('rennUhrzeit') ?? $rennUhrzeitAlt }}">
+                                             id="rennUhrzeit" name="rennUhrzeit" value="{{ old('rennUhrzeit') ?? $rennUhrzeitAlt }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                   </div>
                                   <div class="py-2">

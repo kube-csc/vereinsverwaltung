@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventDocumentController;
 use App\Http\Controllers\RaceController;
+use App\Http\Controllers\RegattaInformationController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
@@ -211,6 +212,8 @@ Route::get('/Rennen/neu',                             [RaceController::class, 'c
 Route::post('/Rennen/speichern',                      [RaceController::class, 'store'])           ->name('race.store');
 Route::get('/Rennen/edit/{race_id}',                  [RaceController::class, 'edit'])            ->name('race.edit');
 Route::post('/Rennen/update/{race_id}',               [RaceController::class, 'update'])          ->name('race.update');
+Route::get('/Rennen/aktiv/{race_id}',                 [RaceController::class, 'aktiv'])           ->name('race.aktiv');
+Route::get('/Rennen/inaktiv/{race_id}',               [RaceController::class, 'inaktiv'])         ->name('race.inaktiv');
 Route::get('/Rennen/Programm',                        [RaceController::class, 'indexProgram'])    ->name('race.indexProgram');
 Route::get('/Rennen/ProgrammAll',                     [RaceController::class, 'indexProgramAll']) ->name('race.indexProgramAll');
 Route::get('/Rennen/Programm/{race_id}',              [RaceController::class, 'editProgram'])     ->name('race.editProgram');
@@ -221,6 +224,19 @@ Route::get('/Rennen/ErgebnisseAlle',                  [RaceController::class, 'i
 Route::get('/Rennen/Ergebnis/{race_id}',              [RaceController::class, 'editResult'])      ->name('race.editResult');
 Route::post('/Rennen/Ergebnis/update/{race_id}',      [RaceController::class, 'updateResult'])    ->name('race.updateResult');
 Route::get('/Rennen/Ergebnis/loeschen/{race_id}',     [RaceController::class, 'deleteResult'])    ->name('race.deleteResult');
+
+//Route::resource('Renneninformation', 'RegattaInformationController');
+Route::get('/Renneninformation/alle',                            [RegattaInformationController::class, 'index'])           ->name('regattaInformation.index');
+Route::get('/Renneninformation/neu',                             [RegattaInformationController::class, 'create'])          ->name('regattaInformation.create');
+Route::post('/Renneninformation/speichern',                      [RegattaInformationController::class, 'store'])           ->name('regattaInformation.store');
+Route::get('/Renneninformation/edit/{regattaInfo_id}',           [RegattaInformationController::class, 'edit'])            ->name('regattaInformation.edit');
+Route::post('/Renneninformation/update/{regattaInfo_id}',        [RegattaInformationController::class, 'update'])          ->name('regattaInformation.update');
+Route::get('/Renneninformation/aktiv/{regattaInfo_id}',          [RegattaInformationController::class, 'aktiv'])           ->name('regattaInformation.aktiv');
+Route::get('/Renneninformation/inaktiv/{regattaInfo_id}',        [RegattaInformationController::class, 'inaktiv'])         ->name('regattaInformation.inaktiv');
+Route::get('/Renneninformation/maxtop/{regattaInfo_id}',         [RegattaInformationController::class, 'maxtop'])          ->name('regattaInformation.maxtop');
+Route::get('/Renneninformation/top/{regattaInfo_id}',            [RegattaInformationController::class, 'top'])             ->name('regattaInformation.top');
+Route::get('/Renneninformation/down/{regattaInfo_id}',           [RegattaInformationController::class, 'down'])            ->name('regattaInformation.down');
+Route::get('/Renneninformation/maxdown/{regattaInfo_id}',        [RegattaInformationController::class, 'maxdown'])         ->name('regattaInformation.maxdown');
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

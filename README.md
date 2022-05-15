@@ -1,6 +1,6 @@
 <h1>Internetauftritt von Vereine</h1>
 <p>
- Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
+Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
 </p>
 <h2>Beispiel der Abteilungen / Sportarten:</h2> 
     <ul>
@@ -45,9 +45,9 @@
     <li>Bildergallery</li>
     <li>Dokumente zum Herunterladen</li>
       <ul>
-          <li>Ausschreibungsunterlagen</li>
-          <li>Programmunterlagen</li>
-          <li>Ergebnislisten</li>
+          <li>Ausschreibung</li>
+          <li>Programm</li>
+          <li>Ergebnisse</li>
           <li>Flyer / Plakat</li>
       </ul>
     </ul>
@@ -105,9 +105,10 @@
 </ul>
 <h3>Regattaverwaltung</h3>
 <ul>
-<li>Regatta auswählen</li>
-<li>Rennen anlegen und bearbeiten</li>
-<li>Programm- und Ergebnissedokument für jedes Rennen hochladen</li>
+    <li>Regatta auswählen</li>
+    <li>Regatta Informationen können angelegt und bearbeitet werden</li>
+    <li>Rennen anlegen und bearbeiten</li>
+    <li>Programm und Ergebnislisten für jedes Rennen hochladen</li>
 </ul>
 
 <h2>Installation</h2>

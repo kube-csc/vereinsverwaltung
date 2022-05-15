@@ -51,6 +51,22 @@
                                     </div>
                                 </div>
 
+                                @if(Session::has('regattaSelectUeberschrift'))
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Renneninformation/alle')">
+                                            <div class="justify-between my-2">
+                                                <div class="flex">
+                                                    <p class="font-bold text-lg">
+                                                        Regatta Informationen
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+
                             </div>
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">

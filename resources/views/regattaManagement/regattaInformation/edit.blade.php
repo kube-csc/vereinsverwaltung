@@ -45,8 +45,8 @@
                                   </div>
                                   <div class="my-4" >
                                       <label for="name">Information:</label>
-                                      <textarea rows="10" cols="200" name="informationBeschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $regattaInformation->InformationBeschreibung }}</textarea>
-                                      <small class="form-text text-danger">{!! $errors->first('InformationBeschreibung') !!}</small>
+                                      <textarea rows="10" cols="200" name="informationBeschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $regattaInformation->informationBeschreibung }}</textarea>
+                                      <small class="form-text text-danger">{!! $errors->first('informationBeschreibung') !!}</small>
                                   </div>
                                   <div class="my-4" >
                                       <label for="name">Start Datum:</label>

@@ -139,6 +139,14 @@ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
    <li>php artisan migrate (Wenn keine eigenen Daten in der Datenbank vorhanden sind, kann "fresh --seed" verwendet werden.)</li>
 </ul>
 
+<h2>Zugehörige Projekte</h2>
+<p>
+Für die live Präsentation der Regatta kann folgende Software verwendet werden.
+https://github.com/kube-csc/regattaView.git
+Der Version V00.10.00 ist kompatibel mit der Version V00.01.01
+https://github.com/kube-csc/vereinsverwaltung.git
+
+</p>
 <br>
 <hr>
 <br>

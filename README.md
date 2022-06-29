@@ -125,8 +125,7 @@ benötigt.
 <h2>Installation</h2>
 <ul>
    <li>git clone https://github.com/kube-csc/vereinsverwaltung.git</li>
-   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt.)
-   </li>
+   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt.)</li>
    <li>composer.phar install</li>
    <li>php artisan storage:link<br>
       anlegen der Unterordner unter "public/storage/"
@@ -140,6 +139,7 @@ benötigt.
         <li>raceDokumente</li>
       </ul>
     </li>
+   <li>in Ordner "/recources/views/textimport recht.blade.php anlegen und mit der Vorlage von echt_example.blade.php ausfüllen</li>
    <li>php artisan migrate:fresh --seed Datenbank mit Demodaten</li>
 </ul>
 

@@ -5,9 +5,9 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   @php
-      $Vereinsname = str_replace('_', ' ', env('Verein_DomainName'));
+      $vereinsname = str_replace('_', ' ', env('Verein_Domain'));
   @endphp
-  <title> @yield( 'title' , '$Vereinsname' ) </title>
+  <title> @yield( 'title' , '$vereinsname' ) </title>
     @php
         // ToDo: Meta Conten bearbeiten
         $description = str_replace('_', ' ', env('Verein_description'));
@@ -16,14 +16,9 @@
   <meta content="{!! $description !!}" name="descriptison">
   <meta content="{!! $keywords !!}"    name="keywordsanlegen">
 
-  <?php /*
-  <!-- Favicons -->
-  <link href="asset/img/favicon.png" rel="icon">
-  <link href="asset/img/apple-touch-icon.png" rel="apple-touch-icon">
-*/ ?>
-
   <!-- Favicons -->
   <link href="/favicon.ico" rel="icon">
+  <link href="/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -46,7 +41,7 @@
   */
  @endphp
 
-  <?php // TODO: boxicons über webpack einbinden ?>
+  <?php // ToDo: boxicons über webpack einbinden ?>
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
 
   @include('layouts.header')
@@ -110,8 +105,8 @@
 
                             $first=0;
                           @endphp
-                          <li class="{{$sportTeamMenuCount > 0 ? 'drop-down' : ''}}">
-                              <a href="/{{env('Menue_Abteilung')}}/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
+                          <li class="{{ $sportTeamMenuCount > 0 ? 'drop-down' : '' }}">
+                              <a href="/{{ env('Menue_Abteilung') }}/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
                                  {{ $sportSectionMenu->abteilung }}
                               </a>
 
@@ -123,14 +118,14 @@
                                           @endphp
                                           <!-- ToDo: Wird für die mobile Version verwendet. Der Link, der eine Ebende höher ist, funktioniert nicht. -->
                                           <li>
-                                              <a href="/{{env('Menue_Abteilung')}}/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
+                                              <a href="/{{ env('Menue_Abteilung') }}/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
                                                   {{ $sportSectionMenu->abteilung }}
                                               </a>
                                           </li>
                                           <!-- End -->
                                   @endif
                                           <li>
-                                              <a href="/{{env('Menue_Abteilung')}}/{{ str_replace(' ', '_', $sportTeamMenu->abteilung) }}">
+                                              <a href="/{{ env('Menue_Abteilung') }}/{{ str_replace(' ', '_', $sportTeamMenu->abteilung) }}">
                                                   {{ $sportTeamMenu->abteilung }}
                                               </a>
                                           </li>

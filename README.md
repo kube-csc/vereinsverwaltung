@@ -2,7 +2,7 @@
 <p>
 Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
 </p>
-<h2>Beispiel der Abteilungen / Sportarten:</h2> 
+<h2>Beispiel der Abteilungen / Sportarten:</h2>
     <ul>
       <li>Jugend</li>
       <li>Wandersport</li>
@@ -13,16 +13,22 @@ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
 
 <a href="https://neu.kel-datteln.de">Beispiel eines Frontend</a>
 
-<h2>Installierte Programme</h2>
+<h2>Installierte Programme / Templets</h2>
 <ul>
   <li>Insallation Laravel 8.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss
   <a href="https://jetstream.laravel.com/2.x/introduction.html"></a>
   <a href="https://jetstream.laravel.com/2.x/stacks/livewire.html"></a></li>
   <li><a href="https://boxicons.com/">boxicons </a></li>
-  <li><a href="https://tailwindcss.com/">Tailwindcss </a></li>
+  <li><a href="https://tailwindcss.com/">Tailwindcss</a></li>
+  <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
   <li>.htaccess für 1und1 Server</li>
   <li><a href="https://botman.io">Botman</a></li>
 </ul>
+
+<h2>Benötigte Lizenzen</h2>
+Es wird eine Lizenz für
+<a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">Squadfree von bootstrapmade</a>
+benötigt.
 
 <h2>Frontend</h2>
 <ul>
@@ -41,7 +47,7 @@ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
   <li>Präsentation der Mannschaften</li>
   <li>Präsentation des Events
   <ul>
-    <li>Beschreibung der Events</li> 
+    <li>Beschreibung der Events</li>
     <li>Bildergallery</li>
     <li>Dokumente zum Herunterladen</li>
       <ul>
@@ -72,13 +78,18 @@ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
 
 <h2>Backend</h2>
 <h3>Vereinsverwaltung</h3>
+<strong>Demodaten</strong>
+<p>
+  Email: info@info.de<br>
+  Password: password
+</p>
 <ul>
   <li>Eingabe und Bearbeitung der Vereinsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
   <li>Eingabe und Bearbeitung von Events
       <ul>
-        <li>Eventbeschreibung</li> 
+        <li>Eventbeschreibung</li>
         <li>Bildergallery</li>
         <li>Dokumente zum Herunterladen</li>
           <ul>
@@ -120,8 +131,8 @@ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
    <li>php artisan storage:link<br>
       anlegen der Unterordner unter "public/storage/"
       <ul>
-        <li>boardPortrait</li> 
-        <li>botman</li> 
+        <li>boardPortrait</li>
+        <li>botman</li>
         <li>dokumente</li>
         <li>eventDokumente</li>
         <li>eventImage</li>

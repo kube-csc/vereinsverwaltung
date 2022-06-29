@@ -1,5 +1,5 @@
 /node_modules
-/public/hot
+/public/*_*.*
 /public/storage/**/*_*.*
 /public/daten/
 /public/asset/img/portfolio

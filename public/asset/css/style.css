@@ -13,11 +13,13 @@ body {
 }
 
 a {
-  color: #67b0d1;
+  /* color: #67b0d1; geaendert */
+  color: var(--linkcolor);
 }
 
 a:hover {
-  color: #8ec4dd;
+  /* color: #8ec4dd; geaendert */
+  color: var(--linkcolorhover);
   text-decoration: none;
 }
 
@@ -36,8 +38,8 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 50px;
   right: 15px;
   bottom: 15px;
-  /*background: #67b0d1; KEL Dunkel*/
-  background: #0062cc;
+  /*background: #67b0d1; geaendert Dungeaendert*/
+  background: var(--iconfarbe);
   color: #fff;
   transition: display 0.5s ease-in-out;
   z-index: 99999;
@@ -52,8 +54,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .back-to-top:hover {
   color: #fff;
-  /*background: #86c0da; */
-  background: #1148e0; /*KEL Hell*/
+  /*background: #86c0da; geaendert Hell*/
+  background: var(--akzentfarbe);
   transition: background 0.2s ease-in-out;
 }
 
@@ -78,8 +80,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #header.header-scrolled {
-  /* background: rgba(103, 176, 209, 0.8); KEL*/
-  background: rgba(0, 98, 204, 0.8);
+  /* background: rgba(103, 176, 209, 0.8); geaendert*/
+  background: var(--menubackground);
   padding: 0;
 }
 
@@ -191,8 +193,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-menu .drop-down ul a:hover, .nav-menu .drop-down ul .active > a, .nav-menu .drop-down ul li:hover > a {
-  /* color: #67b0d1; kel */
-  color: #0062cc;
+  /* color: #67b0d1; geaendert */
+  color: var(--iconfarbe);
 }
 
 .nav-menu .drop-down > a:after {
@@ -287,8 +289,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .mobile-nav a:hover, .mobile-nav .active > a, .mobile-nav li:hover > a {
-  /* color: #67b0d1; kel */
-  color: #0062cc;
+  /* color: #67b0d1; geaendert */
+  color: var(--iconfarbe);
   text-decoration: none;
 }
 
@@ -556,8 +558,8 @@ section {
 
 .about .content .about-btn {
   display: inline-block;
-  /*background: #67b0d1; KEL*/
-  background: #0062cc;
+  /*background: #67b0d1; geaendert*/
+  background: var(--iconfarbe);
   padding: 6px 44px 8px 30px;
   color: #fff;
   border-radius: 50px;
@@ -582,8 +584,8 @@ section {
 
 .about .icon-boxes .icon-box i {
   font-size: 40px;
-  /* color: #67b0d1; kel */
-  color: #0062cc;
+  /* color: #67b0d1; geaendert */
+  color: var(--iconfarbe);
   margin-bottom: 10px;
 }
 
@@ -775,8 +777,8 @@ todo: Blaue Farbe anpassen
 .counts .count-box i {
   display: block;
   font-size: 44px;
-  /* color: #67b0d1; kel */
-  color: #0062cc;
+  /* color: #67b0d1; geaendert */
+  color: var(--iconfarbe);
   float: left;
 }
 
@@ -880,8 +882,8 @@ todo: Blaue Farbe anpassen
 }
 
 .portfolio #portfolio-flters li:hover, .portfolio #portfolio-flters li.filter-active {
-  /* color: #67b0d1; kel */
-  color: #0062cc;
+  /* color: #67b0d1; geaendert */
+  color: var(--iconfarbe);
 }
 
 .portfolio #portfolio-flters li:last-child {
@@ -981,8 +983,8 @@ todo: Blaue Farbe anpassen
 }
 
 .portfolio-details .portfolio-details-carousel .owl-dot.active {
-  /*background-color: #67b0d1 !important; KEL*/
-  background-color: #0062cc !important;
+  /*background-color: #67b0d1 !important; geaendert*/
+  background-color: var(--iconfarbe) !important;
 }
 
 .portfolio-details .portfolio-info {
@@ -1046,12 +1048,12 @@ todo: Blaue Farbe anpassen
   box-sizing: content-box;
   text-align: center;
   /* min-height: 320px; */
-  min-height: 60px;  /*KEL */
+  min-height: 60px;  /*geaendert */
 }
 
 .testimonials .testimonial-item .testimonial-img {
   /*width: 90px;*/
-  width: 500px; /*KEL*/
+  width: 500px; /*geaendert*/
   border-radius: 50%;
   margin: 0 auto;
 }
@@ -1125,8 +1127,8 @@ todo: Blaue Farbe anpassen
 }
 
 .testimonials .owl-dot.active {
-  /*background-color: #67b0d1 !important; KEL*/
-  background-color: #0062cc !important;
+  /*background-color: #67b0d1 !important; geaendert*/
+  background-color: var(--iconfarbe) !important;
 }
 
 @media (max-width: 767px) {
@@ -1202,8 +1204,8 @@ todo: Blaue Farbe anpassen
 }
 
 .team .member .social a:hover {
-  /* color: #67b0d1; kel */
-  color: #0062cc;
+  /* color: #67b0d1; geaendert */
+  color: var(--iconfarbe);
 }
 
 .team .member .social i {
@@ -1234,8 +1236,8 @@ todo: Blaue Farbe anpassen
 
 .contact .info-box i {
   font-size: 32px;
-  /* color: #67b0d1; kel */
-  color: #0062cc;
+  /* color: #67b0d1; geaendert */
+  color: var(--iconfarbe);
   border-radius: 50%;
   padding: 8px;
   border: 2px dotted #f0f7fa;
@@ -1318,8 +1320,8 @@ todo: Blaue Farbe anpassen
 }
 
 .contact .php-email-form input::focus, .contact .php-email-form textarea::focus {
-  /*background-color: #67b0d1  KEL*/
-  background-color: #0062cc;
+  /*background-color: #67b0d1  geaendert*/
+  background-color: var(--iconfarbe);
 }
 
 .contact .php-email-form input {
@@ -1331,8 +1333,8 @@ todo: Blaue Farbe anpassen
 }
 
 .contact .php-email-form button[type="submit"] {
-  /*background: #67b0d1; KEL*/
-  background: #0062cc;
+  /*background: #67b0d1; geaendert*/
+  background: var(--iconfarbe);
   border: 0;
   padding: 10px 24px;
   color: #fff;
@@ -1365,8 +1367,8 @@ todo: Blaue Farbe anpassen
 # Footer
 --------------------------------------------------------------*/
 #footer {
-  /* background: #263f49;  KEL */
-  background: #032040;
+  /* background: #263f49;  geaendert */
+  background: var(--footerbackground);
   padding: 0 0 30px 0;
   color: #fff;
   font-size: 14px;
@@ -1381,8 +1383,8 @@ todo: Blaue Farbe anpassen
   margin-bottom: 15px;
   background: white;
   color: #2f4d5a;
-  /* border-top: 4px solid #67b0d1; KEL*/
-  border-top: 4px solid #0062cc;
+  /* border-top: 4px solid #67b0d1; geaendert*/
+  border-top: 4px solid var(--iconfarbe);
   text-align: center;
   padding: 30px 20px;
 }
@@ -1418,8 +1420,8 @@ todo: Blaue Farbe anpassen
 }
 
 #footer .footer-top .social-links a:hover {
-  /*background: #67b0d1; KEL*/
-  background: #0062cc;
+  /*background: #67b0d1; geaendert*/
+  background: var(--iconfarbe);
   color: #fff;
   text-decoration: none;
 }
@@ -1493,8 +1495,8 @@ todo: Blaue Farbe anpassen
   background: none;
   font-size: 16px;
   padding: 0 20px;
-  /*background: #67b0d1; KEL*/
-  background: #0062cc;
+  /*background: #67b0d1; geaendert*/
+  background: var(--iconfarbe);
   color: #fff;
   transition: 0.3s;
   border-radius: 4;
@@ -1682,7 +1684,7 @@ todo: Blaue Farbe anpassen
 }
 
 .blog .entry .entry-footer a:hover {
-  color: #0062cc;
+  color: var(--iconfarbe);
   /*color: #f6b024; */
 }
 
@@ -1793,8 +1795,8 @@ todo: Blaue Farbe anpassen
 }
 
 .blog .blog-comments .comment h5 a:hover {
-  color: #0062cc;
-  /* color: #f6b024; KEL*/
+  color: var(--iconfarbe);
+  /* color: #f6b024; geaendert*/
 }
 
 .blog .blog-comments .comment h5 .reply {
@@ -1867,8 +1869,8 @@ todo: Blaue Farbe anpassen
 }
 
 .blog .blog-comments .reply-form .btn-primary:hover {
-  background-color: #0062cc;
-  /* background-color: #f6b024; KEL*/
+  background-color: var(--iconfarbe);
+  /* background-color: #f6b024; geaendert*/
 }
 
 .blog .blog-pagination {
@@ -1985,8 +1987,8 @@ todo: Blaue Farbe anpassen
 }
 
 .blog .sidebar .categories ul a:hover {
-  color: #0062cc;
-  /* color: #f6b024; KEL */
+  color: var(--iconfarbe);
+  /* color: #f6b024; geaendert */
 }
 
 .blog .sidebar .categories ul a span {
@@ -2016,8 +2018,8 @@ todo: Blaue Farbe anpassen
 }
 
 .blog .sidebar .recent-posts h4 a:hover {
-  color: #0062cc;
-  /* color: #f6b024; KEL*/
+  color: var(--iconfarbe);
+  /* color: #f6b024; geaendert*/
 }
 
 .blog .sidebar .recent-posts time {
@@ -2054,10 +2056,10 @@ todo: Blaue Farbe anpassen
 
 .blog .sidebar .tags ul a:hover {
   color: #fff;
-  border-color: #0062cc;
-  background: #0062cc;
+  border-color: var(--iconfarbe);
+  background: var(--iconfarbe);
   /*border-color: #f6b024;
-  background: #f6b024; KEL*/
+  background: #f6b024; geaendert*/
 }
 
 .blog .sidebar .tags ul a span {

@@ -13,13 +13,17 @@ $abteilungStylsCount = $abteilungStyls->count();
 
 $i=0;
 ?>
+<style>
+
+@include('textimport.cssColor')
+
 @foreach ( $abteilungStyls as $abteilungStyl)
     @php
     //dd($abteilungStyl);
         ++$i;
     @endphp
     @if ($i == $abteilungStylsCount)
-        <style>
+
           @if( $abteilungStyl->bild<>'' )
             @php
              $bild = $abteilungStyl->bild;
@@ -84,6 +88,6 @@ $i=0;
 
 
            @endif
-        </style>
     @endif
 @endforeach
+    </style>

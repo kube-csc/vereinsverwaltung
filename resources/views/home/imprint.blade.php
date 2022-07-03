@@ -39,30 +39,32 @@
                                 <i class="bx bx-building-house"></i>
                                 <b>Adresse</b>
                                 <p>
-                                    @if (env('Verein_Name')<>"")
-                                        {{ str_replace('_', ' ', env('Verein_Name')) }}
+                                    @if (env('VEREIN_NAME')<>"")
+                                        {{ str_replace('_', ' ', env('VEREIN_NAME')) }}
                                     @else
                                         {{'Hier steht die Vereinsanschrift. Bitte in der .Env die Daten pflegen'}}
                                     @endif
                                     <br>
-                                    {{ str_replace('_', ' ', env('Verein_Strasse')) }}<br>
-                                    {{ str_replace('_', ' ', env('Verein_PLZ')) }} {{ str_replace('_', ' ', env('Verein_Ort')) }}
+                                    {{ str_replace('_', ' ', env('VEREIN_STRASSE')) }}<br>
+                                    {{ str_replace('_', ' ', env('VEREIN_PLZ')) }} {{ str_replace('_', ' ', env('VEREIN_ORT')) }}
                                     <br><br>
-                                    @if (env('Verein_EeintagngsOrt')<>"")
+                                    @if (env('VEREIN_EINTRAGUNGSORT')<>"")
                                         Eingetragen in das
-                                        Vereinsregister: {{ str_replace('_', ' ', env('Verein_EeintagngsOrt')) }}<br>
+                                        Vereinsregister: {{ str_replace('_', ' ', env('VEREIN_EINTRAGUNGSORT')) }}<br>
                                     @endif
-                                    @if (env('Verein_VRNummer')<>"")
-                                        VR-Nummer:  {{ str_replace('_', ' ', env('Verein_VRNummer')) }}
+                                    @if (env('VEREIN_VRNUMMER')<>"")
+                                        VR-Nummer:  {{ str_replace('_', ' ', env('VEREIN_VRNUMMER')) }}
                                     @endif
                                     <br><br>
-                                    @if(env('Verein_Telefon')<>"")
-                                        Tel: {{ str_replace('_', ' ', env('Verein_Telefon')) }}<br>
+                                    @if(env('VEREIN_TELEFON')<>"")
+                                        Tel: {{ str_replace('_', ' ', env('VEREIN_TELEFON')) }}<br>
                                     @endif
-                                    @if(env('Verein_Fax')<>"")
-                                        Fax: {{ str_replace('_', ' ', env('Verein_Fax')) }}<br>
+                                    @if(env('VEREIN_FAX')<>"")
+                                        Fax: {{ str_replace('_', ' ', env('VEREIN_FAX')) }}<br>
                                     @endif
-                                    <a href="mailto:{{ str_replace('_', ' ', env('Verein_Email')) }}">{{ str_replace('_', ' ', env('Verein_Email')) }}</a>
+                                    @if(env('VEREIN_EMAIL')<>"")
+                                        <i class="icofont-envelope"></i> <a href="mailto:{{ str_replace('_', ' ', env('VEREIN_EMAIL')) }}">{{ str_replace('_', ' ', env('VEREIN_EMAIL')) }}</a>
+                                    @endif
                                 </p>
                             </div>
                         </div>
@@ -72,23 +74,23 @@
                                 <i class="bx bx-home"></i>
                                 <b>Dieser vertreten durch:</b>
                                 <p>
-                                    @if(env('Verein_HPVertreten')!='')
-                                      {{ str_replace('_', ' ', env('Verein_HPVertreten')) }}<br>
+                                    @if(env('VEREIN_HP_VERTRETE')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_VERTRETE')) }}<br>
                                     @endif
-                                    @if(env('Verein_HPVertretenStrasse')!='')
-                                      {{ str_replace('_', ' ', env('Verein_HPVertretenStrasse')) }}<br>
+                                    @if(env('VEREIN_HP_VERTRETESTRASSE')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_VERTRETESTRASSE')) }}<br>
                                     @endif
-                                    @if(env('Verein_HPVertretenPLZ')!='')
-                                      {{ str_replace('_', ' ', env('Verein_HPVertretenPLZ')) }}
+                                    @if(env('VEREIN_HP_VERTRETEPLZ')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_VERTRETEPLZ')) }}
                                     @endif
-                                    @if(env('Verein_HPVertretenOrt')!='')
-                                      {{ str_replace('_', ' ', env('Verein_HPVertretenOrt')) }}<br>
+                                    @if(env('VEREIN_HP_VERTRETEORT')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_VERTRETEORT')) }}<br>
                                     @endif
-                                    @if(env('Verein_HPVertretenTelefon')!='')
-                                      <i class="icofont-phone"></i> {{ str_replace('_', ' ', env('Verein_HPVertretenTelefon')) }}<br>
+                                    @if(env('VEREIN_HP_VERTRETETELEFON')!='')
+                                      <i class="icofont-phone"></i> {{ str_replace('_', ' ', env('VEREIN_HP_VERTRETETELEFON')) }}<br>
                                     @endif
-                                    @if(env('Verein_HPVertretenMail')!='')
-                                      <i class="icofont-envelope"></i> <a href="mailto:{{ str_replace('_', ' ', env('Verein_HPVertretenMail')) }}">{{ str_replace('_', ' ', env('Verein_HPVertretenMail')) }}</a><br>
+                                    @if(env('VEREIN_HP_VERTRETEMAIL')!='')
+                                      <i class="icofont-envelope"></i> <a href="mailto:{{ str_replace('_', ' ', env('VEREIN_HP_VERTRETEMAIL')) }}">{{ str_replace('_', ' ', env('VEREIN_HP_VERTRETEMAIL')) }}</a><br>
                                     @endif
                                     <br>
                                     Für weitere Mitglieder des Vorstands <a href="index.php#team">hier</a> klicken.
@@ -96,32 +98,34 @@
                             </div>
                         </div>
 
+                        @if(env('VEREIN_HP_TECH_VERTRETE')!='' | env('VEREIN_HP_TECH_VERTRETEMail')!='')
                         <div class="col-lg-6">
                             <div class="info-box  mb-4">
                                 <i class="bx bx-home"></i>
-                                <b>Für den Inhalt dieser Seiten ist verantwortlich als Webmaster:</b>
+                                <b>Für Technik dieser Seiten ist verantwortlich als Webmaster:</b>
                                 <p>
-                                    @if(env('Verein_HP_Tech_Vertreten')!='')
-                                      {{ str_replace('_', ' ', env('Verein_HP_Tech_Vertreten')) }}<br>
+                                    @if(env('VEREIN_HP_TECH_VERTRETE')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETE')) }}<br>
                                     @endif
-                                    @if(env('Verein_HP_Tech_VertretenStrasse')!='')
-                                      {{ str_replace('_', ' ', env('Verein_HP_Tech_VertretenStrasse')) }}<br>
+                                    @if(env('VEREIN_HP_TECH_VERTRETESTRASSE')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETESTRASSE')) }}<br>
                                     @endif
-                                    @if(env('Verein_HP_Tech_VertretenPLZ')!='')
-                                      {{ str_replace('_', ' ', env('Verein_HP_Tech_VertretenPLZ')) }}
+                                    @if(env('VEREIN_HP_TECH_VERTRETEPLZ')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETEPLZ')) }}
                                     @endif
-                                    @if(env('Verein_HP_Tech_VertretenOrt')!='')
-                                      {{ str_replace('_', ' ', env('Verein_HP_Tech_VertretenOrt')) }}<br>
+                                    @if(env('VEREIN_HP_TECH_VERTRETEORT')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETEORT')) }}<br>
                                     @endif
-                                    @if(env('Verein_HP_Tech_VertretenTelefon')!='')
-                                      <i class="icofont-phone"></i> {{ str_replace('_', ' ', env('Verein_HP_Tech_VertretenTelefon')) }}<br>
+                                    @if(env('VEREIN_HP_TECH_VERTRETETELEFON')!='')
+                                      <i class="icofont-phone"></i> {{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETETELEFON')) }}<br>
                                     @endif
-                                    @if(env('Verein_HP_Tech_VertretenMail')!='')
-                                      <i class="icofont-envelope"></i>  <a href="mailto:{{ str_replace('_', ' ', env('Verein_HP_Tech_VertretenMail')) }}">{{ str_replace('_', ' ', env('Verein_HP_Tech_VertretenMail')) }}</a><br>
+                                    @if(env('VEREIN_HP_TECH_VERTRETEMail')!='')
+                                      <i class="icofont-envelope"></i>  <a href="mailto:{{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETEMAIL')) }}">{{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETEMAIL')) }}</a><br>
                                     @endif
                                 </p>
                             </div>
                         </div>
+                        @ENDIF
                     </div>
 
                     <div class="section-title" data-aos="fade-in" data-aos-delay="100">

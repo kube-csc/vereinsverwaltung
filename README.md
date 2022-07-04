@@ -141,19 +141,21 @@ benötigt.
         <li>raceDokumente</li>
       </ul>
     </li>
-   <li>in Ordner "/recources/views/textimport 
+   <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
    <ul>
-   <li>recht.blade.php anlegen und mit der Vorlage von echt_example.blade.php ausfüllen</li>
-   <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
+     <li>recht.blade.php anlegen und mit der Vorlage von echt_example.blade.php ausfüllen</li>
+     <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
+     <li>map.blade.php anlegen und mit der Vorlage von map_example.blade.php ausfüllen</li>
+     <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
    </ul>
-   <li>php artisan migrate --seed<br>(Datenbank mit Demodaten)</li>
+   <li>php artisan migrate --seed<br>(Datenbank wird mit Demodaten geladen)</li>
 </ul>
 
 <h2>Update</h2>
 <ul>
    <li>git pull origin main</li>
-   <li>php artisan migrate:fresh --seed (solange noch eine eigenden Daten in der Datenbank eingeben worden sind)</li>
-   <li>php artisan migrate (Wenn keine eigenen Daten in der Datenbank vorhanden sind, kann "fresh --seed" verwendet werden.)</li>
+   <li>php artisan migrate:fresh --seed (solange noch keine einige Daten in die Datenbank eingegeben worden sind / Alle Daten werden gelöscht)</li>
+   <li>php artisan migrate (Wenn schon eigene Daten in der Datenbank vorhanden sind)</li>
 </ul>
 
 <h2>Zugehörige Projekte</h2>

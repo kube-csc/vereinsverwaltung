@@ -5,13 +5,13 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   @php
-      $vereinsname = str_replace('_', ' ', env('Verein_Domain'));
+      $vereinsname = str_replace('_', ' ', env('VEREIN_DOMAIN'));
   @endphp
   <title> @yield( 'title' , '$vereinsname' ) </title>
     @php
         // ToDo: Meta Conten bearbeiten
-        $description = str_replace('_', ' ', env('Verein_description'));
-        $keywords    = str_replace('_', ' ', env('Verein_Keywords'));
+        $description = str_replace('_', ' ', env('VEREIN_KEYWORDS'));
+        $keywords    = str_replace('_', ' ', env('VEREIN_DESCRIPTION'));
     @endphp
   <meta content="{!! $description !!}" name="descriptison">
   <meta content="{!! $keywords !!}"    name="keywordsanlegen">
@@ -56,7 +56,7 @@
 
 <body>
 
-@if(env('Verein_Domain')=="ja")
+@if(env('APP_SOZIALMEDINANZEIGE')=="ja")
     <!-- ======= Facebook======= -->
   <div id="fb-root"></div>
   <script>(function(d, s, id) {
@@ -73,7 +73,7 @@
   <div class="container d-flex align-items-center">
 
     <div class="logo mr-auto">
-      <h1 class="text-light"><a href="{{env('APP_URL')}}"><span>{{ str_replace('_' , ' ' , env('Verein_Domain')) }}</span></a></h1>
+      <h1 class="text-light"><a href="{{env('APP_URL')}}"><span>{{ str_replace('_' , ' ' , env('VEREIN_DOMAIN')) }}</span></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.php"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
     </div>
@@ -89,8 +89,8 @@
 
           <ul>
               <li class="{{ Request::is('home') ? 'active' : '' }}"><a href="/#about">Home</a></li>
-
-              <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="/#about">{{env('Menue_Abteilung')}}</a>
+              @if($abteilungMenus->count()>1)
+              <li class="drop-down {{ Request::is('deep') ? 'active' : '' }}"><a href="/#about">{{env('MENUE_ABTEILUNG')}}</a>
                   <ul>
                       @foreach($abteilungMenus as $sportSectionMenu)
 
@@ -140,6 +140,7 @@
                       @endforeach
                   </ul>   <!-- Abteilung -->
               </li>    <!-- Abteilung Mannschaft   -->
+              @endif
               @php
                   // ToDo: Active im Menu funktioniert noch nicht
               @endphp
@@ -185,12 +186,12 @@
 <section id="hero">
     <div class="hero-container" data-aos="fade-up">
        @php
-        $Verein = str_replace('_', ' ', env('Verein_Name'));
-        $SLogen = str_replace('_', ' ', env('Verein_SLogen'));
+        $Verein = str_replace('_', ' ', env('VEREIN_NAME'));
+        $SLogen = str_replace('_', ' ', env('VEREIN_SLOGEN'));
        @endphp
       <h1>{{ $Verein }}</h1>
       <h2>{{ $SLogen }}</h2>
-      <?php // TODO:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
+      <?php // ToDo:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
       <a href="@yield( 'about' , '' )#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
       @php
       /* ToDo: vor dem #About den Routenname hinzufügen verbessern
@@ -211,36 +212,46 @@
 
         <div class="col-lg-4 col-md-6">
           <div class="footer-info" data-aos="fade-up" data-aos-delay="50">
-            <h3>{{ str_replace('_', ' ', env('Verein_Name')) }}</h3>
+            <h3>{{ str_replace('_', ' ', env('VEREIN_NAME')) }}</h3>
             <?php
               /*
                 <p class="pb-3"><em>Qui repudiandae et eum dolores alias sed ea. Qui suscipit veniam excepturi quod.</em></p>
-                // QUESTION: : Warum em
+                // QUESTION: Warum em
               */
               ?>
             <p>
-              {{ str_replace('_', ' ', env('Verein_Name')) }}<br>
-              {{ str_replace('_', ' ', env('Verein_Strasse')) }}<br>
-              {{ str_replace('_', ' ', env('Verein_PLZ')) }} {{ str_replace('_', ' ', env('Verein_Ort')) }}<br>
-              @if(env('Verein_Telefon')<>"")
-               <i class="icofont-telephone"></i>{{ str_replace('_' , ' ' , env('Verein_Telefon')) }}<br>
+              {{ str_replace('_', ' ', env('VEREIN_NAME')) }}<br>
+              {{ str_replace('_', ' ', env('VEREIN_STRASSE')) }}<br>
+              {{ str_replace('_', ' ', env('VEREIN_PLZ')) }} {{ str_replace('_', ' ', env('VEREIN_ORT')) }}<br>
+              @if(env('VEREIN_TELEFON')<>"")
+               <i class="icofont-telephone"></i>{{ str_replace('_' , ' ' , env('VEREIN_TELEFON')) }}<br>
               @endif
-              @if(env('Verein_Fax')<>"")
-               <i class="icofont-fax"></i>{{ str_replace('_' , ' ' , env('Verein_Fax')) }}<br>
+              @if(env('VEREIN_FAX')<>"")
+               <i class="icofont-fax"></i>{{ str_replace('_' , ' ' , env('VEREIN_FAX')) }}<br>
               @endif
-              <i class="icofont-email"></i>
-              <a href="mailto:{{ str_replace('_' , ' ' , env('Verein_Email')) }}">{{ str_replace('_' , ' ' , env('Verein_Email')) }}</a>
+               <i class="icofont-email"></i>
+               <a href="mailto:{{ str_replace('_' , ' ' , env('VEREIN_EMAIL')) }}">{{ str_replace('_' , ' ' , env('VEREIN_EMAIL')) }}</a>
             </p>
 
+            @if(env('APP_SOZIALMEDINANZEIGE')=="ja")
               <div class="social-links mt-3">
-                <a href="https://www.facebook.com/KELDatteln" class="facebook" target="_blank"><i class="bx bxl-facebook"></i></a>
-                <?php /*
-                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-                <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
-                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
-                */ ?>
+                @if(env('APP_SOZIAL_FACEBOOK'))!='')
+                  <a href="{{ str_replace('_' , ' ' , env('APP_SOZIAL_FACEBOOK')) }}" class="facebook" target="_blank"><i class="bx bxl-facebook"></i></a>
+                @endif
+                @if(env('APP_SOZIAL_TWITTER'))!='')
+                  <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                @endif
+                @if(env('APP_SOZIAL_INSTEGRAMM'))!='')
+                  <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                @endif
+                @if(env('APP_SOZIAL_SKYP'))!='')
+                  <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+                @endif
+                @if(env('APP_SOZIAL_LINKEDIN'))!='')
+                  <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                @endif
               </div>
+            @endif
 
           </div>
         </div>
@@ -306,7 +317,7 @@
         @endphp
         @if($count>0)
            <br>
-           <h4>Webseiten {{env('Menue_Abteilung')}}</h4>
+           <h4>Webseiten {{env('MENUE_ABTEILUNG')}}</h4>
            <ul>
              @foreach($abteilungDomains as $abteilungDomain)
                 <li><a href="http://{{$abteilungDomain->domain}}" target="_blank" class="bx bx-link-external">{{$abteilungDomain->abteilung}}</a></li>
@@ -330,7 +341,7 @@
 
   <div class="container">
     <div class="copyright">
-      &copy; Copyright <strong><span>{{ str_replace('_', ' ', env('Verein_Name')) }}</span></strong><br>
+      &copy; Copyright <strong><span>{{ str_replace('_', ' ', env('VEREIN_NAME')) }}</span></strong><br>
       All Rights Reserved
     </div>
     <div class="credits">
@@ -370,7 +381,7 @@
   <script src="{{ asset('asset/js/main.js') }}"></script>
 
   </body>
-    @if(env('Verein_ChatBot')=='ja')
+    @if(env('VEREIN_CHATBOT')=='ja')
       <!-- BotMan WebDrive -->
       <link rel="stylesheet" type="text/css" href="/asset/vendor/botman/chat.min.css">
       <script>

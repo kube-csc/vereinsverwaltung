@@ -74,8 +74,8 @@
                                 <i class="bx bx-home"></i>
                                 <b>Dieser vertreten durch:</b>
                                 <p>
-                                    @if(env('VEREIN_HP_VERTRETE')!='')
-                                      {{ str_replace('_', ' ', env('VEREIN_HP_VERTRETE')) }}<br>
+                                    @if(env('VEREIN_HP_VERTRETEN')!='')
+                                      {{ str_replace('_', ' ', env('VEREIN_HP_VERTRETEN')) }}<br>
                                     @endif
                                     @if(env('VEREIN_HP_VERTRETESTRASSE')!='')
                                       {{ str_replace('_', ' ', env('VEREIN_HP_VERTRETESTRASSE')) }}<br>
@@ -98,7 +98,7 @@
                             </div>
                         </div>
 
-                        @if(env('VEREIN_HP_TECH_VERTRETE')!='' | env('VEREIN_HP_TECH_VERTRETEMail')!='')
+                        @if(env('VEREIN_HP_TECH_VERTRETE')!='' | env('VEREIN_HP_TECH_VERTRETEMAIL')!='')
                         <div class="col-lg-6">
                             <div class="info-box  mb-4">
                                 <i class="bx bx-home"></i>
@@ -119,7 +119,7 @@
                                     @if(env('VEREIN_HP_TECH_VERTRETETELEFON')!='')
                                       <i class="icofont-phone"></i> {{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETETELEFON')) }}<br>
                                     @endif
-                                    @if(env('VEREIN_HP_TECH_VERTRETEMail')!='')
+                                    @if(env('VEREIN_HP_TECH_VERTRETEMAIL')!='')
                                       <i class="icofont-envelope"></i>  <a href="mailto:{{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETEMAIL')) }}">{{ str_replace('_', ' ', env('VEREIN_HP_TECH_VERTRETEMAIL')) }}</a><br>
                                     @endif
                                 </p>

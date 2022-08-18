@@ -23,7 +23,11 @@
                     Bitte bearbeiten die Ergebnisse des Rennens.
                   </div>
               </div>
-
+              <form autocomplete="off" action="{{ url('Rennen/Ergebnis/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
+                  @csrf
+                  @php
+                      // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
+                  @endphp
               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
@@ -39,11 +43,7 @@
                                       </div>
                                   @endif
                               </div>
-                              <form autocomplete="off" action="{{ url('Rennen/Ergebnis/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
-                                @csrf
-                                @php
-                                  // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
-                                @endphp
+
                                 <div class="my-4" >
                                     <label for="name">Beschreibung des Ergebnis:</label>
                                     <textarea rows="10" cols="200" name="ergebnisBeschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $race->ergebnisBeschreibung }}</textarea>
@@ -68,17 +68,56 @@
                                 <div class="py-2">
                                    <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
                                 </div>
-                             </form>
                              <br>
                              <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennen/Ergebnisse"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                            </div>
                           </div>
 
-                      </div>
                   </div>
 
-              </div>
+                  <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Rennen an den das gleiche Dokument angehangen werden soll</div>
+                    </div>
 
+                    <div class="ml-12">
+                        <div class="mt-2 text-sm text-gray-500">
+                            @php
+                                $i=0;
+                            @endphp
+                            @foreach ( $raceDocuments as $raceDocument)
+                                @php
+                                    ++$i;
+                                @endphp
+                                <div class="rounded border shadow p-3 my-2 bg-blue-200" >
+                                    <div class="justify-between my-2">
+                                        <div>
+                                            <label for="raceDocId[{{ $i }}]">Mit Bearbeiten: </label>
+                                            <input type="checkbox" id="raceDocId[{{ $i }}]" name="raceDocId[{{ $i }}]" value="{{ $raceDocument->id }}" {{ $race->fileErgebnisDatei==$raceDocument->fileErgebnisDatei && $raceDocument->fileErgebnisDatei!=""? 'checked' : '' }}>
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Ergebnis/'.$raceDocument->id) }}">
+                                                <box-icon name='file'></box-icon>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="justify-between my-2">
+                                        <div class="flex">
+                                            <p class="font-bold text-lg">{{ $raceDocument->nummer }}. {{ $raceDocument->rennBezeichnung }}<br>{{ $raceDocument->fileErgebnisDatei}}</p>
+                                            <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $raceDocument->updated_at->diffForHumans() }}</p>
+                                        </div>
+                                        <div class="flex">
+                                            von {{ date("d.m.Y", strtotime($raceDocument->rennDatum)) }} {{ date("h:m", strtotime($raceDocument->rennUhrzeit)) }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @endforeach
+
+                        </div>
+                    </div>
+                  </div>
+              </div>
+              </form>
             </div>
         </div>
+    </div>
 </x-app-layout>

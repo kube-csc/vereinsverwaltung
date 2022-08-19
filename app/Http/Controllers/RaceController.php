@@ -129,7 +129,19 @@ class RaceController extends Controller
      */
     public function create()
     {
-        return view('regattaManagement.race.create');
+        $raceLevel = Race::where('event_id' , Session::get('regattaSelectId'))
+            ->orderby('level' , 'desc')
+            ->limit(1)
+            ->first();
+
+        if(isset($raceLevel->level)){
+          $levelMax = $raceLevel->level;
+        }
+        else{
+         $levelMax = 1;
+        }
+
+        return view('regattaManagement.race.create' , compact('levelMax'));
     }
 
     /**
@@ -153,6 +165,7 @@ class RaceController extends Controller
                 'rennDatum'          => $request->rennDatum,
                 'rennUhrzeit'        => $request->rennUhrzeit,
                 'verspaetungUhrzeit' => $request->rennUhrzeit,
+                'level'              => $request->regattaLevel,
                 'visible'            => "1",
                 'bearbeiter_id'      => Auth::id(),
                 'autor_id'           => Auth::id(),
@@ -229,7 +242,15 @@ class RaceController extends Controller
     {
         $race = Race::find($raceid);
 
-        return view('regattaManagement.race.edit' , compact('race'));
+        $raceLevel = Race::where('event_id' , Session::get('regattaSelectId'))
+            ->orderby('level' , 'desc')
+            ->limit(1)
+            ->first();
+
+        return view('regattaManagement.race.edit')->with([
+            'race'          => $race,
+            'levelMax'      => $raceLevel->level,
+        ]);
     }
 
     public function editProgram($race_id)
@@ -239,7 +260,8 @@ class RaceController extends Controller
         $seorch=$race->programmDatei;
         $raceDocuments = Race::where('event_id' , Session::get('regattaSelectId'))
             ->where('id' , '!=' , $race_id)
-            ->where(function ($query) use ($seorch) {
+            ->where('level' , $race->level)
+            ->where(function ($query) use ($seorch){
                 $query->where('programmDatei' , NULL)
                       ->orwhere('programmDatei' , $seorch);
             })
@@ -247,12 +269,10 @@ class RaceController extends Controller
             ->orderby('rennUhrzeit')
             ->get();
 
-
         return view('regattaManagement.race.editProgram')->with([
             'race'          => $race,
             'raceDocuments' => $raceDocuments
         ]);
-        //return view('regattaManagement.race.editProgram' , compact('race'));
     }
 
     public function editResult($race_id)
@@ -262,7 +282,8 @@ class RaceController extends Controller
         $seorch=$race->ergebnisDatei;
         $raceDocuments = Race::where('event_id' , Session::get('regattaSelectId'))
             ->where('id' , '!=' , $race_id)
-            ->where(function ($query) use ($seorch) {
+            ->where('level' , $race->level)
+            ->where(function ($query) use ($seorch){
                 $query->where('ergebnisDatei' , NULL)
                     ->orwhere('ergebnisDatei' , $seorch);
             })
@@ -298,6 +319,7 @@ class RaceController extends Controller
                 'rennDatum'          => $request->rennDatum,
                 'rennUhrzeit'        => $request->rennUhrzeit,
                 'verspaetungUhrzeit' => $request->rennUhrzeit,
+                'level'              => $request->regattaLevel,
                 'bearbeiter_id'      => Auth::id(),
                 'updated_at'         => Carbon::now()
             ]

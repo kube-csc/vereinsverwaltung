@@ -89,7 +89,7 @@
                                           @if($race->nummer!=Null or $race->nummer!="")
                                           {{ $race->nummer }}.
                                           @endif
-                                          {{ $race->rennBezeichnung }}
+                                          {{ $race->rennBezeichnung }}<br>Regatta Abschnitt: {{ $race->level }}
                                       </p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $race->updated_at->diffForHumans() }}</p>
                                     </div>

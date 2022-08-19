@@ -69,6 +69,23 @@
                                            id="rennUhrzeit" name="rennUhrzeit" value="{{ Session::get('regattaSelectRaceTimeNew') }}">
                                     <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                 </div>
+
+                                <div>
+                                    <label for="name">Regatta Abschnitt:</label><br>
+                                    <select name="regattaLevel">
+                                        @for ($i = 1; $i <= $levelMax; $i++)
+                                            <option value="{{ $i }}"
+                                                @if($i==$levelMax)
+                                                  selected
+                                                @endif
+                                            >
+                                                Abschnitt {{ $i }}
+                                            </option>
+                                        @endfor
+                                        <option value="{{ $i }}">Abschnitt +</option>
+                                    </select>
+                                </div>
+
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Rennen anlegen</button>
                                 </div>

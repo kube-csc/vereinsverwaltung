@@ -27,10 +27,10 @@
                      </div>
                </div>
                 <div class="col-md">
-                    <label for="name">{{env('Menue_Abteilung')}} / Mannschaften:</label><br>
+                    <label for="name">{{env('MENUE_ABTEILUNG')}} / Mannschaften:</label><br>
                     <select wire:model="sportSection_id">
                         <!-- name="sportSection_id"  -->
-                        <option value="" selected>Alle {{env('Menue_Abteilung')}} / Mannschaften</option>
+                        <option value="" selected>Alle {{env('MENUE_ABTEILUNG')}} / Mannschaften</option>
                         <optgroup label="Abeilung:">
                             @php
                                 $firsttime = 0;

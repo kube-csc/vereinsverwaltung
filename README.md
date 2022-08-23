@@ -32,33 +32,34 @@ benötigt.
 
 <h2>Frontend</h2>
 <ul>
-<li>Header ist abhängig von den Abteilungen / Sportarten</li>
-<li>Leanding Page
-     <ul>
-      <li>Ausgabe der Vereinsbeschreibung</li>
-      <li>Präsentation der Abteilung mit deren Mannschaften</li>
-      <li>Präsentation der kommenden Events</li>
-      <li>Präsentation der vergangenen Events</li>
-      <li>Präsentation des Teams</li>
-      <li>Kontakt des Vereins inc. Map</li>
-    </ul>
-</li>
-  <li>Präsentation der Abteilungen / Sportarten</li>
-  <li>Präsentation der Mannschaften</li>
-  <li>Präsentation des Events
-  <ul>
-    <li>Beschreibung der Events</li>
-    <li>Bildergallery</li>
-    <li>Dokumente zum Herunterladen</li>
-      <ul>
-          <li>Ausschreibung</li>
-          <li>Programm</li>
-          <li>Ergebnisse</li>
-          <li>Flyer / Plakat</li>
-      </ul>
-    </ul>
-  </ul>
-  </li>
+    <li>Header ist abhängig von den Abteilungen / Sportarten</li>
+    <li>Leanding Page
+         <ul>
+          <li>Ausgabe der Vereinsbeschreibung</li>
+          <li>Präsentation der Abteilung mit deren Mannschaften</li>
+          <li>Präsentation der kommenden Events</li>
+          <li>Präsentation der vergangenen Events</li>
+          <li>Präsentation des Teams</li>
+          <li>Kontakt des Vereins inc. Map</li>
+        </ul>
+    </li>
+    <li>Präsentation der Abteilungen / Sportarten</li>
+    <li>Präsentation der Mannschaften</li>
+    <li>Präsentation des Events
+        <ul>
+            <li>Beschreibung der Events</li>
+            <li>Bildergallery</li>
+            <li>Dokumente zum Herunterladen
+              <ul>
+                  <li>Ausschreibung</li>
+                  <li>Programm</li>
+                  <li>Ergebnisse</li>
+                  <li>Flyer / Plakat</li>
+              </ul>
+            </li>
+        </ul>
+    </li>
+</ul>
   <li>Informationensseiten
     <ul>
         <li>Anfahrt</li>
@@ -119,7 +120,9 @@ benötigt.
     <li>Regatta auswählen</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
     <li>Rennen anlegen und bearbeiten</li>
-    <li>Programm und Ergebnislisten für jedes Rennen hochladen</li>
+    <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
+    <li>Tabellen anlegen und bearbeiten</li>
+    <li>Ergebnislisten für jede Tabelle hochladen</li>
 </ul>
 
 <h2>Installation</h2>

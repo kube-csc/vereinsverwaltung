@@ -72,7 +72,7 @@
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
                                 <div class="flex items-center">
                                     <div class="ml-4 text-lg leading-7 font-semibold">
-                                        Ergebniss Verwaltung
+                                        Ergebnisse Verwaltung
                                     </div>
                                 </div>
                                 @if(Session::has('regattaSelectUeberschrift'))
@@ -96,7 +96,7 @@
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-                                                        alle Rennaufstellung
+                                                         Rennaufstellung
                                                     </p>
                                                 </div>
                                             </div>
@@ -110,7 +110,7 @@
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-                                                        Fehlende Ergenbisse
+                                                        Fehlende Ergebnisse
                                                     </p>
                                                 </div>
                                             </div>
@@ -124,7 +124,7 @@
                                             <div class="justify-between my-2">
                                                 <div class="flex">
                                                     <p class="font-bold text-lg">
-                                                        alle Ergenbisse
+                                                        Ergebnisse
                                                     </p>
                                                 </div>
                                             </div>
@@ -176,17 +176,90 @@
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
                                 <div class="flex items-center">
-                                    <div class="ml-4 text-lg leading-7 font-semibold text-gray-900 dark:text-white">  </div>
+                                    <div class="ml-4 text-lg leading-7 font-semibold text-gray-900 dark:text-white">Tabellen Ergebnisse Verwaltung</div>
+                                </div>
+
+                                @if(Session::has('regattaSelectUeberschrift'))
+                                    <div class="ml-12">
+                                        <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Tabelle/Ergebnisse')">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex">
+                                                        <p class="font-bold text-lg">
+                                                            Fehlende Ergebnisse
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="ml-12">
+                                        <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Tabelle/ErgebnisseAlle')">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex">
+                                                        <p class="font-bold text-lg">
+                                                            Ergebnisse
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="p-6 border-t border-gray-200 dark:border-gray-700">
+                                <div class="flex items-center">
+                                    <div class="ml-4 text-lg leading-7 font-semibold">
+                                        Tabelle bearbeiten
+                                    </div>
                                 </div>
 
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        @if(Session::has('regattaSelectUeberschrift'))
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Tabelle/neu')">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex">
+                                                        <p class="font-bold text-lg">
+                                                            Tabelle eingeben
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
 
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        @if(Session::has('regattaSelectUeberschrift'))
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Tabelle/alle')">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex">
+                                                        <p class="font-bold text-lg">
+                                                            Tabelle auswählen
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
+                                <div class="flex items-center">
+                                    <div class="ml-4 text-lg leading-7 font-semibold text-gray-900 dark:text-white"> </div>
+                                </div>
+
+                            </div>
+
                         </div>
                     </div>
+
 
                     <div class="flex justify-center mt-4 sm:items-center sm:justify-between">
                         <div class="text-center text-sm text-gray-500 sm:text-left">

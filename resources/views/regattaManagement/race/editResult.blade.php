@@ -49,7 +49,21 @@
                                     <textarea rows="10" cols="200" name="ergebnisBeschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $race->ergebnisBeschreibung }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('ergebnisBeschreibung') !!}</small>
                                 </div>
-
+                                <div class="my-4" >
+                                  @php
+                                      $ractetime= substr($ractetime, 0, -3);
+                                  @endphp
+                                  <label for="name">Wann wurde das Rennen gestartet:</label>
+                                  <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
+                                         id="rennUhrzeit" name="rennUhrzeit" value="{{ old('rennUhrzeit') ?? $ractetime }}">
+                                  <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
+                                </div>
+                                <div>
+                                  <label for="name">Zeit die pro Rennen aufgeholt werden kann:</label>
+                                  <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeit') ? 'bg-red-300' : '' }}"
+                                         id="zeit" placeholder="1" name="zeit" value="{{ old('zeit') }}" min="0" max="59">
+                                  <small class="form-text text-danger">{!! $errors->first('zeit') !!}</small>
+                                </div>
                                 <div class="my-4" >
                                     <label for="name">Dokument:</label>
 

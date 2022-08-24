@@ -187,9 +187,9 @@ class TabeleController extends Controller
         ]);
     }
 
-    public function editResult($race_id)
+    public function editResult($tabele_id)
     {
-        $tabele = Tabele::find($race_id);
+        $tabele = Tabele::find($tabele_id);
 
         return view('regattaManagement.tabele.editResult', compact('tabele'));
     }
@@ -201,7 +201,7 @@ class TabeleController extends Controller
      * @param  \App\Models\Tabele  $tabele
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $race_id)
+    public function update(Request $request, $tabele_id)
     {
         $request->validate([
                 'tabelleBezeichnung'   => 'required|max:50',
@@ -214,7 +214,7 @@ class TabeleController extends Controller
             $request->tabelleLevelVon=$request->tabelleLevelBis;
         }
 
-         Tabele::find($race_id)->update([
+         Tabele::find($tabele_id)->update([
                 'ueberschrift'       => $request->tabelleBezeichnung,
                 'tabelleDatumVon'    => $request->tabelleDatum,
                 'tabelleLevelVon'    => $request->tabelleLevelVon,
@@ -230,13 +230,13 @@ class TabeleController extends Controller
         );
     }
 
-    public function updateResult(Request $request, $race_id)
+    public function updateResult(Request $request, $tabele_id)
     {
         if($request->tabelleBeschreibung==""){
             $request->tabelleBeschreibung=Null;
         }
 
-        Tabele::find($race_id)->update([
+        Tabele::find($tabele_id)->update([
             'beschreibung'    => $request->tabelleBeschreibung,
             'bearbeiter_id'   => Auth::id(),
             'updated_at'      => Carbon::now()
@@ -244,7 +244,7 @@ class TabeleController extends Controller
 
         if($request->tabeleDatei){
             $extension = $request->tabeleDatei->extension();
-            $newDocumentName = 'programm' . $race_id . '_' . str::random(4) . '.' . $extension;
+            $newDocumentName = 'tabelle' . $tabele_id . '_' . str::random(4) . '.' . $extension;
             $fileTabeleDatei=$request->file('tabeleDatei')->getClientOriginalName();
             Storage::disk('public')->putFileAs(
                 'tabeleDokumente/',
@@ -252,12 +252,12 @@ class TabeleController extends Controller
                 $newDocumentName
             );
 
-            $oldDocumentFile = Tabele::find($race_id);
-            if(isset($oldDocumentFile->tabeleDatei)){
-                Storage::disk('public')->delete('tabeleDokumente/'.$oldDocumentFile->tabeleDatei);
+            $oldDocumentFile = Tabele::find($tabele_id);
+            if(isset($oldDocumentFile->tabelleDatei)){
+                Storage::disk('public')->delete('tabeleDokumente/'.$oldDocumentFile->tabelleDatei);
             }
 
-            Tabele::find($race_id)->update([
+            Tabele::find($tabele_id)->update([
                 'tabelleDatei'     => $newDocumentName,
                 'fileTabelleDatei' => $fileTabeleDatei,
             ]);
@@ -281,11 +281,11 @@ class TabeleController extends Controller
         //
     }
 
-    public function deleteResult($race_Id)
+    public function deleteResult($tabele_id)
     {
-        $deleteDocumentFile = Tabele::find($race_Id);
+        $deleteDocumentFile = Tabele::find($tabele_id);
 
-        Tabele::find($race_Id)->update(
+        Tabele::find($tabele_id)->update(
             [
                 'tabelleDatei'     => Null,
                 'fileTabelleDatei' => Null,
@@ -297,8 +297,8 @@ class TabeleController extends Controller
             Storage::disk('public')->delete('tabeleDokumente/'.$deleteDocumentFile->tabelleDatei);
         }
 
-        $document = Tabele::find($race_Id);
-        return redirect('Tabelle/Ergebnis/'.$race_Id)->with(
+        $document = Tabele::find($tabele_id);
+        return redirect('Tabelle/Ergebnis/'.$tabele_id)->with(
             [
                 'success'  => 'Das Tabellendokument <b>' . $document->tabelleDatei . '</b> wurde gelöscht.'
             ]

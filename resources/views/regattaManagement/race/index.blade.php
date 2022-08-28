@@ -90,7 +90,13 @@
                                           {{ $race->nummer }}.
                                           @endif
                                           {{ $race->rennBezeichnung }}<br>Regatta Abschnitt: {{ $race->level }}
-                                      </p>
+                                          @if($race->programmDatei!=Null && $status==1)
+                                                  <br><a href="/storage/raceDokumente/{{ $race->programmDatei }}" target="_blank">{{ $race->fileProgrammDatei }}</a>
+                                          @endif
+                                          @if($race->ergebnisDatei!=Null && $status==2)
+                                              <br><a href="/storage/raceDokumente/{{ $race->ergebnisDatei }}" target="_blank">{{ $race->fileErgebnisDatei }}</a>
+                                          @endif
+                                        </p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $race->updated_at->diffForHumans() }}</p>
                                     </div>
                                     <div class="flex">

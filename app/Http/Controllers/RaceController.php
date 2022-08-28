@@ -80,8 +80,8 @@ class RaceController extends Controller
             ['event_id' , Session::get('regattaSelectId')],
             ['programmDatei' ,'!=' , Null]
         ])
-            ->orderby('rennDatum')
-            ->orderby('rennUhrzeit')
+            ->orderby('rennDatum' , 'desc')
+            ->orderby('rennUhrzeit' , 'desc')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
@@ -96,8 +96,8 @@ class RaceController extends Controller
             ['event_id' , Session::get('regattaSelectId')],
             ['ergebnisDatei' , Null]
         ])
-            ->orderby('rennDatum')
-            ->orderby('rennUhrzeit')
+            ->orderby('rennDatum' , 'desc')
+            ->orderby('rennUhrzeit' , 'desc')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
@@ -349,6 +349,8 @@ class RaceController extends Controller
             'updated_at'      => Carbon::now()
         ]);
 
+        $oldDocumentFile = Race::find($race_id);
+
         if($request->programmDatei){
             $extension = $request->programmDatei->extension();
             $newDocumentName = 'programm' . $race_id . '_' . str::random(4) . '.' . $extension;
@@ -359,26 +361,30 @@ class RaceController extends Controller
                 $newDocumentName
             );
 
-            $oldDocumentFile = Race::find($race_id);
-            if(isset($oldDocumentFile->programmDatei)){
-                Storage::disk('public')->delete('raceDokumente/'.$oldDocumentFile->programmDatei);
-            }
-
             Race::find($race_id)->update([
                 'programmDatei'     => $newDocumentName,
                 'fileProgrammDatei' => $fileProgrammDatei,
             ]);
 
-            $raceDocIds=$request->raceDocId;
-            $i=0;
-            foreach ($raceDocIds as $raceDocId){
-                ++$i;
-                Race::find($raceDocIds[$i])->update([
-                    'programmDatei'     => $newDocumentName,
-                    'fileProgrammDatei' => $fileProgrammDatei,
-                    'bearbeiter_id'     => Auth::id(),
-                    'updated_at'        => Carbon::now()
-                ]);
+            if(isset($request->raceDocId)) {
+                $raceDocIds = $request->raceDocId;
+                $i = 0;
+                foreach ($raceDocIds as $raceDocId) {
+                    ++$i;
+                    Race::find($raceDocIds[$i])->update([
+                        'programmDatei' => $newDocumentName,
+                        'fileProgrammDatei' => $fileProgrammDatei,
+                        'bearbeiter_id' => Auth::id(),
+                        'updated_at' => Carbon::now()
+                    ]);
+                }
+            }
+
+            $oldDocumentFileCount=Race::where('programmDatei' , $oldDocumentFile->programmDatei)->count();
+            if($oldDocumentFileCount==0) {
+                if (isset($oldDocumentFile->programmDatei)) {
+                    Storage::disk('public')->delete('raceDokumente/' . $oldDocumentFile->programmDatei);
+                }
             }
         }
 
@@ -403,6 +409,8 @@ class RaceController extends Controller
             'updated_at'           => Carbon::now()
         ]);
 
+        $oldDocumentFile = Race::find($race_id);
+
         if($request->ergebnisDatei){
             $extension = $request->ergebnisDatei->extension();
             $newDocumentName = 'ergebnis' . $race_id . '_' . str::random(4) . '.' . $extension;
@@ -413,26 +421,30 @@ class RaceController extends Controller
                 $newDocumentName
             );
 
-            $oldDocumentFile = Race::find($race_id);
-            if(isset($oldDocumentFile->ergebnisDatei)){
-                Storage::disk('public')->delete('raceDokumente/'.$oldDocumentFile->ergebnisDatei);
-            }
-
             Race::find($race_id)->update([
                 'ergebnisDatei'     => $newDocumentName,
                 'fileErgebnisDatei' => $fileErgebnisDatei,
             ]);
 
-            $raceDocIds=$request->raceDocId;
-            $i=0;
-            foreach ($raceDocIds as $raceDocId){
-                ++$i;
-                Race::find($raceDocIds[$i])->update([
-                    'ergebnisDatei'     => $newDocumentName,
-                    'fileErgebnisDatei' => $fileErgebnisDatei,
-                    'bearbeiter_id'     => Auth::id(),
-                    'updated_at'        => Carbon::now()
-                ]);
+            if(isset($request->raceDocId)) {
+                $raceDocIds = $request->raceDocId;
+                $i = 0;
+                foreach ($raceDocIds as $raceDocId) {
+                    ++$i;
+                    Race::find($raceDocIds[$i])->update([
+                        'ergebnisDatei' => $newDocumentName,
+                        'fileErgebnisDatei' => $fileErgebnisDatei,
+                        'bearbeiter_id' => Auth::id(),
+                        'updated_at' => Carbon::now()
+                    ]);
+                }
+            }
+
+            $oldDocumentFileCount=Race::where('ergebnisDatei' , $oldDocumentFile->ergebnisDatei)->count();
+            if($oldDocumentFileCount==0) {
+                if (isset($oldDocumentFile->ergebnisDatei)) {
+                    Storage::disk('public')->delete('raceDokumente/' . $oldDocumentFile->ergebnisDatei);
+                }
             }
         }
 
@@ -533,8 +545,8 @@ class RaceController extends Controller
                 'updated_at'        => Carbon::now()
             ]);
 
-        if(isset($deleteDocumentFile->programmDatei)){
-            Storage::disk('public')->delete('raceDokumente/'.$deleteDocumentFile->programmDatei);
+        if (isset($deleteDocumentFile->programmDatei)) {
+                Storage::disk('public')->delete('raceDokumente/' . $deleteDocumentFile->programmDatei);
         }
 
         $document = Race::find($race_Id);
@@ -566,8 +578,8 @@ class RaceController extends Controller
                 'updated_at'        => Carbon::now()
             ]);
 
-        if(isset($deleteDocumentFile->ergebnisDatei)){
-            Storage::disk('public')->delete('raceDokumente/'.$deleteDocumentFile->ergebnisDatei);
+        if (isset($deleteDocumentFile->ergebnisDatei)) {
+                Storage::disk('public')->delete('raceDokumente/' . $deleteDocumentFile->ergebnisDatei);
         }
 
         $document = Race::find($race_Id);

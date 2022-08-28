@@ -291,9 +291,15 @@ class RaceController extends Controller
             ->orderby('rennUhrzeit')
             ->get();
 
-        $ractetime1=Carbon::now();
-        $ractetime2=$ractetime1->subMinute(3);
-        $ractetime=$ractetime2->toTimeString();
+        if($race->ergebnisDatei==NULL && $race->ergebnisBeschreibung=='') {
+            $ractetime1 = Carbon::now();
+            $ractetime2 = $ractetime1->subMinute(3);
+            $ractetime  = $ractetime2->toTimeString();
+        }
+        else{
+            $ractetime=$race->verspaetungUhrzeit;
+        }
+
         return view('regattaManagement.race.editResult')->with([
             'race'          => $race,
             'raceDocuments' => $raceDocuments,

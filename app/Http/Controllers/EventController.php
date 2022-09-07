@@ -137,8 +137,8 @@ class EventController extends Controller
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
             'verwendung'       => '0',
-            'bearbeiter_id'    => Auth::user()->id,
-            'autor_id'         => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
+            'autor_id'         => Auth::id(),
             'updated_at'       => Carbon::now(),
             'created_at'       => Carbon::now()
            ]
@@ -219,7 +219,7 @@ class EventController extends Controller
             'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
            ]
         );
@@ -259,7 +259,7 @@ class EventController extends Controller
     {
         Event::find($event_id)->update([
                 'regatta' => 1,
-                'bearbeiter_id' => Auth::user()->id,
+                'bearbeiter_id' => Auth::id(),
                 'updated_at' => Carbon::now()
             ]
         );
@@ -274,7 +274,7 @@ class EventController extends Controller
     {
         Event::find($event_id)->update([
                 'regatta' => Null,
-                'bearbeiter_id' => Auth::user()->id,
+                'bearbeiter_id' => Auth::id(),
                 'updated_at' => Carbon::now()
             ]
         );
@@ -287,14 +287,6 @@ class EventController extends Controller
 
     public function selectRegatta($event_id)
     {
-        $events = event::where([
-            ['id' , '!=' , $event_id],
-            ['verwendung' , '0'],
-            ['regatta' , '1']
-        ])
-            ->orderby('datumbis' , 'desc')
-            ->paginate(5);
-
         $eventSelect=event::find($event_id);
 
         Session::put('regattaSelectId' , $event_id);
@@ -303,9 +295,6 @@ class EventController extends Controller
         Session::put('regattaSelectRaceDateForm' , $eventSelect->datumvon);
         Session::put('regattaSelectRaceDateUntil' , $eventSelect->datumbis);
 
-        return view('admin.event.indexRegatta')->with([
-            'events'      => $events,
-        ]);
+        return view('regattaManagement.regattaMenu');
     }
-
 }

@@ -96,8 +96,8 @@ class RaceController extends Controller
             ['event_id' , Session::get('regattaSelectId')],
             ['ergebnisDatei' , Null]
         ])
-            ->orderby('rennDatum' , 'desc')
-            ->orderby('rennUhrzeit' , 'desc')
+            ->orderby('rennDatum')
+            ->orderby('rennUhrzeit')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([
@@ -112,8 +112,8 @@ class RaceController extends Controller
             ['event_id' , Session::get('regattaSelectId')],
             ['ergebnisDatei' , '!=' , Null]
         ])
-            ->orderby('rennDatum')
-            ->orderby('rennUhrzeit')
+            ->orderby('rennDatum' , 'desc')
+            ->orderby('rennUhrzeit' , 'desc')
             ->paginate(5);
 
         return view('regattaManagement.race.index')->with([

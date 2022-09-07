@@ -108,7 +108,7 @@
                             $first=0;
                           @endphp
                           <li class="{{$sportTeamMenuCount > 0 ? 'drop-down' : ''}}">
-                              <a href="/{{ env('Menue_Abteilung') }}/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
+                              <a href="/{{ env('MENUE_ABTEILUNG') }}/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
                                  {{ $sportSectionMenu->abteilung }}
                               </a>
 
@@ -120,14 +120,14 @@
                                           @endphp
                                           <!-- ToDo: Wird für die mobile Version verwendet. Der Link, der eine Ebende höher ist, funktioniert nicht. -->
                                           <li>
-                                              <a href="/{{ env('Menue_Abteilung') }}/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
+                                              <a href="/{{ env('MENUE_ABTEILUNG') }}/{{ str_replace(' ', '_', $sportSectionMenu->abteilung) }}">
                                                   {{ $sportSectionMenu->abteilung }}
                                               </a>
                                           </li>
                                           <!-- End -->
                                   @endif
                                           <li>
-                                              <a href="/{{ env('Menue_Abteilung') }}/{{ str_replace(' ', '_', $sportTeamMenu->abteilung) }}">
+                                              <a href="/{{ env('MENUE_ABTEILUNG') }}/{{ str_replace(' ', '_', $sportTeamMenu->abteilung) }}">
                                                   {{ $sportTeamMenu->abteilung }}
                                               </a>
                                           </li>

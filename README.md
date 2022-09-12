@@ -59,22 +59,21 @@ benötigt.
             </li>
         </ul>
     </li>
-</ul>
-  <li>Informationensseiten
+    <li>Informationensseiten
     <ul>
         <li>Anfahrt</li>
         <li>Beiträge</li>
         <li>Übernachtungskosten</li>
     </ul>
   </li>
-  <li>Footer
+    <li>Footer
     <ul>
         <li>Dokumente aus dem Dokumentenmanagment werden angezeigt</li>
         <li>Impresssum</li>
         <li>Datenschutzerklärung</li>
     </ul>
   </li>
-  <li>401 Errorseite oder Weiterleitung 301 zu dem im Backlink verwalteten Backend</li>
+    <li>401 Errorseite oder Weiterleitung 301 zu dem im Backlink verwalteten Backend</li>
 </ul>
 
 <h2>Backend</h2>
@@ -142,6 +141,7 @@ benötigt.
         <li>eventImage</li>
         <li>header</li>
         <li>raceDokumente</li>
+        <li>tabeleDokumente</li>
       </ul>
     </li>
    <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
@@ -165,7 +165,7 @@ benötigt.
 <p>
 Für die live Präsentation der Regatta kann folgende Software verwendet werden.
 https://github.com/kube-csc/regattaView.git
-Der Version V00.10.00 ist kompatibel mit der Version V00.01.01
+Die Version V00.11.00 ist kompatibel mit der Version V00.03.00
 https://github.com/kube-csc/vereinsverwaltung.git
 
 </p>

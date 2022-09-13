@@ -21,7 +21,7 @@ class EventDocumentController extends Controller
     {
         report::find($reportId)->update([
             'visible'          => '1',
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
         return Redirect()->back()->with('success' , 'Das Dokument wurde sichtbar geschaltet.');
@@ -31,7 +31,7 @@ class EventDocumentController extends Controller
     {
         report::find($reportId)->update([
             'visible'          => '0',
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
         return Redirect()->back()->with('success' , 'Das Dokument wurde unsichtbar geschaltet.');
@@ -41,20 +41,20 @@ class EventDocumentController extends Controller
     {
         report::find($reportId)->update([
             'webseite'         => '1',
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
-        return Redirect()->back()->with('success' , 'Das Dokument wurde für den öffendlichen Bereich sichtbar geschaltet.');
+        return Redirect()->back()->with('success' , 'Das Dokument wurde für den öffentlichen Bereich sichtbar geschaltet.');
     }
 
     public function webinaktiv($reportId)
     {
         report::find($reportId)->update([
             'webseite'         => '0',
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
-        return Redirect()->back()->with('success' , 'Das Dokument wurde für den öffendlichen Bereich unsichtbar geschaltet.');
+        return Redirect()->back()->with('success' , 'Das Dokument wurde für den öffentlichen Bereich unsichtbar geschaltet.');
     }
 
     public function start($reportId)
@@ -66,23 +66,23 @@ class EventDocumentController extends Controller
             ->where('event_id' , $eventID)
             ->update([
                 'startseite'       => 0,
-                'bearbeiter_id'    => Auth::user()->id,
+                'bearbeiter_id'    => Auth::id(),
                 'updated_at'       => Carbon::now()
             ]);
 
         report::find($reportId)->update([
             'startseite'       => 1,
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
-        return Redirect()->back()->with('success' , 'Das Dokument wurde an der Startseite festgelegt.');
+        return Redirect()->back()->with('success' , 'Das Dokument wurde für die Startseite festgelegt.');
     }
 
     public function maxtop($reportId)
     {
         report::find($reportId)->update([
             'position'         => '0',
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
@@ -113,7 +113,7 @@ class EventDocumentController extends Controller
 
         report::find($reportId)->update([
             'position'         => $positionNew,
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
@@ -132,13 +132,13 @@ class EventDocumentController extends Controller
 
     public function down($reportId)
     {
-        // ToDo verebessern der Updatefunktion
+        // ToDo verbessern der Updatefunktion
         $report = report::find($reportId);
         $positionNew=$report->position+11;
         $eventID=$report->event_id;
         report::find($reportId)->update([
             'position'         => $positionNew,
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
@@ -173,7 +173,7 @@ class EventDocumentController extends Controller
 
         report::find($reportId)->update([
             'position'         => $positionNew,
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
@@ -273,8 +273,8 @@ class EventDocumentController extends Controller
                 'webseite'         => 1,
                 'position'         => $positionNew,
                 'event_id'         => $request->event_id,
-                'bearbeiter_id'    => Auth::user()->id,
-                'user_id'          => Auth::user()->id,
+                'bearbeiter_id'    => Auth::id(),
+                'user_id'          => Auth::id(),
                 'updated_at'       => Carbon::now(),
                 'created_at'       => Carbon::now()
             ]
@@ -393,7 +393,7 @@ class EventDocumentController extends Controller
             'titel'            => $request->reportTitleDocument,
             'kommentar'        => $request->reportDocumentComment,
             'verwendung'       => $request->verwendung,
-            'bearbeiter_id'    => Auth::user()->id,
+            'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
@@ -456,7 +456,7 @@ class EventDocumentController extends Controller
                 'bild'             => Null,
                 'filename'         => Null,
                 'typ'              => Null,
-                'bearbeiter_id'    => Auth::user()->id,
+                'bearbeiter_id'    => Auth::id(),
                 'updated_at'       => Carbon::now()
             ]);
 
@@ -481,7 +481,7 @@ class EventDocumentController extends Controller
                 'image'         => Null,
                 'filename'      => Null,
                 'typ'           => Null,
-                'bearbeiter_id' => Auth::user()->id,
+                'bearbeiter_id' => Auth::id(),
                 'updated_at'    => Carbon::now()
             ]);
 

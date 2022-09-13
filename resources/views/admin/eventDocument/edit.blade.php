@@ -80,7 +80,7 @@
                                                 >Ergebnisse
                                             </option>
                                             <option value="5"
-                                                @if($report->verwendung == "3")
+                                                @if($report->verwendung == "5")
                                                     selected
                                                 @endif
                                                 >Plakat / Flyer

@@ -22,6 +22,7 @@ class CreateRacesTable extends Migration
             $table->date('rennDatum');
             $table->time('rennUhrzeit');
             $table->time('verspaetungUhrzeit');
+            $table->time('veroeffentlichungUhrzeit');
             $table->boolean('visible')->default(true);  // true = 1 = sichtbar
             $table->string('rennBezeichnung', 50);
             $table->text('beschreibung')->nullable();

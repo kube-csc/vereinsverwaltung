@@ -27,12 +27,12 @@ class CreateTabelesTable extends Migration
             $table->integer('status')->default(0);
             $table->boolean('tabelleVisible')->default(true);  // true = 1 = sichtbar
             $table->integer('finale')->default(0);
-            $table->dateTime('finaleAnzeigen');
             $table->integer('getrenntewertung')->default(0);
             $table->integer('punktegleich')->default(0);
             $table->integer('punktegleichlauf')->default(0);
             $table->string('tabelleDatei')->nullable();
             $table->string('fileTabelleDatei')->nullable();
+            $table->time('veroeffentlichungUhrzeit');
             $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('bearbeiter_id');
             $table->SoftDeletes();

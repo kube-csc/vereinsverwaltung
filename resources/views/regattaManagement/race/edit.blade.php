@@ -60,17 +60,55 @@
                                       @php
                                          $rennUhrzeitAlt= substr($race->rennUhrzeit, 0, -3);
                                       @endphp
-                                      <label for="name">Zeit:</label>
+                                      <label for="name">Startzeit:</label>
                                       <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
                                              id="rennUhrzeit" name="rennUhrzeit" value="{{ old('rennUhrzeit') ?? $rennUhrzeitAlt }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                   </div>
                                   <div class="my-4" >
+                                      @php
+                                          $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
+                                      @endphp
+                                      <label for="name">Veröffungszeit der Ergebnisse:</label>
+                                      <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
+                                             id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ old('veroeffentlichungUhrzeit') ?? $veroeffentlichungUhrzeitAlt }}">
+                                      <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>
+                                  </div>
+
+                                  @php
+                                   if(old('tabeleId') != Null){
+                                       $tableId=old('tabeleId');
+                                   }
+                                   else{
+                                       $tableId=$race->tabele_id;
+                                   }
+                                  @endphp
+                                  <div class="my-4" >
+                                      <label for="name">Tabelle:</label><br>
+                                      <select name="tabeleId">
+                                          <option value=""
+                                              @if( $tableId == NULL )
+                                                 selected
+                                              @endif
+                                          >keine Tabelle</option>
+
+                                          @foreach ($tabeles as $tabele)
+                                              <option value="{{ $tabele->id }}"
+                                                  @if( $tableId == $tabele->id )
+                                                      selected
+                                                  @endif
+                                              >{{ $tabele->ueberschrift }}</option>
+                                          @endforeach
+
+                                      </select>
+                                  </div>
+
+                                  <div class="my-4" >
                                       <label for="name">Regatta Abschnitt:</label><br>
                                       <select name="regattaLevel">
                                           @for ($i = 1; $i <= $levelMax; $i++)
                                               <option value="{{ $i }}"
-                                                      @if($i==$levelMax)
+                                                  @if($i==$levelMax)
                                                           selected
                                                   @endif
                                               >

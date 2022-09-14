@@ -126,23 +126,25 @@ class TabeleController extends Controller
      */
     public function store(Request $request){
         $request->validate([
-                  'tabelleBezeichnung'  => 'required|max:50',
-                  'tabelleDatum'        => 'required|date',
+                'tabelleBezeichnung'       => 'required|max:50',
+                'tabelleDatum'             => 'required|date',
+                'veroeffentlichungUhrzeit' => 'required|date_format:H:i',
             ]
         );
 
         $tabele= new Tabele([
-                'event_id'            => Session::get('regattaSelectId'),
-                'ueberschrift'        => $request->tabelleBezeichnung,
-                'tabelleLevelVon'     => $request->tabelleLevelVon,
-                'tabelleLevelBis'     => $request->tabelleLevelBis,
-                'tabelleDatumVon'     => $request->tabelleDatum,
-                'tabelleVisible'      => "1",
-                'finaleAnzeigen'      => Carbon::now(),
-                'bearbeiter_id'       => Auth::id(),
-                'autor_id'            => Auth::id(),
-                'updated_at'          => Carbon::now(),
-                'created_at'          => Carbon::now()
+                'event_id'                 => Session::get('regattaSelectId'),
+                'ueberschrift'             => $request->tabelleBezeichnung,
+                'tabelleLevelVon'          => $request->tabelleLevelVon,
+                'tabelleLevelBis'          => $request->tabelleLevelBis,
+                'tabelleDatumVon'          => $request->tabelleDatum,
+                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
+                'tabelleVisible'           => "1",
+                'finaleAnzeigen'           => Carbon::now(),
+                'bearbeiter_id'            => Auth::id(),
+                'autor_id'                 => Auth::id(),
+                'updated_at'               => Carbon::now(),
+                'created_at'               => Carbon::now()
             ]);
 
         $tabele->save();
@@ -204,9 +206,10 @@ class TabeleController extends Controller
     public function update(Request $request, $tabele_id)
     {
         $request->validate([
-                'tabelleBezeichnung'   => 'required|max:50',
-                'tabelleDatum'         => 'required|date',
-                //'tabelleLevelVon'      => 'tabelleLevelVon<=tabelleLevelBis', ToDo:: Valedierung vebessern
+                'tabelleBezeichnung'       => 'required|max:50',
+                'tabelleDatum'             => 'required|date',
+                //'tabelleLevelVon'        => 'tabelleLevelVon<=tabelleLevelBis', ToDo:: Valedierung vebessern
+                'veroeffentlichungUhrzeit' => 'required|date_format:H:i'
             ]
         );
 
@@ -215,12 +218,13 @@ class TabeleController extends Controller
         }
 
          Tabele::find($tabele_id)->update([
-                'ueberschrift'       => $request->tabelleBezeichnung,
-                'tabelleDatumVon'    => $request->tabelleDatum,
-                'tabelleLevelVon'    => $request->tabelleLevelVon,
-                'tabelleLevelBis'    => $request->tabelleLevelBis,
-                'bearbeiter_id'      => Auth::id(),
-                'updated_at'         => Carbon::now()
+                'ueberschrift'             => $request->tabelleBezeichnung,
+                'tabelleDatumVon'          => $request->tabelleDatum,
+                'tabelleLevelVon'          => $request->tabelleLevelVon,
+                'tabelleLevelBis'          => $request->tabelleLevelBis,
+                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
+                'bearbeiter_id'            => Auth::id(),
+                'updated_at'               => Carbon::now()
             ]
         );
 

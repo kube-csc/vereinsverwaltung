@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Race;
+use App\Models\Tabele;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
@@ -152,25 +153,27 @@ class RaceController extends Controller
      */
     public function store(Request $request) {
         $request->validate([
-                  'rennBezeichnung'  => 'required|max:50',
-                  'rennDatum'        => 'required|date',
-                  'rennUhrzeit'      => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
+                  'rennBezeichnung'           => 'required|max:50',
+                  'rennDatum'                 => 'required|date',
+                  'rennUhrzeit'               => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
+                  'veroeffentlichungUhrzeit'  => 'required|date_format:H:i',    //'date_format:H:i|after:rennUhrzeit',
             ]
         );
 
         $race= new Race([
-                'event_id'           => Session::get('regattaSelectId'),
-                'nummer'             => $request->nummer,
-                'rennBezeichnung'    => $request->rennBezeichnung,
-                'rennDatum'          => $request->rennDatum,
-                'rennUhrzeit'        => $request->rennUhrzeit,
-                'verspaetungUhrzeit' => $request->rennUhrzeit,
-                'level'              => $request->regattaLevel,
-                'visible'            => "1",
-                'bearbeiter_id'      => Auth::id(),
-                'autor_id'           => Auth::id(),
-                'updated_at'         => Carbon::now(),
-                'created_at'         => Carbon::now()
+                'event_id'                 => Session::get('regattaSelectId'),
+                'nummer'                   => $request->nummer,
+                'rennBezeichnung'          => $request->rennBezeichnung,
+                'rennDatum'                => $request->rennDatum,
+                'rennUhrzeit'              => $request->rennUhrzeit,
+                'verspaetungUhrzeit'       => $request->rennUhrzeit,
+                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
+                'level'                    => $request->regattaLevel,
+                'visible'                  => "1",
+                'bearbeiter_id'            => Auth::id(),
+                'autor_id'                 => Auth::id(),
+                'updated_at'               => Carbon::now(),
+                'created_at'               => Carbon::now()
             ]
         );
         $race->save();
@@ -247,9 +250,13 @@ class RaceController extends Controller
             ->limit(1)
             ->first();
 
+        $tabeles = Tabele::where('event_id' , Session::get('regattaSelectId'))
+            ->get();
+
         return view('regattaManagement.race.edit')->with([
             'race'          => $race,
             'levelMax'      => $raceLevel->level,
+            'tabeles'       => $tabeles
         ]);
     }
 
@@ -317,21 +324,24 @@ class RaceController extends Controller
     public function update(Request $request, $race_id)
     {
         $request->validate([
-                'rennBezeichnung'   => 'required|max:50',
-                'rennDatum'         => 'required|date',
-                'rennUhrzeit'       => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
+                'rennBezeichnung'          => 'required|max:50',
+                'rennDatum'                => 'required|date',
+                'rennUhrzeit'              => 'required|date_format:H:i',
+                'veroeffentlichungUhrzeit' => 'required|date_format:H:i',
             ]
         );
 
         Race::find($race_id)->update([
-                'nummer'             => $request->nummer,
-                'rennBezeichnung'    => $request->rennBezeichnung,
-                'rennDatum'          => $request->rennDatum,
-                'rennUhrzeit'        => $request->rennUhrzeit,
-                'verspaetungUhrzeit' => $request->rennUhrzeit,
-                'level'              => $request->regattaLevel,
-                'bearbeiter_id'      => Auth::id(),
-                'updated_at'         => Carbon::now()
+                'nummer'                   => $request->nummer,
+                'rennBezeichnung'          => $request->rennBezeichnung,
+                'rennDatum'                => $request->rennDatum,
+                'rennUhrzeit'              => $request->rennUhrzeit,
+                'verspaetungUhrzeit'       => $request->rennUhrzeit,
+                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
+                'level'                    => $request->regattaLevel,
+                'tabele_id'                => $request->tabeleId,
+                'bearbeiter_id'            => Auth::id(),
+                'updated_at'               => Carbon::now()
             ]
         );
 

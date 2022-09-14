@@ -64,12 +64,17 @@
                                     <small class="form-text text-danger">{!! $errors->first('rennDatum') !!}</small>
                                 </div>
                                 <div>
-                                    <label for="name">Zeit:</label>
+                                    <label for="name">Startzeit:</label>
                                     <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
                                            id="rennUhrzeit" name="rennUhrzeit" value="{{ Session::get('regattaSelectRaceTimeNew') }}">
                                     <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                 </div>
-
+                                <div class="my-4" >
+                                    <label for="name">Veröffungszeit der Ergebnisse:</label>
+                                    <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
+                                         id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ Session::get('regattaSelectRaceTimeNew') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>
+                                </div>
                                 <div>
                                     <label for="name">Regatta Abschnitt:</label><br>
                                     <select name="regattaLevel">

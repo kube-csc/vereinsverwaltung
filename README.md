@@ -122,6 +122,8 @@ benötigt.
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
     <li>Tabellen anlegen und bearbeiten</li>
     <li>Ergebnislisten für jede Tabelle hochladen</li>
+    <li>Startzeitverschiebungen werden berechnet</li>
+    <li>Rennergebnisse und Tabellen können mit einer Veröffendlichungszeiten versehen werden</li>
 </ul>
 
 <h2>Installation</h2>

@@ -26,18 +26,18 @@ foreach ( $abteilungHomes as $abteilungHome)
           <div class="row no-gutters">
             <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
               <div class="content">
-              @if(env('Verein_Sozialmediaanzeigen')=='ja')
+              @if(env('APP_SOZIALMEDINANZEIGE')=='ja')
                   <!-- ======= Facebook======= -->
                   <!-- ToDo: Facebook funktioniert nicht -->
                       <center>
-                          <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('Verein_Domain')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                          <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('VEREIN_DOMAIN')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
                       </center>
                 @endif
                 <h3>{{ $abteilungHome->abteilung }}</h3>
                 {!! $ausgabetext !!}
                 @if ($abgeschnitten==1)
                     <div class="read-more">
-                      <a href="/{{env('Menue_Abteilung')}}/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about-btn">
+                      <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about-btn">
                           mehr<i class="bx bx-chevron-right"></i>
                       </a>
                     </div>
@@ -82,7 +82,7 @@ foreach ( $abteilungHomes as $abteilungHome)
               @else
                <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="{{ $time }}">
               @endif
-                <a href="/{{env('Menue_Abteilung')}}/{{ str_replace(' ' , '_' , $abteilung->abteilung) }}">
+                <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ' , '_' , $abteilung->abteilung) }}">
                   <h4>{{ $abteilung->abteilung }}</h4>
                 </a>
                 <?php
@@ -113,7 +113,7 @@ foreach ( $abteilungHomes as $abteilungHome)
                    @endif
                   @if ($abgeschnitten==1 | $first==1)
                     <div class="read-more">
-                      <a href="/{{env('Menue_Abteilung')}}/{{ str_replace(' ', '_', $abteilung->abteilung) }}"><i class="icofont-arrow-right"></i></a>
+                      <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilung->abteilung) }}"><i class="icofont-arrow-right"></i></a>
                     </div>
                   @endif
                </p>

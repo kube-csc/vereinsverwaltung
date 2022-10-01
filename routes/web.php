@@ -19,6 +19,7 @@ use App\Http\Controllers\BotManController;
 use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
 use App\Http\Controllers\BacklinksController;
+use App\Http\Controllers\ClubController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -176,7 +177,6 @@ Route::get('/Dokumente/geloescht/{document_id}', [DocumentController::class, 'do
 Route::get('/Dokumente/aktiv/{document_id}',     [DocumentController::class, 'aktiv'])         ->name('document.aktiv');
 Route::get('/Dokumente/inaktiv/{document_id}',   [DocumentController::class, 'inaktiv'])       ->name('document.inaktiv');
 
-
 //Route::resource('EventDokumente', EventDocumentController::class);
 Route::get('/EventDokumente/{event_id}',                      [EventDocumentController::class, 'index'])                 ->name('eventDocument.index');
 Route::get('/EventDokumente/neu/{event_id}',                  [EventDocumentController::class, 'create'])                ->name('eventDocument.create');
@@ -252,6 +252,16 @@ Route::get('/Renneninformation/maxtop/{regattaInfo_id}',  [RegattaInformationCon
 Route::get('/Renneninformation/top/{regattaInfo_id}',     [RegattaInformationController::class, 'top'])      ->name('regattaInformation.top');
 Route::get('/Renneninformation/down/{regattaInfo_id}',    [RegattaInformationController::class, 'down'])     ->name('regattaInformation.down');
 Route::get('/Renneninformation/maxdown/{regattaInfo_id}', [RegattaInformationController::class, 'maxdown'])  ->name('regattaInformation.maxdown');
+
+//Route::resource('Club', 'ClubController');
+Route::get('/Club/alle',                        [ClubController::class, 'index'])         ->name('club.index');
+Route::get('/Club/neu',                         [ClubController::class, 'create'])        ->name('club.create');
+Route::post('/Club/speichern',                  [ClubController::class, 'store'])         ->name('club.store');
+Route::get('/Club/edit/{eventGroup_id}',        [ClubController::class, 'edit'])          ->name('club.edit');
+Route::post('/Club/update/{eventGroup_id}',     [ClubController::class, 'update'])        ->name('club.update');
+Route::get('/Club/softDelete/{eventGroup_id}',  [ClubController::class, 'softDelete']);
+Route::get('/Club/aktiv/{sportSection_id}',     [ClubController::class, 'aktiv'])         ->name('club.aktiv');
+Route::get('/Club/inaktiv/{sportSection_id}',   [ClubController::class, 'inaktiv'])       ->name('club.inaktiv');
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

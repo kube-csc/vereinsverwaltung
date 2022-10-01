@@ -91,7 +91,7 @@
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
                       <div class="flex items-center">
-                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Chat Bot</div>
+                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">{{ env('MENUE_VERBAND') }}</div>
                       </div>
 
                       <div class="ml-12">
@@ -99,32 +99,15 @@
 
                             <div style="text-align: left">
 
-                              <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('newBotmanQuestion/alle')">
+                              <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('Club/alle')">
                                   <div class="flex justify-between my-2">
                                     <div class="flex">
-                                      <p class="font-bold text-lg">neue Fragen bearbeiten</p>
+                                      <p class="font-bold text-lg">{{ env('MENUE_VERBAND') }} bearbeiten</p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
                                     </div>
                                   </div>
                               </div>
 
-                              <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('')">
-                                  <div class="flex justify-between my-2">
-                                    <div class="flex">
-                                      <p class="font-bold text-lg">Fragen bearbeiten</p>
-                                      <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
-                                    </div>
-                                  </div>
-                              </div>
-
-                              <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('')">
-                                  <div class="flex justify-between my-2">
-                                    <div class="flex">
-                                      <p class="font-bold text-lg">Antworten bearbeiten</p>
-                                      <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
-                                    </div>
-                                  </div>
-                              </div>
 
                             </div>
 
@@ -192,6 +175,85 @@
                               </div>
 
                          </div>
+                      </div>
+                  </div>
+
+                  <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
+                      <div class="flex items-center">
+                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Chat Bot</div>
+                      </div>
+
+                      <div class="ml-12">
+                          <div class="mt-2 text-sm text-gray-500">
+
+                              <div style="text-align: left">
+
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('newBotmanQuestion/alle')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">neue Fragen bearbeiten</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">Fragen bearbeiten</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">Antworten bearbeiten</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                              </div>
+
+                          </div>
+
+
+                      </div>
+                  </div>
+
+                  <div class="p-6 border-t border-gray-200">
+                      <div class="flex items-center">
+                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Event Gruppen</div>
+                      </div>
+
+                      <div class="ml-12">
+                          <div class="mt-2 text-sm text-gray-500">
+
+                              <div style="text-align: left">
+
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('Team/alle')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">Teammanagment</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('Instruction/alle')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">Informationsseiten</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                              </div>
+
+                          </div>
                       </div>
                   </div>
 

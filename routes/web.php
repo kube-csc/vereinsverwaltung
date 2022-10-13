@@ -20,6 +20,8 @@ use App\Http\Controllers\BotmanQuestionController;
 use App\Http\Controllers\NewBotmanQuestionController;
 use App\Http\Controllers\BacklinksController;
 use App\Http\Controllers\ClubController;
+use App\Http\Controllers\SporttypeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -262,6 +264,16 @@ Route::post('/Club/update/{eventGroup_id}',     [ClubController::class, 'update'
 Route::get('/Club/softDelete/{eventGroup_id}',  [ClubController::class, 'softDelete']);
 Route::get('/Club/aktiv/{sportSection_id}',     [ClubController::class, 'aktiv'])         ->name('club.aktiv');
 Route::get('/Club/inaktiv/{sportSection_id}',   [ClubController::class, 'inaktiv'])       ->name('club.inaktiv');
+
+//Route::resource('Sportart', 'ClubController');
+Route::get('/Sportart/alle',                        [SporttypeController::class, 'index'])         ->name('sporttype.index');
+Route::get('/Sportart/neu',                         [SporttypeController::class, 'create'])        ->name('sporttype.create');
+Route::post('/Sportart/speichern',                  [SporttypeController::class, 'store'])         ->name('sporttype.store');
+Route::get('/Sportart/edit/{eventGroup_id}',        [SporttypeController::class, 'edit'])          ->name('sporttype.edit');
+Route::post('/Sportart/update/{eventGroup_id}',     [SporttypeController::class, 'update'])        ->name('sporttype.update');
+Route::get('/Sportart/softDelete/{eventGroup_id}',  [SporttypeController::class, 'softDelete']);
+Route::get('/Sportart/aktiv/{sportSection_id}',     [SporttypeController::class, 'aktiv'])         ->name('sporttype.aktiv');
+Route::get('/Sportart/inaktiv/{sportSection_id}',   [SporttypeController::class, 'inaktiv'])       ->name('sporttype.inaktiv');
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

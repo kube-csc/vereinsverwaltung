@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
        $this->call(TabeleSeeder::class);
        $this->call(RaceSeeder::class);
        $this->call(RegattaInformationSeeder::class);
+       $this->call(SporttypeSeeder::class);
        $this->call(ClubSeeder::class);
     }
 }

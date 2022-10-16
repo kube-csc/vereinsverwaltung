@@ -18,7 +18,7 @@
           <p>
             {{ str_replace('_', ' ', env('VEREIN_NAME')) }}<br>
             {{ str_replace('_', ' ', env('VEREIN_STRASSE')) }}<br>
-            {{ str_replace('_', ' ', env('Verein_PLZ')) }} {{ str_replace('_', ' ', env('VEREIN_ORT')) }}
+            {{ str_replace('_', ' ', env('VEREIN_PLZ')) }} {{ str_replace('_', ' ', env('VEREIN_ORT')) }}
           </p>
         </div>
       </div>

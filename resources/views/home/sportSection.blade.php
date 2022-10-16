@@ -91,7 +91,10 @@ foreach ( $abteilungHomes as $abteilungHome)
                 ?>
                   {!! $ausgabetext !!}
                   @php
-                   $sportTeams = DB::table('sport_sections')->where('sportSection_id' , $abteilung->id)->get();
+                   $sportTeams = DB::table('sport_sections')
+                                 -> where('status' , '>' , '0')
+                                 ->where('sportSection_id' , $abteilung->id)
+                                 ->get();
                    $first=0;
                   @endphp
 

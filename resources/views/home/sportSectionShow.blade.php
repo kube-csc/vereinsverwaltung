@@ -6,11 +6,11 @@
                 @foreach ($sportSectionNames as $sportSectionName)
                     <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
                         <div class="content">
-                            @if(env('Verein_Sozialmediaanzeigen')=='ja')
+                            @if(env('APP_SOZIALMEDINANZEIGE')=='ja')
                              <!-- ======= Facebook======= -->
                              <!-- ToDo: Facebook funktioniert nicht -->
                                  <center>
-                               <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('Verein_Domain')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                               <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('VEREIN_DOMAIN')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
                              </center>
                             @endif
                             <h3>{{ $sportSectionName->abteilung }}</h3>
@@ -62,7 +62,7 @@
                                 }
                                 ?>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
-                                    <a href="/{{env('Menue_Abteilung')}}/{{ str_replace(' ', '_', $abteilung->abteilung) }}">
+                                    <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilung->abteilung) }}">
                                       <h4>{{ $abteilung->abteilung }}</h4>
                                     </a>
                                    <?php

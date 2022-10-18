@@ -256,24 +256,26 @@ Route::get('/Renneninformation/down/{regattaInfo_id}',    [RegattaInformationCon
 Route::get('/Renneninformation/maxdown/{regattaInfo_id}', [RegattaInformationController::class, 'maxdown'])  ->name('regattaInformation.maxdown');
 
 //Route::resource('Club', 'ClubController');
-Route::get('/Club/alle',                        [ClubController::class, 'index'])         ->name('club.index');
-Route::get('/Club/neu',                         [ClubController::class, 'create'])        ->name('club.create');
-Route::post('/Club/speichern',                  [ClubController::class, 'store'])         ->name('club.store');
-Route::get('/Club/edit/{eventGroup_id}',        [ClubController::class, 'edit'])          ->name('club.edit');
-Route::post('/Club/update/{eventGroup_id}',     [ClubController::class, 'update'])        ->name('club.update');
-Route::get('/Club/softDelete/{eventGroup_id}',  [ClubController::class, 'softDelete']);
-Route::get('/Club/aktiv/{sportSection_id}',     [ClubController::class, 'aktiv'])         ->name('club.aktiv');
-Route::get('/Club/inaktiv/{sportSection_id}',   [ClubController::class, 'inaktiv'])       ->name('club.inaktiv');
+Route::get('/Club/alle',                                      [ClubController::class, 'index'])               ->name('club.index');
+Route::get('/Club/neu',                                       [ClubController::class, 'create'])              ->name('club.create');
+Route::post('/Club/speichern',                                [ClubController::class, 'store'])               ->name('club.store');
+Route::get('/Club/edit/{club_id}',                            [ClubController::class, 'edit'])                ->name('club.edit');
+Route::post('/Club/update/{club_id}',                         [ClubController::class, 'update'])              ->name('club.update');
+Route::get('/Club/softDelete/{club_id}',                      [ClubController::class, 'softDelete']);
+Route::get('/Club/aktiv/{club_id}',                           [ClubController::class, 'aktiv'])               ->name('club.aktiv');
+Route::get('/Club/inaktiv/{club_id}',                         [ClubController::class, 'inaktiv'])             ->name('club.inaktiv');
+Route::get('/Club/{club_id}/Sportart/{sporttype_id}/attach',  [ClubController::class, 'clubAttachSporttype']) ->name('club.club_sporttype');
+Route::get('/Club/{club_id}/Sportart/{sporttype_id}/detach',  [ClubController::class, 'clubDetachSporttype']) ->name('club.club_sporttype');
 
 //Route::resource('Sportart', 'ClubController');
-Route::get('/Sportart/alle',                        [SporttypeController::class, 'index'])         ->name('sporttype.index');
-Route::get('/Sportart/neu',                         [SporttypeController::class, 'create'])        ->name('sporttype.create');
-Route::post('/Sportart/speichern',                  [SporttypeController::class, 'store'])         ->name('sporttype.store');
-Route::get('/Sportart/edit/{eventGroup_id}',        [SporttypeController::class, 'edit'])          ->name('sporttype.edit');
-Route::post('/Sportart/update/{eventGroup_id}',     [SporttypeController::class, 'update'])        ->name('sporttype.update');
-Route::get('/Sportart/softDelete/{eventGroup_id}',  [SporttypeController::class, 'softDelete']);
-Route::get('/Sportart/aktiv/{sportSection_id}',     [SporttypeController::class, 'aktiv'])         ->name('sporttype.aktiv');
-Route::get('/Sportart/inaktiv/{sportSection_id}',   [SporttypeController::class, 'inaktiv'])       ->name('sporttype.inaktiv');
+Route::get('/Sportart/alle',                      [SporttypeController::class, 'index'])         ->name('sporttype.index');
+Route::get('/Sportart/neu',                       [SporttypeController::class, 'create'])        ->name('sporttype.create');
+Route::post('/Sportart/speichern',                [SporttypeController::class, 'store'])         ->name('sporttype.store');
+Route::get('/Sportart/edit/{sporttype_id}',       [SporttypeController::class, 'edit'])          ->name('sporttype.edit');
+Route::post('/Sportart/update/{sporttype_id}',    [SporttypeController::class, 'update'])        ->name('sporttype.update');
+Route::get('/Sportart/softDelete/{sporttype_id}', [SporttypeController::class, 'softDelete']);
+Route::get('/Sportart/aktiv/{sporttype_id}',      [SporttypeController::class, 'aktiv'])         ->name('sporttype.aktiv');
+Route::get('/Sportart/inaktiv/{sporttype_id}',    [SporttypeController::class, 'inaktiv'])       ->name('sporttype.inaktiv');
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

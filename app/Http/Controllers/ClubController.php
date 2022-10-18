@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Club;
+use App\Models\Sporttype;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Auth;
 
 class ClubController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
     public function aktiv($clubId)
     {
         club::find($clubId)->update([
@@ -103,8 +108,16 @@ class ClubController extends Controller
      */
     public function edit($clubId)
     {
-        $club=club::find($clubId);
-        return view('admin.club.edit',compact('club'));
+        $club          = Club::find($clubId);
+        $allSporttypes = Sporttype::all();
+        $verwendeteSporttypes  = $club->sporttypes;
+        $verfuegbareSporttypes = $allSporttypes->diff($verwendeteSporttypes);
+
+        return view('admin.club.edit')->with(
+            [
+                'club'                  => $club,
+                'verfuegbareSporttypes' => $verfuegbareSporttypes
+            ]);
     }
 
     /**
@@ -154,5 +167,23 @@ class ClubController extends Controller
                 'success' => env('MENUE_VERBAND'). ' wurde gelöscht.'
             ]
         );
+    }
+
+    public function clubAttachSporttype($clubId , $sporttypeid)
+    {
+        $club = Club::find($clubId);
+        $sporttype  = Sporttype::find($sporttypeid);
+        $club->sporttypes()->attach($sporttypeid);
+
+      return back()->with('success' , 'Die Sportart <b>'. $sporttype->clubname . '</b> wurde angehangen.');
+    }
+
+    public function clubDetachSporttype($clubId , $sporttypeid)
+    {
+        $club = Club::find($clubId);
+        $sporttype  = Sporttype::find($sporttypeid);
+        $club->sporttypes()->detach($sporttypeid);
+
+        return back()->with('success' , 'Die Sportart <b>'. $sporttype->clubname . '</b> wurde entfernd.');
     }
 }

@@ -12,4 +12,8 @@ class Club extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    public function sporttypes() {
+        return $this->belongsToMany('App\Models\Sporttype');
+    }
 }

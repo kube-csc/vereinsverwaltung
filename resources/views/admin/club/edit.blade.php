@@ -43,6 +43,17 @@
                                     id="clubname" placeholder="{{ env('MENUE_VERBAND') }}" name="clubname" value="{{ old('clubname') ?? $club->clubname }}">
                                     <small class="form-text text-danger">{!! $errors->first('clubname') !!}</small>
                                 </div>
+
+                                 @foreach ( $club->sporttypes as $sporttype )
+                                     <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Club/{{ $club->id }}/Sportart/{{ $sporttype->id }}/detach')">
+                                         <div class="justify-between my-2">
+                                             <div class="flex">
+                                                 <p class="font-bold text-lg">{{ $sporttype->sportart }} </p>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 @endforeach
+
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
                                 </div>
@@ -55,6 +66,23 @@
                       </div>
                   </div>
 
+                  <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
+                      <div class="flex items-center">
+                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Sportart Pool</div>
+                       </div>
+
+                      @foreach ( $verfuegbareSporttypes as $sporttype )
+                          <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Club/{{ $club->id }}/Sportart/{{ $sporttype->id }}/attach')">
+                              <div class="justify-between my-2">
+                                  <div class="flex">
+                                      <p class="font-bold text-lg">{{ $sporttype->sportart }} </p>
+                                  </div>
+                              </div>
+                          </div>
+                      @endforeach
+
+                  </div>
+
               </div>
 
             </div>
@@ -62,3 +90,4 @@
     </div>
 
 </x-app-layout>
+

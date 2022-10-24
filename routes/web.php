@@ -41,6 +41,8 @@ Route::get('/Termine',                                             [HomeControll
 Route::get('/Berichte',                                            [HomeController::class, 'eventPastAll']);
 Route::get('/Anfahrt',                                             [HomeController::class, 'journey']);
 Route::get('/Impressum',                                           [HomeController::class, 'imprint']);
+Route::get('/'.env('MENUE_VEREIN'),                            [HomeController::class, 'club']);
+Route::get('/'.env('MENUE_VERBAND'),                           [HomeController::class, 'sporttype']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');

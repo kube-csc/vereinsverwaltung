@@ -9,6 +9,10 @@ use Auth;
 
 class SporttypeController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
     public function aktiv($sporttypeId)
     {
         sporttype::find($sporttypeId)->update([
@@ -103,6 +107,7 @@ class SporttypeController extends Controller
     public function edit($sporttypeId)
     {
         $sporttype=Sporttype::find($sporttypeId);
+
         return view('admin.sporttype.edit',compact('sporttype'));
     }
 
@@ -148,6 +153,7 @@ class SporttypeController extends Controller
     public function softDelete($sporttypeId)
     {
         $delete = Sporttype::find($sporttypeId)->delete();
+
         return redirect('/Sportart/alle')->with(
             [
                 'success' => 'Die Sportart wurde gelöscht.'

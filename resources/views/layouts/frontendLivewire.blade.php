@@ -161,20 +161,21 @@
                     ->where('visible' , 1)
                     ->orderby('ueberschrift')
                     ->get();
-                   $countinstructionMenu=$instructionMenus->count();
               @endphp
-              @if($countinstructionMenu>0)
-                  <li class="drop-down"><a href="">Informationen</a>
-                      <ul>
-                          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
-                          @foreach($instructionMenus as $instructionMenu)
-                              <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Information/{{ $instructionMenu->ueberschrift }}">{{ $instructionMenu->ueberschrift }}</a></li>
-                          @endforeach
-                      </ul>
-                  </li>
-              @else
-                  <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
-              @endif
+              <li class="drop-down"><a href="">Informationen</a>
+                  <ul>
+                      <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
+                      @foreach($instructionMenus as $instructionMenu)
+                          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Information/{{ $instructionMenu->ueberschrift }}">{{ $instructionMenu->ueberschrift }}</a></li>
+                      @endforeach
+                      @if(env('MENUE_VEREIN')<>'nein')
+                          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/{{ env('MENUE_VEREIN') }}">{{ env('MENUE_VEREIN') }}</a></li>
+                      @endif
+                      @if(env('MENUE_VERBAND')<>'nein')
+                          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/{{ env('MENUE_VERBAND') }}">{{ env('MENUE_VERBAND') }}</a></li>
+                      @endif
+                  </ul>
+              </li>
           </ul>
 
       </nav><!-- .nav-menu -->

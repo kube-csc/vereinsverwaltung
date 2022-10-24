@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\board;
+use App\Models\Club;
 use App\Models\Event;
 use App\Models\report;
 use App\Models\SportSection;
 use App\Models\instruction;
 use App\Models\Document;
+use App\Models\Sporttype;
 use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
@@ -352,4 +354,60 @@ class HomeController extends Controller
             'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
         ]);
     }
+
+    public function club()
+    {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
+        $clubs = Club::all();
+        $footerDocuments = Document::where('footerStatus' , 1)
+            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+            ->where('visible' , 1)
+            ->where('dokumentenFile' ,'!=' , NULL)
+            ->get();
+
+        return view('home.club')->with([
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu,
+            'clubs'                       => $clubs
+        ]);
+    }
+
+    public function sporttype()
+    {
+        $serverdomain        = $_SERVER["HTTP_HOST"];
+        $abteilungHomes      = SportSection::where('status' , '1')
+            ->orwhere('domain' , $serverdomain)
+            ->orderby('status')
+            ->get();
+
+        foreach ($abteilungHomes as $abteilungHome) {
+            $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
+        }
+
+        $sporttypes = Sporttype::all();
+
+        $footerDocuments = Document::where('footerStatus' , 1)
+            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+            ->where('visible' , 1)
+            ->where('dokumentenFile' ,'!=' , NULL)
+            ->get();
+
+        return view('home.sporttype')->with([
+            'footerDocuments'             => $footerDocuments,
+            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu,
+            'sporttypes'                  => $sporttypes
+        ]);
+    }
+
 }

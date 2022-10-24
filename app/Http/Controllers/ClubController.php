@@ -73,6 +73,7 @@ class ClubController extends Controller
         $club= new Club(
             [
                 'clubname'      => $request->clubname,
+                'clubhomepage'  => $request->clubhomepage,
                 'bearbeiter_id' => Auth::id(),
                 'user_id'       => Auth::id(),
                 'updated_at'    => Carbon::now(),
@@ -131,12 +132,13 @@ class ClubController extends Controller
     {
         $request->validate(
             [
-                'clubname'         => 'required|max:50'
+                'clubname'         => 'required|max:50',
             ]
         );
 
         club::find($clubId)->update([
             'clubname'        => $request->clubname,
+            'clubhomepage'    => $request->clubhomepage,
             'bearbeiter_id'   => Auth::id(),
             'updated_at'      => Carbon::now()
         ]);

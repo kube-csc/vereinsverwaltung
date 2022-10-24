@@ -91,7 +91,7 @@
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
                       <div class="flex items-center">
-                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">{{ env('MENUE_VERBAND') }}</div>
+                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">{{ env('MENUE_VEREIN') }} / {{ env('MENUE_VERBAND') }}</div>
                       </div>
 
                       <div class="ml-12">
@@ -102,7 +102,7 @@
                                 <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('Club/alle')">
                                   <div class="flex justify-between my-2">
                                     <div class="flex">
-                                      <p class="font-bold text-lg">{{ env('MENUE_VERBAND') }} bearbeiten</p>
+                                      <p class="font-bold text-lg">{{ env('MENUE_VEREIN') }} bearbeiten</p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
                                     </div>
                                   </div>
@@ -111,7 +111,7 @@
                                 <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('Sportart/alle')">
                                     <div class="flex justify-between my-2">
                                         <div class="flex">
-                                            <p class="font-bold text-lg">Sportart bearbeiten</p>
+                                            <p class="font-bold text-lg">{{ env('MENUE_VERBAND') }} bearbeiten</p>
                                             <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
                                         </div>
                                     </div>

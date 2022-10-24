@@ -50,6 +50,14 @@
                                     id="clubname" placeholder="{{ env('MENUE_VERBAND') }}" name="clubname" value="{{ old('clubname') }}">
                                     <small class="form-text text-danger">{!! $errors->first('clubname') !!}</small>
                                 </div>
+
+                                <div class="my-4" >
+                                    <label for="name">Homepage:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('clubhomepage') ? 'bg-red-300' : '' }}"
+                                           id="clubhomepage" placeholder="http://" name="clubhomepage" value="{{ old('clubhomepage') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('clubhomepage') !!}</small>
+                                </div>
+
                                 <div class="py-2">
                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">anlegen</button>
                                 </div>

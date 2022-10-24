@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ env('MENUE_VERBAND') }} {{ __('Dashboard') }}
+            {{ env('MENUE_VEREIN') }} {{ __('Dashboard') }}
         </h2>
         </h2>
     </x-slot>
@@ -19,14 +19,14 @@
                     @php
                       // ToDo: Beschreibungstext überarbeiten
                     @endphp
-                    Bitte gebe die Daten von {{ env('MENUE_VERBAND') }} ein.
+                    Bitte gebe die Daten von {{ env('MENUE_VEREIN') }} ein.
                   </div>
               </div>
 
               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Neue {{ env('MENUE_VERBAND') }}</div>
+                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Neue {{ env('MENUE_VEREIN') }}</div>
                       </div>
 
                       <div class="ml-12">
@@ -38,21 +38,28 @@
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                 <div class="my-4" >
-                                    <label for="name">{{ env('MENUE_VERBAND') }} Name:</label>
+                                    <label for="name">{{ env('MENUE_VEREIN') }} Name:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('clubname') ? 'bg-red-300' : '' }}"
-                                    id="clubname" placeholder="{{ env('MENUE_VERBAND') }}" name="clubname" value="{{ old('clubname') ?? $club->clubname }}">
+                                    id="clubname" placeholder="{{ env('MENUE_VEREIN') }}" name="clubname" value="{{ old('clubname') ?? $club->clubname }}">
                                     <small class="form-text text-danger">{!! $errors->first('clubname') !!}</small>
                                 </div>
 
-                                 @foreach ( $club->sporttypes as $sporttype )
-                                     <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Club/{{ $club->id }}/Sportart/{{ $sporttype->id }}/detach')">
-                                         <div class="justify-between my-2">
-                                             <div class="flex">
-                                                 <p class="font-bold text-lg">{{ $sporttype->sportart }} </p>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 @endforeach
+                                <div class="my-4" >
+                                    <label for="name">Homepage:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('clubhomepage') ? 'bg-red-300' : '' }}"
+                                           id="clubhomepage" placeholder="http://" name="clubhomepage" value="{{ old('clubname') ?? $club->clubhomepage }}">
+                                    <small class="form-text text-danger">{!! $errors->first('clubhomepage') !!}</small>
+                                </div>
+
+                                @foreach ( $club->sporttypes as $sporttype )
+                                    <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Club/{{ $club->id }}/Sportart/{{ $sporttype->id }}/detach')">
+                                        <div class="justify-between my-2">
+                                            <div class="flex">
+                                                <p class="font-bold text-lg">{{ $sporttype->sportart }} </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
 
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>

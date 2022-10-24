@@ -36,7 +36,7 @@
                       @endif
                       >
                           <h4 class="title"><a href="">{{ $sporttype->sportart }}</a></h4>
-                          <p class="description"></p>
+                          <p class="description">{{ env('MENUE_VEREIN') }}:</p>
                           @foreach($clubs as $club)
                               <p class="description">{{ $club->clubname }}</p>
                           @endforeach

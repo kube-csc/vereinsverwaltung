@@ -18,10 +18,10 @@ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
   <li>Insallation Laravel 8.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss
   <a href="https://jetstream.laravel.com/2.x/introduction.html"></a>
   <a href="https://jetstream.laravel.com/2.x/stacks/livewire.html"></a></li>
-  <li><a href="https://boxicons.com/">boxicons </a></li>
-  <li><a href="https://tailwindcss.com/">Tailwindcss</a></li>
+  <li><a href="https://boxicons.com/">boxicons</a>(Forntend)</li>
+  <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
-  <li>.htaccess für 1und1 Server</li>
+  <li>.htaccess für ionos.de (1und1.de) Server</li>
   <li><a href="https://botman.io">Botman</a></li>
 </ul>
 
@@ -155,7 +155,8 @@ benötigt.
     </li>
    <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
    <ul>
-     <li>recht.blade.php anlegen und mit der Vorlage von echt_example.blade.php ausfüllen</li>
+     <li>anfahrt.blade.php anlegen und mit der Vorlage von anfahrt_example.blade.php ausfüllen</li>
+     <li>recht.blade.php anlegen und mit der Vorlage von recht_example.blade.php ausfüllen</li>
      <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
      <li>map.blade.php anlegen und mit der Vorlage von map_example.blade.php ausfüllen</li>
      <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>

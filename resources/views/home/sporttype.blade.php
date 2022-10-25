@@ -29,28 +29,22 @@
                         ->get();
                   @endphp
 
-                  <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-                      <div class="icon-box" data-aos="fade-up"
-                      @if($loop->first)
-                          data-aos-delay="{{$delay}}"
-                      @endif
-                      >
+                    <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
+                       <div class="icon-box" data-aos="fade-up"
+                          @if(!($loop->first))data-aos-delay="{{$delay}}"@endif
+                          >
                           <h4 class="title"><a href="">{{ $sporttype->sportart }}</a></h4>
                           <p class="description">{{ env('MENUE_VEREIN') }}:</p>
                           @foreach($clubs as $club)
                               <p class="description">{{ $club->clubname }}</p>
                           @endforeach
-                      </div>
-                  </div>
-              @php
-                  $delay=$delay+100;
-              @endphp
+                       </div>
+                    </div>
+                  @php
+                      $delay=$delay+50;
+                  @endphp
               @endforeach
               </div>
-
-
-              </div>
-
           </div>
       </section><!-- End Services Section -->
 

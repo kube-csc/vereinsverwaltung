@@ -32,7 +32,7 @@ benötigt.
 
 <h2>Frontend</h2>
 <ul>
-    <li>Header ist abhängig von den Abteilungen / Sportarten</li>
+    <li>Header ist abhängig von den Abteilungen / Sportarten *</li>
     <li>Leanding Page
          <ul>
           <li>Ausgabe der Vereinsbeschreibung</li>
@@ -64,17 +64,24 @@ benötigt.
         <li>Anfahrt</li>
         <li>Beiträge</li>
         <li>Übernachtungskosten</li>
+        <li>Abteilungen *
+          <ul>
+            <li>Sportarten *</li>
+          </ul> 
+        </li>
     </ul>
   </li>
     <li>Footer
     <ul>
-        <li>Dokumente aus dem Dokumentenmanagment werden angezeigt</li>
+        <li>Dokumente aus dem Dokumentenmanagement werden angezeigt</li>
         <li>Impresssum</li>
         <li>Datenschutzerklärung</li>
     </ul>
   </li>
     <li>401 Errorseite oder Weiterleitung 301 zu dem im Backlink verwalteten Backend</li>
 </ul>
+
+* Begriff wird in der .env eintragen  
 
 <h2>Backend</h2>
 <h3>Vereinsverwaltung</h3>

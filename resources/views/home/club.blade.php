@@ -29,27 +29,26 @@
                        ->get();
                  @endphp
 
-                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
+                  <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                      <div class="icon-box" data-aos="fade-up"
-                     @if($loop->first)
-                         data-aos-delay="{{$delay}}"
-                     @endif
-                     >
+                         @if(!($loop->first))data-aos-delay="{{$delay}}"@endif
+                         >
                          <h4 class="title"><a href="">{{ $club->clubname }}</a></h4>
                          @if($club->clubhomepage<>"")
                              <a href="{{ $club->clubhomepage }}" target="_blank">Homepage</a>
+                             <br><br>
                          @endif
                          @if($sporttypes->count()>0)
-                         <p class="description">{{ env('MENUE_VERBAND') }}:</p>
+                             <p class="description">{{ env('MENUE_VERBAND') }}:</p>
                          @endif
                          @foreach($sporttypes as $sporttype)
-                         <p class="description">{{ $sporttype->sportart }}</p>
+                             <p class="description">{{ $sporttype->sportart }}</p>
                          @endforeach
                      </div>
-                 </div>
-              @php
-                $delay=$delay+100;
-              @endphp
+                  </div>
+                    @php
+                        $delay=$delay+50;
+                    @endphp
               @endforeach
               </div>
           </div>

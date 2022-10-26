@@ -40,7 +40,7 @@ class SporttypeController extends Controller
      */
     public function index()
     {
-        $sporttypes = Sporttype::paginate(5);
+        $sporttypes = Sporttype::orderby('sportart')->paginate(5);
 
         return view('admin.sporttype.index' , compact('sporttypes'));
     }

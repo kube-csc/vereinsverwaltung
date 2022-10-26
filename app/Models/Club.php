@@ -14,6 +14,6 @@ class Club extends Model
     protected $guarded = [];
 
     public function sporttypes() {
-        return $this->belongsToMany('App\Models\Sporttype');
+        return $this->belongsToMany('App\Models\Sporttype')->orderby('sportart');
     }
 }

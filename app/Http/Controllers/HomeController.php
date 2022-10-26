@@ -367,7 +367,7 @@ class HomeController extends Controller
             $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
         }
 
-        $clubs = Club::all();
+        $clubs = Club::orderby('clubname')->get();
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
@@ -394,7 +394,7 @@ class HomeController extends Controller
             $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;
         }
 
-        $sporttypes = Sporttype::all();
+        $sporttypes = Sporttype::orderby('sportart')->get();
 
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())

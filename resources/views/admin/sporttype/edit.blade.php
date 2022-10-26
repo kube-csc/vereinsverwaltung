@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Sportart {{ __('Dashboard') }}
+            {{ env('MENUE_VERBAND') }} {{ __('Dashboard') }}
         </h2>
         </h2>
     </x-slot>
@@ -19,7 +19,7 @@
                     @php
                       // ToDo: Beschreibungstext überarbeiten
                     @endphp
-                    Bitte gebe die Daten von der Sportart ein.
+                    Bitte gebe die Daten von der {{ env('MENUE_VERBAND') }} ein.
                   </div>
               </div>
 

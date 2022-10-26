@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Sportart {{ __('Dashboard') }}
+            {{ env('MENUE_VERBAND') }} {{ __('Dashboard') }}
         </h2>
     </x-slot>
 
@@ -11,11 +11,11 @@
 
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
-                      Sportart
+                      {{ env('MENUE_VERBAND') }}
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                    Bitte gebe eine neue Sportart ein.
+                    Bitte gebe eine neue {{ env('MENUE_VERBAND') }} ein.
                   </div>
 
               </div>
@@ -23,7 +23,7 @@
               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Neue Sportart</div>
+                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Neue {{ env('MENUE_VERBAND') }}</div>
                       </div>
 
                       <div class="ml-12">

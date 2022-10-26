@@ -41,7 +41,7 @@ class ClubController extends Controller
      */
     public function index()
     {
-        $clubs = Club::paginate(5);
+        $clubs = Club::orderby('clubname')->paginate(5);
 
         return view('admin.club.index' , compact('clubs'));
     }
@@ -110,7 +110,7 @@ class ClubController extends Controller
     public function edit($clubId)
     {
         $club          = Club::find($clubId);
-        $allSporttypes = Sporttype::all();
+        $allSporttypes = Sporttype::orderby('sportart')->get();
         $verwendeteSporttypes  = $club->sporttypes;
         $verfuegbareSporttypes = $allSporttypes->diff($verwendeteSporttypes);
 

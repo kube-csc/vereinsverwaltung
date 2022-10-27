@@ -35,7 +35,7 @@
                          >
                          <h4 class="title"><a href="">{{ $club->clubname }}</a></h4>
                          @if($club->clubhomepage<>"")
-                             <a href="{{ $club->clubhomepage }}" target="_blank">Homepage</a>
+                             <a href="{{ $club->clubhomepage }}" class="bx bx-link-external" target="_blank" >Homepage</a>
                              <br><br>
                          @endif
                          @if($sporttypes->count()>0)

@@ -33,10 +33,19 @@
                        <div class="icon-box" data-aos="fade-up"
                           @if(!($loop->first))data-aos-delay="{{$delay}}"@endif
                           >
-                          <h4 class="title"><a href="">{{ $sporttype->sportart }}</a></h4>
+                          <h4 class="title">{{ $sporttype->sportart }}</h4>
                           <p class="description">{{ env('MENUE_VEREIN') }}:</p>
                           @foreach($clubs as $club)
-                              <p class="description">{{ $club->clubname }}</p>
+                              <p class="description">
+                            @if($club->clubhomepage<>"")
+                                <p class="description">
+                                  <a href="{{ $club->clubhomepage }}" class="bx bx-link-external" target="_blank">{{ $club->clubname }}</a>
+                                </p>
+                            @else
+                                <p class="description">
+                                 {{ $club->clubname }}
+                                </p>
+                            @endif
                           @endforeach
                        </div>
                     </div>

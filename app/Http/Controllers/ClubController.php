@@ -143,11 +143,15 @@ class ClubController extends Controller
             'updated_at'      => Carbon::now()
         ]);
 
+        return back()->with('success' , 'Die Daten von <b>' . $request->clubname . '</b> wurden geändert.');
+
+        /*
         return redirect('/Club/alle')->with(
             [
                 'success' => 'Die Daten von <b>' . $request->clubname . '</b> wurden geändert.'
             ]
         );
+        */
     }
 
     /**

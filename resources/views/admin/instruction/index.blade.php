@@ -15,7 +15,7 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich können die Beiträge, Übernachtungskosten und Datenschutzerglärung bearbeitet werden.
+                   In diesem Bereich können Datenschutzerglärung und selbst angelegte Informationsseiten bearbeitet werden.
                   </div>
 
               </div>
@@ -36,6 +36,10 @@
                                           {!! session('success') !!}
                                       </div>
                                   @endif
+                              </div>
+
+                              <div class="my-4 flex">
+                                  <a href="{{ route('instruction.create') }}"><box-icon name='plus'></box-icon></a>
                               </div>
 
                               @foreach ( $instructions as $instruction )

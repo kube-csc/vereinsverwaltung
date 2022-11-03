@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Sonderseiten - Dashboard') }}
+            {{ __('Informationsseite - Dashboard') }}
         </h2>
         </h2>
     </x-slot>
@@ -19,7 +19,7 @@
                     @php
                       // ToDo: Beschreibungstext überarbeiten
                     @endphp
-                    Bitte gebe die Daten ein.
+                    Bitte gebe die Daten der Informationsseite ein.
                   </div>
               </div>
 
@@ -37,6 +37,18 @@
                                 @php
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
+
+                                @if($instruction->ueberschrift <> "Datenschutzerklärung")
+                                <div class="my-4" >
+                                  <label for="name">Name der Seite</label>
+                                  <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ueberschrift') ? 'bg-red-300' : '' }}"
+                                         id="ueberschrift" placeholder="Name der Seite" name="ueberschrift" value="{{ old('ueberschrift') ?? $instruction->ueberschrift }}">
+                                  <small class="form-text text-danger">{!! $errors->first('ueberschrift') !!}</small>
+                                </div>
+                                @else
+                                      <input type="hidden" id="ueberschrift" name="ueberschrift" value="{{ old('ueberschrift') ?? $instruction->ueberschrift }}">
+                                @endif
+
                                 <div class="my-4" >
                                     <textarea rows="25" cols="200" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{!! $instruction->beschreibung !!}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>

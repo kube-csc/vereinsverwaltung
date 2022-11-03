@@ -36,7 +36,7 @@ use App\Http\Controllers\SporttypeController;
 Route::get('/',                                                    [HomeController::class, 'index']);
 Route::get('/'.env('MENUE_ABTEILUNG').'/{sportTeam}',          [HomeController::class, 'homeSportSelect']);
 Route::get('/Bericht/{event}',                                     [HomeController::class, 'eventShow']);
-Route::get('/Information/{event}',                                 [HomeController::class, 'instructionShow']);
+Route::get('/Information/{instructionSearch}',                     [HomeController::class, 'instructionShow']);
 Route::get('/Termine',                                             [HomeController::class, 'eventFutureAll']);
 Route::get('/Berichte',                                            [HomeController::class, 'eventPastAll']);
 Route::get('/Anfahrt',                                             [HomeController::class, 'journey']);
@@ -133,6 +133,8 @@ Route::get('/Berichtbilder/uebernehmen',               [ReportController::class,
 
 //Route::resource('instruction', 'InstructionController');
 Route::get('/Instruction/alle',                        [InstructionController::class, 'index'])        ->name('instruction.index');
+Route::get('/Instruction/neu',                         [InstructionController::class, 'create'])       ->name('instruction.create');
+Route::post('/Instruction/speichern',                  [InstructionController::class, 'store'])        ->name('instruction.store');
 Route::get('/Instruction/edit/{instruction_id}',       [InstructionController::class, 'edit'])         ->name('instruction.edit');
 Route::post('/Instruction/update/{instruction_id}',    [InstructionController::class, 'update'])       ->name('instruction.update');
 Route::get('/Instruction/aktiv/{instruction_id}',      [InstructionController::class, 'aktiv'])        ->name('instruction.aktiv');

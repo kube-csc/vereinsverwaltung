@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\instruction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class InstructionController extends Controller
 {
@@ -54,7 +55,7 @@ class InstructionController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.instruction.create');
     }
 
     /**
@@ -65,7 +66,29 @@ class InstructionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+                'ueberschrift'  => 'required|max:50',
+            ]
+        );
+
+        $instruction = new instruction([
+                'ueberschrift'             => $request->ueberschrift,
+                'visible'                  => "1",
+                'hauptmenu'                => "1",
+                'bearbeiter_id'            => Auth::id(),
+                'user_id'                  => Auth::id(),
+                'updated_at'               => Carbon::now(),
+                'created_at'               => Carbon::now()
+            ]
+        );
+        $instruction->save();
+
+        $instructions = instruction::orderby('ueberschrift')->get();
+
+        return view('admin.instruction.index')->with(
+            [
+                'instructions'    => $instructions
+            ]);
     }
 
     /**
@@ -102,7 +125,9 @@ class InstructionController extends Controller
     public function update(Request $request, $instruction_id)
     {
         instruction::find($instruction_id)->update([
+            'ueberschrift'    => $request->ueberschrift,
             'beschreibung'    => $request->beschreibung,
+            'bearbeiter_id'   => Auth::id(),
             'updated_at'      => Carbon::now()
         ]);
 

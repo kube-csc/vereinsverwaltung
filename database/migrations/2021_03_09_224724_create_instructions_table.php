@@ -15,12 +15,15 @@ class CreateInstructionsTable extends Migration
     {
         Schema::create('instructions', function (Blueprint $table) {
             $table->id();
-            $table->string('ueberschrift');
+            $table->string('ueberschrift' ,50);
             $table->text('beschreibung')->nullable();
             $table->boolean('hauptmenu');    // true = 1 = Hauptmenu
-            $table->boolean('visible');      // true = 1 = sichtbar
+            $table->boolean('visible');     // true = 1 = sichtbar
             $table->unsignedBigInteger('freigeber_id')->nullable();
+            $table->unsignedBigInteger('bearbeiter_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamp('letzteFreigabe')->nullable();
+            $table->SoftDeletes();
             $table->timestamps();
         });
     }

@@ -36,11 +36,11 @@ benötigt.
     <li>Leanding Page
          <ul>
           <li>Ausgabe der Vereinsbeschreibung</li>
-          <li>Präsentation der Abteilung mit deren Mannschaften</li>
+          <li>Präsentation der Abteilung * mit deren Mannschaften *</li>
           <li>Präsentation der kommenden Events</li>
           <li>Präsentation der vergangenen Events</li>
           <li>Präsentation des Teams</li>
-          <li>Kontakt des Vereins inc. Map</li>
+          <li>Kontakt des Vereins inc. Map *</li>
         </ul>
     </li>
     <li>Präsentation der Abteilungen / Sportarten</li>
@@ -59,11 +59,10 @@ benötigt.
             </li>
         </ul>
     </li>
-    <li>Informationensseiten
+    <li>Informationsseiten
     <ul>
-        <li>Anfahrt</li>
-        <li>Beiträge</li>
-        <li>Übernachtungskosten</li>
+        <li>Anfahrt **</li>
+        <li>Selbst angelegte Informationsseiten</li>
         <li>Abteilungen *
           <ul>
             <li>Sportarten *</li>
@@ -82,6 +81,7 @@ benötigt.
 </ul>
 
 * Begriff wird in der .env eintragen  
+** Anfahrt kann in der .env aktiviert bzw. deaktiviert werden 
 
 <h2>Backend</h2>
 <h3>Vereinsverwaltung</h3>

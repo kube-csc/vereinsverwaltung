@@ -161,7 +161,9 @@
               @endphp
               <li class="drop-down"><a href="">Informationen</a>
                   <ul>
-                      <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
+                      @if(env('VEREIN_ANFAHRT')<>'nein')
+                          <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
+                      @endif
                       @foreach($instructionMenus as $instructionMenu)
                           <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Information/{{ $instructionMenu->ueberschrift }}">{{ $instructionMenu->ueberschrift }}</a></li>
                       @endforeach
@@ -213,20 +215,20 @@
 
               @if(env('APP_SOZIALMEDINANZEIGE')=="ja")
                   <div class="social-links mt-3">
-                      @if(env('VEREIN_SOZIAL_FACEBOOK'))!='')
-                      <a href="{{ str_replace('_' , ' ' , env('VEREIN_SOZIAL_FACEBOOK')) }}" class="facebook" target="_blank"><i class="bx bxl-facebook"></i></a>
+                      @if(env('VEREIN_SOZIAL_FACEBOOK')!='')
+                        <a href="{{ str_replace('_' , ' ' , env('VEREIN_SOZIAL_FACEBOOK')) }}" class="facebook" target="_blank"><i class="bx bxl-facebook"></i></a>
                       @endif
-                      @if(env('VEREIN_SOZIAL_TWITTER'))!='')
-                      <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                      @if(env('VEREIN_SOZIAL_TWITTER')!='')
+                        <a href="{{ str_replace('_' , ' ' , env('VEREIN_SOZIAL_TWITTER')) }}" class="twitter"><i class="bx bxl-twitter"></i></a>
                       @endif
-                      @if(env('VEREIN_SOZIAL_INSTEGRAMM'))!='')
-                      <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                      @if(env('VEREIN_SOZIAL_INSTEGRAMM')!='')
+                        <a href="{{ str_replace('_' , ' ' , env('VEREIN_SOZIAL_INSTEGRAMM')) }}" class="instagram"><i class="bx bxl-instagram"></i></a>
                       @endif
-                      @if(env('VEREIN_SOZIAL_SKYP'))!='')
-                      <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+                      @if(env('VEREIN_SOZIAL_SKYP')!='')
+                        <a href="{{ str_replace('_' , ' ' , env('VEREIN_SOZIAL_SKYP')) }}" class="google-plus"><i class="bx bxl-skype"></i></a>
                       @endif
-                      @if(env('VEREIN_SOZIAL_LINKEDIN'))!='')
-                      <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                      @if(env('VEREIN_SOZIAL_LINKEDIN')!='')
+                        <a href="{{ str_replace('_' , ' ' , env('VEREIN_SOZIAL_LINKEDIN')) }}" class="linkedin"><i class="bx bxl-linkedin"></i></a>
                       @endif
                   </div>
               @endif

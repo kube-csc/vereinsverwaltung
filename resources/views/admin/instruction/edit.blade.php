@@ -38,7 +38,7 @@
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
 
-                                @if($instruction->ueberschrift <> "Datenschutzerklärung")
+                                @if($instruction->ueberschrift <> "Datenschutzerklärung" | $instruction->ueberschrift <> "MENUE_VEREIN" | $instruction->ueberschrift <> "MENUE_VERBAND")
                                 <div class="my-4" >
                                   <label for="name">Name der Seite</label>
                                   <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ueberschrift') ? 'bg-red-300' : '' }}"

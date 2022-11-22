@@ -139,6 +139,15 @@ Route::get('/Instruction/edit/{instruction_id}',       [InstructionController::c
 Route::post('/Instruction/update/{instruction_id}',    [InstructionController::class, 'update'])       ->name('instruction.update');
 Route::get('/Instruction/aktiv/{instruction_id}',      [InstructionController::class, 'aktiv'])        ->name('instruction.aktiv');
 Route::get('/Instruction/inaktiv/{instruction_id}',    [InstructionController::class, 'inaktiv'])      ->name('instruction.inaktiv');
+Route::get('/Instruction/maxtop/{instruction_id}',     [InstructionController::class, 'maxtop'])       ->name('instruction.maxtop');
+Route::get('/Instruction/top/{instruction_id}',        [InstructionController::class, 'top'])          ->name('instruction.top');
+Route::get('/Instruction/down/{instruction_id}',       [InstructionController::class, 'down'])         ->name('instruction.down');
+Route::get('/Instruction/maxdown/{instruction_id}',    [InstructionController::class, 'maxdown'])      ->name('instruction.maxdown');
+Route::get('/Instruction/MenuNeu/{instruction_id}',    [InstructionController::class, 'menuNew'])      ->name('instruction.menuNew');
+Route::get('/Instruction/MenuMinus/{instruction_id}',  [InstructionController::class, 'menuMinus'])    ->name('instruction.menuMinus');
+Route::get('/Instruction/MenuPlus/{instruction_id}',   [InstructionController::class, 'menuPlus'])     ->name('instruction.menuPlus');
+Route::get('/Instruction/MenuDelete/{instruction_id}', [InstructionController::class, 'menuDelete'])   ->name('instruction.menuDelete');
+Route::get('/Instruction/MenuDown/{instruction_id}',   [InstructionController::class, 'MenuDown'])     ->name('instruction.MenuDown');
 
 //Route::resource('instruction.', 'NewBotmanQuestionController');
 Route::get('/newBotmanQuestion/alle',                            [NewBotmanQuestionController::class, 'index'])     ->name('newBotmanQuestion.index');

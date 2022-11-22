@@ -155,29 +155,74 @@
 
               @php
                 $instructionMenus = DB::table('instructions')
-                  ->where('beschreibung' , '<>' , '')
-                  ->where('hauptmenu' , 1)
                   ->where('visible' , 1)
-                  ->orderby('ueberschrift')
+                  ->where('hauptmenuspalte' , ">" , 0)
+                  ->orderby('hauptmenuspalte')
+                  ->orderby('position')
                   ->get();
+
+                  $hautmenulevel=0;
               @endphp
 
-              <li class="drop-down"><a href="">Informationen</a>
-                 <ul>
-                  @if(env('VEREIN_ANFAHRT')<>'nein')
-                    <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Anfahrt">Anfahrt</a></li>
+              @foreach($instructionMenus as $instructionMenu)
+                  @if($instructionMenu->hauptmenu==1)
+                      @if($hautmenulevel==0)
+                          @if($instructionMenu->route == Null)
+                              <li><a href="/Information/{{ $instructionMenu->ueberschrift }}">{{ $instructionMenu->ueberschrift }}</a></li>
+                          @else
+                              <li><a href="{{ $instructionMenu->route }}">{{ $instructionMenu->ueberschrift }}</a></li>
+                          @endif
+                          @else
+                        </ul>
+                      </li>
+                      @if($instructionMenu->route == Null)
+                          <li><a href="/Information/{{ $instructionMenu->ueberschrift }}">{{ $instructionMenu->ueberschrift }}</a></li>
+                      @else
+                          <li><a href="{{ $instructionMenu->route }}">{{ $instructionMenu->ueberschrift }}</a></li>
+                      @endif
+                      @php
+                          $hautmenulevel=0;
+                      @endphp
+                      @endif
+                  @else
+                      @if($instructionMenu->hauptmenu==2)
+                         @if($hautmenulevel<$instructionMenu->hauptmenu)
+              <li class="drop-down"><a href="">{{ $instructionMenu->ueberschrift }}</a>
+                        <ul>
+                            @php
+                                $hautmenulevel=$instructionMenu->hauptmenu;
+                            @endphp
+                         @else
+                        </ul>
+                  </li>
+              <li class="drop-down"><a href="">{{ $instructionMenu->ueberschrift }}</a>
+                         <ul>
+                         @endif
+                      @endif
+                      @if($instructionMenu->hauptmenu==3)
+                             <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}">
+                                  @if($instructionMenu->route == Null)
+                                <a href="/Information/{{ $instructionMenu->ueberschrift }}">{{ $instructionMenu->ueberschrift }}</a>
+                                  @else
+                                    @if($instructionMenu->route == "MENUE_VEREIN")
+                                <a href="/{{ env('MENUE_VEREIN') }}">{{ env('MENUE_VEREIN') }}</a>
+                                    @else
+                                      @if($instructionMenu->route == "MENUE_VERBAND")
+                                <a href="/{{ env('MENUE_VERBAND') }}">{{ env('MENUE_VERBAND') }}</a>
+                                      @else
+                                <a href="{{ $instructionMenu->route }}">{{ $instructionMenu->ueberschrift }}</a>
+                                      @endif
+                                    @endif
+                                  @endif
+                             </li>
+                      @endif
+                      @if($loop->last)
+                               </ul>
+                            </li>
+                      @endif
                   @endif
-                  @foreach($instructionMenus as $instructionMenu)
-                    <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/Information/{{ $instructionMenu->ueberschrift }}">{{ $instructionMenu->ueberschrift }}</a></li>
-                  @endforeach
-                  @if(env('MENUE_VEREIN')<>'nein')
-                     <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/{{ env('MENUE_VEREIN') }}">{{ env('MENUE_VEREIN') }}</a></li>
-                  @endif
-                  @if(env('MENUE_VERBAND')<>'nein')
-                     <li class="{{ Request::is('/anfahrt') ? 'active' : '' }}"><a href="/{{ env('MENUE_VERBAND') }}">{{ env('MENUE_VERBAND') }}</a></li>
-                  @endif
-                 </ul>
-              </li>
+
+              @endforeach
           </ul>
 
       </nav><!-- .nav-menu -->

@@ -41,31 +41,85 @@
                               <div class="my-4 flex">
                                   <a href="{{ route('instruction.create') }}"><box-icon name='plus'></box-icon></a>
                               </div>
-
+                             @php
+                               $menulevel=0;
+                             @endphp
                               @foreach ( $instructions as $instruction )
-                              <div class="rounded border shadow p-3 my-2 {{$instruction->id == $instruction->id ? 'bg-blue-200' : ''}}">
-                                  <div class="justify-between my-2">
-                                    <div>
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/edit/'.$instruction->id) }}">
-                                            <box-icon name='edit' type='solid'></box-icon>
-                                        </a>
-                                        @if($instruction['visible']==1)
-                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/inaktiv/'.$instruction->id) }}">
-                                                <box-icon name='show' type='solid'></box-icon>
+                                  <div class="rounded border shadow p-3 my-2 {{$instruction->hauptmenu == 2 ? 'bg-blue-300' : 'bg-blue-200'}}">
+                                      <div class="justify-between my-2">
+                                        <div>
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/edit/'.$instruction->id) }}">
+                                                <box-icon name='edit' type='solid'></box-icon>
                                             </a>
-                                        @endif
-                                        @if($instruction['visible']==0)
-                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/aktiv/'.$instruction->id) }}">
-                                                <box-icon name='hide' type='solid'></box-icon>
-                                            </a>
-                                        @endif
-                                    </div>
-                                    <div class="flex">
-                                      <p class="font-bold text-lg">{{ $instruction->ueberschrift }}</p>
-                                      <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $instruction->updated_at->diffForHumans() }}</p>
-                                    </div>
+                                            @if($instruction['visible']==1)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/inaktiv/'.$instruction->id) }}">
+                                                    <box-icon name='show' type='solid'></box-icon>
+                                                </a>
+                                            @endif
+                                            @if($instruction['visible']==0)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/aktiv/'.$instruction->id) }}">
+                                                    <box-icon name='hide' type='solid'></box-icon>
+                                                </a>
+                                            @endif
+                                            @if($instruction['hauptmenuspalte']>10 | ($instruction['hauptmenuspalte']==10 && $instruction['position']>10) | $instruction['hauptmenu']==2 )
+                                                <a href="{{ url('Instruction/maxtop/'.$instruction->id) }}">
+                                                    <box-icon name='chevrons-up' ></box-icon>
+                                                </a>
+                                                <a href="{{ url('Instruction/top/'.$instruction->id) }}">
+                                                    <box-icon name='chevron-up'></box-icon>
+                                                </a>
+                                            @endif
+                                            @if(!$loop->last && ($instruction['hauptmenuspalte']>=10 && ($instruction['hauptmenuspalte']<$instructionMaxID) | ($instruction['hauptmenuspalte']==$instructionMaxID && $instruction['hauptmenu']==0) ))
+                                                <a href="{{ url('Instruction/down/'.$instruction->id) }}">
+                                                    <box-icon name='chevron-down' ></box-icon>
+                                                </a>
+                                                <a href="{{ url('Instruction/maxdown/'.$instruction->id) }}">
+                                                    <box-icon name='chevrons-down' ></box-icon>
+                                                </a>
+                                            @endif
+                                            @if($instruction['hauptmenu']==0)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuDown/'.$instruction->id) }}">
+                                                    <box-icon name='chevron-down'></box-icon>
+                                                </a>
+                                            @endif
+                                            @if($instruction['hauptmenu']==3)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuDelete/'.$instruction->id) }}">
+                                                    <box-icon name='chevron-left'></box-icon>
+                                                </a>
+                                            @endif
+                                            @if($instruction['hauptmenu']==2)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuMinus/'.$instruction->id) }}">
+                                                    <box-icon name='chevrons-left'></box-icon>
+                                                </a>
+                                            @endif
+                                            @if($instruction['hauptmenu']==1)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuPlus/'.$instruction->id) }}">
+                                                    <box-icon name='chevron-right'></box-icon>
+                                                </a>
+                                            @endif
+                                            @if($instruction['hauptmenu']<2 | $instruction['hauptmenu']==3)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuNeu/'.$instruction->id) }}">
+                                                    <box-icon name='chevrons-right'></box-icon>
+                                                </a>
+                                            @endif
+
+                                        </div>
+                                        <div class="flex">
+                                          <p class="font-bold text-lg">
+                                              @if($instruction->systemmenu==1)
+                                                  Systemprogramm<br>
+                                              @endif
+                                              @if($instruction->hauptmenu==1 | $instruction->hauptmenu==2 )
+                                                  @php
+                                                      ++$menulevel
+                                                  @endphp
+                                                  Hauptmenu: {{ $menulevel }}<br>
+                                              @endif
+                                                  {{ $instruction->ueberschrift }}</p>
+                                          <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $instruction->updated_at->diffForHumans() }}</p>
+                                        </div>
+                                      </div>
                                   </div>
-                              </div>
                               @endforeach
                              <br>
                              <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu"><i class="fas fa-arrow-circle-up"></i>Zurück</a>

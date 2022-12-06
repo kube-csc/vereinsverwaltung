@@ -141,9 +141,8 @@
               </li>    <!-- Abteilung Mannschaft   -->
               @endif
               @php
-                  // ToDo: Active im Menu funktioniert noch nicht
-              @endphp
-
+              // ToDo: Active im Menu funktioniert noch nicht
+              /*
               <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/Termine">Termine</a></li>
               <li class="{{ Request::is('/#services') ? 'active' : '' }}"><a href="/Berichte">Berichte</a></li>
               <li class="{{ Request::is('/#team') ? 'active' : '' }}"><a href="/#team">{{$sportSectionTeamNameMenu}}</a></li>
@@ -151,6 +150,8 @@
               <!-- <li><a href="#portfolio">Portfolio</a></li> -->
 
               <li class="{{ Request::is('/#contact') ? 'active' : '' }}"><a href="/#contact">Kontakt</a></li>
+              */
+              @endphp
 
               @php
                   $instructionMenus = DB::table('instructions')

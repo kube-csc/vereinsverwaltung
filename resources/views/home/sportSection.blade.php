@@ -101,7 +101,7 @@ foreach ( $abteilungHomes as $abteilungHome)
                   @foreach($sportTeams as $sportTeam)
                     @if ($first==0)
                         <br>
-                          <h5><b>Mit den Mannschaften:</b></h5>
+                          <h5><b>{{ env('MENUE_MANNSCHAFTEN') }}:</b></h5>
                        <ul>
                         @php
                          $first=1;

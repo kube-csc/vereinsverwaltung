@@ -1,7 +1,8 @@
-<!-- Template Main CSS File abgeändert bei vereschieden Ausgaben -->
+<!-- Template Main CSS File abgeändert bei verschiedene Ausgaben -->
 <?php
 $serverdomain=$_SERVER["HTTP_HOST"];
 
+//$sportSectionSearch wird in public function homeSportSelect im HomeController gebildet
 if(isset($sportSectionSearch)){
  $abteilungStyls  = DB::table('sport_sections')->where('abteilung' , $sportSectionSearch)->get();
  }
@@ -19,8 +20,7 @@ $i=0;
 
 @foreach ( $abteilungStyls as $abteilungStyl)
     @php
-    //dd($abteilungStyl);
-        ++$i;
+      ++$i;
     @endphp
     @if ($i == $abteilungStylsCount)
 
@@ -36,8 +36,8 @@ $i=0;
                     position: relative;
                     margin-bottom: -90px;
                 }
-           @endif
-           @if( $abteilungStyl->farbe<>'' )
+          @endif
+          @if( $abteilungStyl->farbe<>'' )
                 @php
                     $farbe= $abteilungStyl->farbe;
                 @endphp
@@ -85,9 +85,7 @@ $i=0;
 
               background: rgba(<?php echo $farbe ;?>);
           }
-
-
-           @endif
+          @endif
     @endif
 @endforeach
     </style>

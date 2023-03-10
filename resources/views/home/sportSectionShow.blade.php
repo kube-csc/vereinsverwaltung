@@ -72,7 +72,7 @@
                                        {!! $ausgabetext !!}
                                        @if ($abgeschnitten==1)
                                          <div class="read-more">
-                                           <a href="/Abteilung/detail/{{ str_replace(' ', '_', $abteilung->abteilung) }}">weiter<i class="icofont-arrow-right"></i></a>
+                                           <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilung->abteilung) }}" class="icofont-arrow-right">mehr</a>
                                          </div>
                                        @endif
                                        </p>

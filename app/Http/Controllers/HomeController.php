@@ -98,13 +98,15 @@ class HomeController extends Controller
             $sportSectionsId = $sportSectionName->id;
             $sportSectionTeamName = $sportSectionName->abteilungTeamBezeichnung;
         }
-        $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)->get();
+        $sportTeamNames = SportSection::where('sportSection_id' , $sportSectionsId)
+                                      ->where('status' , '>' , '0')
+                                      ->get();
 
-        $serverdomain        = $_SERVER["HTTP_HOST"];
-        $abteilungHomes      = SportSection::where('status' , '1')
-            ->orwhere('domain' , $serverdomain)
-            ->orderby('status')
-            ->get();
+        $serverdomain    = $_SERVER["HTTP_HOST"];
+        $abteilungHomes  = SportSection::where('status' , '1')
+                                       ->orwhere('domain' , $serverdomain)
+                                       ->orderby('status')
+                                       ->get();
 
         foreach ($abteilungHomes as $abteilungHome) {
             $sportSectionTeamNameMenu= $abteilungHome->abteilungTeamBezeichnung;

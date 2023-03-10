@@ -37,7 +37,7 @@ foreach ( $abteilungHomes as $abteilungHome)
                 {!! $ausgabetext !!}
                 @if ($abgeschnitten==1)
                     <div class="read-more">
-                      <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about-btn">
+                      <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about">
                           mehr<i class="bx bx-chevron-right"></i>
                       </a>
                     </div>
@@ -116,7 +116,7 @@ foreach ( $abteilungHomes as $abteilungHome)
                    @endif
                   @if ($abgeschnitten==1 | $first==1)
                     <div class="read-more">
-                      <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilung->abteilung) }}"><i class="icofont-arrow-right"></i></a>
+                        <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilung->abteilung) }}" class="icofont-arrow-right">mehr</a>
                     </div>
                   @endif
                </p>

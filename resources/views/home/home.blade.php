@@ -1,6 +1,6 @@
 @extends('layouts.headFrontend')
 
-@section('title' ,'Starteite')
+@section('title' ,'Startseite')
 
 @section('content')
 

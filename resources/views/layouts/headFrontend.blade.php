@@ -7,7 +7,7 @@
   @php
       $vereinsname = str_replace('_', ' ', env('VEREIN_DOMAIN'));
   @endphp
-  <title> @yield( 'title' , '$vereinsname' ) </title>
+    <title> @yield( 'title' , $vereinsname ) </title>
     @php
         // ToDo: Meta Conten bearbeiten
         $description = str_replace('_', ' ', env('VEREIN_KEYWORDS'));

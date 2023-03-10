@@ -411,14 +411,26 @@ class InstructionController extends Controller
 
         $instruction = new instruction([
                 'ueberschrift'             => $request->ueberschrift,
-                'visible'                  => "1",
-                'hauptmenu'                => "1",
+                'hauptmenuspalte'          => 10,
+                'systemmenu'               => 0,
+                'visible'                  => 1,
+                'hauptmenu'                => 1,
+                'position'                 => 10,
                 'bearbeiter_id'            => Auth::id(),
                 'user_id'                  => Auth::id(),
                 'updated_at'               => Carbon::now(),
                 'created_at'               => Carbon::now()
             ]
         );
+
+        /* ToDo: mit welchen Werten soll die Felder angelegt werden?
+                  'hauptmenuspalte'          => 10,
+                  'systemmenu'               => 0,
+                  'hauptmenu'                => 1,
+                  'position'                 => 10,
+
+         */
+
         $instruction->save();
 
         $instructions = instruction::orderby('ueberschrift')->get();

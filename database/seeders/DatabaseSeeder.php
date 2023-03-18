@@ -32,5 +32,6 @@ class DatabaseSeeder extends Seeder
        $this->call(ClubSeeder::class);
        $this->call(OperationalLocationSeeder::class);
        $this->call(timetabelHelperListSeeder::class);
+       $this->call(OperationalBookingSeeder::class);
     }
 }

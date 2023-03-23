@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
-use App\Models\instruction;
+use App\Models\Instruction;
 use App\Models\SportSection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;

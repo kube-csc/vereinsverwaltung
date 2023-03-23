@@ -7,7 +7,7 @@ use App\Models\Club;
 use App\Models\Event;
 use App\Models\report;
 use App\Models\SportSection;
-use App\Models\instruction;
+use App\Models\Instruction;
 use App\Models\Document;
 use App\Models\Sporttype;
 use Illuminate\Support\Carbon;

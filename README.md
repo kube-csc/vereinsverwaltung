@@ -23,6 +23,7 @@ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
   <li>.htaccess für ionos.de (1und1.de) Server</li>
   <li><a href="https://botman.io">Botman</a></li>
+  <li><a href="https://github.com/statikbe/laravel-cookie-consent">laravel-cookie-consent</a></li>
 </ul>
 
 <h2>Benötigte Lizenzen</h2>

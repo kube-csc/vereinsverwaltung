@@ -161,6 +161,11 @@ benötigt.
      <li>map.blade.php anlegen und mit der Vorlage von map_example.blade.php ausfüllen</li>
      <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
    </ul>
+   <li>in Ordner "public sin die folgenden Dateien anzulegen:
+   <ul>
+     <li>apple-touch-icon.png</li>
+     <li>favicon.ico</li>
+   </ul>
    <li>php artisan migrate --seed<br>(Datenbank wird mit Demodaten geladen)</li>
 </ul>
 

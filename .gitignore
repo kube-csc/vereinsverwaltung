@@ -5,6 +5,8 @@
 /public/asset/img/portfolio
 /public/asset/img/team
 /public/asset/img/testimonials
+/public/apple-touch-icon.png
+/public/favicon.ico
 /storage/*.key
 /storage/botman/*.json
 /vendor

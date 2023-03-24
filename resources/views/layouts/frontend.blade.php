@@ -30,6 +30,7 @@
   <link href="{{ asset('asset/vendor/venobox/venobox.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/owl.carousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
   <link href="{{ asset('asset/vendor/aos/aos.css') }}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{asset("vendor/cookie-consent/css/cookie-consent.css")}}">
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('asset/css/style.css') }}" rel="stylesheet">
@@ -391,7 +392,8 @@
       <br><br>
       */?>
       <a href="/Information/Datenschutzerklärung">Datenschutzerklärung</a> |
-      <a href="/Impressum">Impressum</a>
+      <a href="/Impressum">Impressum</a><br>
+        Hier ist ein Link, über den Sie die Einstellungen nach dem Akzeptieren erneut öffnen können: <a href="javascript:void(0)" class="js-lcc-settings-toggle">Cookie-Einstellungen</a>
     </div>
   </div>
 </footer><!-- End Footer -->
@@ -416,6 +418,8 @@
 
   <!-- Template Main JS File -->
   <script src="{{ asset('asset/js/main.js') }}"></script>
+
+  @include('cookie-consent::index');
 
 </body>
 

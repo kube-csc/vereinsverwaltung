@@ -34,8 +34,11 @@ foreach ( $abteilungHomes as $abteilungHome)
                       </center>
                 @endif
                 <h3>{{ $abteilungHome->abteilung }}</h3>
+                @if ($laravel_cookie_consent==true)
+
+                @endif
                 {!! $ausgabetext !!}
-                @if ($abgeschnitten==1)
+                 @if ($abgeschnitten==1)
                     <div class="read-more">
                       <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about">
                           mehr<i class="bx bx-chevron-right"></i>

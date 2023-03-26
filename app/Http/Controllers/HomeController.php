@@ -11,10 +11,12 @@ use App\Models\Instruction;
 use App\Models\Document;
 use App\Models\Sporttype;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cookie;
 
 class HomeController extends Controller
 {
     public function index(){
+
         $serverdomain        = $_SERVER["HTTP_HOST"];
         $abteilungHomes      = SportSection::where('status' , '1')
           ->orwhere('domain' , $serverdomain)
@@ -64,7 +66,10 @@ class HomeController extends Controller
             ->where('dokumentenFile' ,'!=' , NULL)
             ->get();
 
-
+        $var = 0;
+        if(isset($_COOKIE['cookie_consent'])) {
+            $var = 1;
+        }
 
         return view('home.home')->with(
             [
@@ -78,7 +83,8 @@ class HomeController extends Controller
                 'footerDocuments'             => $footerDocuments,
                 'eventsFuture'                => $eventsFuture,
                 'eventsPast'                  => $eventsPast,
-                'serverdomain'                => $serverdomain
+                'serverdomain'                => $serverdomain,
+                'laravel_cookie_consent'      => $var
             ]
         );
     }

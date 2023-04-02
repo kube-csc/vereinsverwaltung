@@ -174,7 +174,7 @@ class EventSeeder extends Seeder
                                         'datumbis' => '2021-06-11',
                                         'datumvona' => NULL,
                                         'datumbisa' => NULL,
-                                        'ueberschrift' => 'Eventsersie 1',
+                                        'ueberschrift' => 'Eventserie 1',
                                         'beschreibung' => 'Hier steht die Beschreibung von der Eventserie 1',
                                         'ansprechpartner' => NULL,
                                         'telefon' => NULL,
@@ -206,7 +206,7 @@ class EventSeeder extends Seeder
                                         'datumbis' => '2050-06-11',
                                         'datumvona' => NULL,
                                         'datumbisa' => NULL,
-                                        'ueberschrift' => 'Eventsersie 2',
+                                        'ueberschrift' => 'Eventserie 2',
                                         'beschreibung' => 'Hier steht die Beschreibung von der Eventserie 2.
                                      Das Event ist ein Event der Mannschaft 2.
                                      Es wird eine Regatta zu diesem Event durchgeführt.

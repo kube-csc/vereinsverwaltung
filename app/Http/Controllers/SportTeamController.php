@@ -210,7 +210,7 @@ class SportTeamController extends Controller
            'beschreibung'     => $request->beschreibung,
            'nachtermin'       => $request->nachtermin,
            'sportSection_id'  => $request->sportSection_id,
-           'veranstaltung'    => 4,   //4 = Mannschaftsbeschreibung
+           'verwendung'       => 4,   //4 = Mannschaftsbeschreibung
            'autor_id'         => Auth::user()->id,
            'bearbeiter_id'    => Auth::user()->id,
            'datumvon'         => Carbon::now(),

@@ -40,7 +40,7 @@ benötigt.
           <li>Präsentation der kommenden Events</li>
           <li>Präsentation der vergangenen Events</li>
           <li>Präsentation des Teams</li>
-          <li>Kontakt des Vereins inc. Map *</li>
+          <li>Kontakt des Vereins inc. Map **</li>
         </ul>
     </li>
     <li>Präsentation der Abteilungen / Sportarten</li>
@@ -161,7 +161,7 @@ benötigt.
      <li>map.blade.php anlegen und mit der Vorlage von map_example.blade.php ausfüllen</li>
      <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
    </ul>
-   <li>in Ordner "public sin die folgenden Dateien anzulegen:
+   <li>in Ordner "public sind die folgenden Dateien anzulegen:
    <ul>
      <li>apple-touch-icon.png</li>
      <li>favicon.ico</li>

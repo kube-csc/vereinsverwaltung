@@ -92,8 +92,6 @@
                                     @if(env('VEREIN_HP_VERTRETEMAIL')!='')
                                       <i class="icofont-envelope"></i> <a href="mailto:{{ str_replace('_', ' ', env('VEREIN_HP_VERTRETEMAIL')) }}">{{ str_replace('_', ' ', env('VEREIN_HP_VERTRETEMAIL')) }}</a><br>
                                     @endif
-                                    <br>
-                                    Für weitere Mitglieder des Vorstands <a href="index.php#team">hier</a> klicken.
                                 </p>
                             </div>
                         </div>

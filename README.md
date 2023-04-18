@@ -122,6 +122,9 @@ benötigt.
 <li>Backlinksverwaltung Umleitung von Links die nicht mehr Existieren</li>
 </ul>
 <h3>Regattaverwaltung</h3>
+<p>
+In der .env kann mit der Variabel APP_REGATTA die Regattaverwaltug ein und ausgeschaltet werden.
+</p>
 <ul>
     <li>Regatta auswählen</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
@@ -178,16 +181,16 @@ benötigt.
 
 <h2>Zugehörige Projekte</h2>
 <p>
-Für die live Präsentation der Regatta kann folgende Software verwendet werden.
-https://github.com/kube-csc/regattaView.git
-Die Version V00.11.00 ist kompatibel mit der Version V00.03.00
+Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
+https://github.com/kube-csc/regattaView.git<br>
+Die Version V00.11.XX ist kompatibel mit der Version V00.03.XX<br>
 https://github.com/kube-csc/vereinsverwaltung.git
 
 </p>
 <br>
 <hr>
 <br>
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"> alt="Laravel"</a></p>
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel"></a></p>
 
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>

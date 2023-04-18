@@ -57,9 +57,11 @@
                             </div>
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700">
+                                @if(env('APP_REGATTA')=="ja")
                                 <div class="flex items-center">
                                     <div class="ml-4 text-lg leading-7 font-semibold">
-                                    Regattaverwaltung</div>
+                                      Regattaverwaltung
+                                    </div>
                                 </div>
 
                                 <div class="ml-12">
@@ -75,6 +77,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                @endif
                             </div>
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">

@@ -65,7 +65,7 @@ class SportSectionController extends Controller
       $sportTeams = SportSection::where('sportSection_id'  , $sportSection_id)->orderby('abteilung')->get();
       return view('admin.sportSection.sportSectionSportTeam')->with(
         [
-          'success'               => 'Mannschaften der Abteilung ' . $sportSectionVonSportTeam->abteilung . ' wurde selectiert.',
+          'success'               => env('MENUE_MANNSCHAFTEN').' der '.env('MENUE_ABTEILUNG').' '. $sportSectionVonSportTeam->abteilung . ' wurde selectiert.',
           'sportSectionName'      => $sportSectionVonSportTeam->abteilung,
           'sportTeams'            => $sportTeams,
           'sportSections'         => $sportSections,

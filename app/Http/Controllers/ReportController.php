@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\report;
+use App\Models\Report;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -23,7 +23,7 @@ class ReportController extends Controller
 
     public function aktiv($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'visible'          => '1',
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
@@ -33,7 +33,7 @@ class ReportController extends Controller
 
     public function inaktiv($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'visible'          => '0',
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
@@ -43,7 +43,7 @@ class ReportController extends Controller
 
     public function webaktiv($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'webseite'         => '1',
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
@@ -53,7 +53,7 @@ class ReportController extends Controller
 
     public function webinaktiv($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'webseite'         => '0',
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
@@ -63,18 +63,18 @@ class ReportController extends Controller
 
     public function start($reportId)
     {
-        $report = report::find($reportId);
+        $report = Report::find($reportId);
         $eventID=$report->event_id;
 
-        report::where('startseite' , '1')
-                ->where('event_id' , $eventID)
-                ->update([
+        Report::where('startseite' , '1')
+            ->where('event_id' , $eventID)
+            ->update([
                 'startseite'       => 0,
                 'bearbeiter_id'    => Auth::user()->id,
                 'updated_at'       => Carbon::now()
-        ]);
+            ]);
 
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'startseite'       => 1,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
@@ -84,24 +84,28 @@ class ReportController extends Controller
 
     public function maxtop($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'position'         => '0',
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
 
-        $report=report::find($reportId);
-        $eventID=$report->event_id;
+        $report=Report::find($reportId);
+        $eventId=$report->event_id;
 
-        // ToDo verebessern der Updatefunktion
+        // ToDo verbessern der Updatefunktion
         //board::all()->update(['position' => 'position']);
 
-        $reports = report::where('event_id' , $eventID)
-                          ->orderby('position')
-                          ->get();
+        $reports = Report::where('event_id' , $eventId)
+            ->where(function ($query) use ($eventId) {
+                $query->where('verwendung' , '1')
+                    ->orwhere('verwendung' , NULL);
+            })
+            ->orderby('position')
+            ->get();
         $positionNew=10;
         foreach ($reports as $report){
-            report::find($report->id)->update([
+            Report::find($report->id)->update([
                 'position'         => $positionNew
             ]);
             $positionNew=$positionNew+10;
@@ -111,22 +115,26 @@ class ReportController extends Controller
 
     public function top($reportId)
     {
-        $report = report::find($reportId);
+        $report = Report::find($reportId);
         $positionNew=$report->position-11;
-        $eventID=$report->event_id;
+        $eventId=$report->event_id;
 
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'position'         => $positionNew,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
 
         $positionNew=10;
-        $reports = report::where('event_id' , $eventID)
+        $reports = Report::where('event_id' , $eventId)
+            ->where(function ($query) use ($eventId) {
+                $query->where('verwendung' , '1')
+                    ->orwhere('verwendung' , NULL);
+            })
             ->orderby('position')
             ->get();
         foreach ($reports as $report){
-            report::find($report->id)->update([
+            Report::find($report->id)->update([
                 'position'      => $positionNew
             ]);
             $positionNew=$positionNew+10;
@@ -137,21 +145,25 @@ class ReportController extends Controller
     public function down($reportId)
     {
         // ToDo verebessern der Updatefunktion
-        $report = report::find($reportId);
+        $report = Report::find($reportId);
         $positionNew=$report->position+11;
-        $eventID=$report->event_id;
-        report::find($reportId)->update([
+        $eventId=$report->event_id;
+        Report::find($reportId)->update([
             'position'         => $positionNew,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
 
-        $reports = report::where('event_id' , $eventID)
-                      ->orderby('position')
-                      ->get();
+        $reports = Report::where('event_id' , $eventId)
+            ->where(function ($query) use ($eventId) {
+                $query->where('verwendung' , '1')
+                    ->orwhere('verwendung' , NULL);
+            })
+            ->orderby('position')
+            ->get();
         $positionNew=10;
         foreach ($reports as $report){
-            report::find($report->id)->update([
+            Report::find($report->id)->update([
                 'position'      => $positionNew
             ]);
             $positionNew=$positionNew+10;
@@ -161,12 +173,14 @@ class ReportController extends Controller
 
     public function maxdown($reportId)
     {
-        $report  = report::find($reportId);
+        $report  = Report::find($reportId);
         $eventId = $report->event_id;
 
-        $reports = report::where('event_id' , $eventId)
-            ->where('verwendung' , '>' , '1')
-            ->where('verwendung' , '<' , '6')
+        $reports = Report::where('event_id' , $eventId)
+            ->where(function ($query) use ($eventId) {
+                $query->where('verwendung' , '1')
+                    ->orwhere('verwendung' , NULL);
+            })
             ->orderby('position' , 'desc')
             ->limit(1)
             ->get();
@@ -174,20 +188,22 @@ class ReportController extends Controller
             $positionNew=$report->position+10;
         }
 
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'position'         => $positionNew,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()
         ]);
 
-        $reports = report::where('event_id' , $eventID)
-            ->where('verwendung' , '>' , '1')
-            ->where('verwendung' , '<' , '6')
+        $reports = Report::where('event_id' , $eventId)
+            ->where(function ($query) use ($eventId) {
+                $query->where('verwendung' , '1')
+                    ->orwhere('verwendung' , NULL);
+            })
             ->orderby('position')
             ->get();
         $positionNew=10;
         foreach ($reports as $report){
-            report::find($report->id)->update([
+            Report::find($report->id)->update([
                 'position'      => $positionNew,
             ]);
             $positionNew=$positionNew+10;
@@ -198,7 +214,7 @@ class ReportController extends Controller
 
     public function index($event_id)
     {
-        $reports = report::where('event_id' , $event_id)->orderby('position')->paginate(5);;
+        $reports = Report::where('event_id' , $event_id)->orderby('position')->paginate(5);;
 
         return view('admin.report.index')->with(
             [
@@ -228,7 +244,7 @@ class ReportController extends Controller
         $request->validate(
             [
                 'reportTitleImage'   => 'required|max:45',
-              //  'image'              => 'mimes:jpeg,jpg,bmp,png,gif' //ToDo: Abfrage Image einfügen
+                //  'image'              => 'mimes:jpeg,jpg,bmp,png,gif' //ToDo: Abfrage Image einfügen
             ]
         );
 
@@ -252,6 +268,7 @@ class ReportController extends Controller
                         'pixy'             => $height,
                         'filename'         => $fileName,
                         'visible'          => 1,
+                        'verwendung'       => 1, // 1 = Es ist ein Bild
                         'bearbeiter_id'    => Auth::user()->id,
                         'user_id'          => Auth::user()->id,
                         'updated_at'       => Carbon::now(),
@@ -293,7 +310,7 @@ class ReportController extends Controller
      */
     public function edit($reportId)
     {
-        $report = report::find($reportId);
+        $report = Report::find($reportId);
 
         return view('admin.report.edit')->with(
             [
@@ -318,9 +335,9 @@ class ReportController extends Controller
             ]
         );
 
-        $reportImageName=report::find($reportId);
+        $reportImageName=Report::find($reportId);
         $deletePictureName=$reportImageName->bild;
-         if (file_exists(public_path().'/storage/eventImage/'.$deletePictureName) && $deletePictureName!=Null){
+        if (file_exists(public_path().'/storage/eventImage/'.$deletePictureName) && $deletePictureName!=Null){
             unlink(public_path().'/storage/eventImage/'.$deletePictureName);
         }
 
@@ -334,10 +351,11 @@ class ReportController extends Controller
             $width  = $newImage->width();
             $height = $newImage->height();
 
-              if($newPictureName<>''){
-                 report::find($reportId)->update([
+            if($newPictureName<>''){
+                Report::find($reportId)->update([
                     'bild'         => $newPictureName,
                     'filename'     => $fileName,
+                    'verwendung'   => 1,   // DoTo:: Wird verwendet weil bei der Speicherung von Bilder der Wert 1 vergessen wurde
                     'pixx'         => $width,
                     'pixy'         => $height,
                 ]);
@@ -345,14 +363,14 @@ class ReportController extends Controller
             }
         }
 
-        report::find($reportId)->update([
-         'titel'            => $request->reportTitleImage,
-         'kommentar'        => $request->reportImageComment,
-         'bearbeiter_id'    => Auth::user()->id,
-         'updated_at'       => Carbon::now()
+        Report::find($reportId)->update([
+            'titel'            => $request->reportTitleImage,
+            'kommentar'        => $request->reportImageComment,
+            'bearbeiter_id'    => Auth::user()->id,
+            'updated_at'       => Carbon::now()
         ]);
 
-        $report=report::find($reportId);
+        $report=Report::find($reportId);
 
         return redirect('/Bericht/alle/'.$report->event_id)->with(
             [
@@ -390,23 +408,23 @@ class ReportController extends Controller
             ];
         */
 
-            Image::make($imageInput)
-                //->widen(2050)
-                ->save(public_path().'/storage/eventImage/'.$newPictureName);
-            // ToDo: Bilderbreite?
+        Image::make($imageInput)
+            //->widen(2050)
+            ->save(public_path().'/storage/eventImage/'.$newPictureName);
+        // ToDo: Bilderbreite?
 
-            return  $newPictureName;
-       }
+        return  $newPictureName;
+    }
 
     // Bilder von reportBilder löschen
     public function pictureDelete($reportID){
-        $reportImageName=report::find($reportID);
+        $reportImageName=Report::find($reportID);
         $deletePictureName=$reportImageName->bild;
         $deletePictureFilename=$reportImageName->filename;
         if (file_exists(public_path().'/storage/eventImage/'.$deletePictureName)){
             unlink(public_path().'/storage/eventImage/'.$deletePictureName);
         }
-        report::find($reportID)->update([
+        Report::find($reportID)->update([
             'bild'      => Null,
             'pixx'      => 0,
             'pixy'      => 0,
@@ -421,13 +439,13 @@ class ReportController extends Controller
     // Bilder von reportImage löschen es sind die Bilder vom alten Ablageort
     // Note: Ist überfüssig wenn keine alten daten übernommen wurden
     public function imageDelete($reportID){
-        $reportImageName=report::find($reportID);
+        $reportImageName=Report::find($reportID);
         $deletePictureName=$reportImageName->image;
         $deletePictureFilename=$reportImageName->filename;
         if (file_exists('../public/daten/bilder/'.$deletePictureName)){
             unlink('../public/daten/bilder/'.$deletePictureName);
         }
-        report::find($reportID)->update([
+        Report::find($reportID)->update([
             'image'     => Null,
             'pixx'      => 0,
             'pixy'      => 0,
@@ -441,7 +459,7 @@ class ReportController extends Controller
 
     public function takeover()
     {
-        $reports = report::where('image', Null)
+        $reports = Report::where('image', Null)
             ->where('bild', '!=', '')
             ->limit(2)
             ->get();
@@ -451,7 +469,7 @@ class ReportController extends Controller
             $newordner = date('Y', strtotime($report->created_at));
 
             /*
-                        report::find($reportID)->update([
+                        Report::find($reportID)->update([
                             'image'     => $newImage,
                             'ordner'   => $newOrdner
                         ]);

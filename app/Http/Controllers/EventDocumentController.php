@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\report;
+use App\Models\Report;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -19,7 +19,7 @@ class EventDocumentController extends Controller
 
     public function aktiv($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'visible'          => '1',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
@@ -29,7 +29,7 @@ class EventDocumentController extends Controller
 
     public function inaktiv($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'visible'          => '0',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
@@ -39,7 +39,7 @@ class EventDocumentController extends Controller
 
     public function webaktiv($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'webseite'         => '1',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
@@ -49,7 +49,7 @@ class EventDocumentController extends Controller
 
     public function webinaktiv($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'webseite'         => '0',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
@@ -59,10 +59,10 @@ class EventDocumentController extends Controller
 
     public function start($reportId)
     {
-        $report = report::find($reportId);
+        $report = Report::find($reportId);
         $eventID=$report->event_id;
 
-        report::where('startseite' , '1')
+        Report::where('startseite' , '1')
             ->where('event_id' , $eventID)
             ->update([
                 'startseite'       => 0,
@@ -70,7 +70,7 @@ class EventDocumentController extends Controller
                 'updated_at'       => Carbon::now()
             ]);
 
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'startseite'       => 1,
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
@@ -80,24 +80,24 @@ class EventDocumentController extends Controller
 
     public function maxtop($reportId)
     {
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'position'         => '0',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
-        $report=report::find($reportId);
+        $report=Report::find($reportId);
         $eventID=$report->event_id;
 
         // ToDo verbessern der Updatefunktion
         //board::all()->update(['position' => 'position']);
 
-        $reports = report::where('event_id' , $eventID)
+        $reports = Report::where('event_id' , $eventID)
             ->orderby('position')
             ->get();
         $positionNew=10;
         foreach ($reports as $report){
-            report::find($report->id)->update([
+            Report::find($report->id)->update([
                 'position'         => $positionNew
             ]);
             $positionNew=$positionNew+10;
@@ -107,22 +107,22 @@ class EventDocumentController extends Controller
 
     public function top($reportId)
     {
-        $report = report::find($reportId);
+        $report = Report::find($reportId);
         $positionNew=$report->position-11;
         $eventID=$report->event_id;
 
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'position'         => $positionNew,
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
         $positionNew=10;
-        $reports = report::where('event_id' , $eventID)
+        $reports = Report::where('event_id' , $eventID)
             ->orderby('position')
             ->get();
         foreach ($reports as $report){
-            report::find($report->id)->update([
+            Report::find($report->id)->update([
                 'position'      => $positionNew
             ]);
             $positionNew=$positionNew+10;
@@ -133,21 +133,21 @@ class EventDocumentController extends Controller
     public function down($reportId)
     {
         // ToDo verbessern der Updatefunktion
-        $report = report::find($reportId);
+        $report = Report::find($reportId);
         $positionNew=$report->position+11;
         $eventID=$report->event_id;
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'position'         => $positionNew,
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
-        $reports = report::where('event_id' , $eventID)
+        $reports = Report::where('event_id' , $eventID)
             ->orderby('position')
             ->get();
         $positionNew=10;
         foreach ($reports as $report){
-            report::find($report->id)->update([
+            Report::find($report->id)->update([
                 'position'      => $positionNew
             ]);
             $positionNew=$positionNew+10;
@@ -157,10 +157,10 @@ class EventDocumentController extends Controller
 
     public function maxdown($reportId)
     {
-        $report  = report::find($reportId);
+        $report  = Report::find($reportId);
         $eventId = $report->event_id;
 
-        $reports = report::where('event_id' , $eventId)
+        $reports = Report::where('event_id' , $eventId)
             ->where('verwendung' , '>' , '1')
             ->where('verwendung' , '<' , '6')
             ->orderby('position' , 'desc')
@@ -171,20 +171,20 @@ class EventDocumentController extends Controller
             $positionNew=$report->position+10;
         }
 
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'position'         => $positionNew,
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
-        $reports = report::where('event_id' , $eventId)
+        $reports = Report::where('event_id' , $eventId)
             ->where('verwendung' , '>' , '1')
             ->where('verwendung' , '<' , '6')
             ->orderby('position')
             ->get();
         $positionNew=10;
         foreach ($reports as $report){
-            report::find($report->id)->update([
+            Report::find($report->id)->update([
                 'position'  => $positionNew,
             ]);
             $positionNew=$positionNew+10;
@@ -201,13 +201,13 @@ class EventDocumentController extends Controller
 
     public function index($event_id)
     {
-        $reports = report::where('event_id' , $event_id)
+        $reports = Report::where('event_id' , $event_id)
             ->where('verwendung' , '>' , '1')
             ->where('verwendung' , '<' , '6')
             ->orderby('position')
             ->paginate(5);
 
-        $reportMaxs = report::where('event_id' , $event_id)
+        $reportMaxs = Report::where('event_id' , $event_id)
             ->where('verwendung' , '>' , '1')
             ->where('verwendung' , '<' , '6')
             ->orderby('position')->get();
@@ -253,7 +253,7 @@ class EventDocumentController extends Controller
             ]
         );
 
-        $reports = report::where('event_id' , $request->event_id)
+        $reports = Report::where('event_id' , $request->event_id)
             ->where('verwendung' , '>' , '1')
             ->where('verwendung' , '<' , '6')
             ->orderby('position' , 'desc')
@@ -307,7 +307,7 @@ class EventDocumentController extends Controller
      */
     public function edit($reportId)
     {
-        $report = report::find($reportId);
+        $report = Report::find($reportId);
         $event  = event::find($report->event_id);
 
         return view('admin.eventDocument.edit')->with(
@@ -337,7 +337,7 @@ class EventDocumentController extends Controller
         $messageDocument='';
         if($request->documentFile){
 
-            $reportDocumentName=report::find($reportId);
+            $reportDocumentName=Report::find($reportId);
             $deleteDocumentName=$reportDocumentName->bild;
             if (file_exists(public_path().'/storage/eventDokumente/'.$deleteDocumentName) && $deleteDocumentName!=Null){
                 unlink(public_path().'/storage/eventDokumente/'.$deleteDocumentName);
@@ -380,7 +380,7 @@ class EventDocumentController extends Controller
             );
 
             if($newDocumentName<>''){
-                report::find($reportId)->update([
+                Report::find($reportId)->update([
                     'bild'           => $newDocumentName,
                     'filename'       => $fileName,
                     'typ'            => $typ
@@ -389,7 +389,7 @@ class EventDocumentController extends Controller
             }
         }
 
-        report::find($reportId)->update([
+        Report::find($reportId)->update([
             'titel'            => $request->reportTitleDocument,
             'kommentar'        => $request->reportDocumentComment,
             'verwendung'       => $request->verwendung,
@@ -397,7 +397,7 @@ class EventDocumentController extends Controller
             'updated_at'       => Carbon::now()
         ]);
 
-        $report=report::find($reportId);
+        $report=Report::find($reportId);
 
         return redirect('/EventDokumente/'.$report->event_id)->with(
             [
@@ -414,16 +414,16 @@ class EventDocumentController extends Controller
      */
     public function destroy($document_id)
     {
-        $report = report::find($document_id);
+        $report = Report::find($document_id);
         $report->delete();
 
-        $reports = report::where('event_id' , $report->event_id)
+        $reports = Report::where('event_id' , $report->event_id)
             ->where('verwendung' , '>' , '1')
             ->where('verwendung' , '<' , '6')
             ->orderby('position')
             ->paginate(5);
 
-        $reportMaxs = report::where('event_id' , $report->event_id)
+        $reportMaxs = Report::where('event_id' , $report->event_id)
             ->where('verwendung' , '>' , '1')
             ->where('verwendung' , '<' , '6')
             ->orderby('position')->get();
@@ -447,11 +447,11 @@ class EventDocumentController extends Controller
 
     public function dokumentedelete($documentId)
     {
-        $deleteDocumentFile = report::find($documentId);
+        $deleteDocumentFile = Report::find($documentId);
         if(isset($deleteDocumentFile->bild)){
             Storage::disk('public')->delete('eventDokumente/'.$deleteDocumentFile->bild);
         }
-        report::find($documentId)->update(
+        Report::find($documentId)->update(
             [
                 'bild'             => Null,
                 'filename'         => Null,
@@ -469,14 +469,14 @@ class EventDocumentController extends Controller
 
     public function dokumenteAltdelete($documentId)
     {
-        $deleteDocumentFile = report::find($documentId);
+        $deleteDocumentFile = Report::find($documentId);
         $deleteDocumentName=$deleteDocumentFile->image;
         $deleteDocumentFilename=$deleteDocumentFile->filename;
         if (file_exists('../public/daten/text/'.$deleteDocumentName)) {
             unlink('../public/daten/text/' . $deleteDocumentName);
         }
 
-        report::find($documentId)->update(
+        Report::find($documentId)->update(
             [
                 'image'         => Null,
                 'filename'      => Null,

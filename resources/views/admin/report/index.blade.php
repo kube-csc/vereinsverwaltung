@@ -124,6 +124,7 @@
                                    <img src="/storage/eventImage/{{ $report->bild }}" />
                                    <a href="{{ url('Bericht/picturedelete/'.$report->id) }}">
                                      <box-icon name='x'></box-icon>
+                                     {{ $report->filename }}
                                    </a>
                                   @endif
                                   <!-- Note: Ist überfüssig wenn keine alten daten übernommen wurden-->

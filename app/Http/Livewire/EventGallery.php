@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\report;
+use App\Models\Report;
 use Livewire\Component;
 
 class EventGallery extends Component
@@ -11,7 +11,7 @@ class EventGallery extends Component
 
     public function render()
     {
-        $reports  = report::where('event_id' , $this->reportId)
+        $reports  = Report::where('event_id' , $this->reportId)
             ->where('visible' , 1)
             ->where('typ' , 1)
             ->orderby('position')

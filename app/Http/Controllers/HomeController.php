@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\board;
 use App\Models\Club;
 use App\Models\Event;
-use App\Models\report;
+use App\Models\Report;
 use App\Models\SportSection;
 use App\Models\Instruction;
 use App\Models\Document;

@@ -33,7 +33,7 @@ class SportSectionController extends Controller
             'status'      => '2',
             'updated_at'  => Carbon::now()
           ]);
-     return Redirect()->back()->with('success' , 'Die Abteilung wurde sichtbar geschaltet.');
+     return Redirect()->back()->with('success' , env('MENUE_ABTEILUNG').' wurde sichtbar geschaltet.');
     }
 
     public function inaktiv($sportSection_id)
@@ -42,7 +42,7 @@ class SportSectionController extends Controller
             'status'      => '0',
             'updated_at'  => Carbon::now()
           ]);
-     return Redirect()->back()->with('success' , 'Die Abteilung wurde unsichtbar geschaltet.');
+     return Redirect()->back()->with('success' , env('MENUE_ABTEILUNG').' wurde unsichtbar geschaltet.');
     }
 
     public function start($sportSection_id)
@@ -55,7 +55,7 @@ class SportSectionController extends Controller
             'status'      => '1',
             'updated_at'  => Carbon::now()
           ]);
-     return Redirect()->back()->with('success' , 'Die Abteilung wurde Startseite festgelegt.');
+     return Redirect()->back()->with('success' , env('MENUE_ABTEILUNG').' wurde Startseite festgelegt.');
     }
 
     public function sportSectionSportTeam($sportSection_id)
@@ -125,7 +125,7 @@ class SportSectionController extends Controller
 
       return redirect('/Abteilung/alle')->with(
         [
-          'success' => 'Die Abteilung <b>' . $request->abteilung . '</b> wurde angelegt.'
+          'success' => $request->abteilung . '</b> wurde angelegt.'
         ]
       );
     }
@@ -185,8 +185,9 @@ class SportSectionController extends Controller
           'abteilungTeamBezeichnung' => 'required|max:45',
           'farbe'                    => 'max:255',
           'domain'                   => 'max:255',
-        //'domain'                   => 'sometimes|url'  //ToDo: Leere Felder wird nicht akzepiert
-          'bild'                     => 'mimes:jpeg,jpg,bmp,png,gif'
+        //'domain'                   => 'sometimes|url'  //ToDo: Leere Felder wird nicht akzeptiert
+        //'bild'                     => 'mimes:jpeg,jpg,bmp,png,gif'  //ToDO: andere Formate noch zulassen
+          'bild'                     => 'mimes:jpg'
         ]
       );
 
@@ -248,7 +249,7 @@ class SportSectionController extends Controller
 
       return redirect('/Abteilung/alle')->with(
         [
-          'success' => 'Die Daten von der Abteilung <b>' . $request->abteilung . '</b> wurden geändert.'.$messagePicture
+          'success' => 'Die Daten von <b>' . $request->abteilung . '</b> wurden geändert.'.$messagePicture
         ]
       );
     }
@@ -269,7 +270,7 @@ class SportSectionController extends Controller
       $delete = SportSection::find($SportTeam_id)->delete();
       return redirect('/Abteilung/alle')->with(
         [
-          'success' => 'Die Abteilung wurde gelöscht.'
+          'success' => env('MENUE_ABTEILUNG').' wurde gelöscht.'
         ]
       );
     }
@@ -300,7 +301,7 @@ class SportSectionController extends Controller
           'bild'         => ''
          ]);
          return back()->with([
-             'success' => 'Das Headerbild vom der Abteilung wurde gelöscht'
+             'success' => 'Das Headerbild vom der '.env('MENUE_ABTEILUNG').' wurde gelöscht'
          ]);
        }
 

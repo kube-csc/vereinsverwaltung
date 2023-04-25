@@ -31,11 +31,21 @@
                 </div>
                 <div class="col-md">
                     <div class="form-floating">
-                        <label for="name">{{env('MENUE_ABTEILUNG')}} / Mannschaften:</label><br>
+                        <label for="name">{{ env('MENUE_ABTEILUNG') }}
+                            @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                                / {{ env('MENUE_MANNSCHAFTEN') }}
+                            @endif
+                            :
+                        </label>
+                        <br>
                         <select wire:model="sportSection_id">
                             <!-- name="sportSection_id"  -->
-                            <option value="" selected>Alle {{env('MENUE_ABTEILUNG')}} / Mannschaften</option>
-                            <optgroup label="Abeilung:">
+                            <option value="">Alle {{ env('MENUE_ABTEILUNG') }}
+                                @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                                    / {{ env('MENUE_MANNSCHAFTEN') }}
+                                @endif
+                            </option>
+                            <optgroup label="{{ env('MENUE_ABTEILUNG') }}:">
                                 @php
                                     $firsttime = 0;
                                 @endphp
@@ -45,7 +55,7 @@
                                             $firsttime = 1;
                                         @endphp
                             </optgroup>
-                            <optgroup label="Mannschaft:">
+                            <optgroup label="{{ env('MENUE_MANNSCHAFTEN') }}:">
                                 @endif
                                 <option value="{{ $sportSection->id }}">{{ $sportSection->abteilung }}</option>
                                 @endforeach

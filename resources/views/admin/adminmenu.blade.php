@@ -56,7 +56,12 @@
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
                       <div class="flex items-center">
-                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Abteilung / Mannschaften</div>
+                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
+                              {{ env('MENUE_ABTEILUNG') }}
+                             @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                              / {{ env('MENUE_MANNSCHAFTEN') }}
+                             @endif
+                          </div>
                       </div>
 
                       <div class="ml-12">
@@ -67,21 +72,21 @@
                               <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('Abteilung/alle')">
                                   <div class="flex justify-between my-2">
                                     <div class="flex">
-                                      <p class="font-bold text-lg">Abteilung bearbeiten</p>
+                                      <p class="font-bold text-lg">{{ env('MENUE_ABTEILUNG') }}  bearbeiten</p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
                                     </div>
                                   </div>
                               </div>
-
+                             @if(env('MENUE_MANNSCHAFTEN')<>"nein")
                               <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('Mannschaft/alle')">
                                   <div class="flex justify-between my-2">
                                     <div class="flex">
-                                      <p class="font-bold text-lg">Mannschaft bearbeiten</p>
+                                      <p class="font-bold text-lg">{{ env('MENUE_MANNSCHAFTEN') }} bearbeiten</p>
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
                                     </div>
                                   </div>
                               </div>
-
+                             @endif
                             </div>
 
                           </div>
@@ -90,6 +95,7 @@
                   </div>
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
+                      @if(env('MENUE_VEREIN')<>"nein")
                       <div class="flex items-center">
                           <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">{{ env('MENUE_VEREIN') }} / {{ env('MENUE_VERBAND') }}</div>
                       </div>
@@ -120,14 +126,13 @@
                             </div>
 
                           </div>
-
-
                       </div>
+                      @endif
                   </div>
 
                   <div class="p-6 border-t border-gray-200">
                       <div class="flex items-center">
-                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Event Gruppen</div>
+                          <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Verwaltung</div>
                       </div>
 
                       <div class="ml-12">

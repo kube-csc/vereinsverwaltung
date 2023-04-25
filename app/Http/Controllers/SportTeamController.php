@@ -30,7 +30,7 @@ class SportTeamController extends Controller
          'status'      => '2',
          'updated_at'  => Carbon::now()
        ]);
-  return Redirect()->back()->with('success' , 'Die Mannschaft wurde sichtbar geschaltet.');
+  return Redirect()->back()->with('success' , env('MENUE_MANNSCHAFTEN').' wurde sichtbar geschaltet.');
  }
 
  public function inaktiv($sportTeam_id)
@@ -39,7 +39,7 @@ class SportTeamController extends Controller
          'status'      => '0',
          'updated_at'  => Carbon::now()
        ]);
-  return Redirect()->back()->with('success' , 'Die Mannschaft wurde unsichtbar geschaltet.');
+  return Redirect()->back()->with('success' , env('MENUE_MANNSCHAFTEN').' wurde unsichtbar geschaltet.');
  }
 
  public function start($sportTeams_id)
@@ -52,7 +52,7 @@ class SportTeamController extends Controller
          'status'      => '1',
          'updated_at'  => Carbon::now()
        ]);
-  return Redirect()->back()->with('success' , 'Die Mannschaft wurde Startseite festgelegt.');
+  return Redirect()->back()->with('success' , env('MENUE_MANNSCHAFTEN').' wurde Startseite festgelegt.');
  }
 
  public function index()
@@ -60,7 +60,7 @@ class SportTeamController extends Controller
    $sportTeams = SportSection::where('sportSection_id' , '>' , '0')->orderby('abteilung')->paginate(5);
    return view('admin.sportTeam.index')->with(
      [
-       'sportTeams'    => $sportTeams,
+       'sportTeams' => $sportTeams,
      ]);
  }
 
@@ -167,7 +167,8 @@ class SportTeamController extends Controller
        'farbe'                    => 'max:255',
        'domain'                   => 'max:255',
        //'domain'                 => 'sometimes|url'  //ToDo: Lehre Felder wird nicht akzepiert
-       'bild'                     => 'mimes:jpeg,jpg,bmp,png,gif'
+       //'bild'                   => 'mimes:jpeg,jpg,bmp,png,gif'  //ToDO: andere Formate noch zulassen
+       'bild'                     => 'mimes:jpg'
      ]
    );
 
@@ -251,7 +252,7 @@ class SportTeamController extends Controller
    $delete = sportSection::find($SportTeams_id)->delete();
    return redirect('/Mannschaft/alle')->with(
      [
-       'success' => 'Die Mannschaft wurde gelöscht.'
+       'success' => env('MENUE_MANNSCHAFTEN').' wurde gelöscht.'
      ]
    );
  }
@@ -267,12 +268,12 @@ class SportTeamController extends Controller
     Image::make($bildInput)
       ->widen(2050)
       ->save(public_path().'/storage/header/'.$newPictureName);
-   // TODO: Bilderbreite richtige
+   // ToDo: Bilderbreite richtige
     return $newPictureName;
   }
  }
 
- // Bilder von SportTeams löschen
+ // Bilder von der Mannschaft wurde löschen
     public function pictureDelete($sportTeam_id){
       $newPictureName="header".$sportTeam_id.'.jpg';
       if (file_exists(public_path().'/storage/header/'.$newPictureName)){
@@ -282,7 +283,7 @@ class SportTeamController extends Controller
        'bild'      => ''
       ]);
       return back()->with([
-          'success' => 'Das Headerbild vom der Mannschaft wurde gelöscht'
+          'success' => 'Das Headerbild vom der '.env('MENUE_MANNSCHAFTEN').' wurde gelöscht'
       ]);
     }
 

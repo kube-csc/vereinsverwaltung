@@ -80,13 +80,19 @@
                                 </div>
 
                                 <div class="my-4" >
-                                  <label for="sportSection_id">Abteilung / Mannschaft:</label><br>
+                                    <label for="name">{{ env('MENUE_ABTEILUNG') }}
+                                        @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                                            / {{ env('MENUE_MANNSCHAFTEN') }}
+                                        @endif
+                                        :
+                                    </label>
+                                    <br>
                                   <select name="sportSection_id" class="w-full border rounded shadow p-2 mr-2 my-2">
                                       <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
                                       <option value="" selected>
                                           keine Zuordnung
                                       </option>
-                                      <optgroup label="Abeilung:">
+                                      <optgroup label="{{ env('MENUE_ABTEILUNG') }}:">
                                           @php
                                               $firsttime = 0;
                                           @endphp
@@ -97,7 +103,7 @@
                                                       $firsttime = 1;
                                                   @endphp
                                       </optgroup>
-                                      <optgroup label="Mannschaft:">
+                                      <optgroup label="{{ env('MENUE_MANNSCHAFTEN') }}:">
                                           @endif
                                           <option value="{{ $sportSection->id }}">
                                               {{ $sportSection->abteilung }}
@@ -108,7 +114,7 @@
                                 </div>
 
                                 <div class="py-2">
-                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Dokument anlegen</button>
+                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">anlegen</button>
                                 </div>
 
                             </form>

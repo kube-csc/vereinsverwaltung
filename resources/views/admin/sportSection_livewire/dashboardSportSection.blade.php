@@ -12,17 +12,17 @@
 
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div>
-                    <!--  <x-jet-application-logo class="block h-12 w-auto" /> -->  <?php // TODO: Header ersteellen oder nicht ?>
+                    <!--  <x-jet-application-logo class="block h-12 w-auto" /> -->  <?php // ToDo: Header erstellen oder nicht ?>
                   </div>
 
                   <div class="mt-8 text-2xl">
-                        Abteilung
+                      {{ env('MENUE_ABTEILUNG') }}
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                    Huhu Hier werden die Abteilungen des Vereins bearbeitet. Es können verschiende Abteilungen mit Mannschaften angelegt werden.
-                    Für jede Abteilung ist ein Beschreibungsfeld vorhanden zur vorstellung der Abteilung vorstellen kann.
-                    Jede Abteilung kann eienen eigendenes Headerbild und eine Domain haben.
+                    Hier werden die {{ env('MENUE_ABTEILUNG') }} des Vereins bearbeitet. Es können verschiende {{ env('MENUE_ABTEILUNG') }} mit {{ env('MENUE_MANNSCHAFTEN') }} angelegt werden.
+                    Für jede {{ env('MENUE_ABTEILUNG') }} ist ein Beschreibungsfeld vorhanden zur Vorstellung der {{ env('MENUE_ABTEILUNG') }} vorstellen kann.
+                    Jede Abteilung kann ein eigenes Headerbild und eine Domain haben.
                   </div>
               </div>
 

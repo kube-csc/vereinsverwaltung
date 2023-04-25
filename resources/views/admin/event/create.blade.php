@@ -116,18 +116,29 @@
                                 </div>
                                 <div class="my-4" >
                                     @if (!isset($sportSection_id))
-                                    <label for="name">Abteilung / Mannschaft:</label><br>
+                                        <label for="name">{{ env('MENUE_ABTEILUNG') }}
+                                            @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                                                / {{ env('MENUE_MANNSCHAFTEN') }}
+                                            @endif
+                                            :
+                                        </label>
+                                    <br>
                                     <select name="sportSection_id">
-                                            <option value="">Alle Abteilungen / Mannschaften</option>
-                                     <optgroup label="Abeilung:">
+                                        <option value="">Alle {{ env('MENUE_ABTEILUNG') }}
+                                            @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                                                / {{ env('MENUE_MANNSCHAFTEN') }}
+                                            @endif
+                                        </option>
+                                     <optgroup label="{{ env('MENUE_ABTEILUNG') }}:">
                                       @php
                                        $firsttime = 0;
                                       @endphp
                                         @foreach ($sportSections as $sportSection)
                                             @if ($sportSection->sportSection_id > 0 && $firsttime == 0)
                                                 @php ($firsttime = 1)
-                                                </optgroup>
-                                                <optgroup label="Mannschaft:">
+                                      </optgroup>
+
+                                      <optgroup label="{{ env('MENUE_MANNSCHAFTEN') }}:">
                                             @endif
                                             <option value="{{ $sportSection->id }}"
                                             @if ($sportSection->status == 1)
@@ -135,7 +146,7 @@
                                             @endif
                                             >{{ $sportSection->abteilung }}</option>
                                         @endforeach
-                                     </optgroup>
+                                      </optgroup>
                                     </select>
 
                                     @else

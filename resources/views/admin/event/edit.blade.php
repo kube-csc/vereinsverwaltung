@@ -107,16 +107,25 @@
                                     <small class="form-text text-danger">{!! $errors->first('anmeldetext') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                     <label for="name">Abteilung / Mannschaft:</label><br>
+                                     <label for="name">{{ env('MENUE_ABTEILUNG') }}
+                                         @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                                             / {{ env('MENUE_MANNSCHAFTEN') }}
+                                         @endif
+                                         :
+                                     </label>
+                                     <br>
                                      <select name="sportSection_id">
                                          <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
                                          <option value=""
                                              @if ($event->sportSection_id == NULL)
                                                  selected
                                              @endif
-                                             >Alle Abteilungen / Mannschaften
+                                             >Alle {{ env('MENUE_ABTEILUNG') }}
+                                             @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                                                 / {{ env('MENUE_MANNSCHAFTEN') }}
+                                             @endif
                                          </option>
-                                     <optgroup label="Abeilung:">
+                                     <optgroup label="{{ env('MENUE_ABTEILUNG') }}:">
                                      @php
                                       $firsttime = 0;
                                      @endphp
@@ -127,7 +136,7 @@
                                                  $firsttime = 1;
                                                 @endphp
                                                 </optgroup>
-                                                <optgroup label="Mannschaft:">
+                                                <optgroup label="{{ env('MENUE_MANNSCHAFTEN') }}:">
                                             @endif
                                             <option value="{{ $sportSection->id }}"
                                             @if ($event->sportSection_id == $sportSection->id)

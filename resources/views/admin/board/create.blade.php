@@ -3,8 +3,7 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Team - Dashboard') }}
         </h2>
-        </h2>
-    </x-slot>
+     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -58,10 +57,16 @@
                                   <small class="form-text text-danger">{{ $errors->first('postenWeiblich') }}</small>
                                 </div>
                                 <div class="my-4" >
-                                  <label for="name">Abteilung / Mannschaft:</label><br>
+                                    <label for="name">{{ env('MENUE_ABTEILUNG') }}
+                                        @if(env('MENUE_MANNSCHAFTEN')<>"nein")
+                                            / {{ env('MENUE_MANNSCHAFTEN') }}
+                                        @endif
+                                        :
+                                    </label>
+                                    <br>
                                   <select name="sportSection_id">
                                       <!-- ToDo: Verbesserung Old Wert behalten bei Valiedierungsfehler -->
-                                      <optgroup label="Abeilung:">
+                                      <optgroup label="{{ env('MENUE_ABTEILUNG') }}:">
                                           @php
                                               $firsttime = 0;
                                           @endphp
@@ -71,7 +76,7 @@
                                                       $firsttime = 1;
                                                   @endphp
                                       </optgroup>
-                                      <optgroup label="Mannschaft:">
+                                      <optgroup label="{{ env('MENUE_MANNSCHAFTEN') }}:">
                                           @endif
                                           <option value="{{ $sportSection->id }}"
                                               @if($loop->first)

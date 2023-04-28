@@ -15,7 +15,7 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich können Datenschutzerglärung und selbst angelegte Informationsseiten bearbeitet werden.
+                   In diesem Bereich können Datenschutzerklärung und selbst angelegte Informationsseiten bearbeitet werden.
                   </div>
 
               </div>

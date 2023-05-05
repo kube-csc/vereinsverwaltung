@@ -11,7 +11,7 @@
 
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
-                    Rennen bearbeiten
+                    {{ $titel }}
                   </div>
 
                   <div class="mt-6 text-gray-500">
@@ -25,10 +25,10 @@
                       <div class="flex items-center">
                             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
                                 @if($status==1)
-                                    Programm des
+                                    Programm der
                                 @endif
                                 @if($status==2)
-                                    Ergebnisse des
+                                    Ergebnisse der
                                 @endif
                                     Rennen</div>
                       </div>
@@ -100,7 +100,13 @@
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $race->updated_at->diffForHumans() }}</p>
                                     </div>
                                     <div class="flex">
-                                         um {{ date("H:i", strtotime($race->rennUhrzeit)) }} Uhr am {{ date("d.m.Y", strtotime($race->rennDatum)) }}
+                                        am {{ date("d.m.Y", strtotime($race->rennDatum)) }} um {{ date("H:i", strtotime($race->rennUhrzeit)) }} Uhr
+                                        @if($race->ergebnisDatei==Null)
+                                          voraussichtlich
+                                        @else
+                                          gestartet um
+                                        @endif
+                                        {{ date("H:i", strtotime($race->verspaetungUhrzeit)) }} Uhr
                                     </div>
                                   </div>
 

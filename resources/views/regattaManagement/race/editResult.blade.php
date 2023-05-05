@@ -13,7 +13,8 @@
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
                       Rennen: {{ $race->nummer }}<br>
-                      {{ $race->rennBezeichnung }}
+                      {{ $race->rennBezeichnung }}<br>
+                      um {{ date("H:i", strtotime($race->rennUhrzeit)) }} Uhr am {{ date("d.m.Y", strtotime($race->rennDatum)) }}
                   </div>
 
                   <div class="mt-6 text-gray-500">
@@ -59,10 +60,16 @@
                                   <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                 </div>
                                 <div>
-                                  <label for="name">Zeit die pro Rennen aufgeholt werden kann:</label>
+                                  <label for="name">Zeit in Minuten die pro Rennen aufgeholt werden kann:</label>
                                   <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeit') ? 'bg-red-300' : '' }}"
-                                         id="zeit" name="zeit" value="{{ old('zeit') }}" min="0" max="59">
+                                         id="zeit" name="zeit" value="{{ Session::get('regattaZeit') }}" min="0" max="59">
                                   <small class="form-text text-danger">{!! $errors->first('zeit') !!}</small>
+                                </div>
+                                <div>
+                                    <label for="name">Minimaler Zeitabstand in Minuten:</label>
+                                    <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeitMinAbstand') ? 'bg-red-300' : '' }}"
+                                           id="zeit" name="zeitMinAbstand" value="{{ Session::get('regattaZeitMinAbstand') }}" min="0" max="59">
+                                    <small class="form-text text-danger">{!! $errors->first('zeitMinAbstand') !!}</small>
                                 </div>
                                 <div class="my-4" >
                                     <label for="name">Dokument:</label>

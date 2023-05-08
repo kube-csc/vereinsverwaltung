@@ -3,7 +3,6 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Regatta Verwaltung') }} {{ Session::get('regattaSelectUeberschrift') }}
         </h2>
-        </h2>
     </x-slot>
 
     <div class="py-12">
@@ -13,7 +12,8 @@
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
                       Rennen: {{ $race->nummer }}<br>
-                      {{ $race->rennBezeichnung }}
+                      {{ $race->rennBezeichnung }}<br>
+                      um {{ date("H:i", strtotime($race->rennUhrzeit)) }} Uhr am {{ date("d.m.Y", strtotime($race->rennDatum)) }}
                   </div>
 
                   <div class="mt-6 text-gray-500">

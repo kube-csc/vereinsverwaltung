@@ -59,6 +59,16 @@
                                          id="rennUhrzeit" name="rennUhrzeit" value="{{ old('rennUhrzeit') ?? $ractetime }}">
                                   <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                 </div>
+                                <div class="my-4" >
+                                   <label for="name">Richtige Rennzeit:</label>
+                                   <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennzeit') ? 'bg-red-300' : '' }}"
+                                          id="rennzeit" name="rennzeit" value="1"
+                                          @if(old('rennzeit')==1 or $race->rennzeit==1)
+                                              checked
+                                          @endif
+                                   >
+                                   <small class="form-text text-danger">{!! $errors->first('rennzeit') !!}</small>
+                                </div>
                                 <div>
                                   <label for="name">Zeit in Minuten die pro Rennen aufgeholt werden kann:</label>
                                   <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeit') ? 'bg-red-300' : '' }}"

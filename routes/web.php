@@ -236,10 +236,12 @@ Route::get('/Rennen/Programm/{race_id}',              [RaceController::class, 'e
 Route::post('/Rennen/Programm/update/{race_id}',      [RaceController::class, 'updateProgram'])   ->name('race.updateProgram');
 Route::get('/Rennen/Programm/loeschen/{race_id}',     [RaceController::class, 'deleteProgram'])   ->name('race.deleteProgram');
 Route::get('/Rennen/Ergebnisse',                      [RaceController::class, 'indexResult'])     ->name('race.indexResult');
-Route::get('/Rennen/Ergebnisse/alle',                  [RaceController::class, 'indexResultAll'])  ->name('race.indexResultAll');
+Route::get('/Rennen/Ergebnisse/alle',                 [RaceController::class, 'indexResultAll'])  ->name('race.indexResultAll');
 Route::get('/Rennen/Ergebnis/{race_id}',              [RaceController::class, 'editResult'])      ->name('race.editResult');
 Route::post('/Rennen/Ergebnis/update/{race_id}',      [RaceController::class, 'updateResult'])    ->name('race.updateResult');
 Route::get('/Rennen/Ergebnis/loeschen/{race_id}',     [RaceController::class, 'deleteResult'])    ->name('race.deleteResult');
+Route::get('/Rennen/Zeit/{race_id}',                  [RaceController::class, 'raceTime'])        ->name('race.raceTime');
+Route::post('/Rennen/Zeit/update/{race_id}',          [RaceController::class, 'updateRaceTime'])  ->name('race.updateRaceTime');
 
 //Route::resource('Tabele', 'TabeleController');
 Route::get('/Tabelle/alle',                        [TabeleController::class, 'index'])                 ->name('tabele.index');

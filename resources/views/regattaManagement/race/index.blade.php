@@ -80,6 +80,9 @@
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Ergebnis/'.$race->id) }}">
                                             <box-icon name='file'></box-icon>
                                         </a>
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Zeit/'.$race->id) }}">
+                                            <box-icon name='time'></box-icon>
+                                        </a>
                                         @endif
                                       </div>
                                   </div>
@@ -91,7 +94,7 @@
                                           @endif
                                           {{ $race->rennBezeichnung }}<br>Regatta Abschnitt: {{ $race->level }}
                                           @if($race->programmDatei!=Null && $status==1)
-                                                  <br><a href="/storage/raceDokumente/{{ $race->programmDatei }}" target="_blank">{{ $race->fileProgrammDatei }}</a>
+                                              <br><a href="/storage/raceDokumente/{{ $race->programmDatei }}" target="_blank">{{ $race->fileProgrammDatei }}</a>
                                           @endif
                                           @if($race->ergebnisDatei!=Null && $status==2)
                                               <br><a href="/storage/raceDokumente/{{ $race->ergebnisDatei }}" target="_blank">{{ $race->fileErgebnisDatei }}</a>

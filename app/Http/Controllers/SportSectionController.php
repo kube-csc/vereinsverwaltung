@@ -177,7 +177,7 @@ class SportSectionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $SportTeam_id)
+    public function update(Request $request, $sportSection_id)
     {
       $request->validate(
         [
@@ -191,7 +191,7 @@ class SportSectionController extends Controller
         ]
       );
 
-      SportSection::find($SportTeam_id)->update([
+      SportSection::find($sportSection_id)->update([
         'abteilung'                 => $request->abteilung,
         'abteilungTeamBezeichnung'  => $request->abteilungTeamBezeichnung,
         'farbe'                     => $request->farbe,
@@ -202,9 +202,9 @@ class SportSectionController extends Controller
 
       $messagePicture='';
       if($request->bild){
-        $newPictureName=$this->saveInmage($request->bild , $SportTeam_id);
+        $newPictureName=$this->saveInmage($request->bild , $sportSection_id);
         if($newPictureName<>''){
-          SportSection::find($SportTeam_id)->update([
+          SportSection::find($sportSection_id)->update([
             'bild'  => $newPictureName
           ]);
           $messagePicture='<br>Das Headerbild wurde hochgeladen.';
@@ -215,8 +215,8 @@ class SportSectionController extends Controller
       }
 
       if ($request->beschreibung<>'' | $request->nachtermin<>''){
-        $sportSection = SportSection::find($SportTeam_id);
-        if ($sportSection->event_id>0){
+        $sportSection = SportSection::find($sportSection_id);
+        if ($sportSection->event_id>0) {
           Event::find($sportSection->event_id)->update([
             'beschreibung'      => $request->beschreibung,
             'nachtermin'        => $request->nachtermin,
@@ -228,7 +228,7 @@ class SportSectionController extends Controller
           $createdEvent= new Event([
               'beschreibung'     => $request->beschreibung,
               'nachtermin'       => $request->nachtermin,
-              'SportTeam_id'     => $request->SportTeam_id,
+              'sportSection_id'  => $request->sportSection_id,
               'verwendung'       => 4,    //4 = Abteilungsbeschreibung
               'autor_id'         => Auth::user()->id,
               'bearbeiter_id'    => Auth::user()->id,
@@ -241,7 +241,7 @@ class SportSectionController extends Controller
            $createdEvent->save();
 
            $newEventId  = $createdEvent->id;
-           SportSection::find($SportTeam_id)->update([
+           SportSection::find($sportSection_id)->update([
             'event_id' => $newEventId
           ]);
         }

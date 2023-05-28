@@ -343,7 +343,7 @@ class EventDocumentController extends Controller
                 unlink(public_path().'/storage/eventDokumente/'.$deleteDocumentName);
             }
 
-            // Note: Ist überfüssig wenn keine alten Daten übernommen wurden
+            // Note: Ist überflüssig wenn keine alten Daten übernommen wurden
             $deleteDocumentName=$reportDocumentName->image;
             if (file_exists(public_path().'/daten/text/'.$deleteDocumentName) && $deleteDocumentName!=Null && $reportDocumentName->image!=''){
                 unlink(public_path().'/daten/text/'.$deleteDocumentName);
@@ -368,7 +368,7 @@ class EventDocumentController extends Controller
             $typ= $typOption[$extension];
 
             if(!isset($typ)){
-                dd('Abbfruch flashcer Extension');
+                dd('Abbruch falscher Extension');
             }
 
             $fileName=$request->file('documentFile')->getClientOriginalName();
@@ -438,9 +438,9 @@ class EventDocumentController extends Controller
 
         return view('admin.eventDocument.index')->with(
             [
-                'reports'     =>  $reports,
+                'reports'     => $reports,
                 'reportMaxID' => $reportMaxID,
-                'event'       =>  $event
+                'event'       => $event
             ]
         );
     }

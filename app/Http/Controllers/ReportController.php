@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Report;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Auth;
+
+// Wird nicht mehr benötigt
+use Intervention\Image\Facades\Image;
+
 
 class ReportController extends Controller
 {
@@ -214,11 +218,14 @@ class ReportController extends Controller
 
     public function index($event_id)
     {
-        $reports = Report::where('event_id' , $event_id)->orderby('position')->paginate(5);;
+        $reports = Report::where('event_id' , $event_id)
+            ->where('verwendung' , '1')
+            ->orderby('position')
+            ->paginate(5);
 
         return view('admin.report.index')->with(
             [
-                'reports' =>  $reports,
+                'reports' => $reports,
             ]
         );
     }
@@ -244,19 +251,42 @@ class ReportController extends Controller
         $request->validate(
             [
                 'reportTitleImage'   => 'required|max:45',
-                //  'image'              => 'mimes:jpeg,jpg,bmp,png,gif' //ToDo: Abfrage Image einfügen
+            //  'image'              => 'mimes:jpeg,jpg,bmp,png,gif' //ToDo: Abfrage Image einfügen
             ]
         );
 
         $messagePicture='';
         if($request->image){
-            $newPictureName=$this->saveInmage($request->image , $request->event_id);
             $fileName=$request->file('image')->getClientOriginalName();
+            $extension = $request->image->extension();
+            $typOption=[
+                'jpg'  => '1',
+                'gif'  => '2',
+                'png'  => '3',
+                'bmp'  => '4',
+                'jpeg' => '5',
+                'pdf'  => '10',
+                'doc'  => '11',
+                'xls'  => '12',
+                'xlsx' => '13',
+                'docx' => '14',
+                'odt'  => '15'
+            ];
+            $typ= $typOption[$extension];
+            if(!isset($typ)){
+                dd('Abbruch falscher Extension');
+            }
 
-            //ToDo: Die widht und height Bearbeitung in die Funktion auslagern
-            $newImage = Image::make($request->image);
-            $width  = $newImage->width();
-            $height = $newImage->height();
+            //ToDo: Die width und height Bearbeitung in die Funktion auslagern
+            //$newImage = Image::make($request->image);
+            //$width  = $newImage->width();
+            //$height = $newImage->height();
+
+            $width  = 0;
+            $height = 0;
+
+            $newPictureName=$this->saveInmage($request->image , $request->event_id , $extension);
+
             if($newPictureName<>''){
                 $report = new report(
                     [
@@ -269,6 +299,7 @@ class ReportController extends Controller
                         'filename'         => $fileName,
                         'visible'          => 1,
                         'verwendung'       => 1, // 1 = Es ist ein Bild
+                        'typ'              => $typ,
                         'bearbeiter_id'    => Auth::user()->id,
                         'user_id'          => Auth::user()->id,
                         'updated_at'       => Carbon::now(),
@@ -335,21 +366,46 @@ class ReportController extends Controller
             ]
         );
 
-        $reportImageName=Report::find($reportId);
-        $deletePictureName=$reportImageName->bild;
-        if (file_exists(public_path().'/storage/eventImage/'.$deletePictureName) && $deletePictureName!=Null){
-            unlink(public_path().'/storage/eventImage/'.$deletePictureName);
-        }
-
         $messagePicture='';
         if($request->image){
-            $newPictureName=$this->saveInmage($request->image , $reportId);
-            $fileName=$request->file('image')->getClientOriginalName();
 
-            //ToDo: Die widht und height Bearbeitung in die Funktion auslagern
+            $reportImageName=Report::find($reportId);
+            $deletePictureName=$reportImageName->bild;
+            if (file_exists(public_path().'/storage/eventImage/'.$deletePictureName) && $deletePictureName!=Null){
+                unlink(public_path().'/storage/eventImage/'.$deletePictureName);
+            }
+
+            $fileName=$request->file('image')->getClientOriginalName();
+            $extension = $request->image->extension();
+            $typOption=[
+                'jpg'  => '1',
+                'gif'  => '2',
+                'png'  => '3',
+                'bmp'  => '4',
+                'jpeg' => '5',
+                'pdf'  => '10',
+                'doc'  => '11',
+                'xls'  => '12',
+                'xlsx' => '13',
+                'docx' => '14',
+                'odt'  => '15'
+            ];
+            $typ= $typOption[$extension];
+            if(!isset($typ)){
+                dd('Abbruch falscher Extension');
+            }
+
+            //ToDo: Die width und height Bearbeitung in die Funktion auslagern
+            /*
             $newImage = Image::make($request->image);
             $width  = $newImage->width();
             $height = $newImage->height();
+            */
+
+            $width  = 0;
+            $height = 0;
+
+            $newPictureName=$this->saveInmage($request->image , $request->event_id , $extension);
 
             if($newPictureName<>''){
                 Report::find($reportId)->update([
@@ -390,28 +446,18 @@ class ReportController extends Controller
         //
     }
 
-    //Bilder speichern
-    public function saveInmage($imageInput , $event_id){
-        $newPictureName="eventBild".$event_id. '_' . str::random(4) . '.jpg';
-
+    public function saveInmage($imageInput , $event_id , $extension){
         /*
-        $newImage = Image::make($imageInput);
-        $width  = $newImage->width();
-        $height = $newImage->height();
-
-         //ToDo: Die widht und height Bearbeitung in die Funktion auslagern
-        $newPicture=
-            [
-                'newPictureName' => $newPictureName,
-                'width'          => $width,
-                'height'         => $height,
-            ];
+        Image::make($imageInput)
+            ->save(public_path().'/storage/eventImage/'.$newPictureName);
         */
 
-        Image::make($imageInput)
-            //->widen(2050)
-            ->save(public_path().'/storage/eventImage/'.$newPictureName);
-        // ToDo: Bilderbreite?
+        $newPictureName="eventBild" . $event_id . "_" . str::random(4) . "." . $extension;
+        Storage::disk('public')->putFileAs(
+            'eventImage/',
+            $imageInput,
+            $newPictureName
+        );
 
         return  $newPictureName;
     }

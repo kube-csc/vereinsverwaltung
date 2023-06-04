@@ -28,14 +28,14 @@ $i=0;
             @php
              $bild = $abteilungStyl->bild;
             @endphp
-           #hero {
+            #hero {
                     width: 100%;
                     height: 100vh;
                     background: url("/storage/header/{{$bild}}") top center;
                     background-size: cover;
                     position: relative;
                     margin-bottom: -90px;
-                }
+            }
           @endif
           @if( $abteilungStyl->farbe<>'' )
                 @php
@@ -48,7 +48,7 @@ $i=0;
                transition: all 0.5s;
                padding: 15px 0;
                background: rgba(<?php echo $farbe ;?>);
-           }
+          }
 
           #header.header-scrolled {
               background: rgba(<?php echo $farbe ;?>);
@@ -69,7 +69,7 @@ $i=0;
 
           /* @media (max-width: 768px) { */
           @media (max-width: 995px) {
-              #header.header-scrolled {
+              #header.header-scrolled{
                   padding: 15px 0;
               }
 

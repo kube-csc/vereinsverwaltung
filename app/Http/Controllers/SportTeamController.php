@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-
 use App\Models\SportSection;
 use App\Models\Event;
 
@@ -167,8 +167,7 @@ class SportTeamController extends Controller
        'farbe'                    => 'max:255',
        'domain'                   => 'max:255',
        //'domain'                 => 'sometimes|url'  //ToDo: Lehre Felder wird nicht akzepiert
-       //'bild'                   => 'mimes:jpeg,jpg,bmp,png,gif'  //ToDO: andere Formate noch zulassen
-       'bild'                     => 'mimes:jpg'
+       'bild'                     => 'mimes:jpeg,jpg,bmp,png,gif'
      ]
    );
 
@@ -183,10 +182,20 @@ class SportTeamController extends Controller
 
    $messagePicture='';
    if($request->bild){
-     $newPictureName=$this->saveInmage($request->bild , $sportTeam_id);
-     if($newPictureName<>''){
+       $fileName = $request->file('bild')->getClientOriginalName();
+       $extension = $request->bild->extension();
+       $newPictureName = $this->saveInmage($request->bild , $sportTeam_id, $extension);
+       if($newPictureName <> ''){
+           $sportSectionImageName=SportSection::find($sportTeam_id);
+           $deletePictureName=$sportSectionImageName->bild;
+           if (file_exists(public_path().'/storage/header/'.$deletePictureName) && $deletePictureName!=Null){
+               unlink(public_path().'/storage/header/'.$deletePictureName);
+           }
        SportSection::find($sportTeam_id)->update([
-         'bild'         => $newPictureName
+           'bild'          => $newPictureName,
+           'filename'      => $fileName,
+           'bearbeiter_id' => Auth::user()->id,
+           'updated_at'    => Carbon::now()
        ]);
        $messagePicture='<br>Das Headerbild wurde hochgeladen.';
      }
@@ -236,55 +245,51 @@ class SportTeamController extends Controller
    );
  }
 
- /**
-  * Remove the specified resource from storage.
-  *
-  * @param  int  $id
-  * @return \Illuminate\Http\Response
-  */
- public function destroy($id)
- {
-  //
- }
+     /**
+      * Remove the specified resource from storage.
+      *
+      * @param  int  $id
+      * @return \Illuminate\Http\Response
+      */
+     public function destroy($id)
+     {
+      //
+     }
 
- public function softDelete($SportTeams_id)
- {
-   $delete = sportSection::find($SportTeams_id)->delete();
-   return redirect('/Mannschaft/alle')->with(
+    public function softDelete($SportTeams_id)
+    {
+      $delete = sportSection::find($SportTeams_id)->delete();
+    return redirect('/Mannschaft/alle')->with(
      [
        'success' => env('MENUE_MANNSCHAFTEN').' wurde gelöscht.'
      ]
-   );
- }
+    );
+    }
 
- //Bilder Speichern
- public function saveInmage($bildInput , $sportTeam_id){
-  $newPictureName="header".$sportTeam_id.'.jpg';
-  $bild = Image::make($bildInput);
-  $breite= $bild->width();
-  $hoehe = $bild->height();
-  if($breite > $hoehe){
-    //Querformat
-    Image::make($bildInput)
-      ->widen(2050)
-      ->save(public_path().'/storage/header/'.$newPictureName);
-   // ToDo: Bilderbreite richtige
-    return $newPictureName;
-  }
- }
+    public function saveInmage($imageInput , $sportTeam_id , $extension){
+        $newPictureName="header" . $sportTeam_id . "_" . str::random(4) . "." . $extension;
+        Storage::disk('public')->putFileAs(
+           'header/',
+            $imageInput,
+            $newPictureName
+     );
+      return $newPictureName;
+    }
 
- // Bilder von der Mannschaft wurde löschen
     public function pictureDelete($sportTeam_id){
-      $newPictureName="header".$sportTeam_id.'.jpg';
-      if (file_exists(public_path().'/storage/header/'.$newPictureName)){
-         unlink(public_path().'/storage/header/'.$newPictureName);
-       }
+        $reportImageName=SportSection::find($sportTeam_id);
+        $deleteImageName=$reportImageName->bild;
+        if (file_exists(public_path().'/storage/header/'.$deleteImageName)){
+            unlink(public_path().'/storage/header/'.$deleteImageName);
+        }
       sportSection::find($sportTeam_id)->update([
-       'bild'      => ''
+       'bild'          => Null,
+       'filename'      => Null,
+       'bearbeiter_id' => Auth::user()->id,
+       'updated_at'    => Carbon::now()
       ]);
       return back()->with([
           'success' => 'Das Headerbild vom der '.env('MENUE_MANNSCHAFTEN').' wurde gelöscht'
       ]);
     }
-
 }

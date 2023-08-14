@@ -95,6 +95,8 @@ class SportTeamController extends Controller
        'abteilungTeamBezeichnung'  => $request->mannschaftTeamBezeichnung,
        'event_id'                  => NULL,
        'sportSection_id'           => $request->sportSection_id,
+       'bild'                      => Null,
+       'filename'                  => Null,
        'status'                    => 2,
        'bearbeiter_id'             => Auth::user()->id,
        'user_id'                   => Auth::user()->id,

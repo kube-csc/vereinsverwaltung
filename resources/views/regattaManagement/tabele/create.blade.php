@@ -95,6 +95,17 @@
                                     </select>
                                 </div>
 
+                                <div class="my-4" >
+                                    <label for="name">Finaletabelle:</label>
+                                    <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('finaleTable') ? 'bg-red-300' : '' }}"
+                                           id="finaleTable" name="finaleTable" value="1"
+                                           @if(old('finaleTable')==1)
+                                               checked
+                                        @endif
+                                    >
+                                    <small class="form-text text-danger">{!! $errors->first('finaleTable') !!}</small>
+                                </div>
+
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neue Tabelle anlegen</button>
                                 </div>

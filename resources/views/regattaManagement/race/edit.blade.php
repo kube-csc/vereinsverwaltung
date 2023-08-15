@@ -108,7 +108,7 @@
                                       <select name="regattaLevel">
                                           @for ($i = 1; $i <= $levelMax; $i++)
                                               <option value="{{ $i }}"
-                                                  @if($i==$levelMax)
+                                                  @if($i==$race->level)
                                                           selected
                                                   @endif
                                               >

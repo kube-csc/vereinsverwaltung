@@ -132,6 +132,10 @@ class TabeleController extends Controller
             ]
         );
 
+        if($request->finaleTable==Null){
+            $request->finaleTable=0;
+        }
+
         $tabele= new Tabele([
                 'event_id'                 => Session::get('regattaSelectId'),
                 'ueberschrift'             => $request->tabelleBezeichnung,
@@ -140,7 +144,7 @@ class TabeleController extends Controller
                 'tabelleDatumVon'          => $request->tabelleDatum,
                 'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
                 'tabelleVisible'           => "1",
-                'finaleAnzeigen'           => Carbon::now(),
+                'finale'                   => $request->finaleTable,
                 'bearbeiter_id'            => Auth::id(),
                 'autor_id'                 => Auth::id(),
                 'updated_at'               => Carbon::now(),
@@ -150,7 +154,7 @@ class TabeleController extends Controller
         $tabele->save();
 
         return redirect('/Tabelle/neu')->with([
-                'success' => 'Die Tabelle <b>' . $request->tabelenBezeichnung . '</b> wurde angelegt.'
+                'success' => 'Die Tabelle <b>' . $request->tabelleBezeichnung . '</b> wurde angelegt.'
             ]
         );
 }

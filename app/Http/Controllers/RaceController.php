@@ -221,9 +221,19 @@ class RaceController extends Controller
             $timeNew=$request->rennUhrzeit;
         }
 
-        Session::put('regattaSelectRaceDate'    , $request->rennDatum);
-        Session::put('regattaSelectRaceTime'    , $request->rennUhrzeit);
-        Session::put('regattaSelectRaceTimeNew' , $timeNew);
+        $rennNummer=intval($request->nummer);
+        if($rennNummer==$request->nummer){
+            $rennNummer=$rennNummer+1;
+        }
+        else{
+            $rennNummer=$request->nummer;
+        }
+
+        Session::put('regattaSelectRaceDate'      , $request->rennDatum);
+        Session::put('regattaSelectRaceTime'      , $request->rennUhrzeit);
+        Session::put('regattaSelectRaceTimeNew'   , $timeNew);
+        Session::put('regattaSelectRacePublished' , $request->veroeffentlichungUhrzeit);
+        Session::put('rennNummer'                 , $rennNummer);
 
         return redirect('/Rennen/neu')->with([
                 'success'         => 'Das Rennen <b>' . $request->rennBezeichnung . '</b> wurde angelegt.'

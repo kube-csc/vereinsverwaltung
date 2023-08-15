@@ -60,15 +60,15 @@
                                 <div class="my-4" >
                                     <label for="name">Veröffungszeit der Ergebnisse:</label>
                                     <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
-                                           id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ Session::get('regattaSelectRaceTimeNew') }}">
+                                           id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ Session::get('tablePublished') }}">
                                     <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>
                                 </div>
                                 <div>
-                                  <label for="name">Regatta Abschnitt:</label><br>
+                                  <label for="name">von Regatta Abschnitt:</label><br>
                                   <select name="tabelleLevelVon">
                                       @for ($i = 1; $i <= $levelMaxVon; $i++)
                                           <option value="{{ $i }}"
-                                                  @if($i==$levelMaxVon)
+                                                  @if($i==Session::get('tableLevelSaveVon'))
                                                       selected
                                               @endif
                                           >
@@ -80,11 +80,11 @@
                                 </div>
 
                                 <div>
-                                    <label for="name">Regatta Abschnitt:</label><br>
+                                    <label for="name">bis Regatta Abschnitt:</label><br>
                                     <select name="tabelleLevelBis">
                                         @for ($i = 1; $i <= $levelMaxBis; $i++)
                                             <option value="{{ $i }}"
-                                                @if($i==$levelMaxBis)
+                                                @if($i==Session::get('tableLevelSaveBis'))
                                                   selected
                                                 @endif
                                             >

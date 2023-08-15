@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Race;
 use App\Models\Tabele;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -99,18 +100,30 @@ class TabeleController extends Controller
     {
         $tabeleLevel = Tabele::where('event_id' , Session::get('regattaSelectId'))
             ->orderby('tabelleLevelBis' , 'desc')
-            ->orderby('tabelleLevelVon' , 'desc')
             ->limit(1)
             ->first();
 
         if(isset($tabeleLevel->tabelleLevelBis)){
-            $levelMaxVon = $tabeleLevel->tabelleLevelVon;
+            $levelMaxVon = $tabeleLevel->tabelleLevelBis;
             $levelMaxBis = $tabeleLevel->tabelleLevelBis;
         }
         else{
             $levelMaxVon = 1;
             $levelMaxBis = 1;
         }
+
+        $raceLevel = Race::where('event_id' , Session::get('regattaSelectId'))
+            ->orderby('level' , 'desc')
+            ->limit(1)
+            ->first();
+
+        if(isset($raceLevel->level)){
+            if($raceLevel->level>$levelMaxVon){
+                $levelMaxVon = $raceLevel->level;
+                $levelMaxBis = $raceLevel->level;
+            }
+        }
+
 
         return view('regattaManagement.tabele.create')->with([
             'levelMaxVon'  => $levelMaxVon,
@@ -152,6 +165,12 @@ class TabeleController extends Controller
             ]);
 
         $tabele->save();
+
+        Session::put('tablePublished'    , $request->veroeffentlichungUhrzeit);
+        Session::put('tableLevelVon'     , $request->tabelleLevelVon);
+        Session::put('tableLevelBis'     , $request->tabelleLevelBis);
+        Session::put('tableLevelSaveVon' , $request->tabelleLevelVon);
+        Session::put('tableLevelSaveBis' , $request->tabelleLevelBis);
 
         return redirect('/Tabelle/neu')->with([
                 'success' => 'Die Tabelle <b>' . $request->tabelleBezeichnung . '</b> wurde angelegt.'

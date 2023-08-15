@@ -149,6 +149,17 @@ class RaceController extends Controller
          $levelMax = 1;
         }
 
+        $tabeleLevel = Tabele::where('event_id' , Session::get('regattaSelectId'))
+            ->orderby('tabelleLevelBis' , 'desc')
+            ->limit(1)
+            ->first();
+
+        if(isset($tabeleLevel->tabelleLevelBis)){
+            if($tabeleLevel->tabelleLevelBis>$levelMax){
+                $levelMax = $tabeleLevel->tabelleLevelBis;
+            }
+        }
+
         return view('regattaManagement.race.create' , compact('levelMax'));
     }
 
@@ -234,6 +245,7 @@ class RaceController extends Controller
         Session::put('regattaSelectRaceTimeNew'   , $timeNew);
         Session::put('regattaSelectRacePublished' , $request->veroeffentlichungUhrzeit);
         Session::put('rennNummer'                 , $rennNummer);
+        Session::put('rennLevelSave'              , $request->regattaLevel);
 
         return redirect('/Rennen/neu')->with([
                 'success'         => 'Das Rennen <b>' . $request->rennBezeichnung . '</b> wurde angelegt.'

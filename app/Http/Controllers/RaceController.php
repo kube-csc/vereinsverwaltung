@@ -444,6 +444,10 @@ class RaceController extends Controller
         Session::put('regattaZeit' , $request->zeit);
         Session::put('regattaZeitMinAbstand' , $request->zeitMinAbstand);
 
+        if($request->rennzeit==Null){
+            $request->rennzeit=0;
+        }
+
         Race::find($race_id)->update([
             'ergebnisBeschreibung' => $request->ergebnisBeschreibung,
             'verspaetungUhrzeit'   => $request->rennUhrzeit,

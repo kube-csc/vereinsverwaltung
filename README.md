@@ -1,8 +1,8 @@
 <h1>Internetauftritt von Vereine</h1>
 <p>
-Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
+Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
-<h2>Beispiel der Abteilungen / Sportarten:</h2>
+Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
     <ul>
       <li>Jugend</li>
       <li>Wandersport</li>
@@ -15,9 +15,9 @@ Ausgelegt z.B. für ein Kanuverein mit verschiedenen Abteilungen / Sportarten
 
 <h2>Installierte Programme / Templets</h2>
 <ul>
-  <li>Insallation Laravel 8.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss
-  <a href="https://jetstream.laravel.com/2.x/introduction.html"></a>
-  <a href="https://jetstream.laravel.com/2.x/stacks/livewire.html"></a></li>
+  <li>Installation Laravel 9.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss</li>
+  <li><a href="https://jetstream.laravel.com/2.x/introduction.html">jetstream 2.x Anleitung</a></li>
+  <li><a href="https://jetstream.laravel.com/2.x/stacks/livewire.html">livewire</a></li>
   <li><a href="https://boxicons.com/">boxicons</a>(Forntend)</li>
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
@@ -97,7 +97,7 @@ benötigt.
   <li>Eingabe und Bearbeitung von Events
       <ul>
         <li>Eventbeschreibung</li>
-        <li>Bildergallery</li>
+        <li>Bilder-Gallery</li>
         <li>Dokumente zum Herunterladen</li>
           <ul>
               <li>Ausschreibungsunterlagen</li>
@@ -180,12 +180,17 @@ In der .env kann mit der Variabel APP_REGATTA die Regattaverwaltug ein und ausge
 </ul>
 
 <h2>Zugehörige Projekte</h2>
+<h3>Präsentation der Regatta</h3>  
 <p>
-Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
-https://github.com/kube-csc/regattaView.git<br>
-Die Version V00.11.XX ist kompatibel mit der Version V00.03.XX<br>
-https://github.com/kube-csc/vereinsverwaltung.git
-
+    Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
+    Die Version V00.12.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> ist kompatibel mit der Version V00.03.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+</p>
+<h3>Helferlisten</h3>
+<p>
+Helferliste ist eine APP, die eine Liste von Personen verwaltet, die bereit sind, bei einem Event, einer Veranstaltung oder einem Projekt zu helfen. 
+Die Liste enthält die Namen und E-Mail-Adressen der Helfer. Die Helferliste wird von der Person oder Organisation erstellt, die für die Organisation der Veranstaltung verantwortlich ist. Die Liste kann verwendet werden, um 
+die Helfer zu koordinieren und sicherzustellen, dass alle Aufgaben abgedeckt sind.<br>
+Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a> ist kompatibel mit der Version V00.04.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a>.
 </p>
 <br>
 <hr>

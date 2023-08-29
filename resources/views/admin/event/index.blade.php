@@ -60,7 +60,7 @@
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('EventDokumente/'.$event->id) }}">
                                             <box-icon name='file'></box-icon>
                                         </a>
-                                        @if($event->regatta==Null | $event->regatta==0) <!-- $event->regatta==0 wird für die alten Daten benötigt -->
+                                        @if(($event->regatta==Null | $event->regatta==0) && env('APP_REGATTA')=="ja") <!-- $event->regatta==0 wird für die alten Daten benötigt -->
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Regatta/aktiv/'.$event->id) }}">
                                             <box-icon name='run'></box-icon>
                                         </a>

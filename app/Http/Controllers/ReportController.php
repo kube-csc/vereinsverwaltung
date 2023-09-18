@@ -219,7 +219,10 @@ class ReportController extends Controller
     public function index($event_id)
     {
         $reports = Report::where('event_id' , $event_id)
-            ->where('verwendung' , '1')
+            ->where(function ($query) use ($event_id) {
+                $query->where('verwendung'  , 1)
+                      ->orwhere('verwendung' , NULL);
+            })
             ->orderby('position')
             ->paginate(5);
 

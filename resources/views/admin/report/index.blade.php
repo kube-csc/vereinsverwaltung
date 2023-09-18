@@ -127,11 +127,12 @@
                                      {{ $report->filename }}
                                    </a>
                                   @endif
-                                  <!-- Note: Ist überfüssig wenn keine alten daten übernommen wurden-->
+                                  <!-- Note: Ist überfüssig wenn keine alten Daten übernommen wurden-->
                                   @if($report->image)
                                       <img src="/daten/bilder/{{ $report->image }}" />
                                       <a href="{{ url('Bericht/imagedelete/'.$report->id) }}">
                                           <box-icon name='x'></box-icon>
+                                          {{ $report->filename }}
                                       </a>
                                   @endif
                               </div>

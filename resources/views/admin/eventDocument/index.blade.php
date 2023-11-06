@@ -106,7 +106,8 @@
                                                             '2'  => 'Ausschreibung',
                                                             '3'  => 'Programm',
                                                             '4'  => 'Ergebnisse',
-                                                            '5'  => 'Plakat / Flyer'
+                                                            '5'  => 'Plakat / Flyer',
+                                                            '6' => 'Pressebericht'
                                                         ];
                                                      @endphp
                                                         {{ $typOption[$report->verwendung] }}

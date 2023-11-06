@@ -85,6 +85,12 @@
                                                 @endif
                                                 >Plakat / Flyer
                                             </option>
+                                            <option value="6"
+                                                    @if($report->verwendung == "6")
+                                                        selected
+                                                @endif
+                                            >Pressebericht
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="my-4" >

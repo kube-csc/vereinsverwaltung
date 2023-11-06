@@ -62,6 +62,7 @@
                                       <option value="3">Programm</option>
                                       <option value="4">Ergebnisse</option>
                                       <option value="5">Plakat / Flyer</option>
+                                      <option value="6">Pressebericht</option>
                                   </select>
                                 </div>
 

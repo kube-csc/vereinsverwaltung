@@ -77,6 +77,7 @@
                         "3" => "Programm",
                         "4" => "Ergebnisse",
                         "5" => "Plakat / Flyer",
+                        "6" => "Pressebericht",
                     ];
                 @endphp
                 <div>

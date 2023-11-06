@@ -195,9 +195,9 @@ class HomeController extends Controller
             ->where('visible' , 1)
             ->where('webseite' , 1)
             ->where('verwendung' , '>' , 1)
-            ->where('verwendung' , '<' , 6)
+            ->where('verwendung' , '<' , 7)
             ->where('typ' , '>' , 9)
-            ->where('typ' , '<' , 13)
+            ->where('typ' , '<' , 20)
             ->where(function ($query) use ($eventId) {
                 $query->where('bild'  , "!=" , NULL)
                     ->orwhere('image' , "!=" , NULL);

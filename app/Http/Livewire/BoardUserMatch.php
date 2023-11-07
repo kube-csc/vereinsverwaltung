@@ -2,15 +2,12 @@
 
 namespace App\Http\Livewire;
 
-//ToDo: Überprüfen ob alle use benötigt werden
 use App\Models\board;
 use App\Models\boardUser;
 use App\Models\BoardPortrait;
 use App\Models\User;
 use Illuminate\Support\Carbon;
-use Intervention\Image\Facades\Image;
 use Livewire\WithPagination;
-use Intervention\Image\ImageManagerStatic;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -138,31 +135,21 @@ class BoardUserMatch extends Component
         ]);
     }
 
-    // ToDo: Disk-Speicherung überarbeiten;
-    public function storeImage()
-    {
-        if (!$this->image) {
-            return null;
-        }
-
-        $img   = ImageManagerStatic::make($this->image)->encode('jpg');
-        $name  ='posten_'.$this->boardUserId.'_'.str::random(4).'.jpg';
-        Storage::disk('public')->put($name, $img);
-         return $name;
-    }
-
     public function saveInmage()
     {
         if (!$this->image) {
             return null;
         }
-        //ToDo: heigthen und widen noch mal Testen finde erstmal keine Funktion
+
         $newImageName='posten_'.$this->boardUserId.'_'.str::random(4).'.jpg';
-             Image::make($this->image)->encode('jpg')
-                                      ->heighten(600)
-                                      ->widen(600)
-                                      ->save(public_path().'/storage/boardPortrait/'.$newImageName);
-             return $newImageName;
+
+            Storage::disk('local')->putFileAs(
+                'public/boardPortrait/',
+                $this->image,
+                $newImageName
+            );
+
+            return $newImageName;
     }
 
     public function deletionNote(){

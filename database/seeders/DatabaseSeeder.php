@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
        $this->call(DocumentSeeder::class);
        $this->call(ReportSeeder::class);
        $this->call(BacklinksSeeder::class);
+       $this->call(RaceTypeTemplateSeeder::class);
+       $this->call(RaceTypeSeeder::class);
+       $this->call(RegattaTeamSeeder::class);
        $this->call(TabeleSeeder::class);
        $this->call(RaceSeeder::class);
        $this->call(RegattaInformationSeeder::class);
@@ -33,5 +36,6 @@ class DatabaseSeeder extends Seeder
        $this->call(OperationalLocationSeeder::class);
        $this->call(timetabelHelperListSeeder::class);
        $this->call(OperationalBookingSeeder::class);
+       $this->call(LaneSeeder::class);
     }
 }

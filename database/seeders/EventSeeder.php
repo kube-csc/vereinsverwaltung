@@ -232,6 +232,7 @@ class EventSeeder extends Seeder
                                         'updated_at' => '2021-03-28 13:06:42',
                                         'freigabe' => '',
                                     ),
+
                     ));
     }
 }

@@ -1,4 +1,17 @@
 ## Update Anleitung
+**Version V00.05.00**
+
+In der Dantenbank in der Tabelle race sind die Felder in der Datenbank von Hand  
+event_id von integer auf unsignedBigInteger umzustellen
+tabele_id von integer auf unsignedBigInteger umzustellen
+tabelerennen_id von integer auf unsignedBigInteger umzustellen
+gruppe_id von integer auf unsignedBigInteger umzustellen
+
+In der Dantenbank in der Tabelle tabele sind die Felder in der Datenbank von Hand  
+event_id von integer auf unsignedBigInteger und auf nullable umzustellen
+gruppe_id von integer auf unsignedBigInteger und auf nullable umzustellen
+system_id von integer auf unsignedBigInteger und auf nullable umzustellen
+
 **Version V00.04.01**
 
 Die Abteilungen / Sportarten können nach einer Positionsnummer sortiert werden

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LaneController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\HomeController;
@@ -100,6 +101,12 @@ Route::get('/Regatta/aktiv/{event_id}',               [EventController::class, '
 Route::get('/Regatta/inaktiv/{event_id}',             [EventController::class, 'regattaInaktiv'])     ->name('event.regattaInaktiv');
 Route::get('/Regatta/alle',                           [EventController::class, 'indexRegatta'])       ->name('event.indexRegatta');
 Route::get('/Regatta/{event_id}',                     [EventController::class, 'selectRegatta'])      ->name('event.selectRegatta');
+
+Route::get('/Teamverlosung/{race_id}',                [LaneController::class, 'show'])                ->name('lane.show');
+Route::get('/Teamverlosung/setzen/{race_id}',         [LaneController::class, 'editDraw'])            ->name('lane.editDraw');
+Route::get('/Teamverlosung/Ergebnisse/{race_id}',     [LaneController::class, 'editResult'])          ->name('lane.editResult');
+Route::post('/Teamverlosung/update/{race_id}',        [LaneController::class, 'update'])              ->name('lane.update');
+Route::post('/Rennergebnisse/update/{race_id}',       [LaneController::class, 'updateResult'])        ->name('lane.updateResult');
 
 //Route::resource('Eventgruppe', 'EventGroupController');
 Route::get('/Eventgruppe/alle',                        [EventGroupController::class, 'index'])         ->name('eventGroup.index');

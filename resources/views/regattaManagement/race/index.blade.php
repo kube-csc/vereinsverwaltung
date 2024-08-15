@@ -15,7 +15,7 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich werden die Rennen des Regatta bearbeitet.
+                   In diesem Bereich werden die Rennen der Regatta bearbeitet.
                   </div>
 
               </div>
@@ -24,10 +24,10 @@
                   <div class="p-6">
                       <div class="flex items-center">
                             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
-                                @if($status==1)
+                                @if($funktionStatus==1)
                                     Programm der
                                 @endif
-                                @if($status==2)
+                                @if($funktionStatus==2)
                                     Ergebnisse der
                                 @endif
                                     Rennen</div>
@@ -54,7 +54,7 @@
                               @foreach ($races as $race)
                               <div class="rounded border shadow p-3 my-2 bg-blue-200">
                                   <div class="justify-between my-2">
-                                      <div>
+                                     <div>
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/edit/'.$race->id) }}">
                                             <box-icon name='edit' type='solid'></box-icon>
                                         </a>
@@ -68,35 +68,61 @@
                                             <box-icon name='hide' ></box-icon>
                                         </a>
                                         @endif
+                                        {{-- DoTo: Ziehlfotot hochladen
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/EinlaufFoto/'.$race->id) }}">
                                             <box-icon name='image'></box-icon>
                                         </a>
-                                        @if($status==1)
+                                        --}}
+                                        @if($funktionStatus==1)
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Programm/'.$race->id) }}">
                                             <box-icon name='file'></box-icon>
                                         </a>
                                         @endif
-                                        @if($status==2)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Ergebnis/'.$race->id) }}">
+                                        @if($funktionStatus==2)
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Ergebnis/'.$race->id) }}">
                                             <box-icon name='file'></box-icon>
                                         </a>
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Zeit/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Zeit/'.$race->id) }}">
                                             <box-icon name='time'></box-icon>
                                         </a>
                                         @endif
-                                      </div>
+                                        @if($funktionStatus != 1 and $funktionStatus != 2)
+                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/'.$race->id) }}">
+                                             <box-icon name='user'></box-icon>
+                                          </a>
+                                        @endif
+                                        @if($funktionStatus == 1 && $race->tabele_id)
+                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/setzen/'.$race->id) }}">
+                                              <box-icon name='user'></box-icon>
+                                          </a>
+                                        @endif
+                                        @if($funktionStatus == 2 && $race->tabele_id)
+                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/Ergebnisse/'.$race->id) }}">
+                                              <box-icon name='user'></box-icon>
+                                          </a>
+                                        @endif
+                                     </div>
                                   </div>
                                   <div class="justify-between my-2">
                                     <div class="flex">
                                       <p class="font-bold text-lg">
                                           @if($race->nummer!=Null or $race->nummer!="")
-                                          {{ $race->nummer }}.
+                                          {{ $race->nummer }}. {{ $race->rennBezeichnung }}
                                           @endif
-                                          {{ $race->rennBezeichnung }}<br>Regatta Abschnitt: {{ $race->level }}
-                                          @if($race->programmDatei!=Null && $status==1)
+                                          @if($race->tabele_id>0)
+                                              <br>Wertung: {{ $race->raceTabele->ueberschrift }}
+                                              @if($race->mix==1)
+                                                  <br>Mix Rennen
+                                              @endif
+                                          @endif
+                                          @if($race->bahnen>0)
+                                              <br>Bahnen: {{ $race->bahnen }}
+                                          @endif
+                                          <br>Regatta Abschnitt: {{ $race->level }}
+                                          @if($race->programmDatei!=Null && $funktionStatus==1)
                                               <br><a href="/storage/raceDokumente/{{ $race->programmDatei }}" target="_blank">{{ $race->fileProgrammDatei }}</a>
                                           @endif
-                                          @if($race->ergebnisDatei!=Null && $status==2)
+                                          @if($race->ergebnisDatei!=Null && $funktionStatus==2)
                                               <br><a href="/storage/raceDokumente/{{ $race->ergebnisDatei }}" target="_blank">{{ $race->fileErgebnisDatei }}</a>
                                           @endif
                                         </p>
@@ -110,6 +136,7 @@
                                           gestartet um
                                         @endif
                                         {{ date("H:i", strtotime($race->verspaetungUhrzeit)) }} Uhr
+                                       Startus  {{ $race->status }}
                                     </div>
                                   </div>
 
@@ -127,13 +154,13 @@
                   </div>
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
-                      <div class="flex items-center">
+                     <div class="flex items-center">
 
                        <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
 
-                         </div>
+                       </div>
 
-                      </div>
+                     </div>
 
                   </div>
               </div>

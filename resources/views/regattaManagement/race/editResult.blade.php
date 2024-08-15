@@ -46,7 +46,7 @@
                               </div>
 
                                 <div class="my-4" >
-                                    <label for="name">Beschreibung des Ergebnis:</label>
+                                    <label for="ergebnisBeschreibung">Beschreibung des Ergebnis:</label>
                                     <textarea rows="10" cols="200" name="ergebnisBeschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $race->ergebnisBeschreibung }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('ergebnisBeschreibung') !!}</small>
                                 </div>
@@ -54,13 +54,13 @@
                                   @php
                                       $ractetime= substr($ractetime, 0, -3);
                                   @endphp
-                                  <label for="name">Wann wurde das Rennen gestartet:</label>
+                                  <label for="rennUhrzeit">Wann wurde das Rennen gestartet:</label>
                                   <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
                                          id="rennUhrzeit" name="rennUhrzeit" value="{{ old('rennUhrzeit') ?? $ractetime }}">
                                   <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                   <label for="name">Richtige Rennzeit:</label>
+                                   <label for="rennzeit">Richtige Rennzeit:</label>
                                    <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennzeit') ? 'bg-red-300' : '' }}"
                                           id="rennzeit" name="rennzeit" value="1"
                                           @if(old('rennzeit')==1 or $race->rennzeit==1)
@@ -70,15 +70,15 @@
                                    <small class="form-text text-danger">{!! $errors->first('rennzeit') !!}</small>
                                 </div>
                                 <div>
-                                  <label for="name">Zeit in Minuten die pro Rennen aufgeholt werden kann:</label>
+                                  <label for="zeit">Zeit in Minuten die pro Rennen aufgeholt werden kann:</label>
                                   <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeit') ? 'bg-red-300' : '' }}"
                                          id="zeit" name="zeit" value="{{ Session::get('regattaZeit') }}" min="0" max="59">
                                   <small class="form-text text-danger">{!! $errors->first('zeit') !!}</small>
                                 </div>
                                 <div>
-                                    <label for="name">Minimaler Zeitabstand in Minuten:</label>
+                                    <label for="zeitMinAbstand">Minimaler Zeitabstand in Minuten:</label>
                                     <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeitMinAbstand') ? 'bg-red-300' : '' }}"
-                                           id="zeit" name="zeitMinAbstand" value="{{ Session::get('regattaZeitMinAbstand') }}" min="0" max="59">
+                                           id="zeitMinAbstand" name="zeitMinAbstand" value="{{ Session::get('regattaZeitMinAbstand') }}" min="0" max="59">
                                     <small class="form-text text-danger">{!! $errors->first('zeitMinAbstand') !!}</small>
                                 </div>
                                 <div class="my-4" >

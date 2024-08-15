@@ -38,19 +38,19 @@
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                   <div class="my-4" >
-                                      <label for="name">Nummer:</label>
+                                      <label for="nummer">Nummer:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('nummer') ? 'bg-red-300' : '' }}"
                                              id="nummer" placeholder="Nummer" name="nummer" value="{{ old('nummer') ?? $race->nummer }}">
                                       <small class="form-text text-danger">{!! $errors->first('nummer') !!}</small>
                                   </div>
                                   <div class="my-4" >
-                                      <label for="name">Bezeichnung des Rennen:</label>
+                                      <label for="rennBezeichnung">Bezeichnung des Rennen:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBezeichnung') ? 'bg-red-300' : '' }}"
                                              id="rennBezeichnung" placeholder="Bezeichnung des Rennen" name="rennBezeichnung" value="{{ old('rennBezeichnung') ?? $race->rennBezeichnung }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennBezeichnung') !!}</small>
                                   </div>
                                   <div class="my-4" >
-                                      <label for="name">Datum:</label>
+                                      <label for="rennDatum">Datum:</label>
                                       <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennDatum') ? 'bg-red-300' : '' }}"
                                              id="rennDatum" name="rennDatum" value="{{ old('rennDatum') ?? $race->rennDatum }}"
                                              min="{{ Session::get('regattaSelectRaceDateForm') }}" max="{{ Session::get('regattaSelectRaceDateUntil') }}">
@@ -60,7 +60,7 @@
                                       @php
                                          $rennUhrzeitAlt= substr($race->rennUhrzeit, 0, -3);
                                       @endphp
-                                      <label for="name">Startzeit:</label>
+                                      <label for="rennUhrzeit">Startzeit:</label>
                                       <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
                                              id="rennUhrzeit" name="rennUhrzeit" value="{{ old('rennUhrzeit') ?? $rennUhrzeitAlt }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
@@ -69,10 +69,17 @@
                                       @php
                                           $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
                                       @endphp
-                                      <label for="name">Veröffungszeit der Ergebnisse:</label>
+                                      <label for="veroeffentlichungUhrzeit">Veröffungszeit der Ergebnisse:</label>
                                       <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
                                              id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ old('veroeffentlichungUhrzeit') ?? $veroeffentlichungUhrzeitAlt }}">
                                       <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>
+                                  </div>
+
+                                  <div>
+                                      <label for="rennBahnen">Anzahl der Bahnen:</label>
+                                      <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBahnen') ? 'bg-red-300' : '' }}"
+                                             id="rennBahnen" name="rennBahnen" value="{{ old('rennBahnen') ?? $race->bahnen }}">
+                                      <small class="form-text text-danger">{!! $errors->first('rennBahnen') !!}</small>
                                   </div>
 
                                   @php
@@ -84,8 +91,8 @@
                                    }
                                   @endphp
                                   <div class="my-4" >
-                                      <label for="name">Tabelle:</label><br>
-                                      <select name="tabeleId">
+                                      <label for="tabeleId">Tabelle:</label><br>
+                                      <select name="tabeleId" id="tabeleId" >
                                           <option value=""
                                               @if( $tableId == NULL )
                                                  selected
@@ -104,8 +111,18 @@
                                   </div>
 
                                   <div class="my-4" >
-                                      <label for="name">Regatta Abschnitt:</label><br>
-                                      <select name="regattaLevel">
+                                      <label for="rennMix">Mix Rennen:</label>
+                                      <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennMix') ? 'bg-red-300' : '' }}"
+                                                 id="rennMix" name="rennMix" value="1"
+                                                 @if(old('rennMix') == 1 or $race->mix == 1)
+                                                     checked
+                                                 @endif
+                                      >
+                                  </div>
+
+                                  <div class="my-4" >
+                                      <label for="regattaLevel">Regatta Abschnitt:</label><br>
+                                      <select name="regattaLevel" id="regattaLevel">
                                           @for ($i = 1; $i <= $levelMax; $i++)
                                               <option value="{{ $i }}"
                                                   @if($i==$race->level)

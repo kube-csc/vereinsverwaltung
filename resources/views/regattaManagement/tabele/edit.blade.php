@@ -38,13 +38,13 @@
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                   <div class="my-4" >
-                                      <label for="name">Bezeichnung der Tabelle:</label>
+                                      <label for="tabelleBezeichnung">Bezeichnung der Tabelle:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('tabelleBezeichnung') ? 'bg-red-300' : '' }}"
                                              id="tabelleBezeichnung" placeholder="Bezeichnung des Tabelle" name="tabelleBezeichnung" value="{{ old('tabelleBezeichnung') ?? $tabele->ueberschrift }}">
                                       <small class="form-text text-danger">{!! $errors->first('tabelleBezeichnung') !!}</small>
                                   </div>
                                   <div>
-                                      <label for="name">Datum:</label>
+                                      <label for="tabelleDatum">Datum:</label>
                                       <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('tabelleDatum') ? 'bg-red-300' : '' }}"
                                              id="tabelleDatum" name="tabelleDatum" value="{{ Session::get('regattaSelectRaceDate') }}"
                                              min="{{ Session::get('regattaSelectRaceDateForm') }}" max="{{ Session::get('regattaSelectRaceDateUntil') }}">
@@ -52,8 +52,8 @@
                                   </div>
 
                                   <div class="my-4" >
-                                      <label for="name">von Regatta Abschnitt:</label><br>
-                                      <select name="tabelleLevelVon">
+                                      <label for="tabelleLevelVon">von Regatta Abschnitt:</label><br>
+                                      <select name="tabelleLevelVon" id="tabelleLevelVon">
                                           @for ($i = 1; $i <= $levelMaxBis; $i++)
                                               <option value="{{ $i }}"
                                                       @if($i==$tabele->tabelleLevelVon)
@@ -67,8 +67,8 @@
                                   </div>
 
                                   <div class="my-4" >
-                                      <label for="name">bis Regatta Abschnitt:</label><br>
-                                      <select name="tabelleLevelBis">
+                                      <label for="tabelleLevelBis">bis Regatta Abschnitt:</label><br>
+                                      <select name="tabelleLevelBis" id="tabelleLevelBis">
                                           @for ($i = 1; $i <= $levelMaxBis; $i++)
                                               <option value="{{ $i }}"
                                                       @if($i==$tabele->tabelleLevelBis)
@@ -84,12 +84,44 @@
 
                                   <div class="my-4" >
                                      @php
-                                         $veroeffentlichungUhrzeitAlt= substr($tabele->veroeffentlichungUhrzeit, 0, -3);
+                                         $veroeffentlichungUhrzeitAlt= substr($tabele->finaleAnzeigen, 0, -3);
                                      @endphp
-                                     <label for="name">Veröffungszeit der Ergebnisse:</label>
+                                     <label for="veroeffentlichungUhrzeit">Veröffungszeit der Ergebnisse:</label>
                                      <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
-                                            id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ old('veroeffentlichungUhrzeit') ?? $veroeffentlichungUhrzeitAlt }}">
+                                            id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ old('veroeffentlichungUhrzeit') ?? $veroeffentlichungUhrzeitAlt}}">
                                      <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>
+                                  </div>
+
+                                  <div class="my-4">
+                                        <label for="finaleTable">Finaletabelle:</label>
+                                        <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('finaleTable') ? 'bg-red-300' : '' }}"
+                                               id="finaleTable" name="finaleTable" value="1"
+                                               @if(old('finaleTable') == 1 or $tabele->finale == 1)
+                                                   checked
+                                           @endif
+                                  </div>
+
+                                  <div class="my-4" >
+                                     <label for="tabelleGruppe">Renn Gruppe:</label><br>
+                                     <select name="tabelleGruppe" id="tabelleGruppe" class="{{ $errors->has('tabelleGruppe') ? 'bg-red-300' : '' }}">
+                                         <option value="0"
+                                             @if($tabele->gruppe_id==0 or old('tabelleGruppe')==0)
+                                                     selected
+                                             @endif
+                                         >
+                                             keine Tabelle
+                                         </option>
+                                         @foreach($raceTypes as $raceType)
+                                             <option value="{{ $raceType->id }}"
+                                                     @if($raceType->id==$tabele->gruppe_id or $raceType->id==old('tabelleGruppe'))
+                                                         selected
+                                                 @endif
+                                             >
+                                                 {{ $raceType->typ }}
+                                             </option>
+                                         @endforeach
+                                     </select>
+                                     <br><small class="form-text text-danger">{!! $errors->first('tabelleGruppe') !!}</small>
                                   </div>
 
                                   <div class="py-2">

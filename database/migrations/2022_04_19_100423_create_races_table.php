@@ -15,10 +15,11 @@ class CreateRacesTable extends Migration
     {
         Schema::create('races', function (Blueprint $table) {
             $table->id();
-            $table->integer('event_id');
-            $table->integer('tabele_id')->nullable();
-            $table->integer('tabelerennen_id')->nullable();
-            $table->integer('gruppe_id')->nullable();
+
+            $table->unsignedBigInteger('event_id');
+            $table->unsignedBigInteger('tabele_id')->nullable();
+            $table->unsignedBigInteger('tabelerennen_id')->nullable();
+            $table->unsignedBigInteger('gruppe_id')->nullable();
             $table->date('rennDatum');
             $table->time('rennUhrzeit');
             $table->time('verspaetungUhrzeit');
@@ -31,7 +32,15 @@ class CreateRacesTable extends Migration
             $table->string('nummer', 25)->nullable();
             $table->integer('level')->default(0);
             $table->integer('mix')->default(0);
-            $table->integer('status')->default(0);
+            $table->integer('status')->default(0);   // Rennstatus
+                                                                    // 0 => keine Mannschaften gesetzt
+                                                                    // 1 => Mannschaften gesetzt aber noch nicht geprüft
+                                                                    // 2 => Mannschaften gesetzt und geprüft
+                                                                    // 3 => Rennn-Ergebnisse eingetragen
+                                                                    // 4 => Rennn-Ergebnisse geprüft
+                                                                    // 5 =>
+                                                                    // 6 =>
+
             $table->string('bild')->nullable();
             $table->string('fileBild')->nullable();
             $table->integer('pixx')->nullable();
@@ -40,12 +49,15 @@ class CreateRacesTable extends Migration
             $table->string('fileProgrammDatei')->nullable();
             $table->string('ergebnisDatei')->nullable();
             $table->string('fileErgebnisDatei')->nullable();
+
             $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('bearbeiter_id');
+
             $table->SoftDeletes();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

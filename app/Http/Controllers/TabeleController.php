@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Race;
+use App\Models\RaceType;
 use App\Models\Tabele;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -155,7 +156,7 @@ class TabeleController extends Controller
                 'tabelleLevelVon'          => $request->tabelleLevelVon,
                 'tabelleLevelBis'          => $request->tabelleLevelBis,
                 'tabelleDatumVon'          => $request->tabelleDatum,
-                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
+                'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'tabelleVisible'           => "1",
                 'finale'                   => $request->finaleTable,
                 'bearbeiter_id'            => Auth::id(),
@@ -205,10 +206,15 @@ class TabeleController extends Controller
             ->limit(1)
             ->first();
 
+        $raceTypes  = RaceType::where('regatta_id' , Session::get('regattaSelectId'))
+            ->orderby('typ')
+            ->get();
+
         return view('regattaManagement.tabele.edit')->with([
-            'tabele'      => $tabele,
-            'levelMaxVon'  => $tabeleLevel->tabelleLevelVon,
-            'levelMaxBis'  => $tabeleLevel->tabelleLevelBis
+            'tabele'            => $tabele,
+            'raceTypes'         => $raceTypes,
+            'levelMaxVon'       => $tabeleLevel->tabelleLevelVon,
+            'levelMaxBis'       => $tabeleLevel->tabelleLevelBis
         ]);
     }
 
@@ -228,11 +234,12 @@ class TabeleController extends Controller
      */
     public function update(Request $request, $tabele_id)
     {
-        $request->validate([
+         $request->validate([
                 'tabelleBezeichnung'       => 'required|max:50',
                 'tabelleDatum'             => 'required|date',
-                //'tabelleLevelVon'        => 'tabelleLevelVon<=tabelleLevelBis', ToDo:: Valedierung vebessern
-                'veroeffentlichungUhrzeit' => 'required|date_format:H:i'
+                //'tabelleLevelVon'        => 'tabelleLevelVon<=tabelleLevelBis', //ToDo:: Valedierung vebessern
+                'veroeffentlichungUhrzeit' => 'required|date_format:H:i',
+                'tabelleGruppe'            => 'required|integer|not_in:0'
             ]
         );
 
@@ -240,12 +247,18 @@ class TabeleController extends Controller
             $request->tabelleLevelVon=$request->tabelleLevelBis;
         }
 
-         Tabele::find($tabele_id)->update([
+        if($request->finaleTable==Null){
+            $request->finaleTable=0;
+        }
+
+        Tabele::find($tabele_id)->update([
                 'ueberschrift'             => $request->tabelleBezeichnung,
+                'gruppe_id'                => $request->tabelleGruppe,
                 'tabelleDatumVon'          => $request->tabelleDatum,
                 'tabelleLevelVon'          => $request->tabelleLevelVon,
                 'tabelleLevelBis'          => $request->tabelleLevelBis,
-                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
+                'finale'                   => $request->finaleTable,
+                'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'bearbeiter_id'            => Auth::id(),
                 'updated_at'               => Carbon::now()
             ]

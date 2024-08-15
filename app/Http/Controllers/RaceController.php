@@ -47,7 +47,7 @@ class RaceController extends Controller
     public function index()
     {
         $races = Race::where([
-            'event_id' => Session::get('regattaSelectId')
+            'races.event_id' => Session::get('regattaSelectId')
         ])
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -56,17 +56,18 @@ class RaceController extends Controller
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Rennen bearbeiten',
             'races'  => $races,
-            'status' => 0
+            'funktionStatus' => 0
         ]);
     }
 
     public function indexProgram()
     {
-        $races = Race::where([
-            'event_id'      => Session::get('regattaSelectId'),
-            'programmDatei' => Null,
-            ])
+        $races = Race::where('event_id',Session::get('regattaSelectId'))
+            ->where('status', '<', 2)
+            ->where('programmDatei' , Null)
             ->where('visible' , 1)
+            ->where('programmDatei' , Null)
+            ->whereOr('status' ,'>',3)
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
             ->paginate(5);
@@ -74,16 +75,17 @@ class RaceController extends Controller
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Rennen die kein Programm haben bearbeiten',
             'races'  => $races,
-            'status' => 1
+            'funktionStatus' => 1 // Programm
         ]);
     }
 
     public function indexProgramAll()
     {
-        $races = Race::where([
-            ['event_id' , Session::get('regattaSelectId')],
-            ['programmDatei' ,'!=' , Null]
-        ])
+        $races = Race::where('event_id',Session::get('regattaSelectId'))
+            ->where(function($query) {
+                $query->where('programmDatei', '!=', null)
+                    ->orWhere('status', '<', 3);
+            })
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
             ->paginate(5);
@@ -91,16 +93,17 @@ class RaceController extends Controller
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Programm der Rennen bearbeiten',
             'races'  => $races,
-            'status' => 1
+            'funktionStatus' => 1 // Programm
         ]);
     }
 
     public function indexResult()
     {
-        $races = Race::where([
-            ['event_id' , Session::get('regattaSelectId')],
-            ['ergebnisDatei' , Null]
-            ])
+        $races = Race::where('event_id',Session::get('regattaSelectId'))
+            ->where(function($query) {
+                $query->where('ergebnisDatei', '!=', null)
+                    ->orWhere('status', 2);
+            })
             ->where('visible' , 1)
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -109,16 +112,17 @@ class RaceController extends Controller
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Rennen die kein Ergebnisse haben bearbeiten',
             'races'  => $races,
-            'status' => 2
+            'funktionStatus' => 2 // Ergebnis
         ]);
     }
 
     public function indexResultAll()
     {
-        $races = Race::where([
-            ['event_id' , Session::get('regattaSelectId')],
-            ['ergebnisDatei' , '!=' , Null]
-        ])
+        $races = Race::where('event_id',Session::get('regattaSelectId'))
+            ->where(function($query) {
+                $query->where('programmDatei', '!=', null)
+                    ->orWhere('status', 4);
+            })
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
             ->paginate(5);
@@ -126,7 +130,7 @@ class RaceController extends Controller
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Ergebnissse der Rennen bearbeiten',
             'races'  => $races,
-            'status' => 2
+            'funktionStatus' => 2 // Ergebnis
         ]);
     }
 
@@ -178,15 +182,21 @@ class RaceController extends Controller
             ]
         );
 
+        if($request->rennMix==Null){
+            $request->rennMix=0;
+        }
+
         $race= new Race([
                 'event_id'                 => Session::get('regattaSelectId'),
                 'nummer'                   => $request->nummer,
+                'bahnen'                   => $request->rennBahnen,
                 'rennBezeichnung'          => $request->rennBezeichnung,
                 'rennDatum'                => $request->rennDatum,
                 'rennUhrzeit'              => $request->rennUhrzeit,
                 'verspaetungUhrzeit'       => $request->rennUhrzeit,
                 'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
                 'level'                    => $request->regattaLevel,
+                'mix'                      => $request->rennMix,
                 'visible'                  => "1",
                 'bearbeiter_id'            => Auth::id(),
                 'autor_id'                 => Auth::id(),
@@ -362,15 +372,21 @@ class RaceController extends Controller
             ]
         );
 
+        if($request->rennMix==Null){
+            $request->rennMix=0;
+        }
+
         Race::find($race_id)->update([
                 'nummer'                   => $request->nummer,
                 'rennBezeichnung'          => $request->rennBezeichnung,
+                'bahnen'                   => $request->rennBahnen,
                 'rennDatum'                => $request->rennDatum,
                 'rennUhrzeit'              => $request->rennUhrzeit,
                 'verspaetungUhrzeit'       => $request->rennUhrzeit,
                 'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
                 'level'                    => $request->regattaLevel,
                 'tabele_id'                => $request->tabeleId,
+                'mix'                      => $request->rennMix,
                 'bearbeiter_id'            => Auth::id(),
                 'updated_at'               => Carbon::now()
             ]

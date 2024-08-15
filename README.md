@@ -1,4 +1,5 @@
 <h1>Internetauftritt von Vereine</h1>
+<p>Version: V00.05.xx</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -183,7 +184,7 @@ In der .env kann mit der Variabel APP_REGATTA die Regattaverwaltug ein und ausge
 <h3>Präsentation der Regatta</h3>  
 <p>
     Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
-    Die Version V00.12.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> ist kompatibel mit der Version V00.03.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> ist kompatibel mit der Version V00.03.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Helferlisten</h3>
 <p>

@@ -96,7 +96,7 @@
                                 </div>
 
                                 <div class="my-4" >
-                                    <label for="name">Finaletabelle:</label>
+                                    <label for="finaleTable">Finaletabelle:</label>
                                     <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('finaleTable') ? 'bg-red-300' : '' }}"
                                            id="finaleTable" name="finaleTable" value="1"
                                            @if(old('finaleTable')==1)

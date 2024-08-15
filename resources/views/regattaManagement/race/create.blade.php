@@ -27,57 +27,66 @@
                       </div>
 
                       <div class="ml-12">
-                          <div class="mt-2 text-sm text-gray-500">
+                         <div class="mt-2 text-sm text-gray-500">
 
                             @error('errormessage')
                               <span class="text-red-500 text-xs">{{ $message }}</span>
                             @enderror
 
                             <div style="text-align: left">
-                              <div>
-                                  @if (session()->has('success'))
-                                  <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
-                                      {!! session('success') !!}
-                                  </div>
-                                  @endif
-                              </div>
+                               <div>
+                                   @if (session()->has('success'))
+                                   <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
+                                       {!! session('success') !!}
+                                   </div>
+                                   @endif
+                               </div>
 
-                              <form class="my-4" autocomplete="off" action="{{ route('race.store') }}" method="post">
-                                @csrf
-                                 <div>
-                                    <label for="name">Nummer:</label>
-                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('nummer') ? 'bg-red-300' : '' }}"
-                                            id="nummer" placeholder="Nummer" name="nummer" value="{{ Session::get('rennNummer') ?? old('rennBezeichnung')}}">
-                                    <small class="form-text text-danger">{!! $errors->first('nummer') !!}</small>
-                                </div>
-                                <div>
-                                    <label for="name">Bezeichnung des Rennen:</label>
-                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBezeichnung') ? 'bg-red-300' : '' }}"
-                                           id="rennBezeichnung" placeholder="Bezeichnung des Rennen" name="rennBezeichnung" value="{{ old('rennBezeichnung') }}">
-                                    <small class="form-text text-danger">{!! $errors->first('rennBezeichnung') !!}</small>
-                                </div>
-                                <div>
-                                    <label for="name">Datum:</label>
-                                    <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennDatum') ? 'bg-red-300' : '' }}"
-                                           id="rennDatum" name="rennDatum" value="{{ Session::get('regattaSelectRaceDate') }}"
-                                           min="{{ Session::get('regattaSelectRaceDateForm') }}" max="{{ Session::get('regattaSelectRaceDateUntil') }}">
-                                    <small class="form-text text-danger">{!! $errors->first('rennDatum') !!}</small>
-                                </div>
-                                <div>
-                                    <label for="name">Startzeit:</label>
-                                    <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
-                                           id="rennUhrzeit" name="rennUhrzeit" value="{{ Session::get('regattaSelectRaceTimeNew') }}">
-                                    <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
-                                </div>
-                                <div class="my-4" >
-                                    <label for="name">Veröffungszeit der Ergebnisse:</label>
-                                    <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
-                                         id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ Session::get('regattaSelectRacePublished') }}">
-                                    <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>
-                                </div>
-                                <div>
-                                    <label for="name">Regatta Abschnitt:</label><br>
-                                    <select name="regattaLevel">
+                               <form class="my-4" autocomplete="off" action="{{ route('race.store') }}" method="post">
+                                  @csrf
+                                   <div>
+                                      <label for="nummer">Nummer:</label>
+                                      <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('nummer') ? 'bg-red-300' : '' }}"
+                                              id="nummer" placeholder="Nummer" name="nummer" value="{{ Session::get('rennNummer') ?? old('rennBezeichnung')}}">
+                                      <small class="form-text text-danger">{!! $errors->first('nummer') !!}</small>
+                                  </div>
+                                  <div>
+                                      <label for="rennBezeichnung">Bezeichnung des Rennen:</label>
+                                      <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBezeichnung') ? 'bg-red-300' : '' }}"
+                                             id="rennBezeichnung" placeholder="Bezeichnung des Rennen" name="rennBezeichnung" value="{{ old('rennBezeichnung') }}">
+                                      <small class="form-text text-danger">{!! $errors->first('rennBezeichnung') !!}</small>
+                                  </div>
+
+                                  <div>
+                                      <label for="rennDatum">Datum:</label>
+                                      <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennDatum') ? 'bg-red-300' : '' }}"
+                                             id="rennDatum" name="rennDatum" value="{{ Session::get('regattaSelectRaceDate') }}"
+                                             min="{{ Session::get('regattaSelectRaceDateForm') }}" max="{{ Session::get('regattaSelectRaceDateUntil') }}">
+                                      <small class="form-text text-danger">{!! $errors->first('rennDatum') !!}</small>
+                                  </div>
+                                  <div>
+                                      <label for="rennUhrzeit">Startzeit:</label>
+                                      <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennUhrzeit') ? 'bg-red-300' : '' }}"
+                                             id="rennUhrzeit" name="rennUhrzeit" value="{{ Session::get('regattaSelectRaceTimeNew') }}">
+                                      <small class="form-text text-danger">{!! $errors->first('rennUhrzeit') !!}</small>
+                                  </div>
+                                  <div class="my-4" >
+                                      <label for="veroeffentlichungUhrzeit">Veröffungszeit der Ergebnisse:</label>
+                                      <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
+                                           id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ Session::get('regattaSelectRacePublished') }}">
+                                      <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>
+                                  </div>
+
+                                  <div>
+                                      <label for="rennBahnen">Anzahl der Bahnen:</label>
+                                      <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBahnen') ? 'bg-red-300' : '' }}"
+                                             id="rennBahnen" name="rennBahnen" value="{{ old('rennBahnen') }}">
+                                      <small class="form-text text-danger">{!! $errors->first('rennBahnen') !!}</small>
+                                  </div>
+
+                                  <div>
+                                    <label for="regattaLevel">Regatta Abschnitt:</label><br>
+                                    <select name="regattaLevel" id="regattaLevel">
                                         @for ($i = 1; $i <= $levelMax; $i++)
                                             <option value="{{ $i }}"
                                                 @if($i==Session::get('rennLevelSave'))
@@ -89,17 +98,28 @@
                                         @endfor
                                         <option value="{{ $i }}">Abschnitt +</option>
                                     </select>
-                                </div>
+                                  </div>
 
-                                <div class="py-2">
-                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Rennen anlegen</button>
-                                </div>
-                            </form>
-                            <br>
-                            <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Regattamenu"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
+                                  <div class="my-4" >
+                                      <label for="rennMix">Mix Rennen:</label>
+                                      <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennMix') ? 'bg-red-300' : '' }}"
+                                             id="rennMix" name="rennMix" value="1"
+                                             @if(old('rennMix') == 1)
+                                                 checked
+                                          @endif
+                                      >
+                                  </div>
+
+                                  <div class="py-2">
+                                     <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Rennen anlegen</button>
+                                  </div>
+                               </form>
+
+                                <br>
+                               <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Regattamenu"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
 
                             </div>
-                          </div>
+                         </div>
 
                       </div>
                   </div>

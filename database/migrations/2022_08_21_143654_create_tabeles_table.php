@@ -15,7 +15,7 @@ class CreateTabelesTable extends Migration
     {
         Schema::create('tabeles', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('event_id')->nullable();
+            $table->unsignedBigInteger('event_id');
             $table->unsignedBigInteger('gruppe_id')->nullable();
             $table->unsignedBigInteger('system_id')->nullable();
             $table->date('tabelleDatumVon');

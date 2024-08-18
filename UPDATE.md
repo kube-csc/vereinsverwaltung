@@ -1,16 +1,22 @@
 ## Update Anleitung
 **Version V00.05.00**
 
-In der Dantenbank in der Tabelle race sind die Felder in der Datenbank von Hand  
-event_id von integer auf unsignedBigInteger umzustellen
-tabele_id von integer auf unsignedBigInteger umzustellen
-tabelerennen_id von integer auf unsignedBigInteger umzustellen
-gruppe_id von integer auf unsignedBigInteger umzustellen
+- In der Datenbank in der Tabelle race sind die Felder in der Datenbank von Hand  
+  event_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
+  tabele_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
+  tabelerennen_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
+  gruppe_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
+  
+  In der Datenbank in der Tabelle tabele sind die Felder in der Datenbank von Hand  
+  event_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
+  gruppe_id von integer auf unsignedBigInteger und auf nullable umzustellen
+  system_id von integer auf unsignedBigInteger und auf nullable umzustellen
+  Feld veroeffentlichungUhrzeit in finaleAnzeigen umzustellen
 
-In der Dantenbank in der Tabelle tabele sind die Felder in der Datenbank von Hand  
-event_id von integer auf unsignedBigInteger und auf nullable umzustellen
-gruppe_id von integer auf unsignedBigInteger und auf nullable umzustellen
-system_id von integer auf unsignedBigInteger und auf nullable umzustellen
+- Wenn  die Migration 2024_08_09_010548_add_foreignkey_gruppe_id_to_table fehlschlägt, dann ist die Daten aus dem Alten Projekt zu Seeden.
+
+- artisan migrate
+
 
 **Version V00.04.01**
 

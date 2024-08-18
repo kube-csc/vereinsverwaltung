@@ -21,4 +21,10 @@ class RegattaTeam extends Model
         'autor_id',
         'bearbeiter_id'
     ];
+
+    public function teamWertungsGruppe()
+    {
+        return $this->belongsTo(RaceType::class, 'gruppe_id');
+    }
+
 }

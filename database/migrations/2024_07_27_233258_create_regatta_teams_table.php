@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('homepage')->nullable();
             $table->string('status');
-            $table->boolean('traning');
+            $table->boolean('training');
             $table->unsignedBigInteger('regatta_id');
             $table->unsignedBigInteger('gruppe_id');
             $table->string('passwort');
@@ -44,6 +44,9 @@ return new class extends Migration
 
             $table->SoftDeletes();
             $table->timestamps();
+
+            $table->foreign('gruppe_id')
+                ->references('id')->on('race_types');
         });
     }
 
@@ -54,6 +57,10 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::table('regatta_teams', function (Blueprint $table) {
+            $table->dropForeign(['gruppe_id']);
+        });
+
         Schema::dropIfExists('regatta_teams');
     }
 };

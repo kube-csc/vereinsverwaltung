@@ -83,6 +83,34 @@
                                              id="rennBahnen" name="rennBahnen" value="{{ old('rennBahnen') }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennBahnen') !!}</small>
                                   </div>
+                                   @php
+                                       if(old('tabeleId') != Null){
+                                           $tableId=old('tabeleId');
+                                       }
+                                       else{
+                                           $tableId=Null;
+                                       }
+                                   @endphp
+                                   <div class="my-4" >
+                                       <label for="tabeleId">Tabelle:</label><br>
+                                       <select name="tabeleId" id="tabeleId" >
+                                           <option value=""
+                                                   @if( $tableId == 0 )
+                                                       selected
+                                               @endif
+                                           >keine Tabelle</option>
+
+                                           @foreach ($tabeles as $tabele)
+                                               <option value="{{ $tabele->id }}"
+                                                       @if( $tableId == $tabele->id )
+                                                           selected
+                                                   @endif
+                                               >{{ $tabele->ueberschrift }}</option>
+                                           @endforeach
+
+                                       </select>
+                                   </div>
+
 
                                   <div>
                                     <label for="regattaLevel">Regatta Abschnitt:</label><br>

@@ -109,11 +109,10 @@
                                                             @if( $team->id == $lane->mannschaft_id )
                                                                 selected
                                                         @endif
-                                                    >{{ $team->teamname }}</option>
+                                                    >{{ $team->teamname }} / {{ $team->teamWertungsGruppe->typ }}</option>
                                                 @endforeach
 
                                             </select>
-
 
                                         </div>
                                     @endforeach

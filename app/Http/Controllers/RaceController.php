@@ -164,7 +164,10 @@ class RaceController extends Controller
             }
         }
 
-        return view('regattaManagement.race.create' , compact('levelMax'));
+        $tabeles = Tabele::where('event_id' , Session::get('regattaSelectId'))
+            ->get();
+
+        return view('regattaManagement.race.create' , compact('levelMax', 'tabeles'));
     }
 
     /**
@@ -188,6 +191,7 @@ class RaceController extends Controller
 
         $race= new Race([
                 'event_id'                 => Session::get('regattaSelectId'),
+                'tabele_id'                => $request->tabeleId,
                 'nummer'                   => $request->nummer,
                 'bahnen'                   => $request->rennBahnen,
                 'rennBezeichnung'          => $request->rennBezeichnung,

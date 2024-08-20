@@ -9,7 +9,6 @@ use App\Models\Tabele;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 
 class LaneController extends Controller
@@ -52,7 +51,7 @@ class LaneController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function show($id)
     {
@@ -127,11 +126,31 @@ class LaneController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function editDraw($id)
     {
         $race = Race::find($id);
+
+        // Vorheriges Rennen
+        $previousRace = Race::where('event_id', Session::get('regattaSelectId'))
+            ->where('id', '!=', $id)
+            ->where('rennDatum', $race->rennDatum)
+            ->where('rennUhrzeit', '<=', $race->rennUhrzeit)
+            ->where('status', '>', 0)
+            ->where('status', '<=', 2)
+            ->orderBy('rennUhrzeit', 'desc')
+            ->first();
+
+        // Nächstes Rennen
+        $nextRace = Race::where('event_id', Session::get('regattaSelectId'))
+            ->where('id', '!=', $id)
+            ->where('rennDatum', $race->rennDatum)
+            ->where('rennUhrzeit', '>=', $race->rennUhrzeit)
+            ->where('status', '>', 0)
+            ->where('status', '<=', 2)
+            ->orderBy('rennUhrzeit', 'asc')
+            ->first();
 
         $lanes = Lane::where('rennen_id',$id)->get();
 
@@ -176,18 +195,24 @@ class LaneController extends Controller
         $tabele = Tabele::where('id', $race->tabele_id)->first();
 
         if($race->mix == Null && $tabele->gruppe_id>0) {
-            $teams = RegattaTeam::where('gruppe_id', $tabele->gruppe_id)->get();
+            $teams = RegattaTeam::where('gruppe_id', $tabele->gruppe_id)
+                     ->orderBy('teamname')
+                     ->get();
         }
         else {
-            $teams = RegattaTeam::where('regatta_id', Session::get('regattaSelectId'))->get();
+            $teams = RegattaTeam::where('regatta_id', Session::get('regattaSelectId'))
+                     ->orderBy('teamname')
+                     ->get();
         }
 
         return view('regattaManagement.lane.editDraw')->with(
             [
-                'lanes'  => $lanes,
-                'race'   => $race,
-                'tabele' => $tabele,
-                'teams'  => $teams
+                'lanes'        => $lanes,
+                'race'         => $race,
+                'previousRace' => $previousRace,
+                'nextRace'     => $nextRace,
+                'tabele'       => $tabele,
+                'teams'        => $teams
             ]
         );
     }
@@ -195,6 +220,26 @@ class LaneController extends Controller
     public function editResult($id)
     {
         $race = Race::find($id);
+
+        // Vorheriges Rennen
+        $previousRace = Race::where('event_id', Session::get('regattaSelectId'))
+            ->where('id', '!=', $id)
+            ->where('rennDatum', $race->rennDatum)
+            ->where('rennUhrzeit', '<=', $race->rennUhrzeit)
+            ->where('status', '>=', 3)
+            ->where('status', '<=', 4)
+            ->orderBy('rennUhrzeit', 'desc')
+            ->first();
+
+        // Nächstes Rennen
+        $nextRace = Race::where('event_id', Session::get('regattaSelectId'))
+            ->where('id', '!=', $id)
+            ->where('rennDatum', $race->rennDatum)
+            ->where('rennUhrzeit', '>=', $race->rennUhrzeit)
+            ->where('status', '>=', 3)
+            ->where('status', '<=', 4)
+            ->orderBy('rennUhrzeit', 'asc')
+            ->first();
 
         $lanes = Lane::where('rennen_id',$id)->get();
 
@@ -211,10 +256,12 @@ class LaneController extends Controller
 
         return view('regattaManagement.lane.editResult')->with(
             [
-                'lanes'     => $lanes,
-                'race'      => $race,
-                'tabele'    => $tabele,
-                'ractetime' => $ractetime
+                'lanes'        => $lanes,
+                'race'         => $race,
+                'previousRace' => $previousRace,
+                'nextRace'     => $nextRace,
+                'tabele'       => $tabele,
+                'ractetime'    => $ractetime
             ]
         );
     }

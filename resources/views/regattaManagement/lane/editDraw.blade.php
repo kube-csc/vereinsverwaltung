@@ -73,7 +73,7 @@
                                 @php
                                     $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
                                 @endphp
-                                <label for="name">Veröffungszeit der Ergebnisse:</label>
+                                <label for="name">Veröffentlichungszeit der Ergebnisse:</label>
                                 {{ $veroeffentlichungUhrzeitAlt }} Uhr
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                                         @endphp
 
                                         <div class="my-4" >
-                                            <label for="name">Bahn:</label>
+                                            <label for="name">Bahn / Klasse:</label>
                                             {{ $lane->bahn }}
                                             <input type="hidden" name="laneId[{{$bahn}}]" value="{{ $lane->id }}">
                                             <label for="mannschaftId[{{$bahn}}]">Team:</label><br>
@@ -106,7 +106,7 @@
 
                                                 @foreach($teams as $team)
                                                     <option value="{{ $team->id }}"
-                                                            @if( $team->id == $lane->mannschaft_id )
+                                                        @if( $team->id == $lane->mannschaft_id )
                                                                 selected
                                                         @endif
                                                     >{{ $team->teamname }} / {{ $team->teamWertungsGruppe->typ }}</option>
@@ -123,7 +123,23 @@
 
                                 </form>
                                 <br>
-                                <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennen/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
+
+                                @if($previousRace)
+                                <a class="p-2 bg-blue-500 w-40 rounded shadow text-white mr-2" href="{{ url('/Teamverlosung/setzen/'.$previousRace->id) }}">
+                                    <i class="fas fa-arrow-circle-up"></i>Rennen Zurück</a>
+                                </a>
+                                @endif
+
+                                <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennen/alle">
+                                    <i class="fas fa-arrow-circle-up"></i>Zurück
+                                </a>
+
+                                @if($nextRace)
+                                <a class="p-2 bg-blue-500 w-40 rounded shadow text-white ml-2" href="{{ url('/Teamverlosung/setzen/'.$nextRace->id) }}">
+                                    <i class="fas fa-arrow-circle-up"></i>Rennen weiter</a>
+                                </a>
+                                @endif
+
                             </div>
                         </div>
 

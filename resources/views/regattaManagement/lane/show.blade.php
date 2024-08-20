@@ -71,7 +71,7 @@
                                @php
                                    $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
                                @endphp
-                               <label for="name">Veröffungszeit der Ergebnisse:</label>
+                               <label for="name">Veröffentlichungszeit der Ergebnisse:</label>
                                {{ $veroeffentlichungUhrzeitAlt }} Uhr
                             </div>
                         </div>
@@ -123,7 +123,10 @@
                                                 @endif
                                             @endif
                                             <label for="name">Bahn:</label>
-                                            {{ $lane->bahn }} {{ $lane->regattaTeam->teamname }}
+                                            {{ $lane->bahn }}
+                                            @if($lane->mannschaft_id!=Null)
+                                                {{ $lane->regattaTeam->teamname }}
+                                            @endif
                                         </div>
                                     @endforeach
                                 <br>

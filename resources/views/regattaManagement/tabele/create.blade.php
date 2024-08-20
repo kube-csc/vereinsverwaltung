@@ -58,7 +58,7 @@
                                     <small class="form-text text-danger">{!! $errors->first('tabelleDatum') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <label for="name">Veröffungszeit der Ergebnisse:</label>
+                                    <label for="name">Veröffentlichungszeit der Ergebnisse:</label>
                                     <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
                                            id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ Session::get('tablePublished') }}">
                                     <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>

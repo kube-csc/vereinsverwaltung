@@ -69,7 +69,7 @@
                                 @php
                                     $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
                                 @endphp
-                                <label for="name">Veröffungszeit der Ergebnisse:</label>
+                                <label for="name">Veröffentlichungszeit der Ergebnisse:</label>
                                 {{ $veroeffentlichungUhrzeitAlt }} Uhr
                             </div>
                         </div>
@@ -151,12 +151,23 @@
                                             <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
                                         </div>
 
-                                    </form>
-
-
-                                </form>
+                                  </form>
                                 <br>
-                                <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennen/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
+                                @if($previousRace)
+                                    <a class="p-2 bg-blue-500 w-40 rounded shadow text-white mr-2" href="{{ url('/Teamverlosung/Ergebnisse/'.$previousRace->id) }}">
+                                        <i class="fas fa-arrow-circle-up"></i>Rennen Zurück</a>
+                                    </a>
+                                @endif
+
+                                <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennen/alle">
+                                    <i class="fas fa-arrow-circle-up"></i>Zurück
+                                </a>
+
+                                @if($nextRace)
+                                    <a class="p-2 bg-blue-500 w-40 rounded shadow text-white ml-2" href="{{ url('/Teamverlosung/Ergebnisse/'.$nextRace->id) }}">
+                                        <i class="fas fa-arrow-circle-up"></i>Rennen weiter</a>
+                                    </a>
+                                @endif
                             </div>
                         </div>
 

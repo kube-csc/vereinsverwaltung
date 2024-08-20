@@ -69,7 +69,7 @@
                                       @php
                                           $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
                                       @endphp
-                                      <label for="veroeffentlichungUhrzeit">Veröffungszeit der Ergebnisse:</label>
+                                      <label for="veroeffentlichungUhrzeit">Veröffentlichungszeit der Ergebnisse:</label>
                                       <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('veroeffentlichungUhrzeit') ? 'bg-red-300' : '' }}"
                                              id="veroeffentlichungUhrzeit" name="veroeffentlichungUhrzeit" value="{{ old('veroeffentlichungUhrzeit') ?? $veroeffentlichungUhrzeitAlt }}">
                                       <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>

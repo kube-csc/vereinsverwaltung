@@ -64,7 +64,7 @@
                                         </a>
                                         @endif
                                         @if($race['visible']==0)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/aktiv/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/aktiv/'.$race->id) }}">
                                             <box-icon name='hide' ></box-icon>
                                         </a>
                                         @endif
@@ -74,7 +74,7 @@
                                         </a>
                                         --}}
                                         @if($funktionStatus==1)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/Programm/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Programm/'.$race->id) }}">
                                             <box-icon name='file'></box-icon>
                                         </a>
                                         @endif
@@ -101,6 +101,16 @@
                                               <box-icon name='user'></box-icon>
                                           </a>
                                         @endif
+                                        @if($race['aktuellLiveVideo']==1)
+                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveAktuell/inaktiv/'.$race->id) }}">
+                                                 <box-icon name='pin' type='solid'></box-icon>
+                                             </a>
+                                         @endif
+                                        @if($race['aktuellLiveVideo']==0)
+                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveAktuell/aktiv/'.$race->id) }}">
+                                                 <box-icon name='pin' ></box-icon>
+                                             </a>
+                                         @endif
                                      </div>
                                   </div>
                                   <div class="justify-between my-2">
@@ -136,7 +146,7 @@
                                           gestartet um
                                         @endif
                                         {{ date("H:i", strtotime($race->verspaetungUhrzeit)) }} Uhr
-                                       Startus  {{ $race->status }}
+                                       Status  {{ $race->status }}
                                     </div>
                                   </div>
 

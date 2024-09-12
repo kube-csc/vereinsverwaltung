@@ -25,6 +25,7 @@ class RaceController extends Controller
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
+
         return Redirect()->back()->with('success' , 'Das Rennen wurde sichtbar geschaltet.');
     }
 
@@ -35,7 +36,36 @@ class RaceController extends Controller
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
+
         return Redirect()->back()->with('success' , 'Das Rennen wurde unsichtbar geschaltet.');
+    }
+
+    public function aktivLive($raceId)
+    {
+        Race::where('aktuellLiveVideo', '1')->update([
+            'aktuellLiveVideo' => '0',
+            'bearbeiter_id'    => Auth::id(),
+            'updated_at'       => Carbon::now()
+        ]);
+
+        Race::find($raceId)->update([
+            'aktuellLiveVideo' => '1',
+            'bearbeiter_id'    => Auth::id(),
+            'updated_at'       => Carbon::now()
+        ]);
+
+        return Redirect()->back()->with('success' , 'Das Rennen wurde für Webliveübertragung aktiviert.');
+    }
+
+    public function inaktivLive($raceId)
+    {
+        Race::find($raceId)->update([
+            'aktuellLiveVideo' => '0',
+            'bearbeiter_id'    => Auth::id(),
+            'updated_at'       => Carbon::now()
+        ]);
+
+        return Redirect()->back()->with('success' , 'Das Rennen wurde für Webliveübertragung deaktiviert.');
     }
 
     /**
@@ -51,7 +81,7 @@ class RaceController extends Controller
         ])
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
-            ->paginate(5);
+            ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Rennen bearbeiten',
@@ -70,7 +100,7 @@ class RaceController extends Controller
             ->whereOr('status' ,'>',3)
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
-            ->paginate(5);
+            ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Rennen die kein Programm haben bearbeiten',
@@ -88,7 +118,7 @@ class RaceController extends Controller
             })
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
-            ->paginate(5);
+            ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Programm der Rennen bearbeiten',
@@ -107,7 +137,7 @@ class RaceController extends Controller
             ->where('visible' , 1)
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
-            ->paginate(5);
+            ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Rennen die kein Ergebnisse haben bearbeiten',
@@ -125,7 +155,7 @@ class RaceController extends Controller
             })
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
-            ->paginate(5);
+            ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
             'titel'  => 'Ergebnissse der Rennen bearbeiten',
@@ -517,7 +547,7 @@ class RaceController extends Controller
 
         return redirect('/Rennen/Ergebnisse')->with(
             [
-                'success'  => 'Die Daten des Rennens wurden gespeichert.'
+                'success'  => 'Die Ergebnisse des Rennens wurden gespeichert.'
             ]
         );
     }

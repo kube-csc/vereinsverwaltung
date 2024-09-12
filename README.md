@@ -1,4 +1,4 @@
-<h1>Internetauftritt von Vereine</h1>
+<h1>Internetauftritt für Vereine</h1>
 <p>Version: V00.05.xx</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
@@ -12,7 +12,7 @@ Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
       <li>SUP</li>
     </ul>
 
-<a href="https://neu.kel-datteln.de">Beispiel eines Frontend</a>
+<a href="https://www.kel-datteln.de">Beispiel eines Frontend</a>
 
 <h2>Installierte Programme / Templets</h2>
 <ul>
@@ -22,7 +22,7 @@ Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
   <li><a href="https://boxicons.com/">boxicons</a>(Forntend)</li>
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
-  <li>.htaccess für ionos.de (1und1.de) Server</li>
+  <li>.htaccess für ionos.de Server</li>
   <li><a href="https://botman.io">Botman</a></li>
 </ul>
 
@@ -124,17 +124,19 @@ benötigt.
 </ul>
 <h3>Regattaverwaltung</h3>
 <p>
-In der .env kann mit der Variabel APP_REGATTA die Regattaverwaltug ein und ausgeschaltet werden.
+In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaverwaltung ein und ausgeschaltet werden.
 </p>
 <ul>
     <li>Regatta auswählen</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
     <li>Rennen anlegen und bearbeiten</li>
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
+    <li>Mannschaften können den Rennen zugeteilt werden</li>
+    <li>Plazierungen können eingegeben werden</li> 
     <li>Tabellen anlegen und bearbeiten</li>
     <li>Ergebnislisten für jede Tabelle hochladen</li>
     <li>Startzeitverschiebungen werden berechnet</li>
-    <li>Rennergebnisse und Tabellen können mit einer Veröffendlichungszeiten versehen werden</li>
+    <li>Rennergebnisse und Tabellen können mit einer Veröffentlichungszeit versehen werden</li>
 </ul>
 
 <h2>Installation</h2>

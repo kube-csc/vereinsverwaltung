@@ -1,6 +1,7 @@
 ## Update Anleitung
 **Version V00.05.00**
-
+- 
+- Composer update
 - In der Datenbank in der Tabelle race sind die Felder in der Datenbank von Hand  
   event_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
   tabele_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
@@ -11,12 +12,10 @@
   event_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
   gruppe_id von integer auf unsignedBigInteger und auf nullable umzustellen
   system_id von integer auf unsignedBigInteger und auf nullable umzustellen
-  Feld veroeffentlichungUhrzeit in finaleAnzeigen umzustellen
+  Feld veroeffentlichungUhrzeit in finaleAnzeigen Umbenennen
 
-- Wenn  die Migration 2024_08_09_010548_add_foreignkey_gruppe_id_to_table fehlschlägt, dann ist die Daten aus dem Alten Projekt zu Seeden.
-
+- Wenn die Migration 2024_08_09_010548_add_foreignkey_gruppe_id_to_table fehlschlägt, dann ist die Daten aus dem alten Projekt vorher zu Seeden.
 - artisan migrate
-
 
 **Version V00.04.01**
 

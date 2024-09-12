@@ -174,15 +174,11 @@ class RegattaInformationController extends Controller
             ]
         );
 
-        $regattaInformations= RegattaInformation::where('event_id' , Session::get('regattaSelectId'))
-            ->orderby('position')
-            ->limit(1)
-            ->get();
+        $regattaInformation= RegattaInformation::where('event_id' , Session::get('regattaSelectId'))
+            ->orderBy('position' , 'desc')
+            ->first();
 
-        $neuPosition=10;
-        foreach($regattaInformations as $regattaInformation){
-            $neuPosition=$regattaInformation->position+10;
-        }
+        $neuPosition=$regattaInformation->position+10;
 
         if($request->startDatumAktiv == Null){
             $request->startDatumAktiv=0;
@@ -245,7 +241,6 @@ class RegattaInformationController extends Controller
             'startDatum'         => $startDatum,
             'endDatum'           => $endDatum
         ]);
-            //, compact('regattaInformation'));
     }
 
     /**

@@ -56,17 +56,17 @@
                                     <small class="form-text text-danger">{!! $errors->first('InformationBeschreibung') !!}</small>
                                 </div>
                                 <div>
-                                    <label for="name">Start Datum:</label>
+                                    <label for="startDatum">Start Datum:</label>
                                     <input type="datetime-local" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('startDatum') ? 'bg-red-300' : '' }}"
-                                           id="startDatum" name="startDatum" value="{{ Session::get('regattaSelectRaceDate') }}"
+                                           id="startDatum" name="startDatum" value="{{ Session::get('regattaSelectRaceDate') }}T00:00:00"
                                            min="{{ Session::get('regattaSelectRaceDateForm') }}T00:00:00" max="{{ old('startDatum') ?? Session::get('regattaSelectRaceDateUntil') }}T23:59:59">
                                      Aktiv: <input type="checkbox" id="startDatumAktiv" name="startDatumAktiv" value="1" {{ old('startDatumAktiv')==1 ? 'checked' : '' }}>
                                      <small class="form-text text-danger">{!! $errors->first('startDatum') !!}</small>
                                 </div>
                                 <div>
-                                  <label for="name">End Datum:</label>
+                                  <label for="endDatum">End Datum:</label>
                                   <input type="datetime-local" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('endDatum') ? 'bg-red-300' : '' }}"
-                                         id="endDatum" name="endDatum" value="{{ Session::get('regattaSelectRaceDate') }}"
+                                         id="endDatum" name="endDatum" value="{{ Session::get('regattaSelectRaceDate') }}T23:59:00"
                                          min="{{ Session::get('regattaSelectRaceDateForm') }}T00:00:00" max="{{ old('endDatum') ?? Session::get('regattaSelectRaceDateUntil') }}T23:59:59">
                                     Aktiv: <input type="checkbox" id="endDatumAktiv" name="endDatumAktiv" value="1" {{ old('endDatumAktiv')==1 ? 'checked' : '' }}>
                                     <small class="form-text text-danger">{!! $errors->first('endDatum') !!}</small>

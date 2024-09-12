@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::table('tabeles', function (Blueprint $table) {
             $table->foreign('gruppe_id')
                 ->references('id')->on('race_types');
+
+            // $table->renameColumn('finaleAnzeigen', 'veroeffentlichungUhrzeit'); ToDo: Automatische Umstellung funktioniert nicht
         });
     }
 
@@ -27,7 +29,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('tabeles', function (Blueprint $table) {
-                        $table->dropForeign(['gruppe_id']);
+            // $table->renameColumn('veroeffentlichungUhrzeit', 'finaleAnzeigen'); ToDo: Automatische Umstellung funktioniert nicht
+                                                                                   // Information im Update anpassen
+            $table->dropForeign(['gruppe_id']);
         });
     }
 };

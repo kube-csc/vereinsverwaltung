@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class EventSeeder extends Seeder
@@ -13,10 +14,11 @@ class EventSeeder extends Seeder
      */
     public function run()
     {
+        $currentDate = Carbon::now()->toDateString();
 
-                    \DB::table('events')->delete();
+        \DB::table('events')->delete();
 
-                            \DB::table('events')->insert(array (
+       \DB::table('events')->insert(array (
                                 0 =>
                                     array (
                                         'id' => 1,
@@ -202,8 +204,8 @@ class EventSeeder extends Seeder
                                 6 =>
                                     array (
                                         'id' => 7,
-                                        'datumvon' => '2050-06-11',
-                                        'datumbis' => '2050-06-11',
+                                        'datumvon' => $currentDate,
+                                        'datumbis' => $currentDate,
                                         'datumvona' => NULL,
                                         'datumbisa' => NULL,
                                         'ueberschrift' => 'Eventserie 2',

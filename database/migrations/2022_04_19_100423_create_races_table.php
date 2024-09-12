@@ -17,8 +17,8 @@ class CreateRacesTable extends Migration
             $table->id();
 
             $table->unsignedBigInteger('event_id');
-            $table->unsignedBigInteger('tabele_id')->nullable();
-            $table->unsignedBigInteger('tabelerennen_id')->nullable();
+            $table->unsignedBigInteger('tabele_id')->nullable();  // ToDo: Automatische Umstellung auf nullable nicht database/migrations/2024_08_04_172920_add_tabele_id_to_races_table.php funktioniert nicht
+            $table->unsignedBigInteger('tabelerennen_id')->nullable();  // ToDo: Wozu ist die Variabel 'tabelerennen_id' da ?
             $table->unsignedBigInteger('gruppe_id')->nullable();
             $table->date('rennDatum');
             $table->time('rennUhrzeit');
@@ -38,9 +38,6 @@ class CreateRacesTable extends Migration
                                                                     // 2 => Mannschaften gesetzt und geprüft
                                                                     // 3 => Rennn-Ergebnisse eingetragen
                                                                     // 4 => Rennn-Ergebnisse geprüft
-                                                                    // 5 =>
-                                                                    // 6 =>
-
             $table->string('bild')->nullable();
             $table->string('fileBild')->nullable();
             $table->integer('pixx')->nullable();
@@ -57,7 +54,6 @@ class CreateRacesTable extends Migration
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.

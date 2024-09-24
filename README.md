@@ -18,7 +18,7 @@ Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
 <ul>
   <li>Installation Laravel 9.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss</li>
   <li><a href="https://jetstream.laravel.com/2.x/introduction.html">jetstream 2.x Anleitung</a></li>
-  <li><a href="https://jetstream.laravel.com/2.x/stacks/livewire.html">livewire</a></li>
+  <li><a href="https://jetstream.laravel.com/2.x/stacks/livewire.html">livewire 2.x</a></li>
   <li><a href="https://boxicons.com/">boxicons</a>(Forntend)</li>
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
@@ -132,8 +132,9 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
     <li>Rennen anlegen und bearbeiten</li>
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
     <li>Mannschaften können den Rennen zugeteilt werden</li>
-    <li>Plazierungen können eingegeben werden</li> 
     <li>Tabellen anlegen und bearbeiten</li>
+    <li>Plazierungen können eingegeben werden</li> 
+    <li>Tabellen werden ausgewertet</li>
     <li>Ergebnislisten für jede Tabelle hochladen</li>
     <li>Startzeitverschiebungen werden berechnet</li>
     <li>Rennergebnisse und Tabellen können mit einer Veröffentlichungszeit versehen werden</li>
@@ -186,7 +187,7 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
 <h3>Präsentation der Regatta</h3>  
 <p>
     Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
-    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> ist kompatibel mit der Version V00.03.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> ist kompatibel mit der Version V00.05.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Helferlisten</h3>
 <p>

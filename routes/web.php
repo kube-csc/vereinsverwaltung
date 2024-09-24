@@ -35,15 +35,15 @@ use App\Http\Controllers\SporttypeController;
 */
 //LandingPage
 Route::get('/',                                                    [HomeController::class, 'index']);
-Route::get('/'.env('MENUE_ABTEILUNG').'/{sportTeam}',          [HomeController::class, 'homeSportSelect']);
+Route::get('/'.env('MENUE_ABTEILUNG').'/{sportTeam}',         [HomeController::class, 'homeSportSelect']);
 Route::get('/Bericht/{event}',                                     [HomeController::class, 'eventShow']);
 Route::get('/Information/{instructionSearch}',                     [HomeController::class, 'instructionShow']);
 Route::get('/Termine',                                             [HomeController::class, 'eventFutureAll']);
 Route::get('/Berichte',                                            [HomeController::class, 'eventPastAll']);
 Route::get('/Anfahrt',                                             [HomeController::class, 'journey']);
 Route::get('/Impressum',                                           [HomeController::class, 'imprint']);
-Route::get('/'.env('MENUE_VEREIN'),                            [HomeController::class, 'club']);
-Route::get('/'.env('MENUE_VERBAND'),                           [HomeController::class, 'sporttype']);
+Route::get('/'.env('MENUE_VEREIN'),                           [HomeController::class, 'club']);
+Route::get('/'.env('MENUE_VERBAND'),                          [HomeController::class, 'sporttype']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');
@@ -63,7 +63,6 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboardSportSection', f
 })->name('dashboardSportSection');
 */
 
-//Route::resource('sportSection', 'SportSectionController');
 Route::get('/Abteilung/alle',                                     [SportSectionController::class, 'index'])     ->name('sportSection.index');
 Route::get('/Abteilung/neu',                                      [SportSectionController::class, 'create'])    ->name('sportSection.create');
 Route::post('/Abteilung/speichern',                               [SportSectionController::class, 'store'])     ->name('sportSection.store');
@@ -76,7 +75,6 @@ Route::get('/Abteilung/softDelete/{sportSection_id}',             [SportSectionC
 Route::get('/Abteilung/picturedelete/{sportSection_id}',          [SportSectionController::class, 'pictureDelete']);
 Route::get('/Abteilung/sportSectionSportTeam/{sportSection_id}',  [SportSectionController::class, 'sportSectionSportTeam']);
 
-//Route::resource('sportTeam', 'SportTeamController');
 Route::get('/Mannschaft/alle',                            [SportTeamController::class, 'index'])     ->name('sportTeam.index');
 Route::get('/Mannschaft/neu/{sportSection_id}',           [SportTeamController::class, 'create'])    ->name('sportTeam.create');
 Route::post('/Mannschaft/speichern',                      [SportTeamController::class, 'store'])     ->name('sportTeam.store');
@@ -88,7 +86,6 @@ Route::get('/Mannschaft/start/{sportSection_id}',         [SportTeamController::
 Route::get('/Mannschaft/softDelete/{sportSection_id}',    [SportTeamController::class, 'softDelete']);
 Route::get('/Mannschaft/picturedelete/{sportSection_id}', [SportTeamController::class, 'pictureDelete']);
 
-//Route::resource('event', 'EventController');
 Route::get('/Event/alle',                             [EventController::class, 'index'])              ->name('event.index');
 Route::get('/Eventvergangenheit/alle',                [EventController::class, 'indexPast'])          ->name('event.indexPast');
 Route::get('/Event/neu',                              [EventController::class, 'create'])             ->name('event.create');
@@ -108,7 +105,6 @@ Route::get('/Teamverlosung/Ergebnisse/{race_id}',     [LaneController::class, 'e
 Route::post('/Teamverlosung/update/{race_id}',        [LaneController::class, 'update'])              ->name('lane.update');
 Route::post('/Rennergebnisse/update/{race_id}',       [LaneController::class, 'updateResult'])        ->name('lane.updateResult');
 
-//Route::resource('Eventgruppe', 'EventGroupController');
 Route::get('/Eventgruppe/alle',                        [EventGroupController::class, 'index'])         ->name('eventGroup.index');
 Route::get('/Eventgruppe/neu',                         [EventGroupController::class, 'create'])        ->name('eventGroup.create');
 Route::post('/Eventgruppe/speichern',                  [EventGroupController::class, 'store'])         ->name('eventGroup.store');
@@ -118,7 +114,6 @@ Route::get('/Eventgruppe/softDelete/{eventGroup_id}',  [EventGroupController::cl
 Route::get('/Eventgruppe/aktiv/{sportSection_id}',     [EventGroupController::class, 'aktiv'])         ->name('eventGroup.aktiv');
 Route::get('/Eventgruppe/inaktiv/{sportSection_id}',   [EventGroupController::class, 'inaktiv'])       ->name('eventGroup.inaktiv');
 
-//Route::resource('report', 'ReportController');
 Route::get('/Bericht/alle/{event_id}',                 [ReportController::class, 'index'])             ->name('report.index');
 Route::get('/Bericht/neu/{event_id}',                  [ReportController::class, 'create'])            ->name('report.create');
 Route::post('/Bericht/speichern',                      [ReportController::class, 'store'])             ->name('report.store');
@@ -138,7 +133,6 @@ Route::get('/Bericht/start/{report_id}',               [ReportController::class,
 // TEMP: Route nur für die Übername der Bilder zuständig
 Route::get('/Berichtbilder/uebernehmen',               [ReportController::class, 'takeover'])          ->name('report.takeover');
 
-//Route::resource('instruction', 'InstructionController');
 Route::get('/Instruction/alle',                        [InstructionController::class, 'index'])        ->name('instruction.index');
 Route::get('/Instruction/neu',                         [InstructionController::class, 'create'])       ->name('instruction.create');
 Route::post('/Instruction/speichern',                  [InstructionController::class, 'store'])        ->name('instruction.store');
@@ -156,13 +150,11 @@ Route::get('/Instruction/MenuPlus/{instruction_id}',   [InstructionController::c
 Route::get('/Instruction/MenuDelete/{instruction_id}', [InstructionController::class, 'menuDelete'])   ->name('instruction.menuDelete');
 Route::get('/Instruction/MenuDown/{instruction_id}',   [InstructionController::class, 'MenuDown'])     ->name('instruction.MenuDown');
 
-//Route::resource('instruction.', 'NewBotmanQuestionController');
 Route::get('/newBotmanQuestion/alle',                            [NewBotmanQuestionController::class, 'index'])     ->name('newBotmanQuestion.index');
 Route::get('/newBotmanQuestion/aktiv/{newBotmanQuestionId}',     [NewBotmanQuestionController::class, 'aktiv'])     ->name('newBotmanQuestion.aktiv');
 Route::get('/newBotmanQuestion/inaktiv/{newBotmanQuestionId}',   [NewBotmanQuestionController::class, 'inaktiv'])   ->name('newBotmanQuestion.inaktiv');
 Route::get('/newBotmanQuestion/softDelete/{newBotmanQuestionId}',[NewBotmanQuestionController::class, 'softDelete']);
 
-//Route::resource('board', 'BoardController');
 Route::get('/Team/alle',                   [BoardController::class, 'index'])     ->name('board.index');
 Route::get('/Team/neu',                    [BoardController::class, 'create'])    ->name('board.create');
 Route::post('/Team/speichern',             [BoardController::class, 'store'])     ->name('board.store');
@@ -176,7 +168,6 @@ Route::get('/Team/edit/{board_id}',        [BoardController::class, 'edit'])    
 Route::post('/Team/update/{board_id}',     [BoardController::class, 'update'])    ->name('board.update');
 Route::get('/Team/loeschen/{board_id}',    [BoardController::class, 'destroy'])   ->name('board.destroy');
 
-//Route::resource('boardUser', 'BoardUserController');
 Route::get('/Posten/{board_id}',               [BoardUserController::class, 'index'])     ->name('boardUser.index');
 Route::get('/Posten/neu/{board_id}',           [BoardUserController::class, 'create'])    ->name('boardUser.create');
 Route::get('/Posten/aktiv/{boardUser_id}',     [BoardUserController::class, 'aktiv'])     ->name('boardUser.aktiv');
@@ -189,7 +180,6 @@ Route::get('/Posten/edit/{boardUser_id}',      [BoardUserController::class, 'edi
 Route::get('/Posten/zuordnen/{boardUser_id}',  [BoardUserController::class, 'match'])     ->name('boardUser.match');
 Route::get('/Posten/loeschen/{boardUser_id}',  [BoardUserController::class, 'destroy'])   ->name('boardUser.destroy');
 
-//Route::resource('Dokumente', 'DocumentController');
 Route::get('/Dokumente/alle',                    [DocumentController::class, 'index'])         ->name('document.index');
 Route::get('/Dokumente/neu',                     [DocumentController::class, 'create'])        ->name('document.create');
 Route::post('/Dokumente/speichern',              [DocumentController::class, 'store'])         ->name('document.store');
@@ -199,7 +189,6 @@ Route::get('/Dokumente/geloescht/{document_id}', [DocumentController::class, 'do
 Route::get('/Dokumente/aktiv/{document_id}',     [DocumentController::class, 'aktiv'])         ->name('document.aktiv');
 Route::get('/Dokumente/inaktiv/{document_id}',   [DocumentController::class, 'inaktiv'])       ->name('document.inaktiv');
 
-//Route::resource('EventDokumente', EventDocumentController::class);
 Route::get('/EventDokumente/{event_id}',                      [EventDocumentController::class, 'index'])                 ->name('eventDocument.index');
 Route::get('/EventDokumente/neu/{event_id}',                  [EventDocumentController::class, 'create'])                ->name('eventDocument.create');
 Route::post('/EventDokumente/speichern/{event_id}',           [EventDocumentController::class, 'store'])                 ->name('eventDocument.store');
@@ -217,7 +206,6 @@ Route::get('/EventDokumente/down/{document_id}',              [EventDocumentCont
 Route::get('/EventDokumente/maxdown/{document_id}',           [EventDocumentController::class, 'maxdown'])               ->name('eventDocument.maxdown');
 Route::get('/EventDokumente/Eintrag/geloescht/{document_id}', [EventDocumentController::class, 'destroy'])               ->name('eventDocument.destroy');
 
-//Route::resource('Backlink', 'BacklinksController');
 Route::get('/Backlink/alle',                         [BacklinksController::class, 'index'])         ->name('backlink.index');
 Route::get('/Backlink/relevant',                     [BacklinksController::class, 'indexRelevant']) ->name('backlink.indexRelevant');
 Route::get('/Backlink/benutzt',                      [BacklinksController::class, 'indexUsed'])     ->name('backlink.indexUsed');
@@ -229,7 +217,6 @@ Route::get('/Backlink/softDelete/{backlink_id}',     [BacklinksController::class
 Route::get('/Backlink/edit/{backlink_id}',           [BacklinksController::class, 'edit'])          ->name('backlink.edit');
 Route::post('/Backlink/update/{backlink_id}',        [BacklinksController::class, 'update'])        ->name('backlink.update');
 
-//Route::resource('Rennen', 'RaceController');
 Route::get('/Rennen/alle',                            [RaceController::class, 'index'])           ->name('race.index');
 Route::get('/Rennen/neu',                             [RaceController::class, 'create'])          ->name('race.create');
 Route::post('/Rennen/speichern',                      [RaceController::class, 'store'])           ->name('race.store');
@@ -252,21 +239,21 @@ Route::get('/Rennen/Ergebnis/loeschen/{race_id}',     [RaceController::class, 'd
 Route::get('/Rennen/Zeit/{race_id}',                  [RaceController::class, 'raceTime'])        ->name('race.raceTime');
 Route::post('/Rennen/Zeit/update/{race_id}',          [RaceController::class, 'updateRaceTime'])  ->name('race.updateRaceTime');
 
-//Route::resource('Tabele', 'TabeleController');
-Route::get('/Tabelle/alle',                        [TabeleController::class, 'index'])                 ->name('tabele.index');
-Route::get('/Tabelle/neu',                         [TabeleController::class, 'create'])                ->name('tabele.create');
-Route::post('/Tabelle/speichern',                  [TabeleController::class, 'store'])                 ->name('tabele.store');
-Route::get('/Tabelle/edit/{race_id}',              [TabeleController::class, 'edit'])                  ->name('tabele.edit');
-Route::post('/Tabelle/update/{race_id}',           [TabeleController::class, 'update'])                ->name('tabele.update');
-Route::get('/Tabelle/aktiv/{race_id}',             [TabeleController::class, 'aktiv'])                 ->name('tabele.aktiv');
-Route::get('/Tabelle/inaktiv/{race_id}',           [TabeleController::class, 'inaktiv'])               ->name('tabele.inaktiv');
-Route::get('/Tabelle/Ergebnisse',                  [TabeleController::class, 'indexTabeleResoult'])    ->name('tabele.indexTabeleResoult');
-Route::get('/Tabelle/ErgebnisseAlle',              [TabeleController::class, 'indexTabeleResoultAll']) ->name('tabele.indexTabeleResoultAll');
-Route::get('/Tabelle/Ergebnis/{race_id}',          [TabeleController::class, 'editResult'])            ->name('tabele.editResult');
-Route::post('/Tabelle/Ergebnis/update/{race_id}',  [TabeleController::class, 'updateResult'])          ->name('tabele.updateResult');
-Route::get('/Tabelle/Ergebnis/loeschen/{race_id}', [TabeleController::class, 'deleteResult'])          ->name('tabele.deleteResult');
+// ToDo: Refactorieren {race_id} in {tabele_id} umbenennen
+Route::get('/Tabelle/alle',                         [TabeleController::class, 'index'])                 ->name('tabele.index');
+Route::get('/Tabelle/neu',                          [TabeleController::class, 'create'])                ->name('tabele.create');
+Route::post('/Tabelle/speichern',                   [TabeleController::class, 'store'])                 ->name('tabele.store');
+Route::get('/Tabelle/edit/{tabele_id}',             [TabeleController::class, 'edit'])                  ->name('tabele.edit');
+Route::post('/Tabelle/update/{tabele_id}',          [TabeleController::class, 'update'])                ->name('tabele.update');
+Route::get('/Tabelle/aktiv/{tabele_id}',            [TabeleController::class, 'aktiv'])                 ->name('tabele.aktiv');
+Route::get('/Tabelle/inaktiv/{tabele_id}',          [TabeleController::class, 'inaktiv'])               ->name('tabele.inaktiv');
+Route::get('/Tabelle/Ergebnisse',                   [TabeleController::class, 'indexTabeleResoult'])    ->name('tabele.indexTabeleResoult');
+Route::get('/Tabelle/ErgebnisseAlle',               [TabeleController::class, 'indexTabeleResoultAll']) ->name('tabele.indexTabeleResoultAll');
+Route::get('/Tabelle/Ergebnis/{race_id}',           [TabeleController::class, 'editResult'])            ->name('tabele.editResult');
+Route::post('/Tabelle/Ergebnis/update/{tabele_id}', [TabeleController::class, 'updateResult'])          ->name('tabele.updateResult');
+Route::get('/Tabelle/Ergebnis/loeschen/{tabele_id}',[TabeleController::class, 'deleteResult'])          ->name('tabele.deleteResult');
+Route::get('/Tabelle/anzeigen/{tabele_id}',              [TabeleController::class, 'show'])                  ->name('tabele.show');
 
-//Route::resource('Renneninformation', 'RegattaInformationController');
 Route::get('/Renneninformation/alle',                     [RegattaInformationController::class, 'index'])    ->name('regattaInformation.index');
 Route::get('/Renneninformation/neu',                      [RegattaInformationController::class, 'create'])   ->name('regattaInformation.create');
 Route::post('/Renneninformation/speichern',               [RegattaInformationController::class, 'store'])    ->name('regattaInformation.store');
@@ -279,7 +266,6 @@ Route::get('/Renneninformation/top/{regattaInfo_id}',     [RegattaInformationCon
 Route::get('/Renneninformation/down/{regattaInfo_id}',    [RegattaInformationController::class, 'down'])     ->name('regattaInformation.down');
 Route::get('/Renneninformation/maxdown/{regattaInfo_id}', [RegattaInformationController::class, 'maxdown'])  ->name('regattaInformation.maxdown');
 
-//Route::resource('Club', 'ClubController');
 Route::get('/Club/alle',                                      [ClubController::class, 'index'])               ->name('club.index');
 Route::get('/Club/neu',                                       [ClubController::class, 'create'])              ->name('club.create');
 Route::post('/Club/speichern',                                [ClubController::class, 'store'])               ->name('club.store');
@@ -291,7 +277,6 @@ Route::get('/Club/inaktiv/{club_id}',                         [ClubController::c
 Route::get('/Club/{club_id}/Sportart/{sporttype_id}/attach',  [ClubController::class, 'clubAttachSporttype']) ->name('club.club_sporttype');
 Route::get('/Club/{club_id}/Sportart/{sporttype_id}/detach',  [ClubController::class, 'clubDetachSporttype']) ->name('club.club_sporttype');
 
-//Route::resource('Sportart', 'ClubController');
 Route::get('/Sportart/alle',                      [SporttypeController::class, 'index'])         ->name('sporttype.index');
 Route::get('/Sportart/neu',                       [SporttypeController::class, 'create'])        ->name('sporttype.create');
 Route::post('/Sportart/speichern',                [SporttypeController::class, 'store'])         ->name('sporttype.store');

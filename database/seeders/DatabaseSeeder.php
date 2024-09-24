@@ -28,8 +28,10 @@ class DatabaseSeeder extends Seeder
        $this->call(RaceTypeTemplateSeeder::class);
        $this->call(RaceTypeSeeder::class);
        $this->call(RegattaTeamSeeder::class);
+       $this->call(PointsystemSeeder::class);
        $this->call(TabeleSeeder::class);
        $this->call(RaceSeeder::class);
+       $this->call(TabledataSeeder::class);
        $this->call(RegattaInformationSeeder::class);
        $this->call(SporttypeSeeder::class);
        $this->call(ClubSeeder::class);

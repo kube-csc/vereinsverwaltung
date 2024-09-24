@@ -93,10 +93,10 @@
                                         @endphp
 
                                         <div class="my-4" >
-                                            <label for="name">Bahn / Klasse:</label>
-                                            {{ $lane->bahn }}
+                                            <label for="name">Bahn {{ $lane->bahn }} Team / Klasse:</label>
+
                                             <input type="hidden" name="laneId[{{$bahn}}]" value="{{ $lane->id }}">
-                                            <label for="mannschaftId[{{$bahn}}]">Team:</label><br>
+                                            <br>
                                             <select name="mannschaftId[{{$bahn}}]]" id="mannschaftId[{{$bahn}}]]" >
                                                 <option value=""
                                                         @if( $lane->mannschaft_id == NULL )
@@ -111,8 +111,25 @@
                                                         @endif
                                                     >{{ $team->teamname }} / {{ $team->teamWertungsGruppe->typ }}</option>
                                                 @endforeach
-
                                             </select>
+
+                                            @if($race->mix == 1)
+                                               <select name="tabeleId[{{$bahn}}]]" id="tabeleId[{{$bahn}}]]" >
+                                                    <option value=""
+                                                            @if( $lane->tabele_id == NULL )
+                                                                selected
+                                                        @endif
+                                                    >keine Tabelle</option>
+
+                                                    @foreach($tabeleAlls as $tabeleAll)
+                                                        <option value="{{ $tabeleAll->id }}"
+                                                                @if( $tabeleAll->id == $lane->tabele_id )
+                                                                    selected
+                                                            @endif
+                                                        >{{ $tabeleAll->ueberschrift }}</option>
+                                                    @endforeach
+                                               </select>
+                                            @endif
 
                                         </div>
                                     @endforeach

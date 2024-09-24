@@ -96,6 +96,17 @@
                                 </div>
 
                                 <div class="my-4" >
+                                    <label for="buchholzzahlaktiv">Bucholzzahl aktiv:</label>
+                                    <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('buchholzzahlaktiv') ? 'bg-red-300' : '' }}"
+                                           id="buchholzzahlaktiv" name="buchholzzahlaktiv" value="1"
+                                           @if(old('buchholzzahlaktiv')==1)
+                                               checked
+                                        @endif
+                                    >
+                                    <small class="form-text text-danger">{!! $errors->first('buchholzzahlaktiv') !!}</small>
+                                </div>
+
+                                <div class="my-4" >
                                     <label for="finaleTable">Finaletabelle:</label>
                                     <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('finaleTable') ? 'bg-red-300' : '' }}"
                                            id="finaleTable" name="finaleTable" value="1"

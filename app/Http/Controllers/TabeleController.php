@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Race;
 use App\Models\RaceType;
 use App\Models\Tabele;
+use App\Models\Tabledata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
@@ -18,9 +19,9 @@ class TabeleController extends Controller
         $this->middleware('auth');
     }
 
-    public function aktiv($raceId)
+    public function aktiv($tabelleid)
     {
-        Tabele::find($raceId)->update([
+        Tabele::find($tabelleid)->update([
             'tabelleVisible'   => '1',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
@@ -28,9 +29,9 @@ class TabeleController extends Controller
         return Redirect()->back()->with('success' , 'Die Tabelle wurde sichtbar geschaltet.');
     }
 
-    public function inaktiv($raceId)
+    public function inaktiv($tabelleid)
     {
-        Tabele::find($raceId)->update([
+        Tabele::find($tabelleid)->update([
             'tabelleVisible'   => '0',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
@@ -159,6 +160,7 @@ class TabeleController extends Controller
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'tabelleVisible'           => "1",
                 'finale'                   => $request->finaleTable,
+                'buchholzzahlaktiv'        => $request->buchholzzahlaktiv,
                 'bearbeiter_id'            => Auth::id(),
                 'autor_id'                 => Auth::id(),
                 'updated_at'               => Carbon::now(),
@@ -185,9 +187,21 @@ class TabeleController extends Controller
      * @param  \App\Models\Tabele  $tabele
      * @return \Illuminate\Http\Response
      */
-    public function show(Tabele $tabele)
+    public function show($tabeleid)
     {
-        //
+        $tabele = Tabele::find($tabeleid);
+
+        $tabeledatas = Tabledata::where('tabele_id', $tabeleid)
+            ->orderby('punkte', 'desc')
+            ->orderBy('buchholzzahl')
+            ->orderBy('zeitpunktegleich')
+            ->orderBy('hundertpunktegleich')
+            ->get();
+
+        return view('regattaManagement.tabele.show')->with([
+            'tabele'      => $tabele,
+            'tabeledatas' => $tabeledatas
+        ]);
     }
 
     /**
@@ -196,9 +210,9 @@ class TabeleController extends Controller
      * @param  \App\Models\Tabele  $tabele
      * @return \Illuminate\Http\Response
      */
-    public function edit($raceid)
+    public function edit($tabelleid)
     {
-        $tabele = Tabele::find($raceid);
+        $tabele = Tabele::find($tabelleid);
 
         $tabeleLevel = Tabele::where('event_id' , Session::get('regattaSelectId'))
             ->orderby('tabelleLevelBis' , 'desc')
@@ -218,9 +232,9 @@ class TabeleController extends Controller
         ]);
     }
 
-    public function editResult($tabele_id)
+    public function editResult($tabelleid)
     {
-        $tabele = Tabele::find($tabele_id);
+        $tabele = Tabele::find($tabelleid);
 
         return view('regattaManagement.tabele.editResult', compact('tabele'));
     }
@@ -232,7 +246,7 @@ class TabeleController extends Controller
      * @param  \App\Models\Tabele  $tabele
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $tabele_id)
+    public function update(Request $request, $tabelleid)
     {
          $request->validate([
                 'tabelleBezeichnung'       => 'required|max:50',
@@ -247,17 +261,22 @@ class TabeleController extends Controller
             $request->tabelleLevelVon=$request->tabelleLevelBis;
         }
 
-        if($request->finaleTable==Null){
+        if($request->finaleTable == Null){
             $request->finaleTable=0;
         }
 
-        Tabele::find($tabele_id)->update([
+        if($request->buchholzzahlaktiv == Null){
+            $request->buchholzzahlaktiv=0;
+        }
+
+        Tabele::find($tabelleid)->update([
                 'ueberschrift'             => $request->tabelleBezeichnung,
                 'gruppe_id'                => $request->tabelleGruppe,
                 'tabelleDatumVon'          => $request->tabelleDatum,
                 'tabelleLevelVon'          => $request->tabelleLevelVon,
                 'tabelleLevelBis'          => $request->tabelleLevelBis,
                 'finale'                   => $request->finaleTable,
+                'buchholzzahlaktiv'        => $request->buchholzzahlaktiv,
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'bearbeiter_id'            => Auth::id(),
                 'updated_at'               => Carbon::now()
@@ -270,13 +289,13 @@ class TabeleController extends Controller
         );
     }
 
-    public function updateResult(Request $request, $tabele_id)
+    public function updateResult(Request $request, $tabelleid)
     {
         if($request->tabelleBeschreibung==""){
             $request->tabelleBeschreibung=Null;
         }
 
-        Tabele::find($tabele_id)->update([
+        Tabele::find($tabelleid)->update([
             'beschreibung'    => $request->tabelleBeschreibung,
             'bearbeiter_id'   => Auth::id(),
             'updated_at'      => Carbon::now()
@@ -292,12 +311,12 @@ class TabeleController extends Controller
                 $newDocumentName
             );
 
-            $oldDocumentFile = Tabele::find($tabele_id);
+            $oldDocumentFile = Tabele::find($tabelleid);
             if(isset($oldDocumentFile->tabelleDatei)){
                 Storage::disk('public')->delete('tabeleDokumente/'.$oldDocumentFile->tabelleDatei);
             }
 
-            Tabele::find($tabele_id)->update([
+            Tabele::find($tabelleid)->update([
                 'tabelleDatei'     => $newDocumentName,
                 'fileTabelleDatei' => $fileTabeleDatei,
             ]);
@@ -321,11 +340,11 @@ class TabeleController extends Controller
         //
     }
 
-    public function deleteResult($tabele_id)
+    public function deleteResult($tabelleid)
     {
-        $deleteDocumentFile = Tabele::find($tabele_id);
+        $deleteDocumentFile = Tabele::find($tabelleid);
 
-        Tabele::find($tabele_id)->update(
+        Tabele::find($tabelleid)->update(
             [
                 'tabelleDatei'     => Null,
                 'fileTabelleDatei' => Null,
@@ -337,8 +356,8 @@ class TabeleController extends Controller
             Storage::disk('public')->delete('tabeleDokumente/'.$deleteDocumentFile->tabelleDatei);
         }
 
-        $document = Tabele::find($tabele_id);
-        return redirect('Tabelle/Ergebnis/'.$tabele_id)->with(
+        $document = Tabele::find($tabelleid);
+        return redirect('Tabelle/Ergebnis/'.$tabelleid)->with(
             [
                 'success'  => 'Das Tabellendokument <b>' . $document->tabelleDatei . '</b> wurde gelöscht.'
             ]

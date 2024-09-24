@@ -55,14 +55,17 @@
                                         </a>
                                         @if($tabele['tabelleVisible']==1)
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Tabelle/inaktiv/'.$tabele->id) }}">
-                                            <box-icon name='show' ></box-icon>
+                                            <box-icon name='show'></box-icon>
                                         </a>
                                         @endif
                                         @if($tabele['tabelleVisible']==0)
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Tabelle/aktiv/'.$tabele->id) }}">
-                                            <box-icon name='hide' ></box-icon>
+                                            <box-icon name='hide'></box-icon>
                                         </a>
                                         @endif
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Tabelle/anzeigen/'.$tabele->id) }}">
+                                            <box-icon name='table'></box-icon>
+                                        </a>
                                         @if($status==2)
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Tabelle/Ergebnis/'.$tabele->id) }}">
                                             <box-icon name='file'></box-icon>

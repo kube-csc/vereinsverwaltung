@@ -240,6 +240,11 @@ class RaceController extends Controller
         );
         $race->save();
 
+        // ToDo: Wenn es ein Rennen mit Mix ist, dann muss in der Tabele Tabele das Feld maxrennen auf 0 gesetzt werden
+        $tabele = Tabele::where('id', $request->tabeleId)
+            ->where('maxrennen', '>', 0)
+            ->update(['maxrennen' => 0]);
+
         if(Session::has('regattaSelectRaceTime')) {
             $to = \Carbon\Carbon::createFromFormat('H:i', Session::get('regattaSelectRaceTime'));
             $from = \Carbon\Carbon::createFromFormat('H:i', $request->rennUhrzeit);
@@ -363,8 +368,8 @@ class RaceController extends Controller
         $seorch=$race->ergebnisDatei;
         $raceDocuments = Race::where('event_id' , Session::get('regattaSelectId'))
             ->where('id' , '!=' , $race_id)
-            ->where('level' , $race->level)
-            ->where('visible' , 1)
+            ->where('level'     , $race->level)
+            ->where('visible'   , 1)
             ->where(function ($query) use ($seorch){
                 $query->where('ergebnisDatei' , NULL)
                     ->orwhere('ergebnisDatei' , $seorch);
@@ -373,7 +378,7 @@ class RaceController extends Controller
             ->orderby('rennUhrzeit')
             ->get();
 
-        if($race->ergebnisDatei==NULL && $race->ergebnisBeschreibung=='') {
+        if($race->ergebnisDatei == NULL && $race->ergebnisBeschreibung == '') {
             $ractetime1 = Carbon::now();
             $ractetime2 = $ractetime1->subMinute(3);
             $ractetime  = $ractetime2->toTimeString();
@@ -461,10 +466,10 @@ class RaceController extends Controller
                 $raceDocIds = $request->raceDocId;
                 foreach ($raceDocIds as $raceDocId) {
                     Race::find($raceDocId)->update([
-                        'programmDatei' => $newDocumentName,
+                        'programmDatei'     => $newDocumentName,
                         'fileProgrammDatei' => $fileProgrammDatei,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now()
+                        'bearbeiter_id'     => Auth::id(),
+                        'updated_at'        => Carbon::now()
                     ]);
                 }
             }
@@ -527,10 +532,10 @@ class RaceController extends Controller
                 $raceDocIds = $request->raceDocId;
                 foreach ($raceDocIds as $raceDocId) {
                     Race::find($raceDocId)->update([
-                        'ergebnisDatei' => $newDocumentName,
+                        'ergebnisDatei'     => $newDocumentName,
                         'fileErgebnisDatei' => $fileErgebnisDatei,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now()
+                        'bearbeiter_id'     => Auth::id(),
+                        'updated_at'        => Carbon::now()
                     ]);
                 }
             }

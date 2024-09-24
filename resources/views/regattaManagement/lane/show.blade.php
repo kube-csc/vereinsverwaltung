@@ -3,7 +3,6 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Regatta Verwaltung') }} {{ Session::get('regattaSelectUeberschrift') }}
         </h2>
-        </h2>
     </x-slot>
 
     <div class="py-12">
@@ -126,6 +125,9 @@
                                             {{ $lane->bahn }}
                                             @if($lane->mannschaft_id!=Null)
                                                 {{ $lane->regattaTeam->teamname }}
+                                            @endif
+                                            @if($race->mix == 1)
+                                              - {{ $lane->getTableLane->ueberschrift }}
                                             @endif
                                         </div>
                                     @endforeach

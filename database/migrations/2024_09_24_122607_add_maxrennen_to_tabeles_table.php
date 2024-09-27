@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('tabeles', function (Blueprint $table) {
             $table->integer('maxrennen')->default(0)->after('status');
-            $table->boolean('buchholzzahlaktiv')->default('0')->after('wertungsart');
+            $table->boolean('buchholzwertungaktiv')->default('0')->after('wertungsart');
         });
     }
 

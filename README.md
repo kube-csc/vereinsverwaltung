@@ -134,7 +134,7 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
     <li>Mannschaften können den Rennen zugeteilt werden</li>
     <li>Tabellen anlegen und bearbeiten</li>
     <li>Plazierungen können eingegeben werden</li> 
-    <li>Tabellen werden ausgewertet</li>
+    <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz Wertung</li>
     <li>Ergebnislisten für jede Tabelle hochladen</li>
     <li>Startzeitverschiebungen werden berechnet</li>
     <li>Rennergebnisse und Tabellen können mit einer Veröffentlichungszeit versehen werden</li>

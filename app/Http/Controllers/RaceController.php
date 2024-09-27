@@ -215,8 +215,33 @@ class RaceController extends Controller
             ]
         );
 
-        if($request->rennMix==Null){
+        if($request->rennMix == Null){
             $request->rennMix=0;
+        }
+
+        if($request->einzelRennen == Null) {
+            $request->einzelRennen=0;
+        }
+
+        if($request->einzelRennen == 1) {
+            $tabele= new Tabele([
+                'event_id'                 => Session::get('regattaSelectId'),
+                'ueberschrift'             => $request->rennBezeichnung,
+                'tabelleLevelVon'          => $request->regattaLevel,
+                'tabelleLevelBis'          => $request->regattaLevel,
+                'tabelleDatumVon'          => $request->rennDatum,
+                'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
+                'wertungsart'              => 3,
+                'tabelleVisible'           => 1,
+                'finale'                   => 0,
+                'bearbeiter_id'            => Auth::id(),
+                'autor_id'                 => Auth::id(),
+                'updated_at'               => Carbon::now(),
+                'created_at'               => Carbon::now()
+            ]);
+
+            $tabele->save();
+            $request->tabeleId=$tabele->id;
         }
 
         $race= new Race([
@@ -231,13 +256,12 @@ class RaceController extends Controller
                 'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
                 'level'                    => $request->regattaLevel,
                 'mix'                      => $request->rennMix,
-                'visible'                  => "1",
+                'visible'                  => 1,
                 'bearbeiter_id'            => Auth::id(),
                 'autor_id'                 => Auth::id(),
                 'updated_at'               => Carbon::now(),
                 'created_at'               => Carbon::now()
-            ]
-        );
+            ]);
         $race->save();
 
         // ToDo: Wenn es ein Rennen mit Mix ist, dann muss in der Tabele Tabele das Feld maxrennen auf 0 gesetzt werden
@@ -413,6 +437,31 @@ class RaceController extends Controller
 
         if($request->rennMix==Null){
             $request->rennMix=0;
+        }
+
+        if($request->einzelRennen == Null) {
+            $request->einzelRennen=0;
+        }
+
+        if($request->einzelRennen == 1 && $request->tabeleId == Null) {
+            $tabele= new Tabele([
+                'event_id'                 => Session::get('regattaSelectId'),
+                'ueberschrift'             => $request->rennBezeichnung,
+                'tabelleLevelVon'          => $request->regattaLevel,
+                'tabelleLevelBis'          => $request->regattaLevel,
+                'tabelleDatumVon'          => $request->rennDatum,
+                'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
+                'wertungsart'              => 3,
+                'tabelleVisible'           => 1,
+                'finale'                   => 0,
+                'bearbeiter_id'            => Auth::id(),
+                'autor_id'                 => Auth::id(),
+                'updated_at'               => Carbon::now(),
+                'created_at'               => Carbon::now()
+            ]);
+
+            $tabele->save();
+            $request->tabeleId=$tabele->id;
         }
 
         Race::find($race_id)->update([

@@ -308,6 +308,7 @@ class LaneController extends Controller
         $changeCount=0;
         $platzCount=0;
         $platzAlt=0;
+        $tabelIdAlt=0;
 
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
@@ -335,20 +336,29 @@ class LaneController extends Controller
                 }
 
                 // Maximale Anzahl der Rennen für eine Mannschaft ermitteln und in Tabele speichern
-                if($tabele->maxrennen == 0){
+                //if($tabele->maxrennen == 0 || $tabele->maxrennen < $rennanzahl || $tabelIdAlt != $tabele->id) {
+                if($tabelIdAlt != $tabele->id) {
+                    $tabelIdAlt=$tabele->id;
                     $laneErsteMannschaftId = Lane::where('tabele_id', $tabele->id)->first();
 
                     $laneMaxRennen = Lane::where('tabele_id', $tabele->id)
-                                         ->where('mannschaft_id', $laneErsteMannschaftId->mannschaft_id)
-                                         ->count();
+                        ->where('mannschaft_id', $laneErsteMannschaftId->mannschaft_id)
+                        ->count();
 
                     $tabele->maxrennen=$laneMaxRennen;
                     $tabele->save();
                 }
 
+                if($tabele->wertungsart == 1) {
                 $pointsystem = Pointsystem::where('system_id', $tabele->system_id)
                                           ->where('platz', $request->platz[$index])
                                           ->first();
+                $punkte = $pointsystem->punkte;
+                }
+
+                if($tabele->wertungsart == 3) {
+                    $punkte = $race->bahn-$request->platz[$index]+1;
+                }
 
                 $tabledata = Tabledata::where('regatta_id', Session::get('regattaSelectId'))
                                       ->where('tabele_id', $tabele->id)
@@ -358,7 +368,7 @@ class LaneController extends Controller
                 if ($tabledata) {
                     if($platzAlt == 0) {
                         // Eintrag überschreiben
-                        $tabledata->punkte += $pointsystem->punkte;
+                        $tabledata->punkte += $punkte;
                         $tabledata->rennanzahl += 1;
                         $tabledata->bearbeiter_id = Auth::id();
                         $tabledata->autor_id = Auth::id();
@@ -409,7 +419,7 @@ class LaneController extends Controller
             }
         }
 
-        if($tabele->buchholzzahlaktiv == 1) {
+        if($tabele->buchholzwertungaktiv == 1 && $tabele->wertungsart != 3) {
             //Ermiitel gegen welche Manschaften die Mannschaft bei der die Buchholzzhal ermittel wird
             $lanes = Lane::where('tabele_id', $tabele->id)->get();
             // Welche Manschaften sin der Tabelle vorhanden

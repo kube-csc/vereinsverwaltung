@@ -37,7 +37,7 @@
                                 @php
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
-                                  <div class="my-4" >
+                                  <div class="my-4">
                                       <label for="tabelleBezeichnung">Bezeichnung der Tabelle:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('tabelleBezeichnung') ? 'bg-red-300' : '' }}"
                                              id="tabelleBezeichnung" placeholder="Bezeichnung des Tabelle" name="tabelleBezeichnung" value="{{ old('tabelleBezeichnung') ?? $tabele->ueberschrift }}">
@@ -51,7 +51,7 @@
                                       <small class="form-text text-danger">{!! $errors->first('tabelleDatum') !!}</small>
                                   </div>
 
-                                  <div class="my-4" >
+                                  <div class="my-4">
                                       <label for="tabelleLevelVon">von Regatta Abschnitt:</label><br>
                                       <select name="tabelleLevelVon" id="tabelleLevelVon">
                                           @for ($i = 1; $i <= $levelMaxBis; $i++)
@@ -66,7 +66,7 @@
                                       </select>
                                   </div>
 
-                                  <div class="my-4" >
+                                  <div class="my-4">
                                       <label for="tabelleLevelBis">bis Regatta Abschnitt:</label><br>
                                       <select name="tabelleLevelBis" id="tabelleLevelBis">
                                           @for ($i = 1; $i <= $levelMaxBis; $i++)
@@ -82,7 +82,7 @@
                                       </select>
                                   </div>
 
-                                  <div class="my-4" >
+                                  <div class="my-4">
                                      @php
                                          $veroeffentlichungUhrzeitAlt= substr($tabele->finaleAnzeigen, 0, -3);
                                      @endphp
@@ -92,15 +92,25 @@
                                      <small class="form-text text-danger">{!! $errors->first('veroeffentlichungUhrzeit') !!}</small>
                                   </div>
 
-                                 <div class="my-4" >
-                                     <label for="buchholzzahlaktiv">Bucholzzahl aktiv:</label>
-                                     <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('buchholzzahlaktiv') ? 'bg-red-300' : '' }}"
-                                            id="buchholzzahlaktiv" name="buchholzzahlaktiv" value="1"
-                                            @if(old('buchholzzahlaktiv')==1 or $tabele->buchholzzahlaktiv == 1)
+                                  <div class="my-4">
+                                     <label for="wertungsart">Wertungsart:</label><br>
+                                     <select name="wertungsart" id="wertungsart" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('wertungsart') ? 'bg-red-300' : '' }}">
+                                         <option value="1" {{ old('wertungsart') == 1 || $tabele->wertungsart == 1 ? 'selected' : '' }}>Punkte</option>
+                                         <option value="2" {{ old('wertungsart') == 2 || $tabele->wertungsart == 2 ? 'selected' : '' }}>Zeit</option>
+                                         <option value="3" {{ old('wertungsart') == 3 || $tabele->wertungsart == 3 ? 'selected' : '' }}>Einzelner Lauf</option>
+                                     </select>
+                                     <small class="form-text text-danger">{!! $errors->first('wertungsart') !!}</small>
+                                  </div>
+
+                                  <div class="my-4">
+                                     <label for="buchholzwertungaktiv">Buchholzwertung aktiv:</label><br>
+                                     <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('buchholzwertungaktiv') ? 'bg-red-300' : '' }}"
+                                            id="buchholzwertungaktiv" name="buchholzwertungaktiv" value="1"
+                                            @if(old('buchholzwertungaktiv')==1 or $tabele->buchholzwertungaktiv == 1)
                                                 checked
                                          @endif
                                      >
-                                     <small class="form-text text-danger">{!! $errors->first('buchholzzahlaktiv') !!}</small>
+                                     <small class="form-text text-danger">{!! $errors->first('buchholzwertungaktiv') !!}</small>
                                  </div>
 
                                   <div class="my-4">
@@ -112,7 +122,7 @@
                                            @endif
                                   </div>
 
-                                  <div class="my-4" >
+                                  <div class="my-4">
                                      <label for="tabelleGruppe">Renn Gruppe:</label><br>
                                      <select name="tabelleGruppe" id="tabelleGruppe" class="{{ $errors->has('tabelleGruppe') ? 'bg-red-300' : '' }}">
                                          <option value="0"
@@ -120,7 +130,7 @@
                                                      selected
                                              @endif
                                          >
-                                             keine Tabelle
+                                             keine Gruppe
                                          </option>
                                          @foreach($raceTypes as $raceType)
                                              <option value="{{ $raceType->id }}"

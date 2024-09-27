@@ -42,7 +42,7 @@
                                        <div class="my-4" >
                                           <label for="name">Platz:</label>
                                             {{ $platz }} {{ $tabeledata->getMannschaft->teamname }} {{ $tabeledata->punkte }} Punkte {{ $tabeledata->rennanzahl }}/{{ $tabele->maxrennen }} Rennanzahl
-                                            @if($tabele->buchholzzahlaktiv)
+                                            @if($tabele->buchholzwertungaktiv)
                                                 {{ $tabeledata->buchholzzahl }} Buchholzzahl
                                             @endif
                                        </div>

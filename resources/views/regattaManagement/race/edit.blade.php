@@ -83,13 +83,26 @@
                                   </div>
 
                                   @php
-                                   if(old('tabeleId') != Null){
-                                       $tableId=old('tabeleId');
-                                   }
-                                   else{
-                                       $tableId=$race->tabele_id;
-                                   }
+                                      if(old('tabeleId') != Null){
+                                          $tableId=old('tabeleId');
+                                      }
+                                      else{
+                                          $tableId=$race->tabele_id;
+                                      }
                                   @endphp
+
+                                  @if($tableId == 0)
+                                      <div class="my-4">
+                                          <label for="einzelRennen">Einzelrennen:</label>
+                                          <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('einzelRennen') ? 'bg-red-300' : '' }}"
+                                                 id="einzelRennen" name="einzelRennen" value="1"
+                                                 @if(old('einzelRennen') == 1 or $race->einzelRennen == 1)
+                                                     checked
+                                              @endif
+                                          >
+                                      </div>
+                                  @endif
+
                                   <div class="my-4" >
                                       <label for="tabeleId">Tabelle:</label><br>
                                       <select name="tabeleId" id="tabeleId" >

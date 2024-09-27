@@ -4,6 +4,7 @@
 
 ***Neue Funktionen***
 - Es können Tabellen für Regatten benutzt werden
+- Es können Einzele Rennen verwaltet werden
 
 **Version V00.05.00**
 - Composer update

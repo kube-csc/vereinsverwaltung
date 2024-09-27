@@ -126,10 +126,14 @@ class TabeleController extends Controller
             }
         }
 
+        $raceTypes  = RaceType::where('regatta_id' , Session::get('regattaSelectId'))
+            ->orderby('typ')
+            ->get();
 
         return view('regattaManagement.tabele.create')->with([
             'levelMaxVon'  => $levelMaxVon,
-            'levelMaxBis'  => $levelMaxBis
+            'levelMaxBis'  => $levelMaxBis,
+            'raceTypes'    => $raceTypes
         ]);
     }
 
@@ -153,14 +157,16 @@ class TabeleController extends Controller
 
         $tabele= new Tabele([
                 'event_id'                 => Session::get('regattaSelectId'),
+                'gruppe_id'                => $request->tabelleGruppe,
                 'ueberschrift'             => $request->tabelleBezeichnung,
                 'tabelleLevelVon'          => $request->tabelleLevelVon,
                 'tabelleLevelBis'          => $request->tabelleLevelBis,
                 'tabelleDatumVon'          => $request->tabelleDatum,
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
+                'wertungsart'              => $request->wertungsart,
                 'tabelleVisible'           => "1",
                 'finale'                   => $request->finaleTable,
-                'buchholzzahlaktiv'        => $request->buchholzzahlaktiv,
+                'buchholzwertungaktiv'     => $request->buchholzwertungaktiv,
                 'bearbeiter_id'            => Auth::id(),
                 'autor_id'                 => Auth::id(),
                 'updated_at'               => Carbon::now(),
@@ -265,8 +271,8 @@ class TabeleController extends Controller
             $request->finaleTable=0;
         }
 
-        if($request->buchholzzahlaktiv == Null){
-            $request->buchholzzahlaktiv=0;
+        if($request->buchholzwertungaktiv == Null || $request->wertungsart == 3){
+            $request->buchholzwertungaktiv=0;
         }
 
         Tabele::find($tabelleid)->update([
@@ -275,8 +281,9 @@ class TabeleController extends Controller
                 'tabelleDatumVon'          => $request->tabelleDatum,
                 'tabelleLevelVon'          => $request->tabelleLevelVon,
                 'tabelleLevelBis'          => $request->tabelleLevelBis,
+                'wertungsart'              => $request->wertungsart,
                 'finale'                   => $request->finaleTable,
-                'buchholzzahlaktiv'        => $request->buchholzzahlaktiv,
+                'buchholzwertungaktiv'     => $request->buchholzwertungaktiv,
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'bearbeiter_id'            => Auth::id(),
                 'updated_at'               => Carbon::now()

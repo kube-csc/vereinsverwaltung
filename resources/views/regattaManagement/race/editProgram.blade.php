@@ -23,7 +23,7 @@
                     Bitte bearbeite das Programm des Rennens.
                   </div>
               </div>
-              <form autocomplete="off" action="{{ url('Rennen/Programm/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
+              <form autocomplete="off" action="{{ url('/Rennen/Programm/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
                   @csrf
                   @php
                       // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen

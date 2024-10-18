@@ -14,7 +14,6 @@ return new class extends Migration
     public function up()
     {
         Schema::table('tabeles', function (Blueprint $table) {
-            $table->foreign('system_id')->references('id')->on('pointsystems');
             $table->dropColumn('getrenntewertung');
         });
     }
@@ -27,8 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('tabeles', function (Blueprint $table) {
-            $table->dropForeign(['system_id']);
-            $table->boolean('getrenntewertung')->default(0);
+             $table->boolean('getrenntewertung')->default(0);
         });
     }
 };

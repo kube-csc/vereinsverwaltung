@@ -102,6 +102,13 @@
                                      <small class="form-text text-danger">{!! $errors->first('wertungsart') !!}</small>
                                   </div>
 
+                                 <div class="my-4">
+                                     <label for="tabelleSystem">System:</label>
+                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('tabelleSystem') ? 'bg-red-300' : '' }}"
+                                            id="tabelleSystem" placeholder="System" name="tabelleSystem" value="{{ old('tabelleSystem') ?? $tabele->tabelleSystem }}">
+                                     <small class="form-text text-danger">{!! $errors->first('tabelleSystem') !!}</small>
+                                 </div>
+
                                   <div class="my-4">
                                      <label for="buchholzwertungaktiv">Buchholzwertung aktiv:</label><br>
                                      <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('buchholzwertungaktiv') ? 'bg-red-300' : '' }}"

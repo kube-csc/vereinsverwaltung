@@ -164,6 +164,7 @@ class TabeleController extends Controller
                 'tabelleDatumVon'          => $request->tabelleDatum,
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'wertungsart'              => $request->wertungsart,
+                'stystem_id'               => $request->tabelleSystem,
                 'tabelleVisible'           => "1",
                 'finale'                   => $request->finaleTable,
                 'buchholzwertungaktiv'     => $request->buchholzwertungaktiv,
@@ -271,13 +272,14 @@ class TabeleController extends Controller
             $request->finaleTable=0;
         }
 
-        if($request->buchholzwertungaktiv == Null || $request->wertungsart == 3){
+        if($request->buchholzwertungaktiv == Null or $request->wertungsart == 3){
             $request->buchholzwertungaktiv=0;
         }
 
         Tabele::find($tabelleid)->update([
                 'ueberschrift'             => $request->tabelleBezeichnung,
                 'gruppe_id'                => $request->tabelleGruppe,
+                'system_id'                => $request->tabelleSystem,
                 'tabelleDatumVon'          => $request->tabelleDatum,
                 'tabelleLevelVon'          => $request->tabelleLevelVon,
                 'tabelleLevelBis'          => $request->tabelleLevelBis,

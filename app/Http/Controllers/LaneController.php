@@ -269,21 +269,40 @@ class LaneController extends Controller
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
             if ($lane->mannschaft_id != $request->mannschaftId[$index] || $lane->tabele_id != $request->tabeleId[$index]) {
-                    if($request->mannschaftId[$index]){
-                        $lane->mannschaft_id = $request->mannschaftId[$index];
-                        $changeCount=1;
-                    }
+                $altMannschaftId = $lane->mannschaft_id;
+                $altTabeleId = $lane->tabele_id;
+                if($lane->mannschaft_id != $request->mannschaftId[$index]){
+                    $lane->mannschaft_id = $request->mannschaftId[$index];
+                    $changeCount=1;
+                }
 
-                    if(isset($request->tabeleId[$index])) {
-                        $lane->tabele_id = $request->tabeleId[$index];
-                    }
+                if($lane->tabele_id != $request->tabeleId[$index]) {
+                    $lane->tabele_id = $request->tabeleId[$index];
+                    $changeCount=1;
+                }
+
+                if($changeCount == 1){
+                    $lane->platz = 0;
                     $lane->bearbeiter_id = Auth::id();
-                    $lane->updated_at = Carbon::now();
+                    $lane->updated_at    = Carbon::now();
                     $lane->save();
+
+                    $mannschaftCount = Lane::where('regatta_id', Session::get('regattaSelectId'))
+                        ->where('tabele_id', $altTabeleId)
+                        ->where('mannschaft_id', $altMannschaftId)
+                        ->count();
+
+                    if($mannschaftCount == 0){
+                        $tabledata = Tabledata::where('regatta_id', Session::get('regattaSelectId'))
+                            ->where('tabele_id', $altTabeleId)
+                            ->where('mannschaft_id', $altMannschaftId)
+                            ->delete();
+                    }
+                }
             }
         }
 
-        if ($changeCount == 1) {
+        if($changeCount == 1) {
             $race = Race::find($raceId);
             $race->status = 2;
             $race->save();
@@ -312,9 +331,7 @@ class LaneController extends Controller
 
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
-            //dump('Line berechnung'.' / '.$lane->platz.' / '.$request->platz[$index]);
-            if (($lane && $lane->platz != $request->platz[$index]) || ($request->newCalculate == 1)) {
-                //dump('berechnung');
+            if (($lane && $lane->mannschaft_id) && ($lane->platz != $request->platz[$index] ||$request->newCalculate == 1)) {
                 if($lane->platz>0) {
                     $platzAlt=$lane->platz;
                 }
@@ -330,7 +347,7 @@ class LaneController extends Controller
                 }
 
                 // Wenn es sich um ein Mix Rennhandelt soll für jede Bahn die Tabelle aufgerufen werden
-                if($race->mix == 1)
+                if($race->mix == 1 && $lane->tabele_id >0)
                 {
                   $tabele = Tabele::find($lane->tabele_id);
                 }
@@ -340,12 +357,17 @@ class LaneController extends Controller
                 if($tabelIdAlt != $tabele->id) {
                     $tabelIdAlt=$tabele->id;
                     $laneErsteMannschaftId = Lane::where('tabele_id', $tabele->id)->first();
+                    if($laneErsteMannschaftId){
+                        $laneMaxRennen = Lane::where('tabele_id', $tabele->id)
+                            ->where('mannschaft_id', $laneErsteMannschaftId->mannschaft_id)
+                            ->count();
 
-                    $laneMaxRennen = Lane::where('tabele_id', $tabele->id)
-                        ->where('mannschaft_id', $laneErsteMannschaftId->mannschaft_id)
-                        ->count();
-
-                    $tabele->maxrennen=$laneMaxRennen;
+                        $tabele->maxrennen=$laneMaxRennen;
+                    }
+                    else{
+                        $tabele->maxrennen=0;
+                        Tabledata::where('tabele_id', $tabele->id)->delete();
+                    }
                     $tabele->save();
                 }
 
@@ -364,18 +386,17 @@ class LaneController extends Controller
                 $tabledata = Tabledata::where('regatta_id', Session::get('regattaSelectId'))
                                       ->where('tabele_id', $tabele->id)
                                       ->where('mannschaft_id', $lane->mannschaft_id)
+                                      ->whereNull('deleted_at')
                                       ->first();
 
                 if ($tabledata) {
                     if($platzAlt == 0) {
-                        // Eintrag überschreiben
                         $tabledata->punkte += $punkte;
                         $tabledata->rennanzahl += 1;
                         $tabledata->bearbeiter_id = Auth::id();
                         $tabledata->autor_id = Auth::id();
                         $tabledata->updated_at = Carbon::now();
                         $tabledata->save();
-                        //dump('plazalt');
                     }
                     else{
                         $laneOptimierungs = Lane::where('tabele_id', $tabele->id)
@@ -404,11 +425,9 @@ class LaneController extends Controller
                         $tabledata->autor_id = Auth::id();
                         $tabledata->updated_at = Carbon::now();
                         $tabledata->save();
-
-                        //dump('Nullpunkte eintrag? rennzahl: '.$rennanzahl);
                     }
-                } else {
-                    // Neuer Eintrag
+                }
+                else {
                     $tabledata = new Tabledata([
                         'regatta_id' => Session::get('regattaSelectId'),
                         'tabele_id' => $tabele->id,
@@ -426,81 +445,76 @@ class LaneController extends Controller
         }
 
         if($changeCount == 1 && $tabele->buchholzwertungaktiv == 1 && $tabele->wertungsart != 3) {
-            //dump('Buchholzwertung');
-            //Ermiitel gegen welche Manschaften die Mannschaft bei der die Buchholzzhal ermittel wird
-            $lanes = Lane::where('tabele_id', $tabele->id)->get();
-            //dump($lanes);
-            // Welche Manschaften sin der Tabelle vorhanden
-            //$teamIds = $lanes->pluck('mannschaft_id')->unique();
-            //dump($teamIds);
+            $tabeleIds = Lane::where('rennen_id', $raceId)->pluck('tabele_id')->unique();
+            foreach ($tabeleIds as $tabeleId) {
 
-            $teamsBuchholzwertung = Lane::where('rennen_id', $raceId)
-                ->pluck('mannschaft_id')
-                ->unique();
+                //Ermiitel gegen welche Manschaften die Mannschaft bei der die Buchholzzahl ermittel wird
+                $lanes = Lane::where('tabele_id', $tabeleId)->get();
 
-            foreach ($teamsBuchholzwertung as $teamsBuchholzwertungId) {
-                $opponentName = RegattaTeam::find($teamsBuchholzwertungId);
-                //$opponentName = $opponentName->teamname;
-                //dump($teamsBuchholzwertungId." / ".$opponentName);
+                // Welche Manschaften sind in der Tabelle vorhanden
+                $teamIds = $lanes->pluck('mannschaft_id')->unique();
 
-                // Eine Schleife über alle Manschaften
-                //foreach ($teamIds as $teamId) {
+                $teamsBuchholzwertung = Lane::where('rennen_id', $raceId)
+                    ->pluck('mannschaft_id')
+                    ->unique();
+
+                foreach ($teamIds as $teamId) {
+                ///foreach ($teamsBuchholzwertung as $teamsBuchholzwertungId) {
+                    $opponentName = RegattaTeam::find($teamId);
+                    //$opponentName = $opponentName->teamname;
+
+                    // Eine Schleife über alle Manschaften
+                    //foreach ($teamIds as $teamId) {
                     //ermiitel die Rennen rennen_id in den die Manschaft mit der $teamId  efahren ist
-                    //$rennenIds = $lanes->where('mannschaft_id', $teamId)->pluck('rennen_id')->unique();
-                    $rennenIds = $lanes->where('mannschaft_id', $teamsBuchholzwertungId)->pluck('rennen_id')->unique();
-
+                    $rennenIds = $lanes->where('mannschaft_id', $teamId)->pluck('rennen_id')->unique();
+                    //$rennenIds = $lanes->where('mannschaft_id', $teamsBuchholzwertungId)->pluck('rennen_id')->unique();
                     /*
-                    foreach($rennenIds as $rennenId) {
-                       $rennen=Race::find($rennenId);
-                       //rennen ueberschrift
-                         $rennenUeberschrift=$rennen->ueberschrift;
-                         dump($rennen->rennBezeichnung);
-                    }
-                    */
-
+                       foreach($rennenIds as $rennenId) {
+                          $rennen=Race::find($rennenId);
+                          //rennen ueberschrift
+                            $rennenUeberschrift=$rennen->ueberschrift;
+                            dump($rennen->rennBezeichnung);
+                       }
+                       */
                     // Ermittel die Manschaften gegen die die Manschaft in den Rennen $rennenIds gefahren ist
                     $opponentIds = $lanes->whereIn('rennen_id', $rennenIds)
-                        ->where('mannschaft_id', '!=', $teamsBuchholzwertungId)
-                        //->where('mannschaft_id', '!=', $teamId)
+                        //->where('mannschaft_id', '!=', $teamsBuchholzwertungId)
+                        ->where('mannschaft_id', '!=', $teamId)
                         ->where('platz', '>', 0)
                         ->pluck('mannschaft_id')
                         ->unique();
-
                     /*
-                    foreach($opponentIds as $opponentId) {
-                        $opponent=RegattaTeam::find($opponentId);
-                        //Manschaftsname
-                        $opponentName=$opponent->teamname;
-                        dump($opponentId." / ".$opponentName);
-                    }
-                    */
-
+                       foreach($opponentIds as $opponentId) {
+                           $opponent=RegattaTeam::find($opponentId);
+                           //Manschaftsname
+                           $opponentName=$opponent->teamname;
+                           dump($opponentId." / ".$opponentName);
+                       }
+                       */
                     $buchholzScore = Tabledata::whereIn('mannschaft_id', $opponentIds)
-                        ->where('tabele_id', $tabele->id)
-                        ->sum('punkte');
-
+//                        ->where('tabele_id', $tabele->id)
+                          ->where('tabele_id', $tabeleId)
+                          ->sum('punkte');
                     /*
-                    $buchholzScoreEinzel = Tabledata::whereIn('mannschaft_id', $opponentIds)
-                        ->where('tabele_id', $tabele->id)
-                        ->get();
-                    foreach($buchholzScoreEinzel as $buchholzScoreEinzel) {
-                        dump($buchholzScoreEinzel->mannschaft_id." / ".$buchholzScoreEinzel->punkte);
-                    }
-
-                    dump("Summe aller Punkte der Gegner:".$buchholzScore);
+                       $buchholzScoreEinzel = Tabledata::whereIn('mannschaft_id', $opponentIds)
+                           ->where('tabele_id', $tabele->id)
+                           ->get();
+                       foreach($buchholzScoreEinzel as $buchholzScoreEinzel) {
+                           dump($buchholzScoreEinzel->mannschaft_id." / ".$buchholzScoreEinzel->punkte);
+                       }
+                       dump("Summe aller Punkte der Gegner:".$buchholzScore);
                     */
-
                     //Speicher die Buchholzzahl in der Tabelle Tabledata zur entsprenden Manschaft
-                    $tabledata = Tabledata::where('tabele_id', $tabele->id)
-                        //->where('mannschaft_id', $teamId)
-                        ->where('mannschaft_id', $teamsBuchholzwertungId)
+                    //$tabledata = Tabledata::where('tabele_id', $tabele->id)
+                    $tabledata = Tabledata::where('tabele_id', $tabeleId)
+                        ->where('mannschaft_id', $teamId)
+                        //->where('mannschaft_id', $teamsBuchholzwertungId)
                         ->first();
-
                     if ($tabledata) {
                         $tabledata->buchholzzahl = $buchholzScore;
                         $tabledata->save();
                     }
-                //}
+                }
             }
         }
 
@@ -525,7 +539,6 @@ class LaneController extends Controller
         }
 
         if ($changeCount == 1 && $platzCount == 0) {
-            //dump('Rennen die Wertung zurücksetzen');
             Race::find($raceId)->update([
                 //'ergebnisBeschreibung' => $request->ergebnisBeschreibung,
                 'verspaetungUhrzeit'   => $request->rennUhrzeit,
@@ -538,7 +551,6 @@ class LaneController extends Controller
             $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
         }
 
-        //dd('ende');
         return redirect('/Rennen/Programm')->with([
                 'success' => 'Die Platzierungen vom Rennen wurde eingeben.'
             ]

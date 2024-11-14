@@ -102,7 +102,7 @@
                                                         @if( $lane->mannschaft_id == NULL )
                                                             selected
                                                     @endif
-                                                >keine Bestzung</option>
+                                                >keine Besetzung</option>
 
                                                 @foreach($teams as $team)
                                                     <option value="{{ $team->id }}"

@@ -115,7 +115,7 @@
                                         @endforeach
 
                                       <div class="my-4" >
-                                          <label for="newCalculate">Neue Berechnung:</label>
+                                          <label for="newCalculate">Neue Tabellenberechnung:</label>
                                           <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('newCalculate') ? 'bg-red-300' : '' }}"
                                                  id="newCalculate" name="newCalculate" value="1"
                                                  @if(old('newCalculate')==1)

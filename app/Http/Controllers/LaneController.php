@@ -331,7 +331,7 @@ class LaneController extends Controller
 
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
-            if (($lane && $lane->mannschaft_id) && ($lane->platz != $request->platz[$index])|| ($request->newCalculate == 1)) {
+            if (($lane && $lane->mannschaft_id) && (($lane->platz != $request->platz[$index]) || ($request->newCalculate == 1))) {
                 if($lane->platz>0) {
                     $platzAlt=$lane->platz;
                 }
@@ -448,7 +448,7 @@ class LaneController extends Controller
             $tabeleIds = Lane::where('rennen_id', $raceId)->pluck('tabele_id')->unique();
             foreach ($tabeleIds as $tabeleId) {
 
-                //Ermiittel gegen welche Mannschaften die Mannschaft bei der die Buchholzzahl ermittel wird
+                //Ermittel gegen welche Mannschaften die Mannschaft bei der die Buchholzzahl ermittel wird
                 $lanes = Lane::where('tabele_id', $tabeleId)->get();
 
                 // Welche Mannschaften sind in der Tabelle vorhanden
@@ -471,15 +471,17 @@ class LaneController extends Controller
 
                     $buchholzScore = 0;
                     foreach($opponentIds as $opponentId) {
-                           $opponent=RegattaTeam::find($opponentId);
-                           //Mannschaftsname
-                           $opponentName=$opponent->teamname;
+                       $opponent=RegattaTeam::find($opponentId);
+                       //Mannschaftsname
+                       $opponentName=$opponent->teamname;
 
-                           $buchholzPunkte = Tabledata::where('mannschaft_id', $opponentId)
-                                         ->where('tabele_id', $tabeleId)
-                                         ->first();
+                       $buchholzPunkte = Tabledata::where('mannschaft_id', $opponentId)
+                                     ->where('tabele_id', $tabeleId)
+                                     ->first();
 
-                           $buchholzScore = $buchholzScore+$buchholzPunkte->punkte;
+                       if ($buchholzPunkte) {
+                            $buchholzScore += $buchholzPunkte->punkte;
+                       }
                     }
 
                     $tabledata = Tabledata::where('tabele_id', $tabeleId)
@@ -562,7 +564,6 @@ class LaneController extends Controller
 
         $raceTimes = Race::where('event_id', Session::get('regattaSelectId'))
             ->where('id', '!=', $race_id)
-            //->where('level', $raceLevel->level)
             ->where('rennUhrzeit', '>', $raceLevel->rennUhrzeit)
             ->where('rennDatum', $raceLevel->rennDatum)
             ->orderby('rennUhrzeit')

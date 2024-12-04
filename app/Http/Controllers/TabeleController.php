@@ -200,7 +200,7 @@ class TabeleController extends Controller
 
         $tabeledatas = Tabledata::where('tabele_id', $tabeleid)
             ->orderby('punkte', 'desc')
-            ->orderBy('buchholzzahl')
+            ->orderBy('buchholzzahl', 'desc')
             ->orderBy('zeitpunktegleich')
             ->orderBy('hundertpunktegleich')
             ->get();

@@ -352,7 +352,7 @@ class LaneController extends Controller
                   $tabele = Tabele::find($lane->tabele_id);
                 }
 
-                // Maximale Anzahl der Rennen für eine Mannschaft ermitteln und in Tabele speichern
+                // Maximale Anzahl der Rennen für eine Mannschaft ermitteln und in Tabelle speichern
                 if($tabelIdAlt != $tabele->id) {
                     $tabelIdAlt=$tabele->id;
                     $laneErsteMannschaftId = Lane::where('tabele_id', $tabele->id)->first();
@@ -380,7 +380,7 @@ class LaneController extends Controller
                 }
 
                 if($tabele->wertungsart == 3) {
-                    $punkte = $race->bahn-$request->platz[$index]+1;
+                    $punkte = $race->bahnen-$request->platz[$index]+1;
                 }
 
                 $tabledata = Tabledata::where('regatta_id', Session::get('regattaSelectId'))
@@ -409,11 +409,17 @@ class LaneController extends Controller
 
                             $tabele = Tabele::find($laneOptimierung->tabele_id);
 
-                            $pointsystem = Pointsystem::where('system_id', $tabele->system_id)
-                                                      ->where('platz', $laneOptimierung->platz)
-                                                      ->first();
+                            if($tabele->wertungsart == 1) {
+                                $pointsystem = Pointsystem::where('system_id', $tabele->system_id)
+                                    ->where('platz', $laneOptimierung->platz)
+                                    ->first();
+                                $punkte += optional($pointsystem)->punkte ?? 0;
+                            }
 
-                            $punkte += optional($pointsystem)->punkte ?? 0;
+                            if($tabele->wertungsart == 3) {
+                                $punkte += $race->bahnen-$laneOptimierung->platz+1;
+                            }
+
                             if($laneOptimierung->platz > 0) {
                                 ++$rennanzahl;
                             }
@@ -525,6 +531,8 @@ class LaneController extends Controller
 
             $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
         }
+
+        dd('end');
 
         return redirect('/Rennen/Programm')->with([
                 'success' => 'Die Platzierungen vom Rennen wurde eingeben.'

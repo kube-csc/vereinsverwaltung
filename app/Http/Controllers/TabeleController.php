@@ -42,7 +42,7 @@ class TabeleController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function index()
     {
@@ -96,7 +96,7 @@ class TabeleController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function create()
     {
@@ -141,7 +141,7 @@ class TabeleController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request){
         $request->validate([
@@ -192,7 +192,7 @@ class TabeleController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Tabele  $tabele
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function show($tabeleid)
     {
@@ -215,7 +215,7 @@ class TabeleController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Tabele  $tabele
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function edit($tabelleid)
     {
@@ -251,7 +251,7 @@ class TabeleController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Tabele  $tabele
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $tabelleid)
     {
@@ -312,7 +312,7 @@ class TabeleController extends Controller
 
         if($request->tabeleDatei){
             $extension = $request->tabeleDatei->extension();
-            $newDocumentName = 'tabelle' . $tabele_id . '_' . str::random(4) . '.' . $extension;
+            $newDocumentName = 'tabelle' . $tabelleid . '_' . str::random(4) . '.' . $extension;
             $fileTabeleDatei=$request->file('tabeleDatei')->getClientOriginalName();
             Storage::disk('public')->putFileAs(
                 'tabeleDokumente/',

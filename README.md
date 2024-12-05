@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.05.xx</p>
+<p>Version: V00.06.xx</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -130,12 +130,13 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
     <li>Regatta auswählen</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
     <li>Rennen anlegen und bearbeiten</li>
+    <li>Rennen können Tabellen oder mehrere Tabellen zugeordnet werden</li>
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
     <li>Mannschaften können den Rennen zugeteilt werden</li>
     <li>Tabellen anlegen und bearbeiten</li>
     <li>Plazierungen können eingegeben werden</li> 
     <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz Wertung</li>
-    <li>Ergebnislisten für jede Tabelle hochladen</li>
+    <li>Ergebnislisten können für jede Tabelle hochladen</li>
     <li>Startzeitverschiebungen werden berechnet</li>
     <li>Rennergebnisse und Tabellen können mit einer Veröffentlichungszeit versehen werden</li>
 </ul>
@@ -199,9 +200,9 @@ Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" ta
 <br>
 <hr>
 <br>
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel"></a></p>
+<p><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel"></a></p>
 
-<p align="center">
+<p>
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>

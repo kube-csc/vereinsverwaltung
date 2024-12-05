@@ -1,12 +1,16 @@
 ## Update Anleitung
+
 **Version V00.06.00**
+
 - artisan migrate
 
 ***Neue Funktionen***
-- Es können Tabellen für Regatten benutzt werden
-- Es können Einzele Rennen verwaltet werden
+- Rennen können in Tabellen ausgewertet werden
+- Rennen mit die als Mixed gekennzeichnet sind, werden in unterschiedlichen Tabellen ausgewertet
+- Einzelrenenn können in Tabellen ausgewertet werden
 
 **Version V00.05.00**
+
 - Composer update
 - In der Datenbank in der Tabelle race sind die Felder in der Datenbank von Hand  
   event_id von integer auf unsignedBigInteger bigint(20) Attribute=UNSIGNED umzustellen
@@ -28,12 +32,15 @@
 - Plazierungen können eingegeben werden
 
 **Version V00.04.01**
+
+Die Abteilungen / Sportarten können nach einer Positionsnummer sortiert werden
 - artisan migrate
 
 ***Neue Funktionen***
 - Die Abteilungen / Sportarten können nach einer Positionsnummer sortiert werden
  
 **Version V00.04.00**
+
 - der Ordner storage/app/public ist anzulegen
 - der Ordner storage/app/images ist anzulegen
 - die Files des public/storage ist unter storage/app/public zu verschieben
@@ -41,6 +48,7 @@
 - der Ordner public/storage ist zu löschen
 
 **Version V00.03.02**
+
 - artisan migrate
 - in der .env muss ergänzt werden:
 - PP_REGATTA=ja #ja oder nein
@@ -49,9 +57,11 @@
 - Helferdatenbank wurde ergänzt
 
 **Version V00.03.01**
+
 - In der .env muss von der .env.example neu parametriert werden
 
 **Version V00.03.00**
 
 **Version V00.02.00**
+
 - artisan migrate

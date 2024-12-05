@@ -32,10 +32,10 @@
                       <div class="ml-12">
                           <div class="mt-2 text-sm text-gray-500">
 
-                              <form autocomplete="off" action="{{ url('Rennen/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
+                             <form autocomplete="off" action="{{ url('Rennen/update/'.$race->id) }}" name="action" id="action" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
-                                  // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
+                                  // ToDo: @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                   <div class="my-4" >
                                       <label for="nummer">Nummer:</label>
@@ -149,7 +149,8 @@
                                       </select>
                                   </div>
                                   <div class="py-2">
-                                     <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
+                                      <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" name="action" id="action" value="save">Speichern</button>
+                                      <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" name="action" id="action" value="save_and_edit_next">Speichern & nächstes Rennen bearbeiten</button>
                                   </div>
                              </form>
                              <br>

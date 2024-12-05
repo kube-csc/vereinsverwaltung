@@ -532,8 +532,6 @@ class LaneController extends Controller
             $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
         }
 
-        dd('end');
-
         return redirect('/Rennen/Programm')->with([
                 'success' => 'Die Platzierungen vom Rennen wurde eingeben.'
             ]

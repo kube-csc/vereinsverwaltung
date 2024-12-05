@@ -71,7 +71,7 @@ class RaceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
 
     public function index()
@@ -341,7 +341,7 @@ class RaceController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Race  $race
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function edit($raceid)
     {
@@ -423,7 +423,7 @@ class RaceController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Race  $race
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $race_id)
     {
@@ -480,10 +480,29 @@ class RaceController extends Controller
             ]
         );
 
-        return redirect('/Rennen/alle')->with([
-                'success' => 'Die Daten vom Rennen <b>' . $request->rennBezeichnung . '</b> wurden geändert.'
-            ]
-        );
+        // Unterscheiden, welche Aktion ausgeführt werden soll
+        if ($request->input('action') == 'save_and_edit_next') {
+            // Logik für "Speichern & nächstes Rennen bearbeiten"
+
+            $nextRace = Race::where([
+                'races.event_id' => Session::get('regattaSelectId')
+            ])
+                ->where('rennUhrzeit','>=', $request->rennUhrzeit)
+                ->whereNot('id', $race_id)
+                ->orderby('rennDatum')
+                ->orderby('rennUhrzeit')
+                ->first();
+
+            return redirect('Rennen/edit/'.$nextRace->id)->with([
+                'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
+            ]);
+        } else {
+            // Logik für "Speichern"
+            return redirect('/Rennen/alle')->with([
+                  'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
+                ]
+            );
+        }
     }
 
     public function updateProgram(Request $request, $race_id)

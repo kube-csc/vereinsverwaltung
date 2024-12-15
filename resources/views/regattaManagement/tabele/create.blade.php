@@ -99,17 +99,28 @@
                                     <label for="wertungsart">Wertungsart:</label><br>
                                     <select name="wertungsart" id="wertungsart" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('wertungsart') ? 'bg-red-300' : '' }}">
                                         <option value="1" {{ old('wertungsart') == 1 ? 'selected' : '' }}>Punkte</option>
-                                        <option value="2" {{ old('wertungsart') == 2 ? 'selected' : '' }}>Zeit</option>
+                                    {{--<option value="2" {{ old('wertungsart') == 2 ? 'selected' : '' }}>Zeit</option>--}}
                                         <option value="3" {{ old('wertungsart') == 3 ? 'selected' : '' }}>Einzelner Lauf</option>
                                     </select>
                                     <small class="form-text text-danger">{!! $errors->first('wertungsart') !!}</small>
                                 </div>
 
                                 <div class="my-4">
-                                    <label for="tabelleSystem">System:</label>
+                                    <label for="tabelleSystem">Tabellen Punkte System:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('tabelleSystem') ? 'bg-red-300' : '' }}"
                                            id="tabelleSystem" placeholder="1" name="tabelleSystem" value="{{ old('tabelleSystem') }}">
                                     <small class="form-text text-danger">{!! $errors->first('tabelleSystem') !!}</small>
+                                </div>
+
+                                <div class="my-4">
+                                    <label for="getrenntewertung">Getrennte Wertung bei Mixrennen:</label><br>
+                                    <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('getrenntewertung') ? 'bg-red-300' : '' }}"
+                                           id="getrenntewertung" name="getrenntewertung" value="1"
+                                           @if(old('getrenntewertung') == 1)
+                                               checked
+                                           @endif
+                                    >
+                                    <small class="form-text text-danger">{!! $errors->first('getrenntewertung') !!}</small>
                                 </div>
 
                                 <div class="my-4">

@@ -129,6 +129,8 @@
                                                         >{{ $tabeleAll->ueberschrift }}</option>
                                                     @endforeach
                                                </select>
+                                            @else
+                                                <input type="hidden" name="tabeleId[{{$bahn}}]" value="{{ $lane->tabele_id }}">
                                             @endif
 
                                         </div>

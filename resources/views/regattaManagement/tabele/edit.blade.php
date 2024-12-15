@@ -12,7 +12,7 @@
 
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
-                      Rennen: {{ old('ueberschrift') ?? $tabele->ueberschrift }}
+                      Tabelle: {{ old('ueberschrift') ?? $tabele->ueberschrift }}
                   </div>
 
                   <div class="mt-6 text-gray-500">
@@ -103,10 +103,21 @@
                                   </div>
 
                                  <div class="my-4">
-                                     <label for="tabelleSystem">System:</label>
+                                     <label for="tabelleSystem">Tabellen Punkte System:</label>
                                      <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('tabelleSystem') ? 'bg-red-300' : '' }}"
-                                            id="tabelleSystem" placeholder="System" name="tabelleSystem" value="{{ old('tabelleSystem') ?? $tabele->tabelleSystem }}">
+                                            id="tabelleSystem" placeholder="System" name="tabelleSystem" value="{{ old('tabelleSystem') ?? $tabele->system_id }}">
                                      <small class="form-text text-danger">{!! $errors->first('tabelleSystem') !!}</small>
+                                 </div>
+
+                                 <div class="my-4">
+                                        <label for="getrenntewertung">Getrennte Wertung bei Mixrennen:</label><br>
+                                        <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('getrenntewertung') ? 'bg-red-300' : '' }}"
+                                               id="getrenntewertung" name="getrenntewertung" value="1"
+                                               @if(old('getrenntewertung') == 1 or $tabele->getrenntewertung == 1)
+                                                   checked
+                                               @endif
+                                        >
+                                        <small class="form-text text-danger">{!! $errors->first('getrenntewertung') !!}</small>
                                  </div>
 
                                   <div class="my-4">
@@ -121,7 +132,7 @@
                                  </div>
 
                                   <div class="my-4">
-                                        <label for="finaleTable">Finaletabelle:</label>
+                                        <label for="finaleTable">Finale Tabelle:</label>
                                         <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('finaleTable') ? 'bg-red-300' : '' }}"
                                                id="finaleTable" name="finaleTable" value="1"
                                                @if(old('finaleTable') == 1 or $tabele->finale == 1)
@@ -153,7 +164,7 @@
                                   </div>
 
                                   <div class="py-2">
-                                     <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
+                                     <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Speichern</button>
                                   </div>
                              </form>
                              <br>

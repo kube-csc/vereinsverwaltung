@@ -52,7 +52,7 @@ class TabeleController extends Controller
             ->orderby('tabelleLevelVon')
             ->orderby('tabelleLevelBis')
             ->orderby('ueberschrift')
-            ->paginate(5);
+            ->paginate(10);
 
         return view('regattaManagement.tabele.index')->with([
             'tabeles'  => $tabeles,
@@ -155,6 +155,10 @@ class TabeleController extends Controller
             $request->finaleTable=0;
         }
 
+        if($request->getrenntewertung==Null){
+            $request->getrenntewertung=0;
+        }
+
         $tabele= new Tabele([
                 'event_id'                 => Session::get('regattaSelectId'),
                 'gruppe_id'                => $request->tabelleGruppe,
@@ -164,9 +168,10 @@ class TabeleController extends Controller
                 'tabelleDatumVon'          => $request->tabelleDatum,
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'wertungsart'              => $request->wertungsart,
-                'stystem_id'               => $request->tabelleSystem,
+                'system_id'                => $request->tabelleSystem,
                 'tabelleVisible'           => "1",
                 'finale'                   => $request->finaleTable,
+                'getrenntewertung'         => $request->getrenntewertung,
                 'buchholzwertungaktiv'     => $request->buchholzwertungaktiv,
                 'bearbeiter_id'            => Auth::id(),
                 'autor_id'                 => Auth::id(),
@@ -186,7 +191,7 @@ class TabeleController extends Controller
                 'success' => 'Die Tabelle <b>' . $request->tabelleBezeichnung . '</b> wurde angelegt.'
             ]
         );
-}
+    }
 
     /**
      * Display the specified resource.
@@ -272,6 +277,10 @@ class TabeleController extends Controller
             $request->finaleTable=0;
         }
 
+        if($request->getrenntewertung==Null){
+            $request->getrenntewertung=0;
+        }
+
         if($request->buchholzwertungaktiv == Null or $request->wertungsart == 3){
             $request->buchholzwertungaktiv=0;
         }
@@ -285,6 +294,7 @@ class TabeleController extends Controller
                 'tabelleLevelBis'          => $request->tabelleLevelBis,
                 'wertungsart'              => $request->wertungsart,
                 'finale'                   => $request->finaleTable,
+                'getrenntewertung'         => $request->getrenntewertung,
                 'buchholzwertungaktiv'     => $request->buchholzwertungaktiv,
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'bearbeiter_id'            => Auth::id(),

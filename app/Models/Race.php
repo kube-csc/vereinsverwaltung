@@ -12,4 +12,9 @@ class Race extends Model
     {
         return $this->belongsTo(Tabele::class, 'tabele_id');
     }
+
+    public function lanes()
+    {
+        return $this->hasMany(Lane::class, 'rennen_id');
+    }
 }

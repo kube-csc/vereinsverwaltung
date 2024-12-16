@@ -92,12 +92,12 @@ class RaceController extends Controller
 
     public function indexProgram()
     {
-        $races = Race::where('event_id',Session::get('regattaSelectId'))
-            ->where('status', '<', 2)
-            ->where('programmDatei' , Null)
-            ->where('visible' , 1)
-            ->where('programmDatei' , Null)
-            ->whereOr('status' ,'>',3)
+        $races = Race::where('event_id', Session::get('regattaSelectId'))
+            ->where('visible', 1)
+            ->where(function($query) {
+                $query->where('status', '<', 2)
+                    ->orWhere('programmDatei', null);
+            })
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
             ->paginate(10);
@@ -116,6 +116,7 @@ class RaceController extends Controller
                 $query->where('programmDatei', '!=', null)
                     ->orWhere('status', '<', 3);
             })
+            ->where('status', '>', 1)
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
             ->paginate(10);
@@ -131,9 +132,10 @@ class RaceController extends Controller
     {
         $races = Race::where('event_id',Session::get('regattaSelectId'))
             ->where(function($query) {
-                $query->where('ergebnisDatei', '!=', null)
+                $query->where('ergebnisDatei', null)
                     ->orWhere('status', 2);
             })
+            ->where('status', '>', 4)
             ->where('visible' , 1)
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -204,7 +206,7 @@ class RaceController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request) {
         $request->validate([

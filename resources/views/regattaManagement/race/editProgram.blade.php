@@ -68,11 +68,15 @@
                                          <small class="form-text text-danger">{!! $errors->first('programmDatei') !!}</small>
                                     </div>
                                     <div class="py-2">
-                                       <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
+                                       <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Speichern</button>
                                     </div>
 
                                  <br>
-                                 <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennen/Programm"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
+                                 @if($race->status==3)
+                                    <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennen/Programm"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
+                                 @else
+                                    <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennen/Programm/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
+                                 @endif
                               </div>
                           </div>
                       </div>

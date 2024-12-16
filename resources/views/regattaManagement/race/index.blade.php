@@ -91,7 +91,7 @@
                                              <box-icon name='user'></box-icon>
                                           </a>
                                         @endif
-                                        @if($funktionStatus == 1 && $race->tabele_id)
+                                        @if($funktionStatus == 1 && $race->tabele_id && $race->status <4)
                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/setzen/'.$race->id) }}">
                                               <box-icon name='user'></box-icon>
                                           </a>

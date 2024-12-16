@@ -392,7 +392,8 @@ class LaneController extends Controller
                 {
                   $tabele = Tabele::find($lane->tabele_id);
                 }
-
+                $tabelleBuchholzwertungaktiv[$lane->tabele_id]=$tabele->buchholzwertungaktiv;
+                $tabelleWertungsart[$lane->tabele_id]=$tabele->wertungsart;
                 if($lane->platz>0) {
                     if ($tabele->wertungsart == 1) {
                         if ($tabele->getrenntewertung == 0) {
@@ -490,52 +491,46 @@ class LaneController extends Controller
             }
         }
 
-        if($changeCount == 1 && $tabele->buchholzwertungaktiv == 1 && $tabele->wertungsart != 3) {
-            $tabeleIds = Lane::where('rennen_id', $raceId)->pluck('tabele_id')->unique();
-            foreach ($tabeleIds as $tabeleId) {
+        if($changeCount == 1) {
+            $tabelleIds = Lane::where('rennen_id', $raceId)->pluck('tabele_id')->unique();
+            foreach ($tabelleIds as $tabelleId) {
+                if($tabelleBuchholzwertungaktiv[$tabelleId] == 1 && $tabelleWertungsart[$tabelleId] != 3){
 
-                //Ermittel gegen welche Mannschaften die Mannschaft bei der die Buchholzzahl ermittel wird
-                $lanes = Lane::where('tabele_id', $tabeleId)->get();
+                    //Ermittel gegen welche Mannschaften die Mannschaft bei der die Buchholzzahl ermittel wird
+                    $lanes = Lane::where('tabele_id', $tabelleId)->get();
 
-                // Welche Mannschaften sind in der Tabelle vorhanden
-                $teamIds = $lanes->pluck('mannschaft_id')->unique();
+                    // Welche Mannschaften sind in der Tabelle vorhanden
+                    $teamIds = $lanes->pluck('mannschaft_id')->unique();
 
-                $teamsBuchholzwertung = Lane::where('rennen_id', $raceId)
-                    ->pluck('mannschaft_id')
-                    ->unique();
+                    foreach ($teamIds as $teamId) {
+                        $rennenIds = $lanes->where('mannschaft_id', $teamId)->pluck('rennen_id')->unique();
 
-                foreach ($teamIds as $teamId) {
-                    $opponentName = RegattaTeam::find($teamId);
+                        // Ermittel die Mannschaften gegen die Mannschaft in den Rennen $rennenIds gefahren ist
+                        $opponentIds = $lanes->whereIn('rennen_id', $rennenIds)
+                            ->where('mannschaft_id', '!=' , $teamId)
+                            ->where('platz', '>', 0)
+                            ->pluck('mannschaft_id');
 
-                    $rennenIds = $lanes->where('mannschaft_id', $teamId)->pluck('rennen_id')->unique();
+                        $buchholzScore = 0;
+                        foreach ($opponentIds as $opponentId) {
+                            $opponent = RegattaTeam::find($opponentId);
 
-                    // Ermittel die Mannschaften gegen die Mannschaft in den Rennen $rennenIds gefahren ist
-                    $opponentIds = $lanes->whereIn('rennen_id', $rennenIds)
-                        ->where('mannschaft_id', '!=', $teamId)
-                        ->where('platz', '>', 0)
-                        ->pluck('mannschaft_id');
+                            $buchholzPunkte = Tabledata::where('mannschaft_id', $opponentId)
+                                ->where('tabele_id', $tabelleId)
+                                ->first();
 
-                    $buchholzScore = 0;
-                    foreach($opponentIds as $opponentId) {
-                       $opponent=RegattaTeam::find($opponentId);
-                       //Mannschaftsname
-                       $opponentName=$opponent->teamname;
+                            if ($buchholzPunkte) {
+                                $buchholzScore += $buchholzPunkte->punkte;
+                            }
+                        }
 
-                       $buchholzPunkte = Tabledata::where('mannschaft_id', $opponentId)
-                                     ->where('tabele_id', $tabeleId)
-                                     ->first();
-
-                       if ($buchholzPunkte) {
-                            $buchholzScore += $buchholzPunkte->punkte;
-                       }
-                    }
-
-                    $tabledata = Tabledata::where('tabele_id', $tabeleId)
-                        ->where('mannschaft_id', $teamId)
-                        ->first();
-                    if ($tabledata) {
-                        $tabledata->buchholzzahl = $buchholzScore;
-                        $tabledata->save();
+                        $tablledata = Tabledata::where('tabele_id', $tabelleId)
+                            ->where('mannschaft_id', $teamId)
+                            ->first();
+                        if ($tablledata) {
+                            $tablledata->buchholzzahl = $buchholzScore;
+                            $tablledata->save();
+                        }
                     }
                 }
             }

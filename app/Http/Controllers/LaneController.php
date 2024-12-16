@@ -237,7 +237,7 @@ class LaneController extends Controller
 
         $tabele = Tabele::find($race->tabele_id);
 
-        if($race->status == 2) {
+        if($race->status == 2 && $race->rennDatum == Carbon::now()->toDateString()) {
             $ractetime1 = Carbon::now();
             $ractetime2 = $ractetime1->subMinute(3);
             $ractetime  = $ractetime2->toTimeString();
@@ -403,7 +403,8 @@ class LaneController extends Controller
                         else {
                             if (isset($platz[$lane->tabele_id])) {
                                 $platz[$lane->tabele_id] = $platz[$lane->tabele_id] + 1;
-                            } else {
+                            }
+                            else {
                                 $platz[$lane->tabele_id] = 1;
                             }
                             $pointsystem = Pointsystem::where('system_id', $tabele->system_id)
@@ -416,7 +417,8 @@ class LaneController extends Controller
                     if ($tabele->wertungsart == 3) {
                         if ($tabele->getrenntewertung == 0) {
                             $punkte = $race->bahnen - $lane->platz + 1;
-                        } else {
+                        }
+                        else {
                             if (isset($platz[$lane->tabele_id])) {
                                 $platz[$lane->tabele_id] = $platz[$lane->tabele_id] + 1;
                             } else {
@@ -450,47 +452,6 @@ class LaneController extends Controller
                         $laneRacesSave->save();
                     }
                     else{
-                        if($race->mix == 1 && $lane->tabele_id >0)
-                        {
-                            $tabele = Tabele::find($lane->tabele_id);
-                        }
-
-                        if($lane->platz>0) {
-                            if ($tabele->wertungsart == 1) {
-                                if ($tabele->getrenntewertung == 0) {
-                                    $pointsystem = Pointsystem::where('system_id', $tabele->system_id)
-                                        ->where('platz', $lane->platz)
-                                        ->first();
-                                } else {
-                                    if (isset($platz[$lane->tabele_id])) {
-                                        $platz[$lane->tabele_id] = $platz[$lane->tabele_id] + 1;
-                                    } else {
-                                        $platz[$lane->tabele_id] = 1;
-                                    }
-                                    $pointsystem = Pointsystem::where('system_id', $tabele->system_id)
-                                        ->where('platz', $platz[$lane->tabele_id])
-                                        ->first();
-                                }
-                                $punkte = optional($pointsystem)->punkte ?? 0;
-                            }
-
-                            if ($tabele->wertungsart == 3) {
-                                if ($tabele->getrenntewertung == 0) {
-                                    $punkte = $race->bahnen - $lane->platz + 1;
-                                } else {
-                                    if (isset($platz[$lane->tabele_id])) {
-                                        $platz[$lane->tabele_id] = $platz[$lane->tabele_id] + 1;
-                                    } else {
-                                        $platz[$lane->tabele_id] = 1;
-                                    }
-                                    $punkte = $race->bahnen - $platz[$lane->tabele_id];
-                                }
-                            }
-                        }
-                        else{
-                            $punkte=0;
-                        }
-
                         $tabledata->punkte = $tabledata->punkte+$punkte-$punkteAlt[$lane->id];
                         if($punkte == 0){
                             $tabledata->rennanzahl  = $tabledata->rennanzahl-1;
@@ -503,7 +464,6 @@ class LaneController extends Controller
                         $tabledata->updated_at    = Carbon::now();
                         $tabledata->save();
 
-                        dump('Punkte:'.$punkte.' / lane->id:'.$lane->id);
                         $laneRacesSave = Lane::find($lane->id);
                         $laneRacesSave->punkte = $punkte;
                         $laneRacesSave->save();

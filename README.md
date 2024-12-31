@@ -124,7 +124,7 @@ benötigt.
 </ul>
 <h3>Regattaverwaltung</h3>
 <p>
-In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaverwaltung ein und ausgeschaltet werden.
+In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regattaverwaltung ein und ausgeschaltet werden.
 </p>
 <ul>
     <li>Regatta auswählen</li>
@@ -134,8 +134,8 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
     <li>Mannschaften können den Rennen zugeteilt werden</li>
     <li>Tabellen anlegen und bearbeiten</li>
-    <li>Plazierungen können eingegeben werden</li> 
-    <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz Wertung</li>
+    <li>Platzierungen können eingegeben werden</li> 
+    <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz-Wertung</li>
     <li>Ergebnislisten können für jede Tabelle hochladen</li>
     <li>Startzeitverschiebungen werden berechnet</li>
     <li>Rennergebnisse und Tabellen können mit einer Veröffentlichungszeit versehen werden</li>
@@ -188,14 +188,16 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
 <h3>Präsentation der Regatta</h3>  
 <p>
     Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
-    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> ist kompatibel mit der Version V00.05.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> 
+    ist kompatibel mit der Version V00.05.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Helferlisten</h3>
 <p>
 Helferliste ist eine APP, die eine Liste von Personen verwaltet, die bereit sind, bei einem Event, einer Veranstaltung oder einem Projekt zu helfen. 
 Die Liste enthält die Namen und E-Mail-Adressen der Helfer. Die Helferliste wird von der Person oder Organisation erstellt, die für die Organisation der Veranstaltung verantwortlich ist. Die Liste kann verwendet werden, um 
 die Helfer zu koordinieren und sicherzustellen, dass alle Aufgaben abgedeckt sind.<br>
-Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a> ist kompatibel mit der Version V00.04.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a>.
+Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a> 
+ist kompatibel mit der Version V00.04.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a>.
 </p>
 <br>
 <hr>

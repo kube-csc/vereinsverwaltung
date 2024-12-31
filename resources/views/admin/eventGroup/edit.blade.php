@@ -17,7 +17,7 @@
 
                   <div class="mt-6 text-gray-500">
                     @php
-                      // TODO: Beschreibungstext überarbeiten
+                      // ToDo: Beschreibungstext überarbeiten
                     @endphp
                     Bitte gebe die Daten der Event Gruppe ein.
                   </div>
@@ -35,13 +35,19 @@
                              <form autocomplete="off" action="{{ url('Eventgruppe/update/'.$eventGroup->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
-                                  // TODO:  @method('PUT') in Hobby Projekt noch mal erlernen
+                                  // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
                                 <div class="my-4" >
                                     <label for="name">Event Gruppen Name:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('termingruppe') ? 'bg-red-300' : '' }}"
-                                    id="termingruppe" placeholder="Event Gruppen Name" name="termingruppe" value="{{ old('termingruppe') ?? $eventGroup->termingruppe }}">
+                                           id="termingruppe" placeholder="Event Gruppen Name" name="termingruppe" value="{{ old('termingruppe') ?? $eventGroup->termingruppe }}">
                                     <small class="form-text text-danger">{!! $errors->first('termingruppe') !!}</small>
+                                </div>
+                                <div class="my-4" >
+                                    <label for="domain">Domain:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('domain') ? 'bg-red-300' : '' }}"
+                                           id="domain" placeholder="Domain" name="domain" value="{{ old('domain') ?? $eventGroup->domain }}">
+                                    <small class="form-text text-danger">{!! $errors->first('domain') !!}</small>
                                 </div>
                                 <div class="py-2">
                                  <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>

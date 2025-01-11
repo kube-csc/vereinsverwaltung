@@ -14,9 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('event_groups', function (Blueprint $table) {
-                $table->string('domain')
-                    ->after('visible')
-                    ->nullable();
+                $table->string('domain')->after('visible')->nullable();
+                $table->string('headerBild')->after('domain')->nullable();
         });
     }
 
@@ -29,6 +28,7 @@ return new class extends Migration
     {
         Schema::table('event_groups', function (Blueprint $table) {
             $table->dropColumn('domain');
+            $table->dropColumn('headerBild');
         });
     }
 };

@@ -16,7 +16,7 @@ return [
     'accepted' => 'The :attribute must be accepted.',
     'active_url' => 'The :attribute is not a valid URL.',
     'after' => 'The :attribute must be a date after :date.',
-    'after_or_equal' => 'Das <span style="font-weight: bold; text-transform: capitalize">:attribute</span> muss ein Datum nach oder gleich dem <span style="font-weight: bold; text-transform: capitalize">:date</span> sein.',
+    'after_or_equal' => 'Das muss ein Datum nach oder gleich dem :date sein.',
     'alpha' => 'The :attribute may only contain letters.',
     'alpha_dash' => 'The :attribute may only contain letters, numbers, dashes and underscores.',
     'alpha_num' => 'The :attribute may only contain letters and numbers.',
@@ -79,10 +79,10 @@ return [
     'max' => [
         'numeric' => 'The :attribute may not be greater than :max.',
         'file' => 'The :attribute may not be greater than :max kilobytes.',
-        'string' => 'Das Eingabefeld <span style="font-weight: bold; text-transform: capitalize">:attribute</span> darf nicht länger als :max Zeichen sein.',
+        'string' => 'Das Eingabefeld darf nicht länger als :max Zeichen sein.',
         'array' => 'The :attribute may not have more than :max items.',
     ],
-    'mimes' => 'Das Daenformat vom <span style="font-weight: bold; text-transform: capitalize">:attribute</span> muss ein Typ von sein: :values.',
+    'mimes' => 'Das Datenformat vom :attribute muss ein Typ von sein: :values.',
     'mimetypes' => 'The :attribute must be a file of type: :values.',
     'min' => [
         'numeric' => 'The :attribute must be at least :min.',
@@ -97,7 +97,7 @@ return [
     'password' => 'The password is incorrect.',
     'present' => 'The :attribute field must be present.',
     'regex' => 'The :attribute format is invalid.',
-    'required' => 'Das Feld <span style="font-weight: bold; text-transform: capitalize">:attribute</span> ist ein Pflichtfeld.',
+    'required' => 'Das Feld :attribute ist ein Pflichtfeld.',
     'required_if' => 'The :attribute field is required when :other is :value.',
     'required_unless' => 'The :attribute field is required unless :other is in :values.',
     'required_with' => 'The :attribute field is required when :values is present.',
@@ -116,7 +116,7 @@ return [
     'timezone' => 'The :attribute must be a valid zone.',
     'unique' => 'The :attribute has already been taken.',
     'uploaded' => 'The :attribute failed to upload.',
-    'url' => 'Das Feld <span style="font-weight: bold; text-transform: capitalize">:attribute</span> hat ein falsches Format.',
+    'url' => 'Das Feld :attribute hat ein falsches Format.',
     'uuid' => 'The :attribute must be a valid UUID.',
 
     /*

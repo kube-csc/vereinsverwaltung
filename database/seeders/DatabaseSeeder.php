@@ -39,5 +39,21 @@ class DatabaseSeeder extends Seeder
        $this->call(timetabelHelperListSeeder::class);
        $this->call(OperationalBookingSeeder::class);
        $this->call(LaneSeeder::class);
+       $this->call(TrainertypSeeder::class);
+       $this->call(TrainertableSeeder::class);
+       $this->call(InstructionSeeder::class);
+       $this->call(CourseParticipantSeeder::class);
+       $this->call(OrganiserSeeder::class);
+       $this->call(CourseSeeder::class);
+       $this->call(CoursedateSeeder::class);
+       $this->call(SportEquipmentSeeder::class);
+       $this->call(SportEquipmentBookedSeeder::class);
+       $this->call(OrganiserSportSectionSeeder::class);
+       $this->call(CourseSportSectionSeeder::class);
+       $this->call(CoursedateUserSeeder::class);
+       $this->call(CourseParticipantBookedSeeder::class);
+       $this->call(OrganiserinformationSeeder::class);
     }
 }
+
+

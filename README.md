@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.06.xx</p>
+<p>Version: V00.07.xx</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -122,7 +122,7 @@ benötigt.
   </li>
 <li>Backlinksverwaltung Umleitung von Links die nicht mehr Existieren</li>
 </ul>
-<h3>Regattaverwaltung</h3>
+<h3>Regatta-Verwaltung</h3>
 <p>
 In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaverwaltung ein und ausgeschaltet werden.
 </p>
@@ -195,7 +195,14 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
 Helferliste ist eine APP, die eine Liste von Personen verwaltet, die bereit sind, bei einem Event, einer Veranstaltung oder einem Projekt zu helfen. 
 Die Liste enthält die Namen und E-Mail-Adressen der Helfer. Die Helferliste wird von der Person oder Organisation erstellt, die für die Organisation der Veranstaltung verantwortlich ist. Die Liste kann verwendet werden, um 
 die Helfer zu koordinieren und sicherzustellen, dass alle Aufgaben abgedeckt sind.<br>
-Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a> ist kompatibel mit der Version V00.04.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a>.
+Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a> ist kompatibel mit der Version V00.04.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+</p>
+<h3>Kurse</h3>
+<p>
+Helferliste ist eine APP, die eine Liste von Personen verwaltet, die bereit sind, bei einem Event, einer Veranstaltung oder einem Projekt zu helfen. 
+Die Liste enthält die Namen und E-Mail-Adressen der Helfer. Die Helferliste wird von der Person oder Organisation erstellt, die für die Organisation der Veranstaltung verantwortlich ist. Die Liste kann verwendet werden, um 
+die Helfer zu koordinieren und sicherzustellen, dass alle Aufgaben abgedeckt sind.<br>
+Die Version V00.01.XX <a href="https://github.com/kube-csc/kurse.git" target="_blank">https://github.com/kube-csc/kurse.git</a> ist kompatibel mit der Version V00.07.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <br>
 <hr>

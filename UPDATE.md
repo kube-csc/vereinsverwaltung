@@ -1,13 +1,40 @@
 ## Update Anleitung
+**Version V00.07.00**
+
+Es werden die Datenbanken für Kursangebote und Buchungen integriert
+- migration
+- Folgende Demo Daten können "geseedert" werden:
+   TrainertypSeeder
+   TrainertableSeeder
+   InstructionSeeder
+   CourseParticipantSeeder
+   OrganiserSeeder
+   CourseSeeder
+   CoursedateSeeder
+   SportEquipmentSeeder
+   SportEquipmentBookedSeeder
+   OrganiserSportSectionSeeder
+   CourseSportSectionSeeder
+   CoursedateUserSeeder
+   CourseParticipantBookedSeeder
+   OrganiserinformationSeeder
+
+**Version V00.06.01**
+
+***Neue Funktionen***
+- Überarbeitung der Buchholz-Wertung
+- Menu für Rennen überarbeitet
 
 **Version V00.06.00**
 
 - artisan migrate
+- Folgende Demo Daten können "geseedert" werden:
+    LaneSeeder
 
-***Neue Funktionen***
+- ***Neue Funktionen***
 - Rennen können in Tabellen ausgewertet werden
 - Rennen mit die als Mixed gekennzeichnet sind, werden in unterschiedlichen Tabellen ausgewertet
-- Einzelrenenn können in Tabellen ausgewertet werden
+- Rennen mit Einzelwertung können in Tabellen ausgewertet werden
 
 **Version V00.05.00**
 
@@ -23,9 +50,11 @@
   gruppe_id von integer auf unsignedBigInteger und auf nullable umzustellen
   system_id von integer auf unsignedBigInteger und auf nullable umzustellen
   Feld veroeffentlichungUhrzeit in finaleAnzeigen Umbenennen
-
-- Wenn die Migration 2024_08_09_010548_add_foreignkey_gruppe_id_to_table fehlschlägt, dann ist die Daten aus dem alten Projekt vorher zu Seeden.
+- 
 - artisan migrate
+  Wenn die Migration 2024_08_09_010548_add_foreignkey_gruppe_id_to_table fehlschlägt, dann sind die Daten mit php artisan db:seed --class=RaceTypeSeeder nach Abruch der Mirgation zu seeden.
+  und die Mirgation neu zu starten.
+
 
 ***Neue Funktionen***
 - Mannschaften können den Rennen zugeteilt werden

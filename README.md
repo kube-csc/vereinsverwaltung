@@ -192,19 +192,24 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
 </p>
 <h3>Helferlisten</h3>
 <p>
-Helferliste ist eine APP, die eine Liste von Personen verwaltet, die bereit sind, bei einem Event, einer Veranstaltung oder einem Projekt zu helfen. 
-Die Liste enthält die Namen und E-Mail-Adressen der Helfer. Die Helferliste wird von der Person oder Organisation erstellt, die für die Organisation der Veranstaltung verantwortlich ist. Die Liste kann verwendet werden, um 
-die Helfer zu koordinieren und sicherzustellen, dass alle Aufgaben abgedeckt sind.<br>
+Kurse ist eine APP für ein Kursbuchungssystem. Es hat folgende Funktionen:<br>
+Kursübersicht: Anzeige der verfügbaren Kurse und Termine.<br>
+Buchung: Möglichkeit, Teilnehmer für Kurse zu buchen und die Startzeit zu ändern.<br>
+Teilnehmerverwaltung: Hinzufügen und Entfernen von Teilnehmern<br>
 Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a> ist kompatibel mit der Version V00.04.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Kurse</h3>
 <p>
-Helferliste ist eine APP, die eine Liste von Personen verwaltet, die bereit sind, bei einem Event, einer Veranstaltung oder einem Projekt zu helfen. 
-Die Liste enthält die Namen und E-Mail-Adressen der Helfer. Die Helferliste wird von der Person oder Organisation erstellt, die für die Organisation der Veranstaltung verantwortlich ist. Die Liste kann verwendet werden, um 
-die Helfer zu koordinieren und sicherzustellen, dass alle Aufgaben abgedeckt sind.<br>
+Die App bietet ein Kursbuchungssystem, das auch für Fahrten oder Trainings verwendet werden kann. Sie hat folgende Funktionen:<br>
+Verwaltung: Sportgeräte, Räume usw. können verwaltet werden.<br>
+Teilnehmer: Accounts anlegen und verwalten.<br>
+Kursübersicht: Anzeige der verfügbaren Kurse und Termine sowie Informationen zu den Kursen, Trainings, Übungen oder Fahrten, die angeboten werden.<br>
+Trainer bzw. Fahrtenleiter: Trainer bzw. Fahrtenleiter können Termine für die Kurse anlegen und bearbeiten.<br>
+Sportgeräte und Räume: Zu den Kursen können Sportgeräte, Räume usw. zugeordnet werden.<br>
+Buchung: Teilnehmer können Kurse buchen und ihre eigenen Buchungen bearbeiten.<br>
+Teilnehmerverwaltung: Hinzufügen und Entfernen von Teilnehmern durch Trainer bzw. Fahrtenleiter.<br>
 Die Version V00.01.XX <a href="https://github.com/kube-csc/kurse.git" target="_blank">https://github.com/kube-csc/kurse.git</a> ist kompatibel mit der Version V00.07.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
-<br>
 <hr>
 <br>
 <p><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel"></a></p>

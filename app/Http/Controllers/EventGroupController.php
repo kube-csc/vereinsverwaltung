@@ -36,7 +36,7 @@ class EventGroupController extends Controller
     public function index()
     {
         $eventGroups = eventGroup::paginate(5);
-         return view('admin.eventGroup.index' , compact('eventGroups'));
+        return view('admin.eventGroup.index' , compact('eventGroups'));
     }
 
     /**
@@ -66,6 +66,7 @@ class EventGroupController extends Controller
         $eventGroup= new eventGroup(
             [
                 'termingruppe'     => $request->termingruppe,
+                'domain'           => $request->domain,
                 'user_id'          => Auth::user()->id,
                 'updated_at'       => Carbon::now(),
                 'created_at'       => Carbon::now()
@@ -114,14 +115,15 @@ class EventGroupController extends Controller
     {
         $request->validate(
             [
-              'termingruppe'         => 'required|max:50'
+                'termingruppe'         => 'required|max:50'
             ]
         );
 
         eventGroup::find($eventGroup_id)->update([
             'termingruppe'    => $request->termingruppe,
+            'domain'          => $request->domain,
             'updated_at'      => Carbon::now()
-          ]);
+        ]);
 
         return redirect('/Eventgruppe/alle')->with(
             [

@@ -22,6 +22,7 @@ use App\Http\Controllers\NewBotmanQuestionController;
 use App\Http\Controllers\BacklinksController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\SporttypeController;
+use App\Http\Controllers\RaceTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -265,6 +266,12 @@ Route::get('/Renneninformation/maxtop/{regattaInfo_id}',  [RegattaInformationCon
 Route::get('/Renneninformation/top/{regattaInfo_id}',     [RegattaInformationController::class, 'top'])      ->name('regattaInformation.top');
 Route::get('/Renneninformation/down/{regattaInfo_id}',    [RegattaInformationController::class, 'down'])     ->name('regattaInformation.down');
 Route::get('/Renneninformation/maxdown/{regattaInfo_id}', [RegattaInformationController::class, 'maxdown'])  ->name('regattaInformation.maxdown');
+
+Route::get('/Rennklassen/alle',                            [RaceTypeController::class, 'index'])  ->name('raceType.index');
+Route::get('/Rennklassen/neu',                             [RaceTypeController::class, 'create']) ->name('raceType.create');
+Route::get('/Rennklassen/speichern/{raceTypeTemplate_id}', [RaceTypeController::class, 'store'])  ->name('raceType.store');
+Route::get('/Rennklassen/edit/{raceType_id}',              [RaceTypeController::class, 'edit'])   ->name('raceType.edit');
+Route::post('/Rennklassen/update/{raceType_id}',           [RaceTypeController::class, 'update']) ->name('raceType.update');
 
 Route::get('/Club/alle',                                      [ClubController::class, 'index'])               ->name('club.index');
 Route::get('/Club/neu',                                       [ClubController::class, 'create'])              ->name('club.create');

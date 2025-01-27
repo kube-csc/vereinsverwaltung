@@ -120,7 +120,7 @@
                                     </div>
 
                                     <div class="my-4" >
-                                        <label for="zusatzmanschaft">Zusatzmannschaften</label>
+                                        <label for="zusatzmanschaft">Zusatzmannschaften:</label>
                                         <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zusatzmanschaft') ? 'bg-red-300' : '' }}"
                                                id="zusatzmanschaft" name="zusatzmanschaft" value="1"
                                                @if(old('zusatzmanschaft') == 1 or $raceType->zusatzmanschaft == 1)

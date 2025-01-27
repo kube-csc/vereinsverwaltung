@@ -123,6 +123,8 @@ class RaceTypeController extends Controller
 
         // Validate the incoming request data
         $validatedData = $request->validate([
+            'typ' => 'required|string',
+            'beschreibung' => 'nullable|string',
             'distanz' => 'required|string',
             'altervon' => 'required|integer',
             'alterbis' => 'required|integer',

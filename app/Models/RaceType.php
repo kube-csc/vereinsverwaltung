@@ -22,6 +22,7 @@ class RaceType extends Model
         'bahnen',
         'zusatzmanschaft',
         'beschreibung',
-        'distanz'
+        'distanz',
+        'meldeGebuehr'
     ];
 }

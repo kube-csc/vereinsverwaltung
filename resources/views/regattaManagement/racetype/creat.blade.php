@@ -15,7 +15,7 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich werden die Renntypen zur Regatta Kopiert
+                   In diesem Bereich werden die Renntypen zur Regatta kopiert
                   </div>
 
               </div>

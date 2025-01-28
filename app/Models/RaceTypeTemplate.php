@@ -21,6 +21,9 @@ class RaceTypeTemplate extends Model
         'bahnen',
         'zusatzmanschaft',
         'beschreibung',
-        'distanz'
+        'distanz',
+        'meldeGebuehr',
+        'autor_id',
+        'bearbeiter_id'
     ];
 }

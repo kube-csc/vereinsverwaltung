@@ -41,7 +41,7 @@ class RaceTypeController extends Controller
             ->orderBy('typ')
             ->get();
 
-        return view('regattaManagement.racetype.creat', compact('raceTypeTemplates'));
+        return view('regattaManagement.racetype.create', compact('raceTypeTemplates'));
 
     }
 
@@ -118,9 +118,6 @@ class RaceTypeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Retrieve the RaceType instance by its ID
-        $raceType = RaceType::findOrFail($id);
-
         // Validate the incoming request data
         $validatedData = $request->validate([
             'typ' => 'required|string',
@@ -134,15 +131,20 @@ class RaceTypeController extends Controller
             'weiblichmax' => 'required|integer',
             'manmin' => 'required|integer',
             'manmax' => 'required|integer',
-            'bahnen' => 'required|integer',
+            'bahnen' => 'required|integer|min:0',
+            'training' => 'required|integer|min:0',
             'meldeGebuehr' => 'required|numeric',
             'zusatzmanschaft' => 'boolean',
         ]);
+
+        // Retrieve the RaceType instance by its ID
+        $raceType = RaceType::findOrFail($id);
 
         if(!isset($request->zusatzmanschaft)){
             $validatedData['zusatzmanschaft'] = 0;
         }
 
+        $validatedData['bearbeiter_id'] = auth()->id();
         // Update the RaceType instance with the validated data
         $raceType->update($validatedData);
 

@@ -23,6 +23,8 @@ class RaceType extends Model
         'zusatzmanschaft',
         'beschreibung',
         'distanz',
-        'meldeGebuehr'
+        'meldeGebuehr',
+        'autor_id',
+        'bearbeiter_id'
     ];
 }

@@ -1,4 +1,14 @@
 ## Update Anleitung
+**Version V00.07.01**
+
+- In der Datenbank in der Tabelle race_types und race_type_templates sind die Felder in der Datenbank von Hand
+  training ist von boolean auf integer umzustellen
+
+***Neue Funktionen***
+****Regatta-Verwaltung****
+- Rennklassen können als Vorlage angelegt und bearbeitet werden
+- Rennklassen können der Regatta zugeordnet werden
+
 **Version V00.07.00**
 
 Es werden die Datenbanken für Kursangebote und Buchungen integriert
@@ -31,7 +41,7 @@ Es werden die Datenbanken für Kursangebote und Buchungen integriert
 - Folgende Demo Daten können "geseedert" werden:
     LaneSeeder
 
-- ***Neue Funktionen***
+***Neue Funktionen***
 - Rennen können in Tabellen ausgewertet werden
 - Rennen mit die als Mixed gekennzeichnet sind, werden in unterschiedlichen Tabellen ausgewertet
 - Rennen mit Einzelwertung können in Tabellen ausgewertet werden
@@ -50,7 +60,7 @@ Es werden die Datenbanken für Kursangebote und Buchungen integriert
   gruppe_id von integer auf unsignedBigInteger und auf nullable umzustellen
   system_id von integer auf unsignedBigInteger und auf nullable umzustellen
   Feld veroeffentlichungUhrzeit in finaleAnzeigen Umbenennen
-- 
+
 - artisan migrate
   Wenn die Migration 2024_08_09_010548_add_foreignkey_gruppe_id_to_table fehlschlägt, dann sind die Daten mit php artisan db:seed --class=RaceTypeSeeder nach Abruch der Mirgation zu seeden.
   und die Mirgation neu zu starten.
@@ -58,7 +68,7 @@ Es werden die Datenbanken für Kursangebote und Buchungen integriert
 
 ***Neue Funktionen***
 - Mannschaften können den Rennen zugeteilt werden
-- Plazierungen können eingegeben werden
+- Platzierungen können eingegeben werden
 
 **Version V00.04.01**
 

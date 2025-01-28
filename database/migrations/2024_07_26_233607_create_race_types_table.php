@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('weiblichmax')->default(0);
             $table->integer('manmin')->default(0);
             $table->integer('manmax')->default(0);
-            $table->boolean('training')->default(0);
+            $table->integer('training')->default(0);
             $table->integer('bahnen')->default(0);
             $table->boolean('zusatzmanschaft')->default(0);
             $table->text('beschreibung')->nullable();

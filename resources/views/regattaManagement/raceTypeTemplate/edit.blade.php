@@ -10,27 +10,27 @@
 
                 <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                     <div class="mt-8 text-2xl">
-                        Renntype: {{ old('typ') ?? $raceType->typ }}
+                        Renntypevorlage: {{ old('typ') ?? $raceTypeTemplate->typ }}
                     </div>
 
                     <div class="mt-6 text-gray-500">
                         @php
                             // ToDo: Beschreibungstext überarbeiten
                         @endphp
-                        Bitte gebe die Daten von Renntype ein.
+                        Bitte gebe die Daten von Renntypevorlage ein.
                     </div>
                 </div>
 
                 <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                     <div class="p-6">
                         <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Renntype ändern</div>
+                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Renntypenvorlagen ändern</div>
                         </div>
 
                         <div class="ml-12">
                             <div class="mt-2 text-sm text-gray-500">
 
-                                <form autocomplete="off" action="{{ url('/Rennklassen/update/'.$raceType->id) }}" name="action" id="action" method="post" enctype="multipart/form-data">
+                                <form autocomplete="off" action="{{ url('/Rennklassenvorlage/update/'.$raceTypeTemplate->id) }}" name="action" id="action" method="post" enctype="multipart/form-data">
                                     @csrf
                                     @php
                                         // ToDo: @method('PUT') in Hobby Projekt noch mal erlernen
@@ -38,91 +38,91 @@
                                     <div class="my-4" >
                                         <label for="typ">Typ:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('typ') ? 'bg-red-300' : '' }}"
-                                               id="typ" placeholder="Klasse" name="typ" value="{{ old('typ') ?? $raceType->typ }}">
+                                               id="typ" placeholder="Klasse" name="typ" value="{{ old('typ') ?? $raceTypeTemplate->typ }}">
                                         <small class="form-text text-danger">{!! $errors->first('typ') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="beschreibung">Beschreibung:</label>
                                         <textarea class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('beschreibung') ? 'bg-red-300' : '' }}"
-                                                  id="beschreibung" placeholder="Beschreibung" name="beschreibung">{{ old('beschreibung') ?? $raceType->beschreibung }}</textarea>
+                                                  id="beschreibung" placeholder="Beschreibung" name="beschreibung">{{ old('beschreibung') ?? $raceTypeTemplate->beschreibung }}</textarea>
                                         <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                     </div>
 
                                     <div class="my-4" >
                                         <label for="distanz">Distanz:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('distanz') ? 'bg-red-300' : '' }}"
-                                               id="distanz" placeholder="Distanz" name="distanz" value="{{ old('distanz') ?? $raceType->distanz }}">
+                                               id="distanz" placeholder="Distanz" name="distanz" value="{{ old('distanz') ?? $raceTypeTemplate->distanz }}">
                                         <small class="form-text text-danger">{!! $errors->first('distanz') !!}</small>
                                     </div>
 
                                     <div class="my-4" >
                                         <label for="altervon">alter Von:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('altervon') ? 'bg-red-300' : '' }}"
-                                               id="altervon" placeholder="alter Von" name="altervon" value="{{ old('altervon') ?? $raceType->altervon }}">
+                                               id="altervon" placeholder="alter Von" name="altervon" value="{{ old('altervon') ?? $raceTypeTemplate->altervon }}">
                                         <small class="form-text text-danger">{!! $errors->first('altervon') !!}</small>
                                     </div>
 
                                     <div class="my-4" >
                                         <label for="alterbis">alter Bis:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('alterbis') ? 'bg-red-300' : '' }}"
-                                               id="alterbis" placeholder="alter Bis" name="alterbis" value="{{ old('alterbis') ?? $raceType->alterbis }}">
+                                               id="alterbis" placeholder="alter Bis" name="alterbis" value="{{ old('alterbis') ?? $raceTypeTemplate->alterbis }}">
                                         <small class="form-text text-danger">{!! $errors->first('alterbis') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="min">Mindest Teilnehmerzahl:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('min') ? 'bg-red-300' : '' }}"
-                                               id="min" placeholder="Mindest Teilnehmerzahl" name="min" value="{{ old('min') ?? $raceType->min }}">
+                                               id="min" placeholder="Mindest Teilnehmerzahl" name="min" value="{{ old('min') ?? $raceTypeTemplate->min }}">
                                         <small class="form-text text-danger">{!! $errors->first('min') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="max">Maximale Teilnehmerzahl:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('max') ? 'bg-red-300' : '' }}"
-                                               id="max" placeholder="Maximale Teilnehmerzahl" name="max" value="{{ old('max') ?? $raceType->max }}">
+                                               id="max" placeholder="Maximale Teilnehmerzahl" name="max" value="{{ old('max') ?? $raceTypeTemplate->max }}">
                                         <small class="form-text text-danger">{!! $errors->first('max') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="weiblichmin">Mindest weibliche Teilnehmer:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('weiblichmin') ? 'bg-red-300' : '' }}"
-                                               id="weiblichmin" placeholder="Mindest weibliche Teilnehmer" name="weiblichmin" value="{{ old('weiblichmin') ?? $raceType->weiblichmin }}">
+                                               id="weiblichmin" placeholder="Mindest weibliche Teilnehmer" name="weiblichmin" value="{{ old('weiblichmin') ?? $raceTypeTemplate->weiblichmin }}">
                                         <small class="form-text text-danger">{!! $errors->first('weiblichmin') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="weiblichmax">Maximale weibliche Teilnehmer:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('weiblichmax') ? 'bg-red-300' : '' }}"
-                                               id="weiblichmax" placeholder="Maximale weibliche Teilnehmer" name="weiblichmax" value="{{ old('weiblichmax') ?? $raceType->weiblichmax }}">
+                                               id="weiblichmax" placeholder="Maximale weibliche Teilnehmer" name="weiblichmax" value="{{ old('weiblichmax') ?? $raceTypeTemplate->weiblichmax }}">
                                         <small class="form-text text-danger">{!! $errors->first('weiblichmax') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="manmin">Maximale männliche Teilnehmer:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('manmin') ? 'bg-red-300' : '' }}"
-                                               id="manmin" placeholder="Maximale männliche Teilnehmer" name="manmin" value="{{ old('manmin') ?? $raceType->manmin }}">
+                                               id="manmin" placeholder="Maximale männliche Teilnehmer" name="manmin" value="{{ old('manmin') ?? $raceTypeTemplate->manmin }}">
                                         <small class="form-text text-danger">{!! $errors->first('manmin') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="manmax">Maximale männliche Teilnehmer:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('manmax') ? 'bg-red-300' : '' }}"
-                                               id="manmax" placeholder="Maximale männliche Teilnehmer" name="manmax" value="{{ old('manmax') ?? $raceType->manmax }}">
+                                               id="manmax" placeholder="Maximale männliche Teilnehmer" name="manmax" value="{{ old('manmax') ?? $raceTypeTemplate->manmax }}">
                                         <small class="form-text text-danger">{!! $errors->first('manmax') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="bahnen">Bahnen:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
-                                               id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') ?? $raceType->bahnen }}">
+                                               id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') ?? $raceTypeTemplate->bahnen }}">
                                         <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
                                     </div>
 
                                     <div class="my-4">
                                         <label for="training">Training:</label>
                                         <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('training') ? 'bg-red-300' : '' }}"
-                                               id="training" placeholder="Training" name="training" value="{{ old('training') ?? $raceType->training }}">
+                                               id="training" placeholder="Training" name="training" value="{{ old('training') ?? $raceTypeTemplate->training }}">
                                         <small class="form-text text-danger">{!! $errors->first('training') !!}</small>
                                     </div>
 
@@ -130,7 +130,7 @@
                                         <label for="zusatzmanschaft">Zusatzmannschaften:</label>
                                         <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zusatzmanschaft') ? 'bg-red-300' : '' }}"
                                                id="zusatzmanschaft" name="zusatzmanschaft" value="1"
-                                               @if(old('zusatzmanschaft') == 1 or $raceType->zusatzmanschaft == 1)
+                                               @if(old('zusatzmanschaft') == 1 or $raceTypeTemplate->zusatzmanschaft == 1)
                                                    checked
                                                @endif
                                         >
@@ -139,13 +139,13 @@
                                     <div class="my-4">
                                         <label for="meldeGebuehr">Meldegebühr:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('meldeGebuehr') ? 'bg-red-300' : '' }}"
-                                               id="meldeGebuehr" placeholder="Meldegebühr" name="meldeGebuehr" value="{{ old('meldeGebuehr') ?? $raceType->meldeGebuehr }}">
+                                               id="meldeGebuehr" placeholder="Meldegebühr" name="meldeGebuehr" value="{{ old('meldeGebuehr') ?? $raceTypeTemplate->meldeGebuehr }}">
                                         <small class="form-text text-danger">{!! $errors->first('meldeGebuehr') !!}</small>
                                     </div>
 
                                     <div class="py-2">
                                         <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" name="action" id="action" value="save">Speichern</button>
-                                        <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennklassen/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
+                                        <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Rennklassenvorlage/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                                     </div>
 
                                 </form>

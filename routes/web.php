@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LaneController;
+use App\Http\Controllers\RaceTypeTemplateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\HomeController;
@@ -272,6 +273,12 @@ Route::get('/Rennklassen/neu',                             [RaceTypeController::
 Route::get('/Rennklassen/speichern/{raceTypeTemplate_id}', [RaceTypeController::class, 'store'])  ->name('raceType.store');
 Route::get('/Rennklassen/edit/{raceType_id}',              [RaceTypeController::class, 'edit'])   ->name('raceType.edit');
 Route::post('/Rennklassen/update/{raceType_id}',           [RaceTypeController::class, 'update']) ->name('raceType.update');
+
+Route::get('/Rennklassenvorlage/alle',                         [RaceTypeTemplateController::class, 'index'])  ->name('raceTypeTemplate.index');
+Route::get('/Rennklassenvorlage/neu',                          [RaceTypeTemplateController::class, 'create']) ->name('raceTypeTemplate.create');
+Route::post('/Rennklassenvorlage/speichern',                   [RaceTypeTemplateController::class, 'store'])  ->name('raceTypeTemplate.store');
+Route::get('/Rennklassenvorlage/edit/{raceTypeTemplate_id}',   [RaceTypeTemplateController::class, 'edit'])   ->name('raceTypeTemplate.edit');
+Route::post('/Rennklassenvorlage/update/{raceTypeTemplate_id}',[RaceTypeTemplateController::class, 'update']) ->name('raceTypeTemplate.update');
 
 Route::get('/Club/alle',                                      [ClubController::class, 'index'])               ->name('club.index');
 Route::get('/Club/neu',                                       [ClubController::class, 'create'])              ->name('club.create');

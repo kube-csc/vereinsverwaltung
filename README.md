@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.07.xx</p>
+<p>Version: V00.08.xx</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -124,21 +124,26 @@ benötigt.
 </ul>
 <h3>Regatta-Verwaltung</h3>
 <p>
-In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaverwaltung ein und ausgeschaltet werden.
+In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Verwaltung ein und ausgeschaltet werden.
 </p>
 <ul>
     <li>Regatta auswählen</li>
+    <li>Rennklassen können als Vorlage angelegt und bearbeitet werden</li>
+    <li>Rennklassen können der Regatta zugeordnet werden</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
     <li>Rennen anlegen und bearbeiten</li>
     <li>Rennen können Tabellen oder mehrere Tabellen zugeordnet werden</li>
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
     <li>Mannschaften können den Rennen zugeteilt werden</li>
     <li>Tabellen anlegen und bearbeiten</li>
-    <li>Plazierungen können eingegeben werden</li> 
+    <li>Platzierungen können eingegeben werden</li> 
     <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz Wertung</li>
     <li>Ergebnislisten können für jede Tabelle hochladen</li>
+    <li>Platzierungen können eingegeben werden</li> 
+    <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz-Wertung</li>
+    <li>Ergebnislisten können für jede Tabelle hochladen</li>
     <li>Startzeitverschiebungen werden berechnet</li>
-    <li>Rennergebnisse und Tabellen können mit einer Veröffentlichungszeit versehen werden</li>
+    <li>Rennergebnisse und Tabellen können mit einer Veröffendlichungszeiten versehen werden</li>
 </ul>
 
 <h2>Installation</h2>
@@ -188,7 +193,14 @@ In der .env kann mit der Variabel APP_REGATTA die möglichkeint einer Regattaver
 <h3>Präsentation der Regatta</h3>  
 <p>
     Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
-    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> ist kompatibel mit der Version V00.05.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> 
+    ist kompatibel mit der Version V00.05.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+</p>
+<h3>Regatta Managment</h3>  
+<p>
+    Meldeportal für Teilnehmer für Regatten<br>
+    Die Version V00.01.XX <a href="https://github.com/kube-csc/regattamanager.git" target="_blank">https://github.com/kube-csc/regattamanager.git</a> 
+    ist kompatibel mit der Version V00.08.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Helferlisten</h3>
 <p>
@@ -196,7 +208,8 @@ Kurse ist eine APP für ein Kursbuchungssystem. Es hat folgende Funktionen:<br>
 Kursübersicht: Anzeige der verfügbaren Kurse und Termine.<br>
 Buchung: Möglichkeit, Teilnehmer für Kurse zu buchen und die Startzeit zu ändern.<br>
 Teilnehmerverwaltung: Hinzufügen und Entfernen von Teilnehmern<br>
-Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a> ist kompatibel mit der Version V00.04.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+Die Version V00.01.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/helferplanung.git</a>
+ist kompatibel mit der Version V00.04.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Kurse</h3>
 <p>
@@ -212,9 +225,9 @@ Die Version V00.01.XX <a href="https://github.com/kube-csc/kurse.git" target="_b
 </p>
 <hr>
 <br>
-<p><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel"></a></p>
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel"></a></p>
 
-<p>
+<p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>

@@ -106,6 +106,18 @@
                                     <textarea rows="25" cols="200" name="anmeldetext" class="w-full rounded border shadow p-2 mr-2 my-2">{{ $event->anmeldetext }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('anmeldetext') !!}</small>
                                 </div>
+
+{{--                                <div class="my-4">--}}
+{{--                                     <label for="regatta">Regatta:</label>--}}
+{{--                                     <input type="checkbox" name="regatta" id="regatta" value="1" {{ old('regatta', $event->regatta) == 1 ? 'checked' : '' }}>--}}
+{{--                                     <small class="form-text text-danger">{!! $errors->first('regatta') !!}</small>--}}
+{{--                                </div>--}}
+
+                                <div class="my-4" id="einverstaendnis" style="display: {{ $event->regatta == 1  || $event->einverstaendnis <>'' ? 'block' : 'none' }};">
+                                      <label for="einverstaendnis">Einverständnis:</label>
+                                      <textarea rows="25" cols="200" name="einverstaendnis" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('einverstaendnis') ?? $event->einverstaendnis }}</textarea>
+                                      <small class="form-text text-danger">{!! $errors->first('einverstaendnis') !!}</small>
+                                </div>
                                 <div class="my-4" >
                                      <label for="name">{{ env('MENUE_ABTEILUNG') }}
                                          @if(env('MENUE_MANNSCHAFTEN')<>"nein")
@@ -190,3 +202,4 @@
             </div>
         </div>
 </x-app-layout>
+

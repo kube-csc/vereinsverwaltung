@@ -204,6 +204,10 @@ class EventController extends Controller
             ]
         );
 
+        if($request->regatta == Null){
+            $request->regatta = 0;
+        }
+
         Event::find($event_id)->update([
             'ueberschrift'     => $request->ueberschrift,
             'datumvon'         => $request->datumvon,
@@ -213,6 +217,8 @@ class EventController extends Controller
             'beschreibung'     => $request->beschreibung,
             'anmeldetext'      => $request->anmeldetext,
             'ansprechpartner'  => $request->ansprechpartner,
+            'einverstaendnis'  => $request->einverstaendnis,
+            'regatta'          => $request->regatta,
             'telefon'          => $request->telefon,
             'email'            => $request->email,
             'homepage'         => $request->homepage,
@@ -273,7 +279,7 @@ class EventController extends Controller
     public function regattaInaktiv(Request $request, $event_id)
     {
         Event::find($event_id)->update([
-                'regatta' => Null,
+                'regatta' => 0,
                 'bearbeiter_id' => Auth::id(),
                 'updated_at' => Carbon::now()
             ]

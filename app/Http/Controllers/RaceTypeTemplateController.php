@@ -52,7 +52,7 @@ class RaceTypeTemplateController extends Controller
             'manmax' => 'required|integer',
             'training' => 'required|integer|min:0',
             'bahnen' => 'required|integer|min:0',
-            'zusatzmanschaft' => 'required|boolean',
+            'zusatzmanschaft' => 'boolean',
             'beschreibung' => 'nullable|string',
             'distanz' => 'required|string|max:255',
             'meldeGebuehr' => 'required|numeric',

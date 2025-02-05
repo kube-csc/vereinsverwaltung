@@ -114,7 +114,7 @@
 {{--                                </div>--}}
 
                                 <div class="my-4" id="einverstaendnis" style="display: {{ $event->regatta == 1  || $event->einverstaendnis <>'' ? 'block' : 'none' }};">
-                                      <label for="einverstaendnis">Einverständnis:</label>
+                                      <label for="einverstaendnis">Einverständniserklärung:</label>
                                       <textarea rows="25" cols="200" name="einverstaendnis" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('einverstaendnis') ?? $event->einverstaendnis }}</textarea>
                                       <small class="form-text text-danger">{!! $errors->first('einverstaendnis') !!}</small>
                                 </div>

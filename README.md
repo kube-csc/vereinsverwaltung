@@ -128,6 +128,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
 </p>
 <ul>
     <li>Regatta auswählen</li>
+    <li>Einverständniserklärung zur Regatta</li>
     <li>Rennklassen können als Vorlage angelegt und bearbeitet werden</li>
     <li>Rennklassen können der Regatta zugeordnet werden</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>

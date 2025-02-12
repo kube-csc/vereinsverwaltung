@@ -220,7 +220,6 @@ class EventController extends Controller
             'emailAntwort'     => $request->emailAntwort,
             'ansprechpartner'  => $request->ansprechpartner,
             'einverstaendnis'  => $request->einverstaendnis,
-            'regatta'          => $request->regatta,
             'telefon'          => $request->telefon,
             'email'            => $request->email,
             'homepage'         => $request->homepage,

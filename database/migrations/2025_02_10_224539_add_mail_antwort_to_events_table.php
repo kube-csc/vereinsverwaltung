@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('events', function (Blueprint $table) {
             Schema::table('events', function (Blueprint $table) {
-                $table->string('emailAntwort', 50)->nullable()->after('anmeldetext');
+                $table->text('emailAntwort', 50)->nullable()->after('anmeldetext');
             });
         });
     }

@@ -1,11 +1,16 @@
 ## Update Anleitung
 **Version V00.07.01**
 
+- migration
 - In der Datenbank in der Tabelle race_types und race_type_templates sind die Felder in der Datenbank von Hand
   training ist von boolean auf integer umzustellen
+- In der Datenbank in der Tabelle regatta_teams ist das Felder in der Datenbank von Hand
+  training ist von boolean auf decimal 8,2 umzustellen
 
 ***Neue Funktionen***
 ****Regatta-Verwaltung****
+- Events / Termine können jetzt Ankündigung als kurz Text eingeben werden
+- Events / Termine können jetzt Texte für die E-Mail Anmeldebestätigung eingeben werden
 - Rennklassen können als Vorlage angelegt und bearbeitet werden
 - Rennklassen können der Regatta zugeordnet werden
 

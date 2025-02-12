@@ -102,7 +102,7 @@
                                      <small class="form-text text-danger">{!! $errors->first('nachbericht') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                     <label for="name">Anmeldetext:</label>
+                                     <label for="name">Ankündigung kurz Text:</label>
                                      <textarea rows="25" cols="200" name="anmeldetext" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('anmeldetext') ?? $event->anmeldetext }}</textarea>
                                      <small class="form-text text-danger">{!! $errors->first('anmeldetext') !!}</small>
                                 </div>
@@ -111,13 +111,6 @@
                                      <textarea rows="25" cols="200" name="emailAntwort" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('emailAntwort') ?? $event->emailAntwort }}</textarea>
                                      <small class="form-text text-danger">{!! $errors->first('emailAntwort') !!}</small>
                                 </div>
-
-{{--                                <div class="my-4">--}}
-{{--                                     <label for="regatta">Regatta:</label>--}}
-{{--                                     <input type="checkbox" name="regatta" id="regatta" value="1" {{ old('regatta', $event->regatta) == 1 ? 'checked' : '' }}>--}}
-{{--                                     <small class="form-text text-danger">{!! $errors->first('regatta') !!}</small>--}}
-{{--                                </div>--}}
-
                                 <div class="my-4" id="einverstaendnis" style="display: {{ $event->regatta == 1  || $event->einverstaendnis <>'' ? 'block' : 'none' }};">
                                       <label for="einverstaendnis">Einverständniserklärung:</label>
                                       <textarea rows="25" cols="200" name="einverstaendnis" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('einverstaendnis') ?? $event->einverstaendnis }}</textarea>

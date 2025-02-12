@@ -98,7 +98,7 @@
                                     <small class="form-text text-danger">{!! $errors->first('homepage') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <label for="name">Beschreibung:</label>
+                                    <label for="name">Ankündigung:</label>
                                     <textarea rows="25" cols="200" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('beschreibung') }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                 </div>
@@ -108,7 +108,7 @@
                                     <small class="form-text text-danger">{!! $errors->first('nachbericht') !!}</small>
                                 </div>
                                 <div class="my-4" >
-                                    <label for="name">Anmeldetext:</label>
+                                    <label for="name">Ankündigung kurz Text:</label>
                                     <textarea rows="25" cols="200" name="anmeldetext" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('anmeldetext') }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('anmeldetext') !!}</small>
                                 </div>

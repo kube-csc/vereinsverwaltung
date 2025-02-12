@@ -104,7 +104,7 @@ class EventController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
@@ -129,6 +129,7 @@ class EventController extends Controller
             'datumbisa'        => $request->datumbisa,
             'beschreibung'     => $request->beschreibung,
             'anmeldetext'      => $request->anmeldetext,
+            'emailAntwort'     => $request->emailAntwort,
             'ansprechpartner'  => $request->ansprechpartner,
             'telefon'          => $request->telefon,
             'email'            => $request->email,
@@ -187,7 +188,7 @@ class EventController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Event  $event
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $event_id)
     {
@@ -212,6 +213,7 @@ class EventController extends Controller
             'datumbisa'        => $request->datumbisa,
             'beschreibung'     => $request->beschreibung,
             'anmeldetext'      => $request->anmeldetext,
+            'emailAntwort'     => $request->emailAntwort,
             'ansprechpartner'  => $request->ansprechpartner,
             'telefon'          => $request->telefon,
             'email'            => $request->email,

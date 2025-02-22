@@ -69,6 +69,21 @@
                     <p>{!! $event->nachtermin !!}</p>
                 @endif
             </div>
+
+        @foreach($socialMedias as $socialMedia)
+            @if($socialMedia->webseite == 1)
+                <div class="section-title" data-aos="fade-in" data-aos-delay="100">
+                    <div>
+                        {!! str_replace('[URL]', $socialMedia->filename, $socialMedia->playerlink) !!}
+                        <div>
+                            {{ $socialMedia->titel }}
+                            {{ $socialMedia->kommentar }}
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+
             @if($eventDokumentes->count()>0)
                 @php
                    $groupflak=0;
@@ -80,7 +95,7 @@
                         "6" => "Pressebericht",
                     ];
                 @endphp
-                <div>
+            <div class="section-title" data-aos="fade-in" data-aos-delay="100">
                     <b>Dokumente zum herunterladen:</b>
                         @foreach($eventDokumentes as $eventDokumente)
                         @if($loop->first)
@@ -108,6 +123,7 @@
                     </ul>
                 </div>
             @endif
+
             <livewire:event-gallery :reportId="$event->id" />
 
         </div>

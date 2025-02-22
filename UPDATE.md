@@ -1,4 +1,13 @@
 ## Update Anleitung
+**Version V00.08.00**
+
+- migration
+- php artisan db:seed --class=PlayerDataSeeder
+- php artisan db:seed --class=PlayerSeeder
+
+***Neue Funktionen***
+- Social Media kann in den Events/Termine angegeben werden 
+
 **Version V00.07.01**
 
 - migration
@@ -33,6 +42,7 @@ Es werden die Datenbanken für Kursangebote und Buchungen integriert
    CoursedateUserSeeder
    CourseParticipantBookedSeeder
    OrganiserinformationSeeder
+-  anlegen der Unterordner unter /storage/app/public/sportgeraete
 
 **Version V00.06.01**
 

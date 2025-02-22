@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.07.xx</p>
+<p>Version: V00.08.xx</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -49,6 +49,7 @@ benötigt.
     <li>Präsentation des Events
         <ul>
             <li>Beschreibung der Events</li>
+            <li>Social Medien einbinden</li>  
             <li>Bildergallery</li>
             <li>Dokumente zum Herunterladen
               <ul>
@@ -155,7 +156,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
    <li>curl -sS https://getcomposer.org/installer</li>
    <li>php composer.phar</li>
    <li>php composer.phar install</li>
-   <li>anlegen der Unterordner unter "public/storage/"
+   <li>die Unterordner unter "/storage/app/public/" sollten angelegt sein, wenn nicht von hand anlegen
       <ul>
         <li>boardPortrait</li>
         <li>botman</li>
@@ -165,6 +166,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
         <li>header</li>
         <li>raceDokumente</li>
         <li>tabeleDokumente</li>
+        <li>sportgeraete</li>
       </ul>
     </li>
    <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
@@ -222,7 +224,8 @@ Trainer bzw. Fahrtenleiter: Trainer bzw. Fahrtenleiter können Termine für die 
 Sportgeräte und Räume: Zu den Kursen können Sportgeräte, Räume usw. zugeordnet werden.<br>
 Buchung: Teilnehmer können Kurse buchen und ihre eigenen Buchungen bearbeiten.<br>
 Teilnehmerverwaltung: Hinzufügen und Entfernen von Teilnehmern durch Trainer bzw. Fahrtenleiter.<br>
-Die Version V00.01.XX <a href="https://github.com/kube-csc/kurse.git" target="_blank">https://github.com/kube-csc/kurse.git</a> ist kompatibel mit der Version V00.07.XX <a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+Die Version V00.01.XX <a href="https://github.com/kube-csc/kurse.git" target="_blank">https://github.com/kube-csc/kurse.git</a> ist kompatibel mit der Version V00.07.XX 
+<a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <hr>
 <br>

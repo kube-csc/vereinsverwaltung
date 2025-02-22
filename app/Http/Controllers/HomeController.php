@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\board;
 use App\Models\Club;
 use App\Models\Event;
+use App\Models\Player;
 use App\Models\Report;
 use App\Models\SportSection;
 use App\Models\Instruction;
@@ -87,7 +88,7 @@ class HomeController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function homeSportSelect($sportSectionSeorch)
     {
@@ -172,8 +173,8 @@ class HomeController extends Controller
 
     public function eventShow($eventId)
     {
-        $serverdomain        = $_SERVER["HTTP_HOST"];
-        $abteilungHomes      = SportSection::where('status' , '1')
+        $serverdomain   = $_SERVER["HTTP_HOST"];
+        $abteilungHomes = SportSection::where('status' , '1')
             ->orwhere('domain' , $serverdomain)
             ->orderby('status')
             ->get();
@@ -206,11 +207,24 @@ class HomeController extends Controller
             ->orderby('position')
             ->get();
 
+        $socialMedias = Report::join('players as pl' , 'pl.id' , '=' , 'reports.player')
+            ->join('player_data as pd', 'pd.player_id', '=', 'pl.id')
+            ->where('event_id' , $eventId)
+            ->where('player' ,'>=', 1)
+            ->where('visible' , 1)
+            ->where('webseite' , 1)
+            ->where('playervisible', 1)
+            ->where('visibleEventpage' , 1)
+            ->where('verwendung' , 7)
+            ->orderBy('position')
+            ->get();
+
         return view('home.eventShow')->with([
             'events'                      => $events,
             'footerDocuments'             => $footerDocuments,
             'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu,
-            'eventDokumentes'             => $eventDokumentes
+            'eventDokumentes'             => $eventDokumentes,
+            'socialMedias'                => $socialMedias
         ]);
     }
 

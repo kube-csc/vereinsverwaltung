@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventSocialMediaController;
 use App\Http\Controllers\LaneController;
 use App\Http\Controllers\RaceTypeTemplateController;
 use Illuminate\Support\Facades\Route;
@@ -208,6 +209,20 @@ Route::get('/EventDokumente/down/{document_id}',              [EventDocumentCont
 Route::get('/EventDokumente/maxdown/{document_id}',           [EventDocumentController::class, 'maxdown'])               ->name('eventDocument.maxdown');
 Route::get('/EventDokumente/Eintrag/geloescht/{document_id}', [EventDocumentController::class, 'destroy'])               ->name('eventDocument.destroy');
 
+Route::get('/Event/SocialMedia/{event_id}',                     [EventSocialMediaController::class, 'index'])                 ->name('socialMedia.index');
+Route::get('/Event/SocialMedia/neu/{event_id}',                 [EventSocialMediaController::class, 'create'])                ->name('socialMedia.create');
+Route::post('/Event/SocialMedia/speichern/{socialMedia_id}',    [EventSocialMediaController::class, 'store'])                 ->name('socialMedia.store');
+Route::get('/Event/SocialMedia/edit/{socialMedia_id}',          [EventSocialMediaController::class, 'edit'])                  ->name('socialMedia.edit');
+Route::post('/Event/SocialMedia/update/{socialMedia_id}',       [EventSocialMediaController::class, 'update'])                ->name('socialMedia.update');
+Route::get('/Event/SocialMedia/webaktiv/{socialMedia_id}',      [EventSocialMediaController::class, 'webaktiv'])              ->name('socialMedia.webaktiv');
+Route::get('/Event/SocialMedia/webinaktiv/{socialMedia_id}',    [EventSocialMediaController::class, 'webinaktiv'])            ->name('socialMedia.webinaktiv');
+Route::get('/Event/SocialMedia/aktiv/{socialMedia_id}',         [EventSocialMediaController::class, 'aktiv'])                 ->name('socialMedia.aktiv');
+Route::get('/Event/SocialMedia/inaktiv/{socialMedia_id}',       [EventSocialMediaController::class, 'inaktiv'])               ->name('socialMedia.inaktiv');
+Route::get('/Event/SocialMedia/maxtop/{socialMedia_id}',        [EventSocialMediaController::class, 'maxtop'])                ->name('socialMedia.maxtop');
+Route::get('/Event/SocialMedia/up/{socialMedia_id}',            [EventSocialMediaController::class, 'up'])                    ->name('socialMedia.up');
+Route::get('/Event/SocialMedia/down/{socialMedia_id}',          [EventSocialMediaController::class, 'down'])                  ->name('socialMedia.down');
+Route::get('/Event/SocialMedia/maxdown/{socialMedia_id}',       [EventSocialMediaController::class, 'maxdown'])               ->name('socialMedia.maxdown');
+
 Route::get('/Backlink/alle',                         [BacklinksController::class, 'index'])         ->name('backlink.index');
 Route::get('/Backlink/relevant',                     [BacklinksController::class, 'indexRelevant']) ->name('backlink.indexRelevant');
 Route::get('/Backlink/benutzt',                      [BacklinksController::class, 'indexUsed'])     ->name('backlink.indexUsed');
@@ -226,8 +241,8 @@ Route::get('/Rennen/edit/{race_id}',                  [RaceController::class, 'e
 Route::post('/Rennen/update/{race_id}',               [RaceController::class, 'update'])          ->name('race.update');
 Route::get('/Rennen/aktiv/{race_id}',                 [RaceController::class, 'aktiv'])           ->name('race.aktiv');
 Route::get('/Rennen/inaktiv/{race_id}',               [RaceController::class, 'inaktiv'])         ->name('race.inaktiv');
-Route::get('/Rennen/liveAktuell/aktiv/{race_id}',         [RaceController::class, 'aktivLive'])       ->name('race.aktivLive');
-Route::get('/Rennen/liveAktuell/inaktiv/{race_id}',       [RaceController::class, 'inaktivLive'])     ->name('race.inaktivLive');
+Route::get('/Rennen/liveAktuell/aktiv/{race_id}',     [RaceController::class, 'aktivLive'])       ->name('race.aktivLive');
+Route::get('/Rennen/liveAktuell/inaktiv/{race_id}',   [RaceController::class, 'inaktivLive'])     ->name('race.inaktivLive');
 Route::get('/Rennen/Programm',                        [RaceController::class, 'indexProgram'])    ->name('race.indexProgram');
 Route::get('/Rennen/Programm/alle',                   [RaceController::class, 'indexProgramAll']) ->name('race.indexProgramAll');
 Route::get('/Rennen/Programm/{race_id}',              [RaceController::class, 'editProgram'])     ->name('race.editProgram');
@@ -254,7 +269,7 @@ Route::get('/Tabelle/ErgebnisseAlle',               [TabeleController::class, 'i
 Route::get('/Tabelle/Ergebnis/{race_id}',           [TabeleController::class, 'editResult'])            ->name('tabele.editResult');
 Route::post('/Tabelle/Ergebnis/update/{tabele_id}', [TabeleController::class, 'updateResult'])          ->name('tabele.updateResult');
 Route::get('/Tabelle/Ergebnis/loeschen/{tabele_id}',[TabeleController::class, 'deleteResult'])          ->name('tabele.deleteResult');
-Route::get('/Tabelle/anzeigen/{tabele_id}',              [TabeleController::class, 'show'])                  ->name('tabele.show');
+Route::get('/Tabelle/anzeigen/{tabele_id}',         [TabeleController::class, 'show'])                  ->name('tabele.show');
 
 Route::get('/Renneninformation/alle',                     [RegattaInformationController::class, 'index'])    ->name('regattaInformation.index');
 Route::get('/Renneninformation/neu',                      [RegattaInformationController::class, 'create'])   ->name('regattaInformation.create');

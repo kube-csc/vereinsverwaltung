@@ -51,14 +51,17 @@
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Event/edit/'.$event->id) }}">
                                             <box-icon name='edit' type='solid'></box-icon>
                                         </a>
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/alle/'.$event->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Bericht/alle/'.$event->id) }}">
                                             <box-icon name='image'></box-icon>
                                         </a>
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Bericht/neu/'.$event->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Bericht/neu/'.$event->id) }}">
                                             <box-icon name='image-add'></box-icon>
                                         </a>
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('EventDokumente/'.$event->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/EventDokumente/'.$event->id) }}">
                                             <box-icon name='file'></box-icon>
+                                        </a>
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Event/SocialMedia/'.$event->id) }}">
+                                            <box-icon type='solid' name='videos'></box-icon>
                                         </a>
                                         @if(($event->regatta==Null | $event->regatta==0) && env('APP_REGATTA')=="ja") <!-- $event->regatta==0 wird für die alten Daten benötigt -->
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Regatta/aktiv/'.$event->id) }}">

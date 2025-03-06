@@ -1,4 +1,8 @@
 ## Update Anleitung
+**Version V00.09.00**
+
+Daten unter /storage/app/public/storage soll von Hand als backup gesichert werden
+
 **Version V00.08.00**
 
 - migration

@@ -74,7 +74,12 @@
             @if($socialMedia->webseite == 1)
                 <div class="section-title" data-aos="fade-in" data-aos-delay="100">
                     <div>
-                        {!! str_replace('[URL]', $socialMedia->filename, $socialMedia->playerlink) !!}
+                        @php
+                            $ausgabe = str_replace('[URL]', $socialMedia->filename, $socialMedia->playerlink);
+                            $ausgabe = str_replace('[breite]', $socialMedia->breite, $ausgabe);
+                            $ausgabe = str_replace('[hoehe]', $socialMedia->hoehe, $ausgabe);
+                        @endphp
+                        {!! $ausgabe !!}
                         <div>
                             {{ $socialMedia->titel }}
                             {{ $socialMedia->kommentar }}

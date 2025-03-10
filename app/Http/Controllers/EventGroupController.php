@@ -53,7 +53,7 @@ class EventGroupController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
@@ -67,6 +67,8 @@ class EventGroupController extends Controller
             [
                 'termingruppe'     => $request->termingruppe,
                 'domain'           => $request->domain,
+                'headerTitel'      => $request->headerTitel,
+                'headerSlogen'     => $request->headerSlogen,
                 'user_id'          => Auth::user()->id,
                 'updated_at'       => Carbon::now(),
                 'created_at'       => Carbon::now()
@@ -109,7 +111,7 @@ class EventGroupController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\eventGroup  $eventGroup
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $eventGroup_id)
     {
@@ -122,6 +124,8 @@ class EventGroupController extends Controller
         eventGroup::find($eventGroup_id)->update([
             'termingruppe'    => $request->termingruppe,
             'domain'          => $request->domain,
+            'headerTitel'     => $request->headerTitel,
+            'headerSlogen'    => $request->headerSlogen,
             'updated_at'      => Carbon::now()
         ]);
 

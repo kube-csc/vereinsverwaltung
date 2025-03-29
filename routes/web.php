@@ -25,6 +25,8 @@ use App\Http\Controllers\BacklinksController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\SporttypeController;
 use App\Http\Controllers\RaceTypeController;
+use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\CoursedateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -314,6 +316,15 @@ Route::post('/Sportart/update/{sporttype_id}',    [SporttypeController::class, '
 Route::get('/Sportart/softDelete/{sporttype_id}', [SporttypeController::class, 'softDelete']);
 Route::get('/Sportart/aktiv/{sporttype_id}',      [SporttypeController::class, 'aktiv'])         ->name('sporttype.aktiv');
 Route::get('/Sportart/inaktiv/{sporttype_id}',    [SporttypeController::class, 'inaktiv'])       ->name('sporttype.inaktiv');
+
+Route::get('/Training/alle/{sportSection_id}',           [TrainingController::class, 'index'])  ->name('training.index');
+Route::get('/Training/Abteilung/neu/{sportSection_id}',  [TrainingController::class, 'create']) ->name('training.create');
+Route::post('/Training/speichern',                       [TrainingController::class, 'store'])  ->name('training.store');
+Route::get('/Training/edit/{training_id}',               [TrainingController::class, 'edit'])   ->name('training.edit');
+Route::post('/Training/update/{training_id}',            [TrainingController::class, 'update']) ->name('training.update');
+Route::get('/Training/loeschen/{training_id}',           [TrainingController::class, 'destroy'])->name('training.destroy');
+
+Route::get('/Training/Planung', [CoursedateController::class, 'cronPlanung']);
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 

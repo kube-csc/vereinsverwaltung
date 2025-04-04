@@ -39,7 +39,7 @@
                                   @endif
                               </div>
 
-                              <form autocomplete="off" action="{{ url('Dokumente/update/'.$document->id) }}" method="post" enctype="multipart/form-data">
+                              <form autocomplete="off" action="{{ url('/Dokumente/update/'.$document->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 @php
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
@@ -55,7 +55,7 @@
 
                                     @if(isset($document->dokumentenFile))
                                         <div class="flex ml-2">
-                                            <div class="flex-initial"><a href="/storage/document/{{$document->dokumentenFile}}" target="_blank">{{$document->dokumentenFile}}</a></div>
+                                            <div class="flex-initial"><a href="/storage/dokumente/{{$document->dokumentenFile}}" target="_blank">{{ env('VEREIN_CANONICAL') }}/storage/dokumente/{{$document->dokumentenFile}}</a></div>
                                             <div class="flex-initial ml-2 fas fa-times text-red-600 hover:text-red-00 cursor-pointer">
                                                 <a href="/Dokumente/geloescht/{{ $document->id }}">x</a>
                                             </div>
@@ -103,7 +103,6 @@
                                         @if(env('MENUE_MANNSCHAFTEN')<>"nein")
                                             / {{ env('MENUE_MANNSCHAFTEN') }}
                                         @endif
-                                        :
                                     </label>
                                     <br>
                                   <select name="sportSection_id" class="w-full border rounded shadow p-2 mr-2 my-2">

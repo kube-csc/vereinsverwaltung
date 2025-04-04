@@ -16,10 +16,9 @@ return new class extends Migration
         Schema::table('races', function (Blueprint $table) {
             // ToDo: Automatische Umstellung funktioniert nicht
             //$table->unsignedBigInteger('tabele_id')->nullable()->change();
-
-            $table->boolean('aktuellLiveVideo')->default('0')->after('fileErgebnisDatei');
             $table->foreign('tabele_id')->references('id')->on('tabeles');
-        });
+            $table->boolean('aktuellLiveVideo')->default('0')->after('fileErgebnisDatei');
+          });
     }
 
     /**

@@ -54,7 +54,7 @@ class CreateReportsTable extends Migration
             $table->timestamp('quellDatum')->nullable();
             $table->boolean('visible')->default(true);      // true = 1 = sichtbar
             $table->boolean('startseite')->default(false);  // true = 1 = Leandingpage
-            $table->boolean('webseite')->default(false);    // true = 0 = das Bild wird nur angezeigt, wenn der User im internen Bereich angemeldet ist.
+            $table->boolean('webseite')->default(false);    // 0 = Interner Bereich sichtbar / 1 = Externer Bereich sichtbar
             $table->unsignedBigInteger('bearbeiter_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('freigeber_id')->nullable();

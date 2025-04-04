@@ -1,4 +1,10 @@
 ## Update Anleitung
+**Version V00.08.01**
+- migration
+
+***Neue Funktionen***
+- Trainingszeiten können für Abteilungen / Mannschaften hinterlegt werden
+
 **Version V00.08.00**
 
 - migration

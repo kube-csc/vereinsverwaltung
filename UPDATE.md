@@ -1,4 +1,11 @@
 ## Update Anleitung
+**Version V00.09.01**
+
+- migration
+
+***Neue Funktionen***
+- Trainingszeiten können für Abteilungen / Mannschaften hinterlegt werden
+ 
 **Version V00.09.00**
 
 Daten unter /storage/app/public/storage soll von Hand als backup gesichert werden

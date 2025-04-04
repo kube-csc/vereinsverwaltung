@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.08.xx</p>
+<p>Version: V00.09.xx</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -96,6 +96,7 @@ benötigt.
   <li>Eingabe und Bearbeitung der Vereinsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
+  <li>Eingabe und Bearbeitung von Trainingszeiten von Abteilung / Mannschaften</li>
   <li>Eingabe und Bearbeitung von Events
       <ul>
         <li>Eventbeschreibung</li>
@@ -224,8 +225,8 @@ Trainer bzw. Fahrtenleiter: Trainer bzw. Fahrtenleiter können Termine für die 
 Sportgeräte und Räume: Zu den Kursen können Sportgeräte, Räume usw. zugeordnet werden.<br>
 Buchung: Teilnehmer können Kurse buchen und ihre eigenen Buchungen bearbeiten.<br>
 Teilnehmerverwaltung: Hinzufügen und Entfernen von Teilnehmern durch Trainer bzw. Fahrtenleiter.<br>
-Die Version V00.01.XX <a href="https://github.com/kube-csc/kurse.git" target="_blank">https://github.com/kube-csc/kurse.git</a> ist kompatibel mit der Version V00.07.XX 
-<a href="https://github.com/kube-csc/helferplanung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+Die Version V00.02.XX <a href="https://github.com/kube-csc/kurse.git" target="_blank">https://github.com/kube-csc/kurse.git</a> ist kompatibel mit der Version V00.07.XX 
+<a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <hr>
 <br>

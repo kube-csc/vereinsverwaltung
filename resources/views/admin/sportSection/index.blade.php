@@ -59,27 +59,27 @@
                               @endif
                                   <div class="justify-between my-2">
                                    <div>
-                                       <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/edit/'.$sportSection->id) }}">
+                                       <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Abteilung/edit/'.$sportSection->id) }}">
                                            <box-icon name='edit' </box-icon>
                                        </a>
                                        @if($sportSection['status']==2)
-                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/start/'.$sportSection->id) }}">
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Abteilung/start/'.$sportSection->id) }}">
                                                <box-icon name='pin'</box-icon>
                                            </a>
                                        @endif
                                        @if($sportSection['status']==2)
-                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/inaktiv/'.$sportSection->id) }}">
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Abteilung/inaktiv/'.$sportSection->id) }}">
                                                <box-icon name='show'></box-icon>
                                            </a>
                                        @endif
                                        @if($sportSection['status']==0)
-                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/aktiv/'.$sportSection->id) }}">
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Abteilung/aktiv/'.$sportSection->id) }}">
                                                <box-icon name='hide' ></box-icon>
                                            </a>
                                            <!-- <i class="fas fa-times text-red-200 hover:text-red-600 cursor-pointer">inaktiv</i> -->
                                        @endif
                                        @if ($sportSection['event_id']==0)
-                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Abteilung/softDelete/'.$sportSection->id) }}">
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Abteilung/softDelete/'.$sportSection->id) }}">
                                                <box-icon name='x'></box-icon>
                                            </a>
                                        @endif
@@ -94,6 +94,9 @@
                                                <box-icon name='calendar-plus'></box-icon>
                                            </a>
                                        @endif
+                                       <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Training/alle/'.$sportSection->id) }}">
+                                           <box-icon name='calendar'></box-icon>
+                                       </a>
                                    </div>
 
                                     <div class="flex">

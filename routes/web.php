@@ -324,8 +324,6 @@ Route::get('/Training/edit/{training_id}',               [TrainingController::cl
 Route::post('/Training/update/{training_id}',            [TrainingController::class, 'update']) ->name('training.update');
 Route::get('/Training/loeschen/{training_id}',           [TrainingController::class, 'destroy'])->name('training.destroy');
 
-Route::get('/Training/Planung', [CoursedateController::class, 'cronPlanung']);
-
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 
 Route::resources([

@@ -31,8 +31,4 @@ class Training extends Model
         'created_at'
     ];
 
-    public function getCourse()
-    {
-        return $this->belongsTo(Course::class, 'course_id');
-    }
 }

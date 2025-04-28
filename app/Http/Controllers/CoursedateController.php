@@ -27,7 +27,54 @@ class CoursedateController extends Controller
      */
     public function create()
     {
-        //
+        $organiser = $this->organiser();
+
+        $kursstartterminDatum = Carbon::now()->format('Y-m-d');
+        $kursstartterminTime = Carbon::now()->format('H:i');
+        $kurslaengeStunde = '01';
+        $kurslaengeMinute = '30';
+        $kurslaenge = $kurslaengeStunde.':'.$kurslaengeMinute;
+        $kursendterminDatum=$kursstartterminDatum;
+        $kursendterminTime = Carbon::now()->addHours($kurslaengeStunde)->addMinutes($kurslaengeMinute)->format('H:i');
+
+        $trainer = Trainertable::where('user_id', Auth::user()->id)
+            ->where('organiser_id', $organiser->id)
+            ->get();
+
+        if($trainer->count()>0){
+            $courses = Course::where('organiser_id', $organiser->id)
+                ->orderBy('kursName')
+                ->get();
+        }
+        else{
+            $courses = Course::where('organiser_id', $organiser->id)
+                ->where('trainer', 0)
+                ->orderBy('kursName')
+                ->get();
+        }
+
+        if($courses->count()==0){
+            self::warning('Es kann kein Kein Kurs / Fahrt angelegt werden, weil es hierfür keine Vorlage angelegt wurde.');
+
+            return redirect()->back();
+        }
+
+        $course_id = 0;
+        $sportgeraetanzahl = 0;
+        $sportgeraetanzahlMax = $this->sportgeraetanzahlMax($organiser->id);
+
+        return view('components.backend.courseDate.create' , compact([
+            'kursstartterminDatum',
+            'kursstartterminTime',
+            'kurslaenge',
+            'kursendterminDatum',
+            'kursendterminTime',
+            'sportgeraetanzahlMax',
+            'sportgeraetanzahl',
+            'courses',
+            'course_id',
+            'organiser'
+        ]));
     }
 
     /**
@@ -86,158 +133,4 @@ class CoursedateController extends Controller
         //
     }
 
-    public function cronPlanung()
-    {
-        $currentDate = Carbon::now();
-        $trainings = Training::all();
-
-        foreach ($trainings as $training) {
-            $courseDates = Coursedate::where('training_id', $training->id)->get();
-
-            $newDate             = Carbon::parse($training->datumvon);
-            $kurslaenge          = Carbon::parse($training->zeitbis)->diff(Carbon::parse($training->zeitvon))->format('%H:%I:%S');
-            $wiederholungAktuell = 0;
-            $datumberechnug = max(Carbon::parse($training->datumAktuell), Carbon::now());
-
-            while ($newDate < $datumberechnug) {
-                $newDate->addDays($training->wiederholung);
-            }
-
-            foreach ($courseDates as $courseDate) {
-                if (Carbon::parse($courseDate->kursstartvorschlag) < Carbon::now()) {
-                    $datumvon = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitvon)->diffInSeconds(Carbon::parse('00:00:00')));
-                    $datumbis = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitbis)->diffInSeconds(Carbon::parse('00:00:00')));
-
-                    if($wiederholungAktuell >= $training->vorschauTage){
-                        break;
-                    }
-
-                    $courseDateTest = Coursedate::where('kursstartvorschlag' ,$datumvon)
-                        ->where('training_id' ,$courseDate->training_id)
-                        ->get();
-
-                    if($courseDateTest->isNotEmpty()) {
-                        $courseDate->update([
-                            'course_id' => $training->course_id,
-
-                            'kursstarttermin' => $datumvon,
-                            'kursendtermin' => $datumbis,
-                            'kursstartvorschlag' => $datumvon,
-                            'kursendvorschlag' => $datumbis,
-                            'kursstartvorschlagkunde' => $datumvon,
-                            'kursendvorschlagkunde' => $datumbis,
-                            'kurslaenge' => $kurslaenge,
-                            'sportgeraetanzahl' => $training->sportgeraetanzahl,
-                            'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
-                            'bearbeiter_id' => $training->autor_id,
-                            'updated_at' => Carbon::now(),
-                        ]);
-                    }
-                }
-
-                $newDate->addDays($training->wiederholung);
-                $wiederholungAktuell = $wiederholungAktuell+$training->wiederholung;
-            }
-
-            while ($newDate <= Carbon::parse($training->datumbis)) {
-                if($wiederholungAktuell >= $training->vorschauTage){
-                    break;
-                }
-
-                $datumvon = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitvon)->diffInSeconds(Carbon::parse('00:00:00')));
-                $datumbis = Carbon::parse($newDate)->addSeconds(Carbon::parse($training->zeitbis)->diffInSeconds(Carbon::parse('00:00:00')));
-
-                if($courseDates->count() == 0) {
-                    $courseDateDelete = Coursedate::withTrashed()
-                        ->where('training_id', '>', 0)
-                        ->where('deleted_at' , '!=', null)
-                        ->first();
-
-                    if ($courseDateDelete) {
-                        $courseDateDelete->restore();
-                        $courseDateDelete->update([
-                            'course_id' => $training->course_id,
-
-                            'kursstarttermin' => $datumvon,
-                            'kursendtermin' => $datumbis,
-                            'kursstartvorschlag' => $datumvon,
-                            'kursendvorschlag' => $datumbis,
-                            'kursstartvorschlagkunde' => $datumvon,
-                            'kursendvorschlagkunde' => $datumbis,
-                            'kurslaenge' => $kurslaenge,
-                            'sportgeraetanzahl' => $training->sportgeraeteanzahl,
-                            'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
-                            'bearbeiter_id' => $training->bearbeiter_id,
-                            'autor_id' => $training->bearbeiter_id,
-
-                            'updated_at' => Carbon::now(),
-                            'created_at' => Carbon::now()
-                        ]);
-                    }
-                    else{
-                        Coursedate::create([
-                            'organiser_id' => $training->organiser_id,
-                            'training_id' => $training->id,
-                            'course_id' => $training->course_id,
-
-                            'kursstarttermin' => $datumvon,
-                            'kursendtermin' => $datumbis,
-                            'kursstartvorschlag' => $datumvon,
-                            'kursendvorschlag' => $datumbis,
-                            'kursstartvorschlagkunde' => $datumvon,
-                            'kursendvorschlagkunde' => $datumbis,
-                            'kurslaenge' => $kurslaenge,
-                            'sportgeraetanzahl' => $training->sportgeraeteanzahl,
-                            'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
-                            'bearbeiter_id' => $training->bearbeiter_id,
-                            'autor_id' => $training->bearbeiter_id,
-                            'updated_at' => Carbon::now(),
-                            'created_at' => Carbon::now()
-                        ]);
-                    }
-                }
-                else {
-                    $courseDateTest = Coursedate::where('kursstartvorschlag', $datumvon)
-                        ->where('training_id', $courseDate->training_id)
-                        ->get();
-
-                    if ($courseDateTest->isNotEmpty()) {
-                        Coursedate::create([
-                            'organiser_id' => $training->organiser_id,
-                            'training_id' => $training->id,
-                            'course_id' => $training->course_id,
-
-                            'kursstarttermin' => $datumvon,
-                            'kursendtermin' => $datumbis,
-                            'kursstartvorschlag' => $datumvon,
-                            'kursendvorschlag' => $datumbis,
-                            'kursstartvorschlagkunde' => $datumvon,
-                            'kursendvorschlagkunde' => $datumbis,
-                            'kurslaenge' => $kurslaenge,
-                            'sportgeraetanzahl' => $training->sportgeraetanzahl,
-                            'sportgeraeteGebucht' => $training->sportgeraeteGebucht,
-
-                            'bearbeiter_id' => $training->bearbeiter_id,
-                            'autor_id' => $training->bearbeiter_id,
-                            'updated_at' => Carbon::now(),
-                            'created_at' => Carbon::now()
-                        ]);
-                    }
-                }
-                $newDate->addDays($training->wiederholung);
-                $wiederholungAktuell = $wiederholungAktuell+$training->wiederholung;
-            }
-
-            $courseLetzte = Coursedate::where('training_id', $training->id)
-                ->orderBy('kursstartvorschlag', 'desc')
-                ->first();
-
-            $training->update([
-                'datumAktuell' => $courseLetzte->kursstartvorschlag,
-            ]);
-        }
-    }
 }

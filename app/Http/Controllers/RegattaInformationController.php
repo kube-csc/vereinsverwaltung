@@ -178,7 +178,7 @@ class RegattaInformationController extends Controller
             ->orderBy('position' , 'desc')
             ->first();
 
-        $neuPosition=$regattaInformation->position+10;
+        $neuPosition = $regattaInformation ? $regattaInformation->position + 10 : 10;
 
         if($request->startDatumAktiv == Null){
             $request->startDatumAktiv=0;

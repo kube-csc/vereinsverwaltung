@@ -1,14 +1,12 @@
 @extends('layouts.frontend')
 
-@section('title' ,'Termin')
+@section('title' , 'Termin - '.$event->ueberschrift)
 
 @section('content')
 
   <main id="main">
 
-  @foreach ($events as $event)
-
-    <section id="portfolio" class="portfolio">
+     <section id="portfolio" class="portfolio">
         <div class="container">
             <div class="section-title" data-aos="fade-in" data-aos-delay="100">
                 <!-- ======= Facebook======= -->
@@ -132,8 +130,8 @@
             <livewire:event-gallery :reportId="$event->id" />
 
         </div>
-    </section><!-- End Portfolio Section -->
-  @endforeach
+     </section><!-- End Portfolio Section -->
+
 
   </main><!-- End #main -->
 @endsection

@@ -190,7 +190,7 @@ class HomeController extends Controller
             ->where('dokumentenFile' ,'!=' , NULL)
             ->get();
 
-        $events = event::where('id' , $eventId)->get();
+        $event = event::find($eventId);
 
         $eventDokumentes = Report::where('event_id' , $eventId)
             ->where('visible' , 1)
@@ -220,7 +220,7 @@ class HomeController extends Controller
             ->get();
 
         return view('home.eventShow')->with([
-            'events'                      => $events,
+            'event'                       => $event,
             'footerDocuments'             => $footerDocuments,
             'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu,
             'eventDokumentes'             => $eventDokumentes,

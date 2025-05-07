@@ -72,14 +72,14 @@
                                         <div>
                                             <label for="sportgeraeteanzahl">Maximale Sportgeräte:</label>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteanzahl') ? 'bg-red-300' : '' }}"
-                                                   id="sportgeraeteanzahl" placeholder="Sportgeräte" name="sportgeraeteanzahl" value="{{ old('sportgeraeteanzahl', $training->sportgeraeteanzahl) }}">
+                                                   id="sportgeraeteanzahl" placeholder="Maximale Sportgeräte" name="sportgeraeteanzahl" value="{{ old('sportgeraeteanzahl', $training->sportgeraeteanzahl) }}">
                                             <small class="form-text text-danger">{!! $errors->first('sportgeraeteanzahl') !!}</small>
                                         </div>
 
                                         <div>
-                                            <label for="sportgeraeteGebucht">>Gebuchte Sportgeräte:</label>
+                                            <label for="sportgeraeteGebucht">Gebuchte Sportgeräte:</label>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteGebucht') ? 'bg-red-300' : '' }}"
-                                                   id="sportgeraeteGebucht" placeholder="Maximale Sportgeräte" name="sportgeraeteGebucht" value="{{ old('sportgeraeteGebucht', $training->sportgeraeteGebucht) }}">
+                                                   id="sportgeraeteGebucht" placeholder="Gebuchte Sportgeräte" name="sportgeraeteGebucht" value="{{ old('sportgeraeteGebucht', $training->sportgeraeteGebucht) }}">
                                             <small class="form-text text-danger">{!! $errors->first('sportgeraeteGebucht') !!}</small>
                                         </div>
 
@@ -101,7 +101,7 @@
                                             <label for="courseId" class="form-label">Training:</label><br>
                                             <select name="courseId">
                                                 @foreach ($courses as $course)
-                                                    <option value="{{ $course->course_id }}" @selected(old('courseId', $training->course_id) == $course->id)>
+                                                    <option value="{{ $course->course_id }}" @selected(old('courseId', $training->course_id) == $course->course_id)>
                                                         {{ $course->kursName }}
                                                     </option>
                                                 @endforeach

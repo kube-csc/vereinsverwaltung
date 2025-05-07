@@ -3,7 +3,7 @@
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
-Beispiel ein Kanu Verein mit Abteilungen / Sportarten:
+Beispiel für einen Kanuverein mit Abteilungen / Sportarten:
     <ul>
       <li>Jugend</li>
       <li>Wandersport</li>
@@ -146,7 +146,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
     <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz-Wertung</li>
     <li>Ergebnislisten können für jede Tabelle hochladen</li>
     <li>Startzeitverschiebungen werden berechnet</li>
-    <li>Rennergebnisse und Tabellen können mit einer Veröffendlichungszeiten versehen werden</li>
+    <li>Rennergebnisse und Tabellen können mit einer Veröffentlichungszeiten versehen werden</li>
 </ul>
 
 <h2>Installation</h2>
@@ -225,7 +225,7 @@ Trainer bzw. Fahrtenleiter: Trainer bzw. Fahrtenleiter können Termine für die 
 Sportgeräte und Räume: Zu den Kursen können Sportgeräte, Räume usw. zugeordnet werden.<br>
 Buchung: Teilnehmer können Kurse buchen und ihre eigenen Buchungen bearbeiten.<br>
 Teilnehmerverwaltung: Hinzufügen und Entfernen von Teilnehmern durch Trainer bzw. Fahrtenleiter.<br>
-Die Version V00.02.XX <a href="https://github.com/kube-csc/kurse.git" target="_blank">https://github.com/kube-csc/kurse.git</a> ist kompatibel mit der Version V00.07.XX 
+Die Version V00.02.XX <a href="https://github.com/kube-csc/kurse.git" target="_blank">https://github.com/kube-csc/kurse.git</a> ist kompatibel ab der Version V00.09.01 
 <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <hr>

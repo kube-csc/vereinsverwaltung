@@ -1,5 +1,7 @@
 /node_modules
 /public/*_*.*
+/public/storage
+/public/images
 /public/storage/**/*_*.*
 /storage/app/public/*/*_*.*
 /public/daten/

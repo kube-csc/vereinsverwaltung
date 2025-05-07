@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Course;
 
 class Training extends Model
 {
@@ -31,4 +33,8 @@ class Training extends Model
         'created_at'
     ];
 
+    public function getCourse()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
 }

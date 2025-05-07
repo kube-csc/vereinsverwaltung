@@ -31,9 +31,8 @@ return new class extends Migration
         Schema::table('races', function (Blueprint $table) {
             $table->dropForeign(['tabele_id']);
             $table->dropColumn('aktuellLiveVideo');
+            // ToDo: Automatische Umstellung funktioniert nicht
+            //$table->integer('tabele_id')->nullable()->change();
         });
-
-        // ToDo: Automatische Umstellung funktioniert nicht
-        //$table->integer('tabele_id')->nullable()->change();
     }
 };

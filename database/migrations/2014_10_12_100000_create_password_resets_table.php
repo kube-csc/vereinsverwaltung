@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// This file is part of the Laravel framework von de App vereinsverwaltung_dev
+
 class CreatePasswordResetsTable extends Migration
 {
     /**

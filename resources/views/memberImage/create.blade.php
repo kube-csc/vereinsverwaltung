@@ -79,7 +79,7 @@
                         <small class="form-text text-danger">{!! $errors->first('controlNumber') !!}</small>
                     </div>
                     <div>
-                        <button type="submit">Absenden</button>
+                        <button type="submit">Hochladen</button>
                     </div>
               </form>
               <br><br><br>

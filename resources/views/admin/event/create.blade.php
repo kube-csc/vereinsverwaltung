@@ -118,7 +118,7 @@
                                      <small class="form-text text-danger">{!! $errors->first('emailAntwort') !!}</small>
                                 </div>
                                 <div class="my-4">
-                                    <label for="password">Password:</label>
+                                    <label for="password">Passwort damit Mitglieder Bilder hochladen können:</label>
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('password') ? 'bg-red-300' : '' }}"
                                            id="password" placeholder="Password" name="password" value="{{ old('password') }}">
                                     <small class="form-text text-danger">{!! $errors->first('password') !!}</small>

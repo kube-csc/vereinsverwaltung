@@ -28,7 +28,7 @@ class MemberImageController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
-    public function create($id)
+    public function create($event_id)
     {
         $footerDocuments = Document::where('footerStatus' , 1)
             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
@@ -37,7 +37,6 @@ class MemberImageController extends Controller
             ->where('dokumentenFile' ,'!=' , NULL)
             ->get();
 
-        $event_id = 1299;
         $event= Event::find($event_id);
 
         return view('memberImage.create')->with([

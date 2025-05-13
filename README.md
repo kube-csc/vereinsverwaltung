@@ -109,6 +109,7 @@ benötigt.
               <li>Flyer / Plakat</li>
           </ul>
         <li>Regatta anlegen</li>  
+       <li>Mitglieder können Bilder zu Veranstaltungen hochladen, wenn sie ein Passwort haben</li>
       </ul>
   </li>
   <li>Eingabe und Bearbeitung von Event Gruppen</li>

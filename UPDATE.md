@@ -5,6 +5,8 @@
 
 ***Neue Funktionen***
 - Trainingszeiten können für Abteilungen / Mannschaften hinterlegt werden
+- Mitglieder können Bilder zu Veranstaltungen hochladen, wenn sie ein Passwort haben
+- Bug fehlende migrationsdatei password_reset_tokens für die App Kurse
  
 **Version V00.09.00**
 

@@ -97,17 +97,17 @@
                                            id="homepage" placeholder="Homepage" name="homepage" value="{{ old('email') }}">
                                     <small class="form-text text-danger">{!! $errors->first('homepage') !!}</small>
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
                                     <label for="name">Ankündigung:</label>
                                     <textarea rows="25" cols="200" name="beschreibung" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('beschreibung') }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('beschreibung') !!}</small>
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
                                     <label for="name">Nachbericht:</label>
                                     <textarea rows="25" cols="200" name="nachbericht" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('nachbericht') }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('nachbericht') !!}</small>
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
                                     <label for="name">Ankündigung kurz Text:</label>
                                     <textarea rows="25" cols="200" name="anmeldetext" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('anmeldetext') }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('anmeldetext') !!}</small>
@@ -117,7 +117,13 @@
                                      <textarea rows="25" cols="200" name="emailAntwort" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('anmeldetext') }}</textarea>
                                      <small class="form-text text-danger">{!! $errors->first('emailAntwort') !!}</small>
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
+                                    <label for="password">Password:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('password') ? 'bg-red-300' : '' }}"
+                                           id="password" placeholder="Password" name="password" value="{{ old('password') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('password') !!}</small>
+                                </div>
+                                <div class="my-4">
                                     @if (!isset($sportSection_id))
                                         <label for="name">{{ env('MENUE_ABTEILUNG') }}
                                             @if(env('MENUE_MANNSCHAFTEN')<>"nein")
@@ -156,7 +162,7 @@
                                     <input type="hidden" id="sportSection_id" name="sportSection_id" value="{{ old('sportSection_id') ?? $sportSection_id }}">
                                     @endif
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
                                       <label for="name">Event Gruppe:</label><br>
                                       <select name="eventGroup_id">
                                           <option value="">keine Event Gruppe</option>

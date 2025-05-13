@@ -138,6 +138,7 @@ class EventController extends Controller
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
             'verwendung'       => '0',
+            'password'         => $request->password,
             'bearbeiter_id'    => Auth::id(),
             'autor_id'         => Auth::id(),
             'updated_at'       => Carbon::now(),
@@ -226,6 +227,7 @@ class EventController extends Controller
             'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
+            'password'         => $request->password,
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
            ]

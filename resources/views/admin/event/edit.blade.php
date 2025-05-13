@@ -116,6 +116,12 @@
                                       <textarea rows="25" cols="200" name="einverstaendnis" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('einverstaendnis') ?? $event->einverstaendnis }}</textarea>
                                       <small class="form-text text-danger">{!! $errors->first('einverstaendnis') !!}</small>
                                 </div>
+                                <div class="my-4">
+                                     <label for="password">Passwort:</label>
+                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('password') ? 'bg-red-300' : '' }}"
+                                            id="password" placeholder="Passwort" name="password" value="{{ old('password') ?? $event->password }}">
+                                     <small class="form-text text-danger">{!! $errors->first('password') !!}</small>
+                                </div>
                                 <div class="my-4" >
                                      <label for="name">{{ env('MENUE_ABTEILUNG') }}
                                          @if(env('MENUE_MANNSCHAFTEN')<>"nein")

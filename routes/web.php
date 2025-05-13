@@ -27,6 +27,7 @@ use App\Http\Controllers\SporttypeController;
 use App\Http\Controllers\RaceTypeController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\CoursedateController;
+use App\Http\Controllers\MemberImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,9 @@ Route::get('/Anfahrt',                                             [HomeControll
 Route::get('/Impressum',                                           [HomeController::class, 'imprint']);
 Route::get('/'.env('MENUE_VEREIN'),                           [HomeController::class, 'club']);
 Route::get('/'.env('MENUE_VERBAND'),                          [HomeController::class, 'sporttype']);
+
+Route::get('/Mitgliederbilder/{event_id}',          [MemberImageController::class, 'create'])->name('memberImage.create');
+Route::post('/Mitgliederbilder/uploade',            [MemberImageController::class, 'store']) ->name('memberImage.store');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');

@@ -68,6 +68,11 @@
                                             <box-icon name='run'></box-icon>
                                         </a>
                                         @endif
+                                        @if($event->password)
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Mitgliederbilder/'.$event->id) }}" target="_blank">
+                                             <box-icon name='link'></box-icon>
+                                        </a>
+                                        @endif
                                       </div>
                                   </div>
                                   <div class="justify-between my-2">

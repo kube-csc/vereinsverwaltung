@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('reports', function (Blueprint $table) {
-            $table->string('hashtag', 255)->nullable()->after('webseite');
+            $table->text('hashtag')->nullable()->after('webseite');
         });
     }
 

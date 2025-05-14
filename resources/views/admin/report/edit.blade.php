@@ -43,12 +43,12 @@
                                     id="reportTitleImage" placeholder="Titel" name="reportTitleImage" value="{{ old('reportTitleImage') ?? $report->titel }}">
                                     <small class="form-text text-danger">{!! $errors->first('reportTitleImage') !!}</small>
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
                                     <label for="name">Bild:</label>
                                     @if($report->bild)
                                       <img src="/storage/eventImage/{{$report->bild}}" />
                                     @endif
-                                    <!-- Note: Ist überfüssig wenn keine alten daten übernommen wurden-->
+                                    <!-- Note: Ist überflüssig wenn keine alten daten übernommen wurden-->
                                     @if($report->image)
                                       <img src="/daten/bilder/{{$report->image}}" />
                                     @endif
@@ -56,7 +56,13 @@
                                     id="image" name="image" value="">
                                     <small class="form-text text-danger">{!! $errors->first('image') !!}</small>
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
+                                    <label for="name">Hashtag:</label>
+                                    <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('reportHashtag') ? 'bg-red-300' : '' }}"
+                                    id="reportHashtag" placeholder="#Hashtag" name="reportHashtag" value="{{ old('reportHashtag') ?? $report->hashtag }}">
+                                    <small class="form-text text-danger">{!! $errors->first('reportHashtag') !!}</small>
+                                </div>
+                                <div class="my-4">
                                     <label for="name">Kommentar des Bildes:</label>
                                     <textarea rows="25" cols="150" name="reportImageComment" class="w-full rounded border shadow p-2 mr-2 my-2">{{ old('reportImageComment') ?? $report->kommentar }}</textarea>
                                     <small class="form-text text-danger">{!! $errors->first('reportImageComment') !!}</small>

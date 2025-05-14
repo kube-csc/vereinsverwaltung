@@ -32,15 +32,19 @@
              <div class="col-lg-4 col-md-6 portfolio-item filter-intern">
                 <div class="portfolio-wrap">
                     @if($report->bild != Null && !is_file('/storage/eventImage/'.$report->bild))
-                        <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }} {{ $report->hashtag }}">
                         <div class="portfolio-links">
-                            <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                            <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }} {{ $report->hashtag }}">
+                                <i class="bx bx-plus"></i>
+                            </a>
                         </div>
                     @endif
                     @if($report->image != Null && !is_file('/storage/eventImage/'.$report->image))
-                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }}" {{ $report->hashtag }}">
                         <div class="portfolio-links">
-                            <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                            <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }} {{ $report->hashtag }}">
+                                <i class="bx bx-plus"></i>
+                            </a>
                         </div>
                     @endif
                 </div>
@@ -50,15 +54,19 @@
              <div class="col-lg-4 col-md-6 portfolio-item filter-web">
                 <div class="portfolio-wrap">
                     @if($report->bild != Null && !is_file('/storage/eventImage/'.$report->bild))
-                        <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }} {{ $report->hashtag }}">
                         <div class="portfolio-links">
-                            <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                            <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }} {{ $report->hashtag }}">
+                                <i class="bx bx-plus"></i>
+                            </a>
                         </div>
                     @endif
                     @if($report->image != Null && !is_file('/storage/eventImage/'.$report->image))
-                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }} {{ $report->hashtag }}">
                         <div class="portfolio-links">
-                            <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                            <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }} {{ $report->hashtag }}">
+                                <i class="bx bx-plus"></i>
+                            </a>
                         </div>
                     @endif
                 </div>
@@ -69,15 +77,19 @@
              <div class="col-lg-4 col-md-6 portfolio-item filter-{{ $ii }}">
                 <div class="portfolio-wrap">
                     @if($report->bild != Null && !is_file('/storage/eventImage/'.$report->bild))
-                       <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }}">
+                       <img src="/storage/eventImage/{{ $report->bild }}" class="img-fluid" alt="{{ $report->titel }} {{ $report->hashtag }}">
                        <div class="portfolio-links">
-                         <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                         <a href="/storage/eventImage/{{ $report->bild }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }} {{ $report->hashtag }}">
+                             <i class="bx bx-plus"></i>
+                         </a>
                        </div>
                     @endif
                     @if($report->image != Null && !is_file('/storage/eventImage/'.$report->image))
-                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }}">
+                        <img src="/daten/bilder/{{ $report->image }}" class="img-fluid" alt="{{ $report->titel }} {{ $report->hashtag }}">
                         <div class="portfolio-links">
-                           <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }}"><i class="bx bx-plus"></i></a>
+                           <a href="/daten/bilder/{{ $report->image }}" data-gall="portfolioGallery" class="venobox" title="{{ $report->titel }} {{ $report->hashtag }}">
+                               <i class="bx bx-plus"></i>
+                           </a>
                         </div>
                     @endif
                 </div>

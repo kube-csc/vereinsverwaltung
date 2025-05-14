@@ -254,7 +254,8 @@ class ReportController extends Controller
         $request->validate(
             [
                 'reportTitleImage'   => 'required|max:45',
-            //  'image'              => 'mimes:jpeg,jpg,bmp,png,gif' //ToDo: Abfrage Image einfügen
+                'reportHashtag' => 'max:255',
+             //  'image'              => 'mimes:jpeg,jpg,bmp,png,gif' //ToDo: Abfrage Image einfügen
             ]
         );
 
@@ -296,6 +297,7 @@ class ReportController extends Controller
                         'event_id'         => $request->event_id,
                         'titel'            => $request->reportTitleImage,
                         'kommentar'        => $request->reportImageComment,
+                        'hashtag'          => $request->reportHashtag,
                         'bild'             => $newPictureName,
                         'pixx'             => $width,
                         'pixy'             => $height,
@@ -364,14 +366,14 @@ class ReportController extends Controller
     {
         $request->validate(
             [
-                'reportTitleImage'   => 'required|max:45',
+                'reportTitleImage' => 'required|max:45',
+                'reportHashtag'    => 'max:255',
                 //  'image'              => 'mimes:jpeg,jpg,bmp,png,gif' //ToDo: Abfrage Image einfügen
             ]
         );
 
         $messagePicture='';
         if($request->image){
-
             $reportImageName=Report::find($reportId);
             $deletePictureName=$reportImageName->bild;
             if (file_exists(public_path().'/storage/eventImage/'.$deletePictureName) && $deletePictureName!=Null){
@@ -414,7 +416,7 @@ class ReportController extends Controller
                 Report::find($reportId)->update([
                     'bild'         => $newPictureName,
                     'filename'     => $fileName,
-                    'verwendung'   => 1,   // DoTo:: Wird verwendet weil bei der Speicherung von Bilder der Wert 1 vergessen wurde
+                    'verwendung'   => 1,   // DoTo:: Wird verwendet, weil bei der Speicherung von Bilder der Wert 1 vergessen wurde
                     'pixx'         => $width,
                     'pixy'         => $height,
                 ]);
@@ -424,6 +426,7 @@ class ReportController extends Controller
 
         Report::find($reportId)->update([
             'titel'            => $request->reportTitleImage,
+            'hashtag'          => $request->reportHashtag,
             'kommentar'        => $request->reportImageComment,
             'bearbeiter_id'    => Auth::user()->id,
             'updated_at'       => Carbon::now()

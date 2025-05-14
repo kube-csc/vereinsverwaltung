@@ -52,12 +52,18 @@
                                     id="reportTitleImage" placeholder="Titel" name="reportTitleImage" value="{{ old('reportTitleImage') }}">
                                     <small class="form-text text-danger">{!! $errors->first('reportTitleImage') !!}</small>
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
+                                  <label for="reportHashtag">Hashtag:</label>
+                                  <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('reportHashtag') ? 'bg-red-300' : '' }}"
+                                         id="reportHashtag" placeholder="#Hashtag" name="reportHashtag" value="{{ old('reportHashtag') }}">
+                                  <small class="form-text text-danger">{!! $errors->first('reportHashtag') !!}</small>
+                                </div>
+                                <div class="my-4">
                                   <label for="reportImageComment">Kommentar des Bildes:</label>
                                   <textarea rows="15" cols="100" name="reportImageComment" class="w-full rounded border shadow p-2 mr-2 my-2"></textarea>
                                   <small class="form-text text-danger">{!! $errors->first('reportImageComment') !!}</small>
                                 </div>
-                                <div class="my-4" >
+                                <div class="my-4">
                                   <label for="image">Bild:</label>
                                   <input type="file" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('image') ? 'bg-red-300' : '' }}"
                                          id="image" name="image" value="">

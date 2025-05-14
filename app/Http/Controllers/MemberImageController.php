@@ -59,9 +59,9 @@ class MemberImageController extends Controller
         // Validate the request
         $request->validate([
             'image'    => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'hashtag'  => 'required|string|max:255',
+            'hashtag'  => 'string|max:255',
             'controlNumber' => ['required', function ($attribute, $value, $fail) use ($controlNumber) {
-                if ($value != $controlNumber) {
+                if (strcasecmp($value, $controlNumber) !== 0) {
                     $fail('Die Kontrollzahl ist ungültig.');
                 }
             }],
@@ -91,21 +91,21 @@ class MemberImageController extends Controller
         if($newPictureName<>'') {
             $report = new report(
                 [
-                    'event_id'  => $event->id,
-                    'titel'     => $event->ueberschrift,
-                    'hashtag'   => $request->hashtag,
-                    'bild'      => $newPictureName,
+                    'event_id'      => $event->id,
+                    'titel'         => $event->ueberschrift,
+                    'hashtag'       => $request->hashtag,
+                    'bild'          => $newPictureName,
                     //'pixx'             => $width,
                     //'pixy'             => $height,
-                    'filename'   => $fileName,
-                    'visible'    => 1,
-                    'verwendung' => 1, // 1 = Es ist ein Bild
-                    'webseite'   => 1,
-                    'typ'        => $typ,
+                    'filename'      => $fileName,
+                    'visible'       => 1,
+                    'verwendung'    => 1, // 1 = Es ist ein Bild
+                    'webseite'      => 1,
+                    'typ'           => $typ,
                     'bearbeiter_id' => 1,
                     'user_id'       => 1,
-                    'updated_at' => Carbon::now(),
-                    'created_at' => Carbon::now()
+                    'updated_at'    => Carbon::now(),
+                    'created_at'    => Carbon::now()
                 ]
             );
             $report->save();

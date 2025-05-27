@@ -112,12 +112,18 @@ class EventController extends Controller
               'ueberschrift'     => 'required|max:50',
               'datumvon'         => 'required|date',
               'datumbis'         => 'required|date|after_or_equal:datumvon',
-              'datumvona'        => 'nullable|date',
-              'datumbisa'        => 'nullable|date|after_or_equal:datumvona',
+              'datumvona'        => 'nullable|date|before_or_equal:datumvon',
+              'datumbisa'        => 'nullable|date|after_or_equal:datumvona|before_or_equal:datumbis',
               'ansprechpartner'  => 'max:50',
               'telefon'          => 'max:25',
               'email'            => 'max:50',
               'homepage'         => 'max:255',
+              'mitgliederSicherheitscodeEnddatum' => 'nullable|after_or_equal:datumbis',
+            ], [],
+            [
+                  'datumvon'  => 'Start Termin',
+                  'datumvona' => 'Start Anmeldestarttermin',
+                  'datumbis'  => 'End Termin',
             ]
         );
 
@@ -138,7 +144,8 @@ class EventController extends Controller
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
             'verwendung'       => '0',
-            'password'         => $request->password,
+            'mitgliederSicherheitscode'         => $request->mitgliederSicherheitscode,
+            'mitgliederSicherheitscodeEnddatum' => $request->mitgliederSicherheitscodeEnddatum,
             'bearbeiter_id'    => Auth::id(),
             'autor_id'         => Auth::id(),
             'updated_at'       => Carbon::now(),
@@ -194,15 +201,21 @@ class EventController extends Controller
     public function update(Request $request, $event_id)
     {
         $request->validate([
-                'ueberschrift'         => 'required|max:50',
-                'datumvon'             => 'required|date',
-                'datumbis'             => 'required|date|after_or_equal:datumvon',
-                'datumvona'            => 'nullable|date',
-                'datumbisa'            => 'nullable|date|after_or_equal:datumvona',
-                'ansprechpartner'      => 'max:50',
-                'telefon'              => 'max:25',
-                'email'                => 'max:50',
-                'homepage'             => 'max:255',
+                'ueberschrift'                      => 'required|max:50',
+                'datumvon'                          => 'required|date',
+                'datumbis'                          => 'required|date|after_or_equal:datumvon',
+                'datumvona'                         => 'nullable|date|before_or_equal:datumvon',
+                'datumbisa'                         => 'nullable|date|after_or_equal:datumvona|before_or_equal:datumbis',
+                'ansprechpartner'                   => 'max:50',
+                'telefon'                           => 'max:25',
+                'email'                             => 'max:50',
+                'homepage'                          => 'max:255',
+                'mitgliederSicherheitscodeEnddatum' => 'nullable|after_or_equal:datumbis',
+            ], [],
+            [
+                'datumvon'  => 'Start Termin',
+                'datumvona' => 'Start Anmeldestarttermin',
+                'datumbis'  => 'End Termin',
             ]
         );
 
@@ -227,7 +240,8 @@ class EventController extends Controller
             'nachtermin'       => $request->nachbericht,
             'sportSection_id'  => $request->sportSection_id,
             'eventGroup_id'    => $request->eventGroup_id,
-            'password'         => $request->password,
+            'mitgliederSicherheitscode'         => $request->mitgliederSicherheitscode,
+            'mitgliederSicherheitscodeEnddatum' => $request->mitgliederSicherheitscodeEnddatum,
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
            ]

@@ -117,10 +117,18 @@
                                       <small class="form-text text-danger">{!! $errors->first('einverstaendnis') !!}</small>
                                 </div>
                                 <div class="my-4">
-                                     <label for="password">Passwort damit Mitglieder Bilder hochladen können:</label>
-                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('password') ? 'bg-red-300' : '' }}"
-                                            id="password" placeholder="Passwort" name="password" value="{{ old('password') ?? $event->password }}">
-                                     <small class="form-text text-danger">{!! $errors->first('password') !!}</small>
+                                     <label for="mitgliederSicherheitscode">Sicherheitscode damit Mitglieder Bilder hochladen können:</label>
+                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('mitgliederSicherheitscode') ? 'bg-red-300' : '' }}"
+                                            id="mitgliederSicherheitscode" placeholder="Sicherheitscode" name="mitgliederSicherheitscode" value="{{ old('mitgliederSicherheitscode') ?? $event->mitgliederSicherheitscode }}">
+                                     <small class="form-text text-danger">{!! $errors->first('mitgliederSicherheitscode') !!}</small>
+                                </div>
+                                <div class="my-4">
+                                     <div class="my-4">
+                                         <label for="mitgliederSicherheitscodeEnddatum">Sicherheitscode gültig bis Datum:</label>
+                                         <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('mitgliederSicherheitscodeEnddatum') ? 'bg-red-300' : '' }}"
+                                                id="mitgliederSicherheitscodeEnddatum" placeholder="Gültig bis" name="mitgliederSicherheitscodeEnddatum" value="{{ old('mitgliederSicherheitscodeEnddatum') ?? $event->mitgliederSicherheitscodeEnddatum }}">
+                                         <small class="form-text text-danger">{!! $errors->first('mitgliederSicherheitscodeEnddatum') !!}</small>
+                                     </div>
                                 </div>
                                 <div class="my-4" >
                                      <label for="name">{{ env('MENUE_ABTEILUNG') }}

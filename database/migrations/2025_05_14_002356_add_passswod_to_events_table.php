@@ -14,11 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->string('password', 255)->nullable()->after('freigabe');
+            $table->string('mitgliederSicherheitscode', 255)->nullable()->after('freigabe');
+            $table->date('mitgliederSicherheitscodeEnddatum')->nullable()->after('mitgliederSicherheitscode');
         });
     }
 
-    /**
+     /**
      * Reverse the migrations.
      *
      * @return void
@@ -26,7 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->dropColumn('password');
+          $table->dropColumn('mitgliederSicherheitscode');
+          $table->dropColumn('mitgliederSicherheitscodeEnddatum');
         });
     }
 };

@@ -80,7 +80,7 @@
                         {!! $ausgabe !!}
                         <div>
                             {{ $socialMedia->titel }}
-                            {{ $socialMedia->kommentar }}
+                            {!! $socialMedia->kommentar !!}
                         </div>
                     </div>
                 </div>

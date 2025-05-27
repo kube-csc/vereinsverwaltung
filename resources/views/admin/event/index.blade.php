@@ -68,7 +68,7 @@
                                             <box-icon name='run'></box-icon>
                                         </a>
                                         @endif
-                                        @if($event->password)
+                                        @if($event->mitgliederSicherheitscode)
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Mitgliederbilder/'.$event->id) }}" target="_blank">
                                              <box-icon name='link'></box-icon>
                                         </a>

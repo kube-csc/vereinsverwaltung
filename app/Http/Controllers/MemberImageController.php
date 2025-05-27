@@ -8,7 +8,7 @@ use App\Models\Event;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
 class MemberImageController extends Controller
@@ -54,15 +54,15 @@ class MemberImageController extends Controller
     public function store(Request $request)
     {
         $event= Event::find($request->event_id);
-        $controlNumber = $event->password;
+        $mitgliederSicherheitscode = $event->mitgliederSicherheitscode;
 
         // Validate the request
         $request->validate([
             'image'    => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'hashtag'  => 'string|max:255',
-            'controlNumber' => ['required', function ($attribute, $value, $fail) use ($controlNumber) {
-                if (strcasecmp($value, $controlNumber) !== 0) {
-                    $fail('Die Kontrollzahl ist ungültig.');
+            'hashtag'  => 'max:255',
+            'mitgliederSicherheitscode' => ['required', function ($attribute, $value, $fail) use ($mitgliederSicherheitscode) {
+                if (strcasecmp($value, $mitgliederSicherheitscode) !== 0) {
+                    $fail('Die Sicherheitscode ist ungültig.');
                 }
             }],
         ]);
@@ -88,6 +88,8 @@ class MemberImageController extends Controller
             $newPictureName = $this->saveInmage($request->image, $event->id, $extension);
         }
 
+        Session::put('mitgliederSicherheitscodeSession' , $mitgliederSicherheitscode);
+
         if($newPictureName<>'') {
             $report = new report(
                 [
@@ -102,8 +104,8 @@ class MemberImageController extends Controller
                     'verwendung'    => 1, // 1 = Es ist ein Bild
                     'webseite'      => 1,
                     'typ'           => $typ,
-                    'bearbeiter_id' => 1,
-                    'user_id'       => 1,
+                    'bearbeiter_id' => $event->autor_id,
+                    'user_id'       => $event->autor_id,
                     'updated_at'    => Carbon::now(),
                     'created_at'    => Carbon::now()
                 ]

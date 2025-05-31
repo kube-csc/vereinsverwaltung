@@ -263,14 +263,10 @@ class LaneController extends Controller
         $tabele = Tabele::where('id', $race->tabele_id)->first();
 
         if($race->mix == Null && $tabele->gruppe_id>0) {
-            $teamCount = RegattaTeam::where('gruppe_id', $tabele->gruppe_id)
-                //->orderBy('teamname')
-                ->count();
+            $teamCount = RegattaTeam::where('gruppe_id', $tabele->gruppe_id)->count();
         }
         else {
-            $teamCount = RegattaTeam::where('regatta_id', Session::get('regattaSelectId'))
-                //->orderBy('teamname')
-                ->count();
+            $teamCount = RegattaTeam::where('regatta_id', Session::get('regattaSelectId'))->count();
         }
 
         $tabeleVorRennens = Tabele::where('event_id', Session::get('regattaSelectId'))
@@ -360,11 +356,11 @@ class LaneController extends Controller
     public function update(Request $request, int $raceId)
     {
         $changeCount=0;
-        $laneTabelvorCount=0;
+        $laneTableBeforCount=0;
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
-            if($lane->tabelevor_id != Null && ($lane->platzvor != Null || $lane->platzvor != 0)) {
-                ++$laneTabelvorCount;
+            if($lane->tabelevor_id != Null && ($lane->platzvor != Null && $lane->platzvor != 0)) {
+                ++$laneTableBeforCount;
             }
             if ($lane->mannschaft_id != $request->mannschaftId[$index] || $lane->tabele_id != $request->tabeleId[$index]) {
                 $altMannschaftId = $lane->mannschaft_id;
@@ -404,12 +400,12 @@ class LaneController extends Controller
         $race = Race::find($raceId);
 
         if($changeCount == 1) {
-            $mannschaftLaneCount = Lane::where('rennen_id', $raceId)
+            $teamLaneCount = Lane::where('rennen_id', $raceId)
                 ->where('mannschaft_id', '>', 0)
                 ->count();
 
-            if($mannschaftLaneCount == 0) {
-                if($laneTabelvorCount == $race->bahnen) {
+            if($teamLaneCount == 0) {
+                if($laneTableBeforCount == $race->bahnen) {
                     $race->status = 1;
                 }
                 else{
@@ -455,7 +451,7 @@ class LaneController extends Controller
             }
         }
         else {
-            if($laneTabelvorCount == $race->bahnen) {
+            if($laneTableBeforCount == $race->bahnen) {
                 $race->status = 1;
                 $race->save();
             }
@@ -479,11 +475,11 @@ class LaneController extends Controller
     public function updateSetDraw(Request $request, int $raceId)
     {
         $changeCount=0;
-        $laneTabelvorCount=0;
+        $laneTableBeforCount=0;
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
-            if($lane->tabelevor_id != Null && ($lane->platzvor != Null || $lane->platzvor != 0)) {
-                ++$laneTabelvorCount;
+            if($lane->tabelevor_id != Null && ($lane->platzvor != Null && $lane->platzvor != 0)) {
+                ++$laneTableBeforCount;
             }
             if ($lane->tabelevor_id != $request->tabelevorId[$index] || $lane->platzvor != $request->platzvor[$index] || $lane->tabele_id != $request->tabeleId[$index]) {
 
@@ -515,12 +511,12 @@ class LaneController extends Controller
         $race = Race::find($raceId);
 
         if($changeCount == 1) {
-            $mannschaftLaneCount = Lane::where('rennen_id', $raceId)
+            $teamLaneCount = Lane::where('rennen_id', $raceId)
                 ->where('mannschaft_id', '>', 0)
                 ->count();
 
-            if($mannschaftLaneCount == 0) {
-                if($laneTabelvorCount == $race->bahnen) {
+            if($teamLaneCount == 0) {
+                if($laneTableBeforCount == $race->bahnen) {
                     $race->status = 1;
                 }
                 else{
@@ -530,12 +526,11 @@ class LaneController extends Controller
             else {
                 $race->status = 2;
             }
-
             $race->save();
             $success = 'Das Rennen wurde gesetzt.';
         }
         else{
-            if($laneTabelvorCount == $race->bahnen) {
+            if($laneTableBeforCount == $race->bahnen) {
                 $race->status = 1;
                 $race->save();
             }

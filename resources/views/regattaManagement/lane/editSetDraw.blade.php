@@ -31,7 +31,7 @@
 
                             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
                                <label for="name">Nummer:</label>
-                               {{ $race->nummer }} {{ $race->rennBezeichnung }}
+                               {{ $race->nummer }} - {{ $race->rennBezeichnung }}
                                <br>
                                @if($tabele)
                                <label for="name">Tabelle:</label>
@@ -93,7 +93,7 @@
                                         @endphp
 
                                         <div class="my-4" >
-                                            <label for="name">Bahn {{ $lane->bahn }} Tabelle:</label>
+                                            <label for="name">Bahn {{ $lane->bahn }} setzen aus Tabelle:</label>
 
                                             <input type="hidden" name="laneId[{{$bahn}}]" value="{{ $lane->id }}">
                                             <br>
@@ -109,6 +109,7 @@
                                                         @if( $tabeleVorRennen->id == $lane->tabelevor_id )
                                                                 selected
                                                         @endif
+                                                        @selected( $lane->tabelevor_id == 0 && $tabele->gruppe_id == $tabeleVorRennen->gruppe_id)
                                                     >{{ $tabeleVorRennen->ueberschrift }}</option>
                                                 @endforeach
                                             </select>

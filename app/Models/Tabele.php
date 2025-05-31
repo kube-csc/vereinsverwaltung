@@ -13,4 +13,9 @@ class Tabele extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    public function getTeamWertungsGruppe()
+    {
+        return $this->belongsTo(RaceType::class, 'gruppe_id');
+    }
 }

@@ -81,7 +81,8 @@
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $tabele->updated_at->diffForHumans() }}</p>
                                     </div>
                                     <div class="flex">
-                                        Regatta Abschnitt von {{ $tabele->tabelleLevelVon }} bis {{ $tabele->tabelleLevelBis }}
+                                        Regatta Abschnitt von {{ $tabele->tabelleLevelVon }} bis {{ $tabele->tabelleLevelBis }}<br>
+                                        Klasse: {{ $tabele->getTeamWertungsGruppe->typ }}
                                     </div>
                                   </div>
 

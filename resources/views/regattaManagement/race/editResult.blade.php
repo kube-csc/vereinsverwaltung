@@ -140,7 +140,7 @@
                                             <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $raceDocument->updated_at->diffForHumans() }}</p>
                                         </div>
                                         <div class="flex">
-                                            von {{ date("d.m.Y", strtotime($raceDocument->rennDatum)) }} {{ date("h:m", strtotime($raceDocument->rennUhrzeit)) }}
+                                            von {{ date("d.m.Y", strtotime($raceDocument->rennDatum)) }} {{ date("H:i", strtotime($raceDocument->rennUhrzeit)) }} Uhr
                                         </div>
                                     </div>
 

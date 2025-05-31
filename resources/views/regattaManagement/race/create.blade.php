@@ -46,13 +46,13 @@
                                    <div>
                                       <label for="nummer">Nummer:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('nummer') ? 'bg-red-300' : '' }}"
-                                              id="nummer" placeholder="Nummer" name="nummer" value="{{ Session::get('rennNummer') ?? old('rennBezeichnung')}}">
+                                              id="nummer" placeholder="Nummer" name="nummer" value="{{ Session::get('rennNummer') ?? old('nummer')}}">
                                       <small class="form-text text-danger">{!! $errors->first('nummer') !!}</small>
                                   </div>
                                   <div>
                                       <label for="rennBezeichnung">Bezeichnung des Rennen:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBezeichnung') ? 'bg-red-300' : '' }}"
-                                             id="rennBezeichnung" placeholder="Bezeichnung des Rennen" name="rennBezeichnung" value="{{ old('rennBezeichnung') }}">
+                                             id="rennBezeichnung" placeholder="Bezeichnung des Rennen" name="rennBezeichnung" value="{{ Session::get('regattaSelectRaceName') ?? old('rennBezeichnung') }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennBezeichnung') !!}</small>
                                   </div>
 

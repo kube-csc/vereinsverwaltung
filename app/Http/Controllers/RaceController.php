@@ -96,7 +96,8 @@ class RaceController extends Controller
             ->where('visible', 1)
             ->where(function($query) {
                 $query->where('status', '<', 2)
-                    ->orWhere('programmDatei', null);
+                    //->orWhere('programmDatei', null);
+                    ->where('programmDatei', null);
             })
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -114,9 +115,12 @@ class RaceController extends Controller
         $races = Race::where('event_id',Session::get('regattaSelectId'))
             ->where(function($query) {
                 $query->where('programmDatei', '!=', null)
-                    ->orWhere('status', '<', 3);
+                    ->orWhere(function($subQuery) {
+                        $subQuery->where('status', '>', 1)
+                            ->where('status', '<', 3);
+                    });
             })
-            ->where('status', '>', 1)
+            ->where('visible' , 1)
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
             ->paginate(10);
@@ -133,9 +137,9 @@ class RaceController extends Controller
         $races = Race::where('event_id',Session::get('regattaSelectId'))
             ->where(function($query) {
                 $query->where('ergebnisDatei', null)
-                    ->orWhere('status', 2);
+                    //->orWhere('status', 2);
+                    ->where('status', '>', 4);
             })
-            ->where('status', '>', 4)
             ->where('visible' , 1)
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -155,6 +159,7 @@ class RaceController extends Controller
                 $query->where('programmDatei', '!=', null)
                     ->orWhere('status', 4);
             })
+            ->where('visible' , 1)
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
             ->paginate(10);
@@ -311,14 +316,31 @@ class RaceController extends Controller
         if($rennNummer==$request->nummer){
             $rennNummer=$rennNummer+1;
         }
-        else{
-            $rennNummer=$request->nummer;
+        else {
+            $prefixPattern = '/[-.]/'; // Unterstützt sowohl "-" als auch "."
+            $teile = preg_split($prefixPattern, $request->nummer, 2);
+            if (count($teile) === 2) {
+                $vordererTeil = $teile[0];
+                $hintererTeil = $teile[1];
+                $originalPrefix = strpos($request->nummer, '-') !== false ? '-' : '.'; // Ermittelt das ursprüngliche Präfix
+
+                // Prüfen, ob der hintere Teil eine Zahl ist
+                if (is_numeric($hintererTeil)) {
+                    $hintererTeil += 1; // Erhöhe die Zahl um 1
+                    $rennNummer = $vordererTeil . $originalPrefix . $hintererTeil; // Verwendet das ursprüngliche Präfix
+                } else {
+                    $rennNummer = $request->nummer;
+                }
+            } else {
+                $rennNummer = $request->nummer;
+            }
         }
 
         Session::put('regattaSelectRaceDate'      , $request->rennDatum);
         Session::put('regattaSelectRaceTime'      , $request->rennUhrzeit);
         Session::put('regattaSelectRaceTimeNew'   , $timeNew);
         Session::put('regattaSelectRacePublished' , $request->veroeffentlichungUhrzeit);
+        Session::put('regattaSelectRaceName'      , $request->rennBezeichnung);
         Session::put('rennNummer'                 , $rennNummer);
         Session::put('rennLevelSave'              , $request->regattaLevel);
 
@@ -485,20 +507,28 @@ class RaceController extends Controller
         // Unterscheiden, welche Aktion ausgeführt werden soll
         if ($request->input('action') == 'save_and_edit_next') {
             // Logik für "Speichern & nächstes Rennen bearbeiten"
-
             $nextRace = Race::where([
                 'races.event_id' => Session::get('regattaSelectId')
             ])
                 ->where('rennUhrzeit','>=', $request->rennUhrzeit)
                 ->whereNot('id', $race_id)
-                ->orderby('rennDatum')
-                ->orderby('rennUhrzeit')
+                ->orderBy('rennDatum')
+                ->orderBy('rennUhrzeit')
+                ->orderBy('id')
                 ->first();
 
-            return redirect('Rennen/edit/'.$nextRace->id)->with([
-                'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
-            ]);
-        } else {
+            if ($nextRace) {
+                return redirect('Rennen/edit/'.$nextRace->id)->with([
+                    'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
+                ]);
+            } else {
+                return redirect('/Rennen/alle')->with([
+                    'error' => 'Kein weiteres Rennen gefunden.',
+                    'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
+                ]);
+            }
+        }
+        else {
             // Logik für "Speichern"
             return redirect('/Rennen/alle')->with([
                   'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'

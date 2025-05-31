@@ -108,12 +108,6 @@ Route::get('/Regatta/inaktiv/{event_id}',             [EventController::class, '
 Route::get('/Regatta/alle',                           [EventController::class, 'indexRegatta'])       ->name('event.indexRegatta');
 Route::get('/Regatta/{event_id}',                     [EventController::class, 'selectRegatta'])      ->name('event.selectRegatta');
 
-Route::get('/Teamverlosung/{race_id}',                [LaneController::class, 'show'])                ->name('lane.show');
-Route::get('/Teamverlosung/setzen/{race_id}',         [LaneController::class, 'editDraw'])            ->name('lane.editDraw');
-Route::get('/Teamverlosung/Ergebnisse/{race_id}',     [LaneController::class, 'editResult'])          ->name('lane.editResult');
-Route::post('/Teamverlosung/update/{race_id}',        [LaneController::class, 'update'])              ->name('lane.update');
-Route::post('/Rennergebnisse/update/{race_id}',       [LaneController::class, 'updateResult'])        ->name('lane.updateResult');
-
 Route::get('/Eventgruppe/alle',                        [EventGroupController::class, 'index'])         ->name('eventGroup.index');
 Route::get('/Eventgruppe/neu',                         [EventGroupController::class, 'create'])        ->name('eventGroup.create');
 Route::post('/Eventgruppe/speichern',                  [EventGroupController::class, 'store'])         ->name('eventGroup.store');
@@ -240,6 +234,7 @@ Route::get('/Backlink/softDelete/{backlink_id}',     [BacklinksController::class
 Route::get('/Backlink/edit/{backlink_id}',           [BacklinksController::class, 'edit'])          ->name('backlink.edit');
 Route::post('/Backlink/update/{backlink_id}',        [BacklinksController::class, 'update'])        ->name('backlink.update');
 
+// Regattaverwaltung
 Route::get('/Rennen/alle',                            [RaceController::class, 'index'])           ->name('race.index');
 Route::get('/Rennen/neu',                             [RaceController::class, 'create'])          ->name('race.create');
 Route::post('/Rennen/speichern',                      [RaceController::class, 'store'])           ->name('race.store');
@@ -253,6 +248,7 @@ Route::get('/Rennen/Programm',                        [RaceController::class, 'i
 Route::get('/Rennen/Programm/alle',                   [RaceController::class, 'indexProgramAll']) ->name('race.indexProgramAll');
 Route::get('/Rennen/Programm/{race_id}',              [RaceController::class, 'editProgram'])     ->name('race.editProgram');
 Route::post('/Rennen/Programm/update/{race_id}',      [RaceController::class, 'updateProgram'])   ->name('race.updateProgram');
+Route::get('/Rennen/Setzen/{race_id}',                [RaceController::class, 'setProgram'])      ->name('race.setProgram');
 Route::get('/Rennen/Programm/loeschen/{race_id}',     [RaceController::class, 'deleteProgram'])   ->name('race.deleteProgram');
 Route::get('/Rennen/Ergebnisse',                      [RaceController::class, 'indexResult'])     ->name('race.indexResult');
 Route::get('/Rennen/Ergebnisse/alle',                 [RaceController::class, 'indexResultAll'])  ->name('race.indexResultAll');
@@ -261,6 +257,14 @@ Route::post('/Rennen/Ergebnis/update/{race_id}',      [RaceController::class, 'u
 Route::get('/Rennen/Ergebnis/loeschen/{race_id}',     [RaceController::class, 'deleteResult'])    ->name('race.deleteResult');
 Route::get('/Rennen/Zeit/{race_id}',                  [RaceController::class, 'raceTime'])        ->name('race.raceTime');
 Route::post('/Rennen/Zeit/update/{race_id}',          [RaceController::class, 'updateRaceTime'])  ->name('race.updateRaceTime');
+
+Route::get('/Teamverlosung/{race_id}',                [LaneController::class, 'show'])            ->name('lane.show');
+Route::get('/Teamverlosung/setzen/{race_id}',         [LaneController::class, 'editDraw'])        ->name('lane.editDraw');
+Route::get('/Teamverlosung/Ergebnisse/{race_id}',     [LaneController::class, 'editResult'])      ->name('lane.editResult');
+Route::post('/Teamverlosung/update/{race_id}',        [LaneController::class, 'update'])          ->name('lane.update');
+Route::post('/Rennergebnisse/update/{race_id}',       [LaneController::class, 'updateResult'])    ->name('lane.updateResult');
+Route::get('/Teamverlosung/planen/{race_id}',         [LaneController::class, 'editSetDraw'])     ->name('lane.editSetDraw');
+Route::post('/Teamverlosung/planen/update/{race_id}', [LaneController::class, 'updateSetDraw'])   ->name('lane.updateSetDraw');
 
 // ToDo: Refactorieren {race_id} in {tabele_id} umbenennen
 Route::get('/Tabelle/alle',                         [TabeleController::class, 'index'])                 ->name('tabele.index');

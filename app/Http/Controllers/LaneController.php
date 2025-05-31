@@ -209,6 +209,98 @@ class LaneController extends Controller
         );
     }
 
+    public function editSetDraw($id)
+    {
+        $race = Race::find($id);
+
+        // Vorheriges Rennen
+        $previousRace = Race::where('event_id', Session::get('regattaSelectId'))
+            ->where('id', '!=', $id)
+            ->where('rennDatum', $race->rennDatum)
+            ->where('rennUhrzeit', '<=', $race->rennUhrzeit)
+            ->where('status', '>', 0)
+            ->where('status', '<=', 2)
+            ->orderBy('rennUhrzeit', 'desc')
+            ->first();
+
+        // Nächstes Rennen
+        $nextRace = Race::where('event_id', Session::get('regattaSelectId'))
+            ->where('id', '!=', $id)
+            ->where('rennDatum', $race->rennDatum)
+            ->where('rennUhrzeit', '>=', $race->rennUhrzeit)
+            ->where('status', '>', 0)
+            ->where('status', '<=', 2)
+            ->orderBy('rennUhrzeit', 'asc')
+            ->first();
+
+        $lanes = Lane::where('rennen_id',$id)->get();
+
+        if ($lanes->isEmpty()) {
+            for ($i = 1; $i <= $race->bahnen; $i++) {
+                if($race->tabele_id != Null) {
+                    $lane = new Lane([
+                        'regatta_id' => Session::get('regattaSelectId'),
+                        'rennen_id' => $id,
+                        'tabele_id' => $race->tabele_id,
+                        'bahn' => $i,
+                        'zeit' => '00:00:00',
+                        'hundert' => 0,
+                        'punkte' => 0,
+                        'platz' => 0,
+                        'tabelevor_id' => 0,
+                        'platzvor' => 0,
+                        'bearbeiter_id' => Auth::id(),
+                        'autor_id' => Auth::id(),
+                        'updated_at' => Carbon::now(),
+                        'created_at' => Carbon::now()
+                    ]);
+                }
+                $lane->save();
+            }
+            $lanes = Lane::where('rennen_id',$id)->get();
+        }
+
+        $tabele = Tabele::where('id', $race->tabele_id)->first();
+
+        if($race->mix == Null && $tabele->gruppe_id>0) {
+            $teamCount = RegattaTeam::where('gruppe_id', $tabele->gruppe_id)
+                //->orderBy('teamname')
+                ->count();
+        }
+        else {
+            $teamCount = RegattaTeam::where('regatta_id', Session::get('regattaSelectId'))
+                //->orderBy('teamname')
+                ->count();
+        }
+
+        $tabeleVorRennens = Tabele::where('event_id', Session::get('regattaSelectId'))
+            ->where('tabelleLevelBis', '<', $race->level)
+            ->orderBy('tabelleLevelVon')
+            ->orderBy('tabelleLevelBis')
+            ->orderBy('ueberschrift')
+            ->get();
+
+        $tabeleAlls = Tabele::where('event_id', Session::get('regattaSelectId'))
+            ->where('tabelleLevelBis', '>=', $race->level)
+            ->orderBy('tabelleLevelVon')
+            ->orderBy('tabelleLevelBis')
+            ->orderBy('ueberschrift')
+            ->get();
+
+        return view('regattaManagement.lane.editSetDraw')->with(
+            [
+                'lanes'            => $lanes,
+                'race'             => $race,
+                'previousRace'     => $previousRace,
+                'nextRace'         => $nextRace,
+                'tabele'           => $tabele,
+                'teamsCount'       => $teamCount,
+                'tabeleAlls'       => $tabeleAlls,
+                'tabeleVorRennens' => $tabeleVorRennens
+            ]
+        );
+    }
+
     public function editResult($id)
     {
         $race = Race::find($id);
@@ -268,8 +360,12 @@ class LaneController extends Controller
     public function update(Request $request, int $raceId)
     {
         $changeCount=0;
+        $laneTabelvorCount=0;
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
+            if($lane->tabelevor_id != Null && ($lane->platzvor != Null || $lane->platzvor != 0)) {
+                ++$laneTabelvorCount;
+            }
             if ($lane->mannschaft_id != $request->mannschaftId[$index] || $lane->tabele_id != $request->tabeleId[$index]) {
                 $altMannschaftId = $lane->mannschaft_id;
                 $altTabelleId = $lane->tabele_id;
@@ -305,10 +401,27 @@ class LaneController extends Controller
             }
         }
 
+        $race = Race::find($raceId);
+
         if($changeCount == 1) {
-            $race = Race::find($raceId);
-            $race->status = 2;
+            $mannschaftLaneCount = Lane::where('rennen_id', $raceId)
+                ->where('mannschaft_id', '>', 0)
+                ->count();
+
+            if($mannschaftLaneCount == 0) {
+                if($laneTabelvorCount == $race->bahnen) {
+                    $race->status = 1;
+                }
+                else{
+                    $race->status = 0;
+                }
+            }
+            else {
+                  $race->status = 2;
+            }
+
             $race->save();
+            $success = 'Das Rennen wurde gesetzt.';
 
             $tabellenIds = Lane::where('rennen_id', $raceId)
                 ->where('mannschaft_id', '>', 0)
@@ -341,9 +454,96 @@ class LaneController extends Controller
                 }
             }
         }
+        else {
+            if($laneTabelvorCount == $race->bahnen) {
+                $race->status = 1;
+                $race->save();
+            }
+
+            $success = 'Es gab keine Änderung.';
+        }
 
         return redirect('/Rennen/Programm')->with([
-                'success' => 'Das Rennen wurde gesetzt.'
+                'success' => $success
+            ]
+        );
+    }
+
+    /**
+     * updateSetDraw the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param int $raceId
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function updateSetDraw(Request $request, int $raceId)
+    {
+        $changeCount=0;
+        $laneTabelvorCount=0;
+        foreach ($request->laneId as $index => $laneId) {
+            $lane = Lane::find($laneId);
+            if($lane->tabelevor_id != Null && ($lane->platzvor != Null || $lane->platzvor != 0)) {
+                ++$laneTabelvorCount;
+            }
+            if ($lane->tabelevor_id != $request->tabelevorId[$index] || $lane->platzvor != $request->platzvor[$index] || $lane->tabele_id != $request->tabeleId[$index]) {
+
+                if($lane->tabelevor_id != $request->tabelevorId[$index]){
+                    $lane->tabelevor_id = $request->tabelevorId[$index];
+                    $changeCount=1;
+                }
+
+                if($lane->platzvor != $request->platzvor[$index]){
+                    $lane->platzvor = $request->platzvor[$index];
+                    $changeCount=1;
+                }
+
+                if($lane->tabele_id != $request->tabeleId[$index]) {
+                    $lane->tabele_id = $request->tabeleId[$index];
+                    $changeCount=1;
+                }
+
+                if($changeCount == 1){
+                    $lane->mannschaft_id = Null;
+                    $lane->platz = 0;
+                    $lane->bearbeiter_id = Auth::id();
+                    $lane->updated_at    = Carbon::now();
+                    $lane->save();
+                }
+            }
+        }
+
+        $race = Race::find($raceId);
+
+        if($changeCount == 1) {
+            $mannschaftLaneCount = Lane::where('rennen_id', $raceId)
+                ->where('mannschaft_id', '>', 0)
+                ->count();
+
+            if($mannschaftLaneCount == 0) {
+                if($laneTabelvorCount == $race->bahnen) {
+                    $race->status = 1;
+                }
+                else{
+                    $race->status = 0;
+                }
+            }
+            else {
+                $race->status = 2;
+            }
+
+            $race->save();
+            $success = 'Das Rennen wurde gesetzt.';
+        }
+        else{
+            if($laneTabelvorCount == $race->bahnen) {
+                $race->status = 1;
+                $race->save();
+            }
+            $success = 'Es gab keine Änderung.';
+        }
+
+        return redirect('/Rennen/Programm')->with([
+                'success' => $success
             ]
         );
     }

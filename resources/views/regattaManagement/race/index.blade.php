@@ -45,9 +45,14 @@
                             <div style="text-align: left">
                               <div>
                                   @if (session()->has('success'))
-                                  <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
-                                      {!! session('success') !!}
-                                  </div>
+                                      <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
+                                          {!! session('success') !!}
+                                      </div>
+                                  @endif
+                                  @if (session()->has('error'))
+                                      <div class="p-3 bg-red-500 text-red-800 rounded shadow-sm">
+                                            {!! session('error') !!}
+                                      </div>
                                   @endif
                               </div>
 
@@ -73,6 +78,11 @@
                                             <box-icon name='image'></box-icon>
                                         </a>
                                         --}}
+                                        {{--
+                                         Wenn $funktionStatus == 1: Es wird das Rennprogramm (also die geplanten Rennen) angezeigt und entsprechende Aktionen (z.B. „Programm der Rennen“).
+                                         Wenn $funktionStatus == 2: Es werden die Rennergebnisse angezeigt und entsprechende Aktionen (z.B. „Ergebnisse der Rennen“).
+                                         Bei anderen Werten werden spezielle Aktionen wie Teamverlosung angeboten.
+                                        --}}
                                         @if($funktionStatus==1)
                                         <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Programm/'.$race->id) }}">
                                             <box-icon name='file'></box-icon>
@@ -86,15 +96,23 @@
                                             <box-icon name='time'></box-icon>
                                         </a>
                                         @endif
+                                        {{--
+                                        Ausgabe der Rennaufstellung
+                                        --}}
                                         @if($funktionStatus != 1 and $funktionStatus != 2)
                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/'.$race->id) }}">
-                                             <box-icon name='user'></box-icon>
+                                             <box-icon name='clipboard'></box-icon>
                                           </a>
                                         @endif
                                         @if($funktionStatus == 1 && $race->tabele_id && $race->status <4)
                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/setzen/'.$race->id) }}">
                                               <box-icon name='user'></box-icon>
                                           </a>
+                                        @endif
+                                        @if($funktionStatus == 1 && $race->tabele_id && $race->status <2)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/planen/'.$race->id) }}">
+                                                <box-icon name='shuffle'></box-icon>
+                                            </a>
                                         @endif
                                         @if($funktionStatus == 2 && $race->tabele_id)
                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/Ergebnisse/'.$race->id) }}">

@@ -325,7 +325,7 @@ class LaneController extends Controller
 
         $tabele = Tabele::find($race->tabele_id);
 
-        if($race->status == 2 && $race->rennDatum == Carbon::now()->toDateString()) {
+        if($race->status == 2 && $race->rennDatum == Carbon::now()->toDateString() && $race->rennzeit == 0){
             $ractetime1 = Carbon::now();
             $ractetime2 = $ractetime1->subMinute(3);
             $ractetime  = $ractetime2->toTimeString();
@@ -356,12 +356,8 @@ class LaneController extends Controller
     public function update(Request $request, int $raceId)
     {
         $changeCount=0;
-        $laneTableBeforCount=0;
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
-            if($lane->tabelevor_id != Null && ($lane->platzvor != Null && $lane->platzvor != 0)) {
-                ++$laneTableBeforCount;
-            }
             if ($lane->mannschaft_id != $request->mannschaftId[$index] || $lane->tabele_id != $request->tabeleId[$index]) {
                 $altMannschaftId = $lane->mannschaft_id;
                 $altTabelleId = $lane->tabele_id;
@@ -398,6 +394,10 @@ class LaneController extends Controller
         }
 
         $race = Race::find($raceId);
+        $laneTableBeforCount = Lane::where('rennen_id', $raceId)
+            ->where('tabelevor_id', '>', 0)
+            ->where('platzvor', '>', 0)
+            ->count();
 
         if($changeCount == 1) {
             $teamLaneCount = Lane::where('rennen_id', $raceId)
@@ -475,12 +475,8 @@ class LaneController extends Controller
     public function updateSetDraw(Request $request, int $raceId)
     {
         $changeCount=0;
-        $laneTableBeforCount=0;
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
-            if($lane->tabelevor_id != Null && ($lane->platzvor != Null && $lane->platzvor != 0)) {
-                ++$laneTableBeforCount;
-            }
             if ($lane->tabelevor_id != $request->tabelevorId[$index] || $lane->platzvor != $request->platzvor[$index] || $lane->tabele_id != $request->tabeleId[$index]) {
 
                 if($lane->tabelevor_id != $request->tabelevorId[$index]){
@@ -509,6 +505,10 @@ class LaneController extends Controller
         }
 
         $race = Race::find($raceId);
+        $laneTableBeforCount = Lane::where('rennen_id', $raceId)
+            ->where('tabelevor_id', '>', 0)
+            ->where('platzvor', '>', 0)
+            ->count();
 
         if($changeCount == 1) {
             $teamLaneCount = Lane::where('rennen_id', $raceId)

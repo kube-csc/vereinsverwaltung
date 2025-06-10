@@ -280,6 +280,7 @@ Route::get('/Tabelle/Ergebnis/{race_id}',           [TabeleController::class, 'e
 Route::post('/Tabelle/Ergebnis/update/{tabele_id}', [TabeleController::class, 'updateResult'])          ->name('tabele.updateResult');
 Route::get('/Tabelle/Ergebnis/loeschen/{tabele_id}',[TabeleController::class, 'deleteResult'])          ->name('tabele.deleteResult');
 Route::get('/Tabelle/anzeigen/{tabele_id}',         [TabeleController::class, 'show'])                  ->name('tabele.show');
+Route::get('/Tabelle/verlosen/{tabele_id}',         [TabeleController::class, 'shuffel'])               ->name('tabele.shuffel');
 
 Route::get('/Renneninformation/alle',                     [RegattaInformationController::class, 'index'])    ->name('regattaInformation.index');
 Route::get('/Renneninformation/neu',                      [RegattaInformationController::class, 'create'])   ->name('regattaInformation.create');

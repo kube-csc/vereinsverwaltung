@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lane;
 use App\Models\Race;
 use App\Models\RaceType;
 use App\Models\Tabele;
@@ -206,8 +207,8 @@ class TabeleController extends Controller
         $tabeledatas = Tabledata::where('tabele_id', $tabeleid)
             ->orderby('punkte', 'desc')
             ->orderBy('buchholzzahl', 'desc')
-            ->orderBy('zeitpunktegleich')
-            ->orderBy('hundertpunktegleich')
+            ->orderBy('zeit')
+            ->orderBy('hundert')
             ->get();
 
         return view('regattaManagement.tabele.show')->with([
@@ -381,5 +382,26 @@ class TabeleController extends Controller
                 'success'  => 'Das Tabellendokument <b>' . $document->tabelleDatei . '</b> wurde gelöscht.'
             ]
         );
+    }
+
+    public function shuffel($tableId)
+    {
+        $tabledatas = Tabledata::where('tabele_id', $tableId)
+            ->orderby('punkte', 'desc')
+            ->orderBy('buchholzzahl', 'desc')
+            ->orderBy('zeit')
+            ->orderBy('hundert')
+            ->get();
+
+        $platz=0;
+        foreach ($tabledatas as $data) {
+            ++$platz;
+            // Aktualisiere die Lane-Tabelle mit den entsprechenden Werten
+            Lane::where('tabelevor_id', $tableId)
+                ->where('platzvor', $platz)
+                ->update(['mannschaft_id' => $data->mannschaft_id]);
+        }
+
+        return redirect()->back()->with('success', 'Die Rennen wurden von der Tabelle verlost.');
     }
 }

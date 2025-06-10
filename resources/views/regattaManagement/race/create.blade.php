@@ -130,8 +130,9 @@
                                                    @endif
                                                >{{ $tabele->ueberschrift }}</option>
                                            @endforeach
-
                                        </select>
+                                       <br>
+                                       <small class="text-red-500 ">{!! $errors->first('tabeleId') !!}</small>
                                    </div>
 
                                   <div>

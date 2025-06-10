@@ -219,6 +219,7 @@ class RaceController extends Controller
                   'rennDatum'                 => 'required|date',
                   'rennUhrzeit'               => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
                   'veroeffentlichungUhrzeit'  => 'required|date_format:H:i',    //'date_format:H:i|after:rennUhrzeit',
+                  'tabeleId'                  =>  'required',
             ]
         );
 
@@ -229,15 +230,29 @@ class RaceController extends Controller
         if($request->einzelRennen == Null) {
             $request->einzelRennen=0;
         }
+        else{
+            $table = Tabele::find($request->tabeleId);
+            if($table) {
+                $request->gruppe_id = $table->id;
+            } else {
+                $request->gruppe_id = null;
+            }
+        }
+
+        if($request->getrenntewertung==Null){
+            $request->getrenntewertung=0;
+        }
 
         if($request->einzelRennen == 1) {
             $tabele= new Tabele([
                 'event_id'                 => Session::get('regattaSelectId'),
+                'gruppe_id'                => $table->gruppe_id,
                 'ueberschrift'             => $request->rennBezeichnung,
                 'tabelleLevelVon'          => $request->regattaLevel,
                 'tabelleLevelBis'          => $request->regattaLevel,
                 'tabelleDatumVon'          => $request->rennDatum,
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
+                'getrenntewertung'         => $request->getrenntewertung,
                 'wertungsart'              => 3,
                 'tabelleVisible'           => 1,
                 'finale'                   => 0,

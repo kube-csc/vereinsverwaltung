@@ -164,7 +164,7 @@
                                           gestartet um
                                         @endif
                                         {{ date("H:i", strtotime($race->verspaetungUhrzeit)) }} Uhr
-                                       Status  {{ $race->status }}
+                                        <br>Status: {{ $race->status }}
                                     </div>
                                   </div>
 

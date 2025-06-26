@@ -265,6 +265,8 @@ Route::post('/Teamverlosung/update/{race_id}',        [LaneController::class, 'u
 Route::post('/Rennergebnisse/update/{race_id}',       [LaneController::class, 'updateResult'])    ->name('lane.updateResult');
 Route::get('/Teamverlosung/planen/{race_id}',         [LaneController::class, 'editSetDraw'])     ->name('lane.editSetDraw');
 Route::post('/Teamverlosung/planen/update/{race_id}', [LaneController::class, 'updateSetDraw'])   ->name('lane.updateSetDraw');
+Route::get('/Teamverlosung/Bahn/neu/{race_id}',       [LaneController::class, 'newLane'])         ->name('lane.newLane');
+Route::get('/Teamverlosung/Bahn/loeschen/{race_id}',  [LaneController::class, 'deleteLast'])      ->name('lane.deleteLast');
 
 // ToDo: Refactorieren {race_id} in {tabele_id} umbenennen
 Route::get('/Tabelle/alle',                         [TabeleController::class, 'index'])                 ->name('tabele.index');

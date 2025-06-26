@@ -135,6 +135,18 @@
 
                                         </div>
                                     @endforeach
+                                    <div class="mb-4">
+                                        <a href="{{ route('lane.newLane', ['race_id' => $race->id]) }}"
+                                           class="inline-flex items-center p-2 bg-green-500 rounded shadow text-white hover:bg-green-600">
+                                            <i class="fas fa-plus mr-2"></i> Neue Bahn anlegen
+                                        </a>
+                                        @if($lane && is_null($lane->mannschaft_id))
+                                            <a href="{{ route('lane.deleteLast', ['race_id' => $race->id]) }}"
+                                               class="inline-flex items-center p-2 bg-red-500 rounded shadow text-white hover:bg-red-600">
+                                                <i class="fas fa-minus mr-2"></i> letzte Bahn löschen
+                                            </a>
+                                        @endif
+                                    </div>
                                     <input type="hidden" name="bahnMax" value="{{ $bahn }}">
                                     <div class="py-2">
                                         <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>

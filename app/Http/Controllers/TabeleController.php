@@ -387,10 +387,11 @@ class TabeleController extends Controller
     public function shuffel($tableId)
     {
         $tabledatas = Tabledata::where('tabele_id', $tableId)
+            ->where('punkte', '>', 0)
             ->orderby('punkte', 'desc')
-            ->orderBy('buchholzzahl', 'desc')
             ->orderBy('zeit')
             ->orderBy('hundert')
+            ->orderBy('buchholzzahl', 'desc')
             ->get();
 
         $platz=0;
@@ -399,8 +400,46 @@ class TabeleController extends Controller
             // Aktualisiere die Lane-Tabelle mit den entsprechenden Werten
             Lane::where('tabelevor_id', $tableId)
                 ->where('platzvor', $platz)
+                ->where(function($query) {
+                    $query->where('mannschaft_id', 0)
+                        ->orWhereNull('mannschaft_id');
+                })
                 ->update(['mannschaft_id' => $data->mannschaft_id]);
         }
+
+        // Aktualisiere die Tabelle mit der neuen Maximalanzahl an Rennen
+        // ToDo: Diese Code muss noch getestet werden.
+        $tabellenIds = Lane::where('tabelevor_id', $tableId)
+            ->where('mannschaft_id', '>', 0)
+            ->pluck('tabele_id')
+            ->unique();
+
+            foreach ($tabellenIds as $tabellenId) {
+
+                $raceCount = Race::whereHas('lanes', function ($query) use ($tabellenId) {
+                    $query->where('tabele_id', $tabellenId);
+                })->where('status', 1)
+                  ->count();
+
+                if($raceCount == 1) {
+
+                    $laneErsteMannschaftId = Lane::where('tabele_id', $tabellenId)
+                        ->where('mannschaft_id', '>', 0)
+                        ->first();
+
+                    if($laneErsteMannschaftId) {
+                        $laneMaxRennen = Lane::where('tabele_id', $tabellenId)
+                            ->where('mannschaft_id', $laneErsteMannschaftId->mannschaft_id)
+                            ->count();
+
+                        $tabelle = Tabele::find($tabellenId);
+                        if ($laneMaxRennen != $tabelle->maxrennen) {
+                            $tabelle->maxrennen = $laneMaxRennen;
+                            $tabelle->save();
+                        }
+                    }
+                }
+            }
 
         return redirect()->back()->with('success', 'Die Rennen wurden von der Tabelle verlost.');
     }

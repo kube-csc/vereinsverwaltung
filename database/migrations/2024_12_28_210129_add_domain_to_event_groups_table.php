@@ -31,6 +31,8 @@ return new class extends Migration
         Schema::table('event_groups', function (Blueprint $table) {
             $table->dropColumn('domain');
             $table->dropColumn('headerBild');
+            $table->dropColumn('headerSlogen');
+            $table->dropColumn('headerTitel');
         });
     }
 };

@@ -136,9 +136,8 @@ class RaceController extends Controller
     {
         $races = Race::where('event_id',Session::get('regattaSelectId'))
             ->where(function($query) {
-                $query->where('ergebnisDatei', null)
-                    //->orWhere('status', 2);
-                    ->where('status', '>', 4);
+                $query->whereNull('ergebnisDatei')
+                    ->where('status', 2);
             })
             ->where('visible' , 1)
             ->orderby('rennDatum')
@@ -151,6 +150,7 @@ class RaceController extends Controller
             'funktionStatus' => 2 // Ergebnis
         ]);
     }
+
 
     public function indexResultAll()
     {

@@ -280,9 +280,42 @@
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
                                 <div class="flex items-center">
-                                    <div class="ml-4 text-lg leading-7 font-semibold text-gray-900 dark:text-white"> </div>
+                                    <div class="ml-4 text-lg leading-7 font-semibold">
+                                        Regattateam bearbeiten
+                                    </div>
                                 </div>
 
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        @if(Session::has('regattaSelectUeberschrift'))
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Regattateams/neu')">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex">
+                                                        <p class="font-bold text-lg">
+                                                            Regattateam eingeben
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        @if(Session::has('regattaSelectUeberschrift'))
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Regattateams/alle')">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex">
+                                                        <p class="font-bold text-lg">
+                                                            Regattateam auswählen
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
 
                         </div>

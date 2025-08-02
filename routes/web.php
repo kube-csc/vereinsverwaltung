@@ -28,6 +28,7 @@ use App\Http\Controllers\RaceTypeController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\CoursedateController;
 use App\Http\Controllers\MemberImageController;
+use App\Http\Controllers\RegattaTeamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -235,6 +236,15 @@ Route::get('/Backlink/edit/{backlink_id}',           [BacklinksController::class
 Route::post('/Backlink/update/{backlink_id}',        [BacklinksController::class, 'update'])        ->name('backlink.update');
 
 // Regattaverwaltung
+// Regattateam bearbeiten
+Route::get('/Regattateam/Werbungsquelle',                [RegattaTeamController::class, 'werbungsquelle'])->name('regattaTeam.werbungsquelle');
+Route::get('/Regattateams/alle',                         [RegattaTeamController::class, 'index'])->name('regattaTeam.index');
+Route::get('/Regattateam/neu',                           [RegattaTeamController::class, 'create'])->name('regattaTeam.create');
+Route::post('/Regattateam/speichern',                    [RegattaTeamController::class, 'store'])->name('regattaTeam.store');
+Route::get('/Regattateam/{regattaTeam_id}',              [RegattaTeamController::class, 'show'])->name('regattaTeam.show');
+Route::get('/Regattateam/edit/{regattaTeam_id}',         [RegattaTeamController::class, 'edit'])->name('regattaTeam.edit');
+Route::post('/Regattateam/update/{regattaTeam_id}',      [RegattaTeamController::class, 'update'])->name('regattaTeam.update');
+
 Route::get('/Rennen/alle',                            [RaceController::class, 'index'])           ->name('race.index');
 Route::get('/Rennen/neu',                             [RaceController::class, 'create'])          ->name('race.create');
 Route::post('/Rennen/speichern',                      [RaceController::class, 'store'])           ->name('race.store');

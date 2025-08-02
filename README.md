@@ -24,12 +24,14 @@ Beispiel für einen Kanuverein mit Abteilungen / Sportarten:
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
   <li>.htaccess für ionos.de Server</li>
   <li><a href="https://botman.io">Botman</a></li>
+  <li><a href="https://www.tiny.cloud/">TinyMCE</a>(Backend)</li>
 </ul>
 
 <h2>Benötigte Lizenzen</h2>
-Es wird eine Lizenz für
+Folgende Lizenz wird für die Nutzung des Frontends benötigt:
 <a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">Squadfree von bootstrapmade</a>
-benötigt.
+<a href="https://www.tiny.cloud/">TinyMCE Editor </a>
+
 
 <h2>Frontend</h2>
 <ul>
@@ -135,6 +137,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
     <li>Rennklassen können als Vorlage angelegt und bearbeitet werden</li>
     <li>Rennklassen können der Regatta zugeordnet werden</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
+    <li>Mannschaften können angelegt und bearbeitet werden</li>
     <li>Rennen anlegen und bearbeiten</li>
     <li>Rennen können Tabellen oder mehrere Tabellen zugeordnet werden</li>
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
@@ -153,8 +156,9 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
 <h2>Installation</h2>
 <ul>
    <li>git clone https://github.com/kube-csc/vereinsverwaltung.git</li>
-   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt.)</li>
    <li>cd vereinsverwaltung</li>
+   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt)</li>
+   <li>php artisan key:generate</li>
    <li>curl -sS https://getcomposer.org/installer</li>
    <li>php composer.phar</li>
    <li>php composer.phar install</li>
@@ -178,6 +182,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
      <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
      <li>map.blade.php anlegen und mit der Vorlage von map_example.blade.php ausfüllen</li>
      <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
+     <li>werbung_options.php anlegen und mit der Vorlage von werbung_options_example.blade.php ausfüllen</li>
    </ul>
    <li>in Ordner "public sind die folgenden Dateien anzulegen:
    <ul>

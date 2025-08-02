@@ -26,8 +26,19 @@ return new class extends Migration
             $table->string('telefon');
             $table->string('email');
             $table->string('homepage')->nullable();
+
+            /**
+             * Feld 'status' - Status der Team-Meldung.
+             * Mögliche Werte:
+             * - Neumeldung: Aktiv gemeldetes Team
+             * - Warteliste: Team steht auf der Warteliste
+             * - Nicht angetreten: Team ist nicht angetreten
+             * - Disqualifiziert: Team wurde disqualifiziert
+             * - Ausgeschieden: Team ist ausgeschieden
+             * - Gelöscht: Team wurde gelöscht (nicht mehr sichtbar)
+             */
             $table->string('status');
-            $table->boolean('training');
+            $table->integer('training')->default(0);
             $table->unsignedBigInteger('regatta_id');
             $table->unsignedBigInteger('gruppe_id');
             $table->string('passwort');
@@ -40,7 +51,25 @@ return new class extends Migration
             $table->string('mannschaftsmail')->nullable();
             $table->string('mailen');
             $table->date('mailendatum')->nullable();
-            $table->boolean('werbung');
+            /**
+             * Feld 'werbung' - Wie wurde das Team auf die Regatta aufmerksam?
+             * Mögliche Werte:
+             * 0: nicht ausgewählt
+             * 1: kel-datteln.de Homepage
+             * 2: Day of Dragons Homepage
+             * 3: Kanucup-Datteln Homepage
+             * 4: Plakatwerbung
+             * 5: Flyer
+             * 6: Empfehlung von Sportfreunden
+             * 7: Radio
+             * 8: Drachenboot-Liga
+             * 9: Einladungsmail
+             * 10: Presse
+             * 11: Sonstiges
+             * 12: dragonboat.online
+             * 13: lokalkompass.de
+             */
+            $table->string('werbung')->nullable()->comment('Wie wurde das Team auf die Regatta aufmerksam? Siehe Migrationsdatei für mögliche Werte.');
 
             $table->SoftDeletes();
             $table->timestamps();

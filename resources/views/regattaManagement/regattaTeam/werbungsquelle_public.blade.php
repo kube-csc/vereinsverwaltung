@@ -20,11 +20,11 @@
                         return strtolower($team->status) !== 'Gelöscht';
                     })->count();
                 @endphp
-                <h2 class="text-lg font-semibold mb-2">Anzahl pro Werbungsquelle</h2>
                 <div class="mb-2 font-bold">
-                    Gesamtanzahl gemeldete Meldungen mit Werbungsquellenangabe: {{ $gesamt }}<br>
-                    Gesamtanzahl gemeldete Meldungen: {{ $gesamtTeams }}
+                    Gesamtzahl der Meldungen mit Angabe der Werbungsquelle: {{ $gesamt }}<br>
+                    Gesamtzahl gemeldete Meldungen: {{ $gesamtTeams }}
                 </div>
+                <h2 class="text-lg font-semibold mb-2">Anzahl pro Werbungsquelle</h2>
                 <ul class="list-disc pl-6">
                     @foreach($statistik as $key => $anzahl)
                         @if(($key !== 0 && $key !== '0') && $anzahl > 0)

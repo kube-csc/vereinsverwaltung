@@ -21,7 +21,7 @@
                 @endphp
                 <div class="mb-2 font-bold">
                     Gesamtzahl der Meldungen mit Angabe der Werbungsquelle: {{ $gesamt }}<br>
-                    Gesamtzahl gemeldete Meldungen: {{ $gesamtTeams }}
+                    Gesamtzahl Meldungen: {{ $gesamtTeams }}
                 </div>
                 <h2 class="text-lg font-semibold mb-2">Anzahl pro Werbungsquelle</h2>
                 <ul class="list-disc pl-6">

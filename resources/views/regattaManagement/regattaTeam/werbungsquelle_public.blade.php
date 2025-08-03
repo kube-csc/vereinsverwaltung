@@ -6,10 +6,10 @@
     <div class="max-w-4xl mx-auto py-8">
         {{-- Event-Überschrift --}}
         <div class="bg-white shadow rounded-lg p-6">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                Werbungsquellenauswertung: {{ $regattaName ?? '' }}
-            </h2>
-            <h1 class="text-2xl font-bold mb-4">Werbungsquellenauswertung der Teams</h1>
+            <h1 class="font-semibold text-2xl text-gray-800 leading-tight mb-4">
+                {{ $regattaName }}
+            </h1>
+            <h2 class="text-xl font-bold mb-4">Werbungsquellenauswertung der Teams</h2>
             {{-- Auswertungsliste --}}
             <div class="mb-8">
                 @php
@@ -22,7 +22,7 @@
                 @endphp
                 <div class="mb-2 font-bold">
                     Gesamtzahl der Meldungen mit Angabe der Werbungsquelle: {{ $gesamt }}<br>
-                    Gesamtzahl gemeldete Meldungen: {{ $gesamtTeams }}
+                    Gesamtzahl Meldungen: {{ $gesamtTeams }}
                 </div>
                 <h2 class="text-lg font-semibold mb-2">Anzahl pro Werbungsquelle</h2>
                 <ul class="list-disc pl-6">

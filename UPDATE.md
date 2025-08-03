@@ -9,7 +9,7 @@
 - Status-Feld für Teams mit Auswahl (Neumeldung, Warteliste, Nicht angetreten, Disqualifiziert, ausgeschieden, gelöscht)
 - TinyMCE-Editor für Beschreibung/Kommentar, API-Key über .env steuerbar, Einbindung als Partial
 - Werbungsquellen-Auswertung für Teams mit Tortendiagramm
-- Werbungsquellen-Optionen und inaktive Werte zentral ausgelagert (textimport/werbung_options.php)
+- Werbungsquellen-Optionen und inaktive Werte zentral ausgelagert (resources/views/textimport/werbung_options.php)
 
 **Version V00.09.01**
 

@@ -36,4 +36,9 @@ class Event extends Model
          return $this->belongsTo(eventGroup::class, 'eventGroup_id');
      }
 
+     public function regattaTeams()
+     {
+         return $this->hasMany(\App\Models\RegattaTeam::class, 'regatta_id', 'id');
+     }
+
 }

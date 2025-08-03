@@ -1,20 +1,21 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Werbungsquellenauswertung: {{ Session::get('regattaSelectUeberschrift') }}
-        </h2>
-    </x-slot>
+@extends('layouts.public')
+
+@section('title' ,'Werbungsquellenauswertung')
+
+@section('content')
     <div class="max-w-4xl mx-auto py-8">
+        {{-- Event-Überschrift --}}
         <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
+                Werbungsquellenauswertung: {{ $regattaName ?? '' }}
+            </h2>
             <h1 class="text-2xl font-bold mb-4">Werbungsquellenauswertung der Teams</h1>
-            {{-- Auswertungsliste GANZ OBEN --}}
+            {{-- Auswertungsliste --}}
             <div class="mb-8">
                 @php
-                    // '0' ist immer "nicht ausgewählt"
                     $gesamt = collect($statistik)
                         ->filter(function($anzahl, $key) { return $key !== 0 && $key !== '0'; })
                         ->sum();
-                    // Gesamtanzahl Teams ohne Status "Gelöscht"
                     $gesamtTeams = $regattaTeams->filter(function($team) {
                         return strtolower($team->status) !== 'Gelöscht';
                     })->count();
@@ -32,12 +33,12 @@
                     @endforeach
                 </ul>
             </div>
-            {{-- Diagramm darunter --}}
+            {{-- Diagramm --}}
             <div class="mb-8">
                 <canvas id="werbungChart" width="400" height="200"></canvas>
             </div>
             <h2 class="text-xl font-semibold mb-2">Meldungen nach Werbungsquellen</h2>
-            {{-- Verbesserte tabellenähnliche Darstellung --}}
+            {{-- Tabellenähnliche Darstellung --}}
             <div class="w-full mb-6">
                 <div class="w-full flex font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded-t">
                     <div class="w-1/2 px-2 py-2 border-r border-gray-300">Teamname</div>
@@ -59,8 +60,6 @@
                     </div>
                 @endforeach
             </div>
-            <a href="{{ route('regattaTeam.index') }}"
-               class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded inline-block text-center transition duration-150 ease-in-out">Zurück zur Übersicht</a>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -100,4 +99,4 @@
             }
         });
     </script>
-</x-app-layout>
+@endsection

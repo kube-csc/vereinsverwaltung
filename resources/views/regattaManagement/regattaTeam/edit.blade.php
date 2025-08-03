@@ -10,62 +10,62 @@
             <form action="{{ route('regattaTeam.update', $regattaTeam->id) }}" method="POST">
                 @csrf
                 <div class="mb-4">
-                    <label for="name" class="block font-semibold mb-1">Teamname</label>
+                    <label for="name" class="block font-semibold mb-1">Teamname:</label>
                     <input type="text" name="name" id="name" value="{{ old('name', $regattaTeam->teamname) }}" class="form-input w-full" required>
                     @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="verein" class="block font-semibold mb-1">Verein</label>
+                    <label for="verein" class="block font-semibold mb-1">Verein:</label>
                     <input type="text" name="verein" id="verein" value="{{ old('verein', $regattaTeam->verein) }}" class="form-input w-full">
                     @error('verein') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="teamcaptain" class="block font-semibold mb-1">Teamcaptain</label>
+                    <label for="teamcaptain" class="block font-semibold mb-1">Teamcaptain:</label>
                     <input type="text" name="teamcaptain" id="teamcaptain" value="{{ old('teamcaptain', $regattaTeam->teamcaptain) }}" class="form-input w-full">
                     @error('teamcaptain') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="strasse" class="block font-semibold mb-1">Straße</label>
+                    <label for="strasse" class="block font-semibold mb-1">Straße:</label>
                     <input type="text" name="strasse" id="strasse" value="{{ old('strasse', $regattaTeam->strasse) }}" class="form-input w-full">
                     @error('strasse') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="plz" class="block font-semibold mb-1">PLZ</label>
+                    <label for="plz" class="block font-semibold mb-1">PLZ:</label>
                     <input type="text" name="plz" id="plz" value="{{ old('plz', $regattaTeam->plz) }}" class="form-input w-full">
                     @error('plz') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="ort" class="block font-semibold mb-1">Ort</label>
+                    <label for="ort" class="block font-semibold mb-1">Ort:</label>
                     <input type="text" name="ort" id="ort" value="{{ old('ort', $regattaTeam->ort) }}" class="form-input w-full">
                     @error('ort') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="telefon" class="block font-semibold mb-1">Telefon</label>
+                    <label for="telefon" class="block font-semibold mb-1">Telefon:</label>
                     <input type="text" name="telefon" id="telefon" value="{{ old('telefon', $regattaTeam->telefon) }}" class="form-input w-full">
                     @error('telefon') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="email" class="block font-semibold mb-1">E-Mail</label>
+                    <label for="email" class="block font-semibold mb-1">E-Mail:</label>
                     <input type="email" name="email" id="email" value="{{ old('email', $regattaTeam->email) }}" class="form-input w-full">
                     @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="homepage" class="block font-semibold mb-1">Homepage</label>
+                    <label for="homepage" class="block font-semibold mb-1">Homepage:</label>
                     <input type="text" name="homepage" id="homepage" value="{{ old('homepage', $regattaTeam->homepage) }}" class="form-input w-full">
                     @error('homepage') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="beschreibung" class="block font-semibold mb-1">Beschreibung</label>
+                    <label for="beschreibung" class="block font-semibold mb-1">Beschreibung:</label>
                     <textarea name="beschreibung" id="beschreibung" class="form-input w-full" rows="6">{{ old('beschreibung', $regattaTeam->beschreibung) }}</textarea>
                     @error('beschreibung') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="kommentar" class="block font-semibold mb-1">Kommentar</label>
+                    <label for="kommentar" class="block font-semibold mb-1">Kommentar:</label>
                     <textarea name="kommentar" id="kommentar" class="form-input w-full">{{ old('kommentar', $regattaTeam->kommentar) }}</textarea>
                     @error('kommentar') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="gruppe_id" class="block font-semibold mb-1">Wertungsgruppe</label>
+                    <label for="gruppe_id" class="block font-semibold mb-1">Wertungsgruppe:</label>
                     <select name="gruppe_id" id="gruppe_id" class="form-input w-full">
                         @foreach($gruppen as $gruppe)
                             <option value="{{ $gruppe->id }}" @if(old('gruppe_id', $regattaTeam->gruppe_id) == $gruppe->id) selected @endif>
@@ -76,19 +76,20 @@
                     @error('gruppe_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="status" class="block font-semibold mb-1">Status</label>
+                    <label for="status" class="block font-semibold mb-1">Status:</label>
                     <select name="status" id="status" class="form-input w-full">
-                        <option value="Neumeldung" @if(old('status', $regattaTeam->status ?? 'Neumeldung') == 'Neumeldung') selected @endif>Neumeldung (aktiv gemeldet)</option>
+                        <option value="Neumeldung" @if(old('status', $regattaTeam->status ?? 'Neumeldung') == 'Neumeldung') selected @endif>Neumeldung</option>
                         <option value="Warteliste" @if(old('status', $regattaTeam->status) == 'Warteliste') selected @endif>Warteliste</option>
+                        <option value="Gelöscht" @if(old('status', $regattaTeam->status) == 'Gelöscht') selected @endif>Gelöscht</option>
+                        <option value="Abgemeldet" @if(old('status', $regattaTeam->status) == 'Abgemeldet') selected @endif>Abgemeldet</option>
                         <option value="Nicht angetreten" @if(old('status', $regattaTeam->status) == 'Nicht angetreten') selected @endif>Nicht angetreten</option>
                         <option value="Disqualifiziert" @if(old('status', $regattaTeam->status) == 'Disqualifiziert') selected @endif>Disqualifiziert</option>
                         <option value="Ausgeschieden" @if(old('status', $regattaTeam->status) == 'Ausgeschieden') selected @endif>Ausgeschieden</option>
-                        <option value="Gelöscht" @if(old('status', $regattaTeam->status) == 'Gelöscht') selected @endif>Gelöscht (nicht mehr sichtbar)</option>
                     </select>
                     @error('status') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 @php
-                    $werbungConfig = include base_path('textimport/werbung_options.php');
+                    $werbungConfig = include base_path('resources/views/textimport/werbung_options.php');
                     $werbungOptions = $werbungConfig['options'];
                     $inactiveOptions = $werbungConfig['inactive'];
                 @endphp

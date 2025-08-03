@@ -17,8 +17,9 @@
             <div class="mb-2"><strong>Homepage:</strong> {{ $regattaTeam->homepage }}</div>
             <div class="mb-2"><strong>Beschreibung:</strong> {{ $regattaTeam->beschreibung }}</div>
             <div class="mb-2"><strong>Kommentar:</strong> {{ $regattaTeam->kommentar }}</div>
-            <div class="mb-2"><strong>Wertungsgruppe:</strong> {{ $regattaTeam->teamWertungsGruppe->typ ?? '-' }}</div>
-            <div class="mb-2"><strong>Werbung:</strong>
+            <div class="mb-2"><strong>Status:</strong> {{ $regattaTeam->status ?? '-' }}</div>
+            <div class="mb-2"><strong>Wertungsgruppe:</strong> {{ $regattaTeam->teamWertungsGruppe->typ }}</div>
+            <div class="mb-2"><strong>Werbungsquelle:</strong>
                 @php
                     $werbungOptions = [
                         '0' => 'nicht ausgewählt',

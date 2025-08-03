@@ -7,11 +7,12 @@ use App\Models\RaceType;
 use Illuminate\Http\Request;
 use App\Models\RegattaTeam;
 use App\Models\TeamWertungsGruppe;
+use App\Models\Event;
 
 class RegattaTeamController extends Controller
 {
     public function __construct(){
-        $this->middleware('auth');
+        $this->middleware('auth')->except(['werbungsquellePublic']);
     }
 
     /**
@@ -38,6 +39,7 @@ class RegattaTeamController extends Controller
     {
         $gruppen = RaceType::where('regatta_id', session()->get('regattaSelectId'))->get();
         $regattaTeam = new RegattaTeam();
+
         return view('regattaManagement.regattaTeam.create', compact('regattaTeam', 'gruppen'));
     }
 
@@ -76,7 +78,6 @@ class RegattaTeamController extends Controller
             'kommentar' => 'nullable|string',
             'gruppe_id' => 'required',
             'werbung' => 'nullable|in:0,1,2,3,4,5,6,7,8,9,10,11,12,13',
-            'status' => 'required|in:Gelöscht,Neumeldung,Warteliste,Nicht angetreten,Disqualifiziert,Ausgeschieden',
         ]);
 
         $regattaTeam = new RegattaTeam();
@@ -170,8 +171,7 @@ class RegattaTeamController extends Controller
             'beschreibung' => 'nullable|string',
             'kommentar' => 'nullable|string',
             'gruppe_id' => 'required',
-            'werbung' => 'nullable|in:0,1,2,3,4,5,6,7,8,9,10,11,12,13',
-            'status' => 'required|in:Gelöscht,Neumeldung,Warteliste,Nicht angetreten,Disqualifiziert,Ausgeschieden',
+            'werbung' => 'nullable|in:0,1,2,3,4,5,6,7,8,9,10,11,12,13'
         ]);
 
         $regattaTeam->teamname = $request->input('name');
@@ -213,7 +213,7 @@ class RegattaTeamController extends Controller
             ->get();
 
         // Werbungsoptionen auslagern
-        $werbungConfig = include base_path('textimport/werbung_options.php');
+        $werbungConfig = include base_path('resources/views/textimport/werbung_options.php');
         $werbungOptions = $werbungConfig['options'];
 
         // Statistik initialisieren mit IDs als Key
@@ -242,11 +242,75 @@ class RegattaTeamController extends Controller
         }
 
         return view('regattaManagement.regattaTeam.werbungsquelle', [
-            'statistik' => $statistik,
-            'labels' => $labels,
-            'values' => $values,
-            'regattaTeams' => $regattaTeams,
+            'statistik'      => $statistik,
+            'labels'         => $labels,
+            'values'         => $values,
+            'regattaTeams'   => $regattaTeams,
             'werbungOptions' => $werbungOptions,
+        ]);
+    }
+
+    public function werbungsquellePublic($regatta_id = null)
+    {
+        $event = null; // Initialisierung, damit $event immer definiert ist
+        // Wenn keine Regatta-ID übergeben wurde, suche die aktuellste Regatta mit Meldungen
+        if (empty($regatta_id)) {
+            $event = Event::where('regatta', 1)
+                ->whereHas('regattaTeams', function($query) {
+                    $query->where('status', '!=', 'Gelöscht');
+                })
+                ->orderBy('datumvon', 'desc')
+                ->first();
+
+            // Falls kein Event mit Meldungen gefunden wurde, nimm die aktuelle Regatta nach Datum
+            if (!$event) {
+                $now = now();
+                $event = Event::where('regatta', 1)
+                    ->orderBy('datumvon', 'desc')
+                    ->first();
+            }
+
+            if ($event) {
+                $regatta_id = $event->id;
+            }
+        }
+
+        if ($event) {
+            $regattaName = $event->ueberschrift ?? $event->name ?? '';
+        } else {
+            $event = Event::find($regatta_id);
+            $regattaName = $event->ueberschrift ?? $event->name ?? '';
+        }
+
+        // Regatta-Teams für die angegebene Regatta-ID laden (ohne Status "Gelöscht")
+        $regattaTeams = RegattaTeam::where('regatta_id', $regatta_id)
+            ->where('status', '!=', 'Gelöscht')
+            ->get();
+
+        // Werbungsoptionen laden
+        $werbungConfig = include base_path('resources/views/textimport/werbung_options.php');
+        $werbungOptions = $werbungConfig['options'];
+
+        // Statistik initialisieren
+        $statistik = [];
+        foreach ($werbungOptions as $key => $label) {
+            $statistik[$key] = 0;
+        }
+        foreach ($regattaTeams as $team) {
+            $key = (string)($team->werbung ?? '0');
+            if (array_key_exists($key, $statistik)) {
+                $statistik[$key]++;
+            } else {
+                $statistik['0']++;
+            }
+        }
+        arsort($statistik);
+
+        return view('regattaManagement.regattaTeam.werbungsquelle_public', [
+            'statistik'      => $statistik,
+            'regattaTeams'   => $regattaTeams,
+            'werbungOptions' => $werbungOptions,
+            'regattaName'    => $regattaName,
         ]);
     }
 }

@@ -32,10 +32,11 @@ return new class extends Migration
              * Mögliche Werte:
              * - Neumeldung: Aktiv gemeldetes Team
              * - Warteliste: Team steht auf der Warteliste
+             * - Gelöscht: Team wurde gelöscht
+             * - Abgemeldet: Team hat sich abgemeldet
              * - Nicht angetreten: Team ist nicht angetreten
              * - Disqualifiziert: Team wurde disqualifiziert
              * - Ausgeschieden: Team ist ausgeschieden
-             * - Gelöscht: Team wurde gelöscht (nicht mehr sichtbar)
              */
             $table->string('status');
             $table->integer('training')->default(0);

@@ -39,16 +39,18 @@
               {!! $texausgabe !!}
           </div>
 
-          <div class="section-title" data-aos="fade-in" data-aos-delay="150">
-              @if($documents->count())
-                 <b>Dokumente</b>
-                   @foreach($documents as $document)
-                      <div>
-                        <a href="/storage/dokumente/{{$document->dokumentenFile}}" target="_blank"><i class="bx bxs-note"></i>{{$document->dokumentenName}}</a>
-                      </div>
-                   @endforeach
-              @endif
-          </div>
+          @if($documents->count())
+            <div class="section-title" data-aos="fade-in" data-aos-delay="150">
+              <b>Dokumente zum Downloaden</b>
+              @foreach($documents as $document)
+                <div>
+                  <a href="/storage/dokumente/{{$document->dokumentenFile}}" target="_blank">
+                    <i class="bx bxs-note"></i> {{$document->dokumentenName}}
+                  </a>
+                </div>
+              @endforeach
+            </div>
+          @endif
 
       </div>
 

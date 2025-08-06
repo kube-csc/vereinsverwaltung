@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::table('coursedates', function (Blueprint $table) {
             $table->unsignedBigInteger('training_id')->nullable()->after('organiser_id');
             $table->unsignedBigInteger('event_id')->nullable()->after('training_id');
-            $table->integer('sportgeraeteGebucht')->default('0')->after('sportgeraetanzahl');
+            $table->integer('sportgeraeteReserviert')->default('0')->after('sportgeraetanzahl');
             $table->foreign('training_id')->references('id')->on('trainings');
             $table->foreign('event_id')->references('id')->on('events');
         });
@@ -34,7 +34,7 @@ return new class extends Migration
             $table->dropForeign(['event_id']);
             $table->dropColumn('training_id');
             $table->dropColumn('event_id');
-            $table->dropColumn('sportgeraeteGebucht');
+            $table->dropColumn('sportgeraeteReserviert');
         });
     }
 };

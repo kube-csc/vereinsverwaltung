@@ -28,7 +28,7 @@ return new class extends Migration
             $table->text('vorschauTage');
             $table->string('wiederholung');
             $table->integer('sportgeraeteanzahl');
-            $table->integer('sportgeraeteGebucht');
+            $table->integer('sportgeraeteReserviert');
 
             $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('bearbeiter_id');

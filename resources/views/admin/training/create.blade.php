@@ -70,17 +70,17 @@
                                 </div>
 
                                 <div>
-                                    <label for="sportgeraeteanzahl">Maximale Sportgeräte:</label>
+                                    <label for="sportgeraeteanzahl">Maximale Anzahl Sportgeräte:</label>
                                     <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteanzahl') ? 'bg-red-300' : '' }}"
-                                           id="sportgeraeteanzahl" placeholder="Maximale Sportgeräte" name="sportgeraeteanzahl" value="{{ old('sportgeraeteanzahl') }}">
+                                           id="sportgeraeteanzahl" placeholder="Maximale Anzahl Sportgeräte" name="sportgeraeteanzahl" value="{{ old('sportgeraeteanzahl') }}">
                                     <small class="form-text text-danger">{!! $errors->first('sportgeraeteanzahl') !!}</small>
                                 </div>
 
                                 <div>
-                                    <label for="sportgeraeteGebucht">Gebuchte Sportgeräte:</label>
-                                    <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteGebucht') ? 'bg-red-300' : '' }}"
-                                           id="sportgeraeteGebucht" placeholder="Gebuchte Sportgeräte" name="sportgeraeteGebucht" value="{{ old('sportgeraeteGebucht') }}">
-                                    <small class="form-text text-danger">{!! $errors->first('sportgeraeteGebucht') !!}</small>
+                                    <label for="sportgeraeteReserviert">Reservierte Sportgeräte:</label>
+                                    <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteReserviert') ? 'bg-red-300' : '' }}"
+                                           id="sportgeraeteReserviert" placeholder="Anzahl Sportgeräte" name="sportgeraeteReserviert" value="{{ old('sportgeraeteReserviert') }}">
+                                    <small class="form-text text-danger">{!! $errors->first('sportgeraeteReserviert') !!}</small>
                                 </div>
 
                                 <div>

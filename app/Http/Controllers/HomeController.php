@@ -258,6 +258,7 @@ class HomeController extends Controller
                              ->where('startDatum' , '<=' , Carbon::now()->toDateString())
                              ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
                              ->where('dokumentenFile' ,'!=' , NULL)
+                             ->where('visible' , 1)
                              ->get();
 
         return view('instruction.show')->with([

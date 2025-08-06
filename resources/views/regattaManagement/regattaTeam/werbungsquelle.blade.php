@@ -59,6 +59,21 @@
                     </div>
                 @endforeach
             </div>
+            {{-- Werbungsquellen-Optionen --}}
+            <div class="mt-8">
+                <h3 class="text-lg font-semibold mb-2">Mögliche Werbungsquellen-Optionen</h3>
+                <ul class="list-disc pl-6">
+                    @php
+                        $inactiveOptions = include resource_path('views/textimport/werbung_options.php');
+                        $inactive = $inactiveOptions['inactive'] ?? [];
+                    @endphp
+                    @foreach($werbungOptions as $key => $option)
+                        @if($key !== '0' && $option && !in_array((string)$key, $inactive))
+                            <li><span class="font-semibold">{{ $option }}</span></li>
+                        @endif
+                    @endforeach
+                </ul>
+            </div>
             <a href="{{ route('regattaTeam.index') }}"
                class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded inline-block text-center transition duration-150 ease-in-out">Zurück zur Übersicht</a>
         </div>

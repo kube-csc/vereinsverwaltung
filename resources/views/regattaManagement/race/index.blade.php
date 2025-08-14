@@ -129,6 +129,15 @@
                                                  <box-icon name='pin' ></box-icon>
                                              </a>
                                          @endif
+                                         @if($race['sliteShowResult']==1)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/sliteShowResult/deactivate/'.$race->id) }}" title="Slideshow-Ergebnis AUS">
+                                                <box-icon name='slideshow' type='solid' color="orange"></box-icon>
+                                            </a>
+                                        @else
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/sliteShowResult/activate/'.$race->id) }}" title="Slideshow-Ergebnis EIN">
+                                                <box-icon name='slideshow'></box-icon>
+                                            </a>
+                                        @endif
                                      </div>
                                   </div>
                                   <div class="justify-between my-2">

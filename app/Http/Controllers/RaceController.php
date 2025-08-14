@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Race;
 use App\Models\Tabele;
+use App\Models\RaceType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
@@ -204,7 +205,10 @@ class RaceController extends Controller
         $tabeles = Tabele::where('event_id' , Session::get('regattaSelectId'))
             ->get();
 
-        return view('regattaManagement.race.create' , compact('levelMax', 'tabeles'));
+        // Nur RaceTypes des aktiven Events laden
+        $raceTypes = \App\Models\RaceType::where('regatta_id', Session::get('regattaSelectId'))->get();
+
+        return view('regattaManagement.race.create' , compact('levelMax', 'tabeles', 'raceTypes'));
     }
 
     /**
@@ -214,14 +218,22 @@ class RaceController extends Controller
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request) {
-        $request->validate([
-                  'rennBezeichnung'           => 'required|max:50',
-                  'rennDatum'                 => 'required|date',
-                  'rennUhrzeit'               => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
-                  'veroeffentlichungUhrzeit'  => 'required|date_format:H:i',    //'date_format:H:i|after:rennUhrzeit',
-                  'tabeleId'                  =>  'required',
-            ]
-        );
+        $rules = [
+            'rennBezeichnung'           => 'required|max:50',
+            'rennDatum'                 => 'required|date',
+            'rennUhrzeit'               => 'required|date_format:H:i',
+            'veroeffentlichungUhrzeit'  => 'required|date_format:H:i',
+        ];
+
+        // tabeleId ist nur erforderlich, wenn einzelRennen nicht 1 ist
+        if($request->einzelRennen != 1) {
+            $rules['tabeleId'] = 'required';
+        } else {
+            // Bei Einzelrennen muss gruppe_id gewählt werden
+            $rules['gruppe_id'] = 'required|exists:tabeles,id';
+        }
+
+        $request->validate($rules);
 
         if($request->rennMix == Null){
             $request->rennMix=0;
@@ -229,14 +241,6 @@ class RaceController extends Controller
 
         if($request->einzelRennen == Null) {
             $request->einzelRennen=0;
-        }
-        else{
-            $table = Tabele::find($request->tabeleId);
-            if($table) {
-                $request->gruppe_id = $table->id;
-            } else {
-                $request->gruppe_id = null;
-            }
         }
 
         if($request->getrenntewertung==Null){
@@ -246,7 +250,7 @@ class RaceController extends Controller
         if($request->einzelRennen == 1) {
             $tabele= new Tabele([
                 'event_id'                 => Session::get('regattaSelectId'),
-                'gruppe_id'                => $table->gruppe_id,
+                'gruppe_id'                => $request->gruppe_id,
                 'ueberschrift'             => $request->rennBezeichnung,
                 'tabelleLevelVon'          => $request->regattaLevel,
                 'tabelleLevelBis'          => $request->regattaLevel,
@@ -254,7 +258,7 @@ class RaceController extends Controller
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'getrenntewertung'         => $request->getrenntewertung,
                 'wertungsart'              => 3,
-                'tabelleVisible'           => 1,
+                'tabelleVisible'           => 0,
                 'finale'                   => 0,
                 'bearbeiter_id'            => Auth::id(),
                 'autor_id'                 => Auth::id(),
@@ -859,4 +863,19 @@ class RaceController extends Controller
         }
     }
 
+    public function sliteShowResultActivate($id)
+    {
+        $race = \App\Models\Race::findOrFail($id);
+        $race->sliteShowResult = true;
+        $race->save();
+        return back()->with('success', 'Slideshow-Ergebnis aktiviert.');
+    }
+
+    public function sliteShowResultDeactivate($id)
+    {
+        $race = \App\Models\Race::findOrFail($id);
+        $race->sliteShowResult = false;
+        $race->save();
+        return back()->with('success', 'Slideshow-Ergebnis deaktiviert.');
+    }
 }

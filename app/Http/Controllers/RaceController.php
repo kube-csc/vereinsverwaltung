@@ -878,4 +878,20 @@ class RaceController extends Controller
         $race->save();
         return back()->with('success', 'Slideshow-Ergebnis deaktiviert.');
     }
+
+    public function liveStreamActivate($id)
+    {
+        $race = \App\Models\Race::findOrFail($id);
+        $race->liveStream = true;
+        $race->save();
+        return back()->with('success', 'Livestream aktiviert.');
+    }
+
+    public function liveStreamDeactivate($id)
+    {
+        $race = \App\Models\Race::findOrFail($id);
+        $race->liveStream = false;
+        $race->save();
+        return back()->with('success', 'Livestream deaktiviert.');
+    }
 }

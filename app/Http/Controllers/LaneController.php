@@ -752,7 +752,8 @@ class LaneController extends Controller
                 'rennzeit'             => $request->rennzeit,
                 'status'               => 4,
                 'bearbeiter_id'        => Auth::id(),
-                'updated_at'           => Carbon::now()
+                'updated_at'           => Carbon::now(),
+                'liveStream'           => false
             ]);
 
             $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
@@ -764,7 +765,7 @@ class LaneController extends Controller
                 'rennzeit'             => $request->rennzeit,
                 'status'               => 2,
                 'bearbeiter_id'        => Auth::id(),
-                'updated_at'           => Carbon::now()
+                'updated_at'           => Carbon::now(),
             ]);
 
             $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);

@@ -269,8 +269,10 @@ Route::post('/Rennen/Ergebnis/update/{race_id}',      [RaceController::class, 'u
 Route::get('/Rennen/Ergebnis/loeschen/{race_id}',     [RaceController::class, 'deleteResult'])    ->name('race.deleteResult');
 Route::get('/Rennen/Zeit/{race_id}',                  [RaceController::class, 'raceTime'])        ->name('race.raceTime');
 Route::post('/Rennen/Zeit/update/{race_id}',          [RaceController::class, 'updateRaceTime'])  ->name('race.updateRaceTime');
-Route::post('/Rennen/sliteShowResult/activate/{id}',     [RaceController::class, 'sliteShowResultActivate']);
-Route::post('/Rennen/sliteShowResult/deactivate/{id}', [RaceController::class, 'sliteShowResultDeactivate']);
+Route::get('/Rennen/sliteShowResult/activate/{id}',     [RaceController::class, 'sliteShowResultActivate']);
+Route::get('/Rennen/sliteShowResult/deactivate/{id}', [RaceController::class, 'sliteShowResultDeactivate']);
+Route::get('/Rennen/liveStream/activate/{id}', [RaceController::class, 'liveStreamActivate']);
+Route::get('/Rennen/liveStream/deactivate/{id}', [RaceController::class, 'liveStreamDeactivate']);
 
 Route::get('/Teamverlosung/{race_id}',                [LaneController::class, 'show'])            ->name('lane.show');
 Route::get('/Teamverlosung/setzen/{race_id}',         [LaneController::class, 'editDraw'])        ->name('lane.editDraw');
@@ -354,5 +356,4 @@ Route::match(['get', 'post'], '/botman',                       [BotManController
 Route::resources([
     'BotmanQuestion' => BotmanQuestionController::class,
 ]);
-
 

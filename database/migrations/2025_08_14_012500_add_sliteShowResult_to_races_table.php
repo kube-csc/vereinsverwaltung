@@ -10,6 +10,7 @@ class AddSliteShowResultToRacesTable extends Migration
     {
         Schema::table('races', function (Blueprint $table) {
             $table->boolean('sliteShowResult')->default(false)->after('aktuellLiveVideo')->comment('Slideshow-Ergebnis aktiv');
+            $table->boolean('liveStream')->default(false)->after('sliteShowResult')->comment('Livestream aktiv');
         });
     }
 
@@ -17,7 +18,7 @@ class AddSliteShowResultToRacesTable extends Migration
     {
         Schema::table('races', function (Blueprint $table) {
             $table->dropColumn('sliteShowResult');
+            $table->dropColumn('liveStream');
         });
     }
 }
-

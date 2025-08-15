@@ -13,6 +13,11 @@ class Race extends Model
         'sliteShowResult' => 'boolean',
     ];
 
+    protected $fillable = [
+        'sliteShowResult',
+        'liveStream', // NEU
+    ];
+
     public function raceTabele()
     {
         return $this->belongsTo(Tabele::class, 'tabele_id');

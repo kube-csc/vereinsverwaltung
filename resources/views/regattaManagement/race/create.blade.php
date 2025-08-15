@@ -91,7 +91,7 @@
                                        }
                                    @endphp
 
-                                   @if($tableId == 0)
+                                   @if($tableId === null || $tableId == 0)
                                        <div class="my-4">
                                            <label for="einzelRennen">Einzelrennen:</label>
                                            <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('einzelRennen') ? 'bg-red-300' : '' }}"
@@ -101,6 +101,36 @@
                                                @endif
                                            >
                                        </div>
+                                       {{-- Gruppen-Auswahl für Einzelrennen --}}
+                                       <div class="my-4" id="gruppeSelectWrapper" @if(old('einzelRennen') != 1) style="display:none;" @endif>
+                                           <label for="gruppe_id">Gruppe für Einzelrennen:</label>
+                                           <select name="gruppe_id" id="gruppe_id" class="w-full border rounded shadow p-2 mr-2 my-2">
+                                               <option value="">Bitte wählen</option>
+                                               @foreach ($raceTypes as $raceType)
+                                                   <option value="{{ $raceType->id }}"
+                                                       @if(old('gruppe_id') == $raceType->id)
+                                                           selected
+                                                       @endif
+                                                   >{{ $raceType->typ }}</option>
+                                               @endforeach
+                                           </select>
+                                           <small class="form-text text-danger">{!! $errors->first('gruppe_id') !!}</small>
+                                       </div>
+                                       <script>
+                                           document.addEventListener('DOMContentLoaded', function() {
+                                               const einzelRennen = document.getElementById('einzelRennen');
+                                               const gruppeSelectWrapper = document.getElementById('gruppeSelectWrapper');
+                                               if(einzelRennen) {
+                                                   einzelRennen.addEventListener('change', function() {
+                                                       if(this.checked) {
+                                                           gruppeSelectWrapper.style.display = '';
+                                                       } else {
+                                                           gruppeSelectWrapper.style.display = 'none';
+                                                       }
+                                                   });
+                                               }
+                                           });
+                                       </script>
                                    @endif
 
 
@@ -171,4 +201,3 @@
        </div>
     </div>
 </x-app-layout>
-

@@ -138,6 +138,15 @@
                                                 <box-icon name='slideshow'></box-icon>
                                             </a>
                                         @endif
+                                        @if($race['liveStream']==1)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveStream/deactivate/'.$race->id) }}" title="Livestream AUS">
+                                                <box-icon name='video' type='solid' color="red"></box-icon>
+                                            </a>
+                                        @else
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveStream/activate/'.$race->id) }}" title="Livestream EIN">
+                                                <box-icon name='video'></box-icon>
+                                            </a>
+                                        @endif
                                      </div>
                                   </div>
                                   <div class="justify-between my-2">

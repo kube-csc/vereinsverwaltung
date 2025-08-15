@@ -160,6 +160,10 @@ class TabeleController extends Controller
             $request->getrenntewertung=0;
         }
 
+        if($request->buchholzwertungaktiv == Null){
+            $request->buchholzwertungaktiv=0;
+        }
+
         $tabele= new Tabele([
                 'event_id'                 => Session::get('regattaSelectId'),
                 'gruppe_id'                => $request->tabelleGruppe,

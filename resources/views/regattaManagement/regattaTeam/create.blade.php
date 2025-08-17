@@ -65,6 +65,8 @@
                     @error('kommentar') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
+                    <label for="gruppe_id" class="block font-semibold mb-1">Wertungsgruppe:</label>
+                    <select name="gruppe_id" id="gruppe_id" class="form-input w-full">
                         <option value="">Bitte wählen</option>
                         @foreach($gruppen as $gruppe)
                             <option value="{{ $gruppe->id }}" @if(old('gruppe_id', $regattaTeam->gruppe_id)==$gruppe->id) selected @endif>
@@ -106,11 +108,9 @@
                     <select name="status" id="status" class="form-input w-full">
                         <option value="Neumeldung" @if(old('status', $regattaTeam->status ?? 'Neumeldung') == 'Neumeldung') selected @endif>Neumeldung</option>
                         <option value="Warteliste" @if(old('status', $regattaTeam->status) == 'Warteliste') selected @endif>Warteliste</option>
+                        <option value="Ausgeschieden" @if(old('status', $regattaTeam->status) == 'Ausgeschieden') selected @endif>Ausgeschieden</option>
                         <option value="Gelöscht" @if(old('status', $regattaTeam->status) == 'Gelöscht') selected @endif>Gelöscht</option>
                         <option value="Abgemeldet" @if(old('status', $regattaTeam->status) == 'Abgemeldet') selected @endif>Abgemeldet</option>
-                        <option value="Nicht angetreten" @if(old('status', $regattaTeam->status) == 'Nicht angetreten') selected @endif>Nicht angetreten</option>
-                        <option value="Disqualifiziert" @if(old('status', $regattaTeam->status) == 'Disqualifiziert') selected @endif>Disqualifiziert</option>
-                        <option value="Ausgeschieden" @if(old('status', $regattaTeam->status) == 'Ausgeschieden') selected @endif>Ausgeschieden</option>
                     </select>
                     @error('status') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>

@@ -79,7 +79,8 @@
                                   <div>
                                       <label for="rennBahnen">Anzahl der Bahnen:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBahnen') ? 'bg-red-300' : '' }}"
-                                             id="rennBahnen" name="rennBahnen" value="{{ old('rennBahnen') }}">
+                                             id="rennBahnen" name="rennBahnen"
+                                             value="{{ old('rennBahnen') ?? ($rennBahnenSession ?? '') }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennBahnen') !!}</small>
                                   </div>
                                    @php

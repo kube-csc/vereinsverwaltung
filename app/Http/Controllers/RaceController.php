@@ -208,7 +208,10 @@ class RaceController extends Controller
         // Nur RaceTypes des aktiven Events laden
         $raceTypes = \App\Models\RaceType::where('regatta_id', Session::get('regattaSelectId'))->get();
 
-        return view('regattaManagement.race.create' , compact('levelMax', 'tabeles', 'raceTypes'));
+        // Anzahl Bahnen aus Session holen
+        $rennBahnenSession = Session::get('rennBahnen');
+
+        return view('regattaManagement.race.create' , compact('levelMax', 'tabeles', 'raceTypes', 'rennBahnenSession'));
     }
 
     /**
@@ -290,6 +293,11 @@ class RaceController extends Controller
             ]);
         $race->save();
 
+        // Anzahl Bahnen in Session speichern, wenn gesetzt
+        if ($request->filled('rennBahnen')) {
+            Session::put('rennBahnen', $request->rennBahnen);
+        }
+
         // ToDo: Wenn es ein Rennen mit Mix ist, dann muss in der Tabele Tabele das Feld maxrennen auf 0 gesetzt werden
         $tabele = Tabele::where('id', $request->tabeleId)
             ->where('maxrennen', '>', 0)
@@ -364,9 +372,8 @@ class RaceController extends Controller
         Session::put('rennLevelSave'              , $request->regattaLevel);
 
         return redirect('/Rennen/neu')->with([
-                'success'         => 'Das Rennen <b>' . $request->rennBezeichnung . '</b> wurde angelegt.'
-            ]
-        );
+            'success'         => 'Das Rennen <b>' . $request->rennBezeichnung . '</b> wurde angelegt.'
+        ]);
     }
 
     /**

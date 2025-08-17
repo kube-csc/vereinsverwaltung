@@ -7,6 +7,7 @@ use App\Models\Race;
 use App\Models\RaceType;
 use App\Models\Tabele;
 use App\Models\Tabledata;
+use App\Models\RegattaTeam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
@@ -446,5 +447,61 @@ class TabeleController extends Controller
             }
 
         return redirect()->back()->with('success', 'Die Rennen wurden von der Tabelle verlost.');
+    }
+
+    public function consistency($tabele_id)
+    {
+        $tabele = Tabele::find($tabele_id);
+        $maxrennen = $tabele->maxrennen;
+        $gruppe_id = $tabele->gruppe_id;
+
+        // Hole alle Mannschaften der Wertungsgruppe
+        $mannschaften = RegattaTeam::where('gruppe_id', $gruppe_id)->get();
+
+        // Hole alle Lanes für diese Tabelle
+        $lanes = Lane::where('tabele_id', $tabele_id)->get();
+
+        // Zähle, wie oft jede Mannschaft gesetzt wurde und sammle alle Rennen pro Mannschaft
+        $gesetzt = [];
+        $rennenZuViel = [];
+        foreach ($lanes as $lane) {
+            if ($lane->mannschaft_id) {
+                if (!isset($gesetzt[$lane->mannschaft_id])) {
+                    $gesetzt[$lane->mannschaft_id] = 0;
+                    $rennenZuViel[$lane->mannschaft_id] = [];
+                }
+                $gesetzt[$lane->mannschaft_id]++;
+                $race = Race::find($lane->rennen_id);
+                $rennenZuViel[$lane->mannschaft_id][] = [
+                    'id'     => $lane->rennen_id,
+                    'name'   => optional($race)->rennBezeichnung,
+                    'nummer' => optional($race)->nummer,
+                    'datum'  => optional($race)->rennDatum,
+                    'uhrzeit'=> optional($race)->rennUhrzeit,
+                ];
+            }
+        }
+
+        // Finde Mannschaften, die nicht maxrennen mal gesetzt sind oder zu oft
+        $auffaellig = [];
+        foreach ($mannschaften as $mannschaft) {
+            $anzahl = $gesetzt[$mannschaft->id] ?? 0;
+            if ($anzahl != $maxrennen) {
+                $item = [
+                    'mannschaft' => $mannschaft,
+                    'gesetzt' => $anzahl,
+                    'soll' => $maxrennen
+                ];
+                // Gib ALLE Rennen der auffälligen Mannschaft mit
+                $item['zu_viele_rennen'] = $rennenZuViel[$mannschaft->id] ?? [];
+                $auffaellig[] = $item;
+            }
+        }
+
+
+        return view('regattaManagement.tabele.consistency', [
+            'tabele' => $tabele,
+            'auffaellig' => $auffaellig,
+        ]);
     }
 }

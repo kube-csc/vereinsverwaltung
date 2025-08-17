@@ -299,6 +299,7 @@ Route::post('/Tabelle/Ergebnis/update/{tabele_id}',   [TabeleController::class, 
 Route::get('/Tabelle/Ergebnis/loeschen/{tabele_id}',  [TabeleController::class, 'deleteResult'])              ->name('tabele.deleteResult');
 Route::get('/Tabelle/anzeigen/{tabele_id}',           [TabeleController::class, 'show'])                      ->name('tabele.show');
 Route::get('/Tabelle/verlosen/{tabele_id}',           [TabeleController::class, 'shuffel'])                   ->name('tabele.shuffel');
+Route::get('/Tabelle/Konsistenzpruefung/{tabele_id}',               [TabeleController::class, 'consistency'])->name('tabele.consistency');
 
 Route::get('/Renneninformation/alle',                          [RegattaInformationController::class, 'index'])   ->name('regattaInformation.index');
 Route::get('/Renneninformation/neu',                           [RegattaInformationController::class, 'create'])  ->name('regattaInformation.create');
@@ -356,4 +357,3 @@ Route::match(['get', 'post'], '/botman',                       [BotManController
 Route::resources([
     'BotmanQuestion' => BotmanQuestionController::class,
 ]);
-

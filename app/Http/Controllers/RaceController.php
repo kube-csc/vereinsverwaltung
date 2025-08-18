@@ -197,6 +197,7 @@ class RaceController extends Controller
             'rennDatum'                        => 'required|date',
             'rennUhrzeit'                      => 'required|date_format:H:i',
             'veroeffentlichungUhrzeit'  => 'required|date_format:H:i',
+            'liveStreamURL'                   => 'nullable|max:255',
         ];
 
         // tabeleId ist nur erforderlich, wenn einzelRennen nicht 1 ist
@@ -249,18 +250,19 @@ class RaceController extends Controller
                 'tabele_id'                         => $request->tabeleId,
                 'nummer'                          => $request->nummer,
                 'bahnen'                           => $request->rennBahnen,
-                'rennBezeichnung'            => $request->rennBezeichnung,
-                'rennDatum'                      => $request->rennDatum,
-                'rennUhrzeit'                     => $request->rennUhrzeit,
-                'verspaetungUhrzeit'         => $request->rennUhrzeit,
-                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
-                'level'                                 => $request->regattaLevel,
-                'mix'                                   => $request->rennMix,
-                'visible'                               => 1,
-                'bearbeiter_id'                    => Auth::id(),
-                'autor_id'                            => Auth::id(),
-                'updated_at'                       => Carbon::now(),
-                'created_at'                        => Carbon::now()
+                'rennBezeichnung'           => $request->rennBezeichnung,
+                'rennDatum'                     => $request->rennDatum,
+                'rennUhrzeit'                    => $request->rennUhrzeit,
+                'verspaetungUhrzeit'        => $request->rennUhrzeit,
+                'veroeffentlichungUhrzeit'=> $request->veroeffentlichungUhrzeit,
+                'level'                                => $request->regattaLevel,
+                'mix'                                  => $request->rennMix,
+                'visible'                              => 1,
+                'liveStreamURL'                 => $request->liveStreamURL,
+                'bearbeiter_id'                   => Auth::id(),
+                'autor_id'                           => Auth::id(),
+                'updated_at'                      => Carbon::now(),
+                'created_at'                       => Carbon::now()
             ]);
         $race->save();
 
@@ -453,6 +455,7 @@ class RaceController extends Controller
                 'rennDatum'                => 'required|date',
                 'rennUhrzeit'              => 'required|date_format:H:i',
                 'veroeffentlichungUhrzeit' => 'required|date_format:H:i',
+                'liveStreamURL'            => 'nullable|max:255',
             ]
         );
 
@@ -496,6 +499,7 @@ class RaceController extends Controller
                 'level'                                  => $request->regattaLevel,
                 'tabele_id'                           => $request->tabeleId,
                 'mix'                                    => $request->rennMix,
+                'liveStreamURL'                  => $request->liveStreamURL,
                 'bearbeiter_id'                     => Auth::id(),
                 'updated_at'                        => Carbon::now()
             ]

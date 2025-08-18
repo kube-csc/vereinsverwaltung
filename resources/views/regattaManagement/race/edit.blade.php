@@ -148,6 +148,12 @@
                                           <option value="{{ $i }}">Abschnitt +</option>
                                       </select>
                                   </div>
+                                  <div class="my-4">
+                                      <label for="liveStreamURL">Livestream Video ID Youtube:</label>
+                                      <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('liveStreamURL') ? 'bg-red-300' : '' }}"
+                                             id="liveStreamURL" name="liveStreamURL" placeholder="Video ID" value="{{ old('liveStreamURL') ?? $race->liveStreamURL }}">
+                                      <small class="form-text text-danger">{!! $errors->first('liveStreamURL') !!}</small>
+                                  </div>
                                   <div class="py-2">
                                       <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" name="action" id="action" value="save">Speichern</button>
                                       <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" name="action" id="action" value="save_and_edit_next">Speichern & nächstes Rennen bearbeiten</button>

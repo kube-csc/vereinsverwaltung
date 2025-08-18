@@ -28,7 +28,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('tabeles', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('tabeles', 'getrenntewertung')) {
+                $table->dropColumn('getrenntewertung');
+            }
         });
     }
 };

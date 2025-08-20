@@ -116,7 +116,7 @@
                     @endif
                 </div>
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded transition duration-150 ease-in-out hover:bg-blue-700 hover:scale-105">Speichern</button>
-                <a href="{{ route('regattaTeam.index') }}" class="ml-4 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded inline-block text-center transition duration-150 ease-in-out">Abbrechen</a>
+                <a href="{{ url()->previous() }}" class="ml-4 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded inline-block text-center transition duration-150 ease-in-out">Abbrechen</a>
             </form>
         </div>
     </div>

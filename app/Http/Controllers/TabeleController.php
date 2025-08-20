@@ -455,7 +455,7 @@ class TabeleController extends Controller
         $maxrennen = $tabele->maxrennen;
         $gruppe_id = $tabele->gruppe_id;
 
-        // Hole alle Mannschaften der Wertungsgruppe
+        // Hole alle Mannschaften der Wertungsgruppe, auch gelöschte
         $mannschaften = RegattaTeam::where('gruppe_id', $gruppe_id)->get();
 
         // Hole alle Lanes für diese Tabelle
@@ -486,7 +486,8 @@ class TabeleController extends Controller
         $auffaellig = [];
         foreach ($mannschaften as $mannschaft) {
             $anzahl = $gesetzt[$mannschaft->id] ?? 0;
-            if ($anzahl != $maxrennen) {
+            // Wenn Status "Gelöscht", immer auffällig und Rennen anzeigen
+            if (($anzahl != $maxrennen) || (isset($mannschaft->status) && $mannschaft->status === 'Gelöscht')) {
                 $item = [
                     'mannschaft' => $mannschaft,
                     'gesetzt' => $anzahl,

@@ -68,8 +68,8 @@
 
                 {{-- Pagination auf Deutsch --}}
                 @if ($regattaTeams->hasPages())
-                    <div class="mt-4">
-                        <nav class="flex justify-center">
+                    <div class="mt-4 flex justify-center items-center gap-4">
+                        <nav>
                             <ul class="inline-flex items-center -space-x-px">
                                 {{-- Vorherige Seite --}}
                                 @if ($regattaTeams->onFirstPage())
@@ -107,6 +107,7 @@
                                 @endif
                             </ul>
                         </nav>
+                        <a href="/Regattamenu" class="p-2 bg-blue-500 rounded shadow text-white">Zurück</a>
                     </div>
                 @endif
             </div>

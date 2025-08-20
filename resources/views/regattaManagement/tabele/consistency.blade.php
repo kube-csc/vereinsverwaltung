@@ -19,17 +19,23 @@
                     </div>
                     <div class="w-full">
                         <!-- Kopfzeile -->
-                        <div class="grid grid-cols-4 bg-gray-100 font-semibold border-b">
+                        <div class="grid grid-cols-5 bg-gray-100 font-semibold border-b">
                             <div class="px-4 py-2">Mannschaft</div>
+                            <div class="px-4 py-2">Status</div>
                             <div class="px-4 py-2">Gesetzt</div>
                             <div class="px-4 py-2">Soll</div>
                             <div class="px-4 py-2">Zu oft gesetzt?</div>
                         </div>
                         <!-- Datenzeilen -->
                         @foreach($auffaellig as $item)
-                            <div class="grid grid-cols-4 border-b last:border-b-0">
+                            <div class="grid grid-cols-5 border-b last:border-b-0">
                                 <div class="border-r px-4 py-2 align-top">
-                                    {{ $item['mannschaft']->teamname }}
+                                    <a href="{{ route('regattaTeam.edit', $item['mannschaft']->id) }}" class="text-blue-600 underline" title="Team bearbeiten">
+                                        {{ $item['mannschaft']->teamname }}
+                                    </a>
+                                </div>
+                                <div class="border-r px-4 py-2 align-top">
+                                    {{ $item['mannschaft']->status ?? '-' }}
                                 </div>
                                 <div class="border-r px-4 py-2 align-top">{{ $item['gesetzt'] }}</div>
                                 <div class="border-r px-4 py-2 align-top">{{ $item['soll'] }}</div>
@@ -40,7 +46,7 @@
                                             <ul class="list-disc ml-4">
                                                 @foreach($item['zu_viele_rennen'] as $rennen)
                                                     <li>
-                                                        <a href="{{ url('/Teamverlosung/setzen/'.$rennen['id']) }}" class="text-blue-600 underline" target="_blank">
+                                                        <a href="{{ url('/Teamverlosung/setzen/'.$rennen['id']) }}" class="text-blue-600 underline">
                                                             @php
                                                                 $rennNummer = isset($rennen['nummer']) ? $rennen['nummer'] : null;
                                                             @endphp

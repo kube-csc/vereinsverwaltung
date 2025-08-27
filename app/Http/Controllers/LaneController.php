@@ -25,7 +25,7 @@ class LaneController extends Controller
      */
     public function index()
     {
-     //
+        //
     }
 
     /**
@@ -119,7 +119,7 @@ class LaneController extends Controller
      */
     public function edit($id)
     {
-      //
+        //
     }
 
     /**
@@ -156,21 +156,21 @@ class LaneController extends Controller
 
         if ($lanes->isEmpty()) {
             for ($i = 1; $i <= $race->bahnen; $i++) {
-                 if($race->tabele_id != Null) {
+                if($race->tabele_id != Null) {
                     $lane = new Lane([
-                            'regatta_id' => Session::get('regattaSelectId'),
-                            'rennen_id' => $id,
-                            'tabele_id' => $race->tabele_id,
-                            'bahn' => $i,
-                            'zeit' => '00:00:00',
-                            'hundert' => 0,
-                            'punkte' => 0,
-                            'platz' => 0,
-                            'bearbeiter_id' => Auth::id(),
-                            'autor_id' => Auth::id(),
-                            'updated_at' => Carbon::now(),
-                            'created_at' => Carbon::now()
-                        ]);
+                        'regatta_id' => Session::get('regattaSelectId'),
+                        'rennen_id' => $id,
+                        'tabele_id' => $race->tabele_id,
+                        'bahn' => $i,
+                        'zeit' => '00:00:00',
+                        'hundert' => 0,
+                        'punkte' => 0,
+                        'platz' => 0,
+                        'bearbeiter_id' => Auth::id(),
+                        'autor_id' => Auth::id(),
+                        'updated_at' => Carbon::now(),
+                        'created_at' => Carbon::now()
+                    ]);
                 }
                 $lane->save();
             }
@@ -181,20 +181,20 @@ class LaneController extends Controller
 
         if($race->mix == Null && $tabele->gruppe_id>0) {
             $teams = RegattaTeam::where('gruppe_id', $tabele->gruppe_id)
-                     ->orderBy('teamname')
-                     ->get();
+                ->orderBy('teamname')
+                ->get();
         }
         else {
             $teams = RegattaTeam::where('regatta_id', Session::get('regattaSelectId'))
-                     ->orderBy('teamname')
-                     ->get();
+                ->orderBy('teamname')
+                ->get();
         }
 
         $tabeleAlls = Tabele::where('event_id', Session::get('regattaSelectId'))
-                            ->orderBy('tabelleLevelVon')
-                            ->orderBy('tabelleLevelBis')
-                            ->orderBy('ueberschrift')
-                            ->get();
+            ->orderBy('tabelleLevelVon')
+            ->orderBy('tabelleLevelBis')
+            ->orderBy('ueberschrift')
+            ->get();
 
         return view('regattaManagement.lane.editDraw')->with(
             [
@@ -414,7 +414,7 @@ class LaneController extends Controller
                 }
             }
             else {
-                  $race->status = 2;
+                $race->status = 2;
             }
 
             $race->save();
@@ -433,11 +433,11 @@ class LaneController extends Controller
 
                 if($raceCount == 0) {
 
-                   $laneErsteMannschaftId = Lane::where('tabele_id', $tabellenId)
-                                                ->where('mannschaft_id', '>', 0)
-                                                ->first();
+                    $laneErsteMannschaftId = Lane::where('tabele_id', $tabellenId)
+                        ->where('mannschaft_id', '>', 0)
+                        ->first();
 
-                   if($laneErsteMannschaftId) {
+                    if($laneErsteMannschaftId) {
                         $laneMaxRennen = Lane::where('tabele_id', $tabellenId)
                             ->where('mannschaft_id', $laneErsteMannschaftId->mannschaft_id)
                             ->count();
@@ -447,7 +447,7 @@ class LaneController extends Controller
                             $tabelle->maxrennen = $laneMaxRennen;
                             $tabelle->save();
                         }
-                   }
+                    }
                 }
             }
         }
@@ -591,14 +591,14 @@ class LaneController extends Controller
                 // Wenn es sich um ein Mix Rennen handelt, soll für jede Bahn die Tabelle aufgerufen werden
                 if($race->mix == 1 && $lane->tabele_id >0)
                 {
-                  $tabele = Tabele::find($lane->tabele_id);
+                    $tabele = Tabele::find($lane->tabele_id);
                 }
                 $tabelleBuchholzwertungaktiv[$lane->tabele_id]=$tabele->buchholzwertungaktiv;
                 $tabelleWertungsart[$lane->tabele_id]=$tabele->wertungsart;
                 if($lane->platz>0) {
                     if ($tabele->wertungsart == 1) {
                         if ($tabele->getrenntewertung == 0) {
-                           $pointsystem = Pointsystem::where('system_id', $tabele->system_id)
+                            $pointsystem = Pointsystem::where('system_id', $tabele->system_id)
                                 ->where('platz', $lane->platz)
                                 ->first();
                         }
@@ -635,10 +635,10 @@ class LaneController extends Controller
                 }
 
                 $tabledata = Tabledata::where('regatta_id', Session::get('regattaSelectId'))
-                                      ->where('tabele_id', $tabele->id)
-                                      ->where('mannschaft_id', $lane->mannschaft_id)
-                                      ->whereNull('deleted_at')
-                                      ->first();
+                    ->where('tabele_id', $tabele->id)
+                    ->where('mannschaft_id', $lane->mannschaft_id)
+                    ->whereNull('deleted_at')
+                    ->first();
 
                 if ($tabledata) {
                     if($platzAlt[$lane->id] == 0) {
@@ -674,7 +674,7 @@ class LaneController extends Controller
                     }
                 }
                 else {
-                     $tabledata = new Tabledata([
+                    $tabledata = new Tabledata([
                         'regatta_id'    => Session::get('regattaSelectId'),
                         'tabele_id'     => $tabele->id,
                         'mannschaft_id' => $lane->mannschaft_id,
@@ -749,11 +749,11 @@ class LaneController extends Controller
         if ($changeCount == 1 && $platzCount == 1) {
             Race::find($raceId)->update([
                 'verspaetungUhrzeit'   => $request->rennUhrzeit,
-                'rennzeit'             => $request->rennzeit,
-                'status'               => 4,
-                'bearbeiter_id'        => Auth::id(),
-                'updated_at'           => Carbon::now(),
-                'liveStream'           => false
+                'rennzeit'                     => $request->rennzeit,
+                'status'                        => 4,
+                'bearbeiter_id'             => Auth::id(),
+                'updated_at'                => Carbon::now(),
+                'liveStream'                 => false
             ]);
 
             $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
@@ -761,17 +761,17 @@ class LaneController extends Controller
 
         if ($changeCount == 1 && $platzCount == 0) {
             Race::find($raceId)->update([
-                'verspaetungUhrzeit'   => $request->rennUhrzeit,
-                'rennzeit'             => $request->rennzeit,
-                'status'               => 2,
-                'bearbeiter_id'        => Auth::id(),
-                'updated_at'           => Carbon::now(),
+                'verspaetungUhrzeit'  => $request->rennUhrzeit,
+                'rennzeit'                    => $request->rennzeit,
+                'status'                       => 2,
+                'bearbeiter_id'            => Auth::id(),
+                'updated_at'               => Carbon::now(),
             ]);
 
             $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
         }
 
-        return redirect('/Rennen/Programm')->with([
+        return redirect('/Rennen/Ergebnisse')->with([
                 'success' => 'Die Platzierungen vom Rennen wurde eingeben.'
             ]
         );
@@ -788,76 +788,94 @@ class LaneController extends Controller
         //
     }
 
-    public function timeVerschiebung($race_id, $rennUhrzeit, $zeit, $zeitMinAbstand){
-        $raceLevel = Race::find($race_id);
-
-        $time1=explode(":" , $raceLevel->rennUhrzeit);
-        $time2=explode(":" , $rennUhrzeit);
-
-        $difftime=($time2[0]*60+$time2[1])-($time1[0]*60+$time1[1]);
-
-        $hour=$difftime/60;
-        $houradd=(int)$hour;
-        $minuteadd=$difftime-$houradd*60;
-        $hourVerspeatet  =$time1[0]+$houradd;
-        $minuteVerspeatet=$time1[1]+$minuteadd;
-        if($minuteVerspeatet>=60){
-            ++$hourVerspeatet;
-            $minuteVerspeatet=$minuteVerspeatet-60;
+    public function timeVerschiebung($race_id, $rennUhrzeit, $zeit, $zeitMinAbstand)
+    {
+        $race = Race::find($race_id);
+        if (!$race) {
+            return;
         }
-        $timeVerspaetung=$hourVerspeatet.":".$minuteVerspeatet.":00";
 
+        // Startzeit des letzten gestarteten Rennens in Minuten
+        $letzteStartArr = explode(":", $rennUhrzeit);
+        $letzteStartMin = ((int)$letzteStartArr[0]) * 60 + ((int)$letzteStartArr[1]);
+
+        // Hole alle nachfolgenden Rennen am selben Tag, sortiert nach Uhrzeit
         $raceTimes = Race::where('event_id', Session::get('regattaSelectId'))
             ->where('id', '!=', $race_id)
-            ->where('rennUhrzeit', '>', $raceLevel->rennUhrzeit)
-            ->where('rennDatum', $raceLevel->rennDatum)
-            ->orderby('rennUhrzeit')
+            ->where('rennUhrzeit', '>', $race->rennUhrzeit)
+            ->where('rennDatum', $race->rennDatum)
+            ->orderBy('rennUhrzeit')
             ->get();
 
-        $rennzeitStop=0;
+        $aufholProRennen = (int)$zeit;
+        $minAbstand = (int)$zeitMinAbstand;
+
+        $verspaetungAktiv = true;
+
         foreach ($raceTimes as $raceTime) {
-            if($raceTime->rennzeit==1){
-                $rennzeitStop=1;
-            }
-            if($rennzeitStop==0) {
-                $time3 = explode(":", $raceTime->rennUhrzeit);
-                $difftimeRace = ($time3[0] * 60 + $time3[1]) - ($time1[0] * 60 + $time1[1]);
+            $nextOrigArr = explode(":", $raceTime->rennUhrzeit);
+            $nextOrigMin = ((int)$nextOrigArr[0]) * 60 + ((int)$nextOrigArr[1]);
 
-                $time1[0] = $time3[0];
-                $time1[1] = $time3[1];
-
-                if ($difftimeRace > $zeitMinAbstand) {
-                    $diffMin = $difftimeRace - $zeitMinAbstand;
-                    $minuteadd = $minuteadd - $diffMin;
-                }
-
-                $hourVerspeatet   = $time3[0] + $houradd;
-                $minuteVerspeatet = $time3[1] + $minuteadd;
-                if ($minuteVerspeatet >= 60) {
-                    ++$hourVerspeatet;
-                    $minuteVerspeatet = $minuteVerspeatet - 60;
-                }
-                $timeVerspaetung = $hourVerspeatet . ":" . $minuteVerspeatet . ":00";
-
-                if ($minuteadd > 0) {
-                    Race::find($raceTime->id)->update([
-                        'verspaetungUhrzeit' => $timeVerspaetung,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now()
-                    ]);
-                    $minuteadd = $minuteadd - $zeit;
-                    if ($minuteadd < 0) {
-                        $minuteadd = 0;
-                    }
-                }
-                else {
+            // Wenn keine Verspätung mehr aktiv, alle weiteren Rennen auf geplante Zeit setzen
+            if (!$verspaetungAktiv) {
+                if ($raceTime->verspaetungUhrzeit !== $raceTime->rennUhrzeit) {
                     Race::find($raceTime->id)->update([
                         'verspaetungUhrzeit' => $raceTime->rennUhrzeit,
                         'bearbeiter_id'      => Auth::id(),
                         'updated_at'         => Carbon::now()
                     ]);
                 }
+                $letzteStartMin = $nextOrigMin;
+                continue;
             }
+
+            // Neuer Start: Letztes Rennen + Mindestabstand
+            $neuerStartMin = $letzteStartMin + $minAbstand;
+
+            // Maximale Aufholzeit: Abstand zwischen geplantem und neuem Start, aber höchstens $aufholProRennen
+            $aufholMoeglich = min($aufholProRennen, max(0, $nextOrigMin - $neuerStartMin));
+
+            // Ziehe die Aufholzeit ab, aber Mindestabstand muss bleiben
+            $berechneteStartMin = $nextOrigMin - $aufholMoeglich;
+
+            // Falls der neue Startzeitpunkt zu früh wäre, setze auf Mindestabstand nach letztem Rennen
+            if ($berechneteStartMin < $letzteStartMin + $minAbstand) {
+                $berechneteStartMin = $letzteStartMin + $minAbstand;
+            }
+
+            // Sicherstellen, dass die neue Startzeit nicht vor der ursprünglichen Startzeit ($rennUhrzeit) liegt
+            if ($berechneteStartMin < $letzteStartMin) {
+                $berechneteStartMin = $letzteStartMin;
+            }
+
+            // --- Fix: Wenn berechnete Startzeit < geplante Startzeit ($nextOrigMin), dann $rennUhrzeit verwenden und ab dann alle weiteren Rennen auch ---
+            if ($berechneteStartMin < $nextOrigMin) {
+                $rennUhrzeitStr = $raceTime->rennUhrzeit;
+                if ($raceTime->verspaetungUhrzeit !== $rennUhrzeitStr) {
+                    Race::find($raceTime->id)->update([
+                        'verspaetungUhrzeit' => $rennUhrzeitStr,
+                        'bearbeiter_id'      => Auth::id(),
+                        'updated_at'         => Carbon::now()
+                    ]);
+                }
+                $letzteStartMin = $nextOrigMin;
+                $verspaetungAktiv = false;
+                continue;
+            }
+
+            // Zeit in hh:mm:00 umwandeln
+            $neueStunde = floor($berechneteStartMin / 60);
+            $neueMinute = $berechneteStartMin % 60;
+            $neueStartzeit = sprintf('%02d:%02d:00', $neueStunde, $neueMinute);
+
+            // Speichern
+            Race::find($raceTime->id)->update([
+                'verspaetungUhrzeit' => $neueStartzeit,
+                'bearbeiter_id'      => Auth::id(),
+                'updated_at'         => Carbon::now()
+            ]);
+
+            $letzteStartMin = $berechneteStartMin;
         }
     }
 

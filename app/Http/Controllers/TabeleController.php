@@ -166,24 +166,24 @@ class TabeleController extends Controller
         }
 
         $tabele= new Tabele([
-                'event_id'                 => Session::get('regattaSelectId'),
-                'gruppe_id'                => $request->tabelleGruppe,
-                'ueberschrift'             => $request->tabelleBezeichnung,
-                'tabelleLevelVon'          => $request->tabelleLevelVon,
-                'tabelleLevelBis'          => $request->tabelleLevelBis,
-                'tabelleDatumVon'          => $request->tabelleDatum,
-                'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
-                'wertungsart'              => $request->wertungsart,
-                'system_id'                => $request->tabelleSystem,
-                'tabelleVisible'           => "1",
-                'finale'                   => $request->finaleTable,
-                'getrenntewertung'         => $request->getrenntewertung,
-                'buchholzwertungaktiv'     => $request->buchholzwertungaktiv,
-                'bearbeiter_id'            => Auth::id(),
-                'autor_id'                 => Auth::id(),
-                'updated_at'               => Carbon::now(),
-                'created_at'               => Carbon::now()
-            ]);
+            'event_id'                       => Session::get('regattaSelectId'),
+            'gruppe_id'                     => $request->tabelleGruppe,
+            'ueberschrift'                 => $request->tabelleBezeichnung,
+            'tabelleLevelVon'           => $request->tabelleLevelVon,
+            'tabelleLevelBis'             => $request->tabelleLevelBis,
+            'tabelleDatumVon'         => $request->tabelleDatum,
+            'finaleAnzeigen'             => $request->veroeffentlichungUhrzeit,
+            'wertungsart'                 => $request->wertungsart,
+            'system_id'                     => $request->tabelleSystem,
+            'tabelleVisible'                => "1",
+            'finale'                            => $request->finaleTable,
+            'getrenntewertung'        => $request->getrenntewertung,
+            'buchholzwertungaktiv'  => $request->buchholzwertungaktiv,
+            'bearbeiter_id'                => Auth::id(),
+            'autor_id'                        => Auth::id(),
+            'updated_at'                   => Carbon::now(),
+            'created_at'                    => Carbon::now()
+        ]);
 
         $tabele->save();
 
@@ -209,12 +209,31 @@ class TabeleController extends Controller
     {
         $tabele = Tabele::find($tabeleid);
 
+        // Sortierung wie $tabeledataShows und Platz-Berechnung ergänzen
         $tabeledatas = Tabledata::where('tabele_id', $tabeleid)
-            ->orderby('punkte', 'desc')
-            ->orderBy('buchholzzahl', 'desc')
+            ->orderBy('punkte', 'desc')
             ->orderBy('zeit')
             ->orderBy('hundert')
-            ->get();
+            ->orderBy('buchholzzahl', 'desc')
+            ->get()
+            ->values();
+
+        // Platz berechnen
+        $lastPoints = null;
+        $lastBuchholz = null;
+        $platz = 1;
+        foreach ($tabeledatas as $key => $item) {
+            if ($key === 0) {
+                $item->platz = 1;
+            } elseif ($item->punkte < $lastPoints || $item->buchholzzahl < $lastBuchholz) {
+                $platz = $key + 1;
+                $item->platz = $platz;
+            } else {
+                $item->platz = $platz;
+            }
+            $lastPoints = $item->punkte;
+            $lastBuchholz = $item->buchholzzahl;
+        }
 
         return view('regattaManagement.tabele.show')->with([
             'tabele'      => $tabele,
@@ -266,7 +285,7 @@ class TabeleController extends Controller
      */
     public function update(Request $request, $tabelleid)
     {
-         $request->validate([
+        $request->validate([
                 'tabelleBezeichnung'       => 'required|max:50',
                 'tabelleDatum'             => 'required|date',
                 //'tabelleLevelVon'        => 'tabelleLevelVon<=tabelleLevelBis', //ToDo:: Valedierung vebessern
@@ -419,34 +438,34 @@ class TabeleController extends Controller
             ->pluck('tabele_id')
             ->unique();
 
-            foreach ($tabellenIds as $tabellenId) {
+        foreach ($tabellenIds as $tabellenId) {
 
-                $raceCount = Race::whereHas('lanes', function ($query) use ($tabellenId) {
-                    $query->where('tabele_id', $tabellenId);
-                })->where('status', 1)
-                  ->count();
+            $raceCount = Race::whereHas('lanes', function ($query) use ($tabellenId) {
+                $query->where('tabele_id', $tabellenId);
+            })->where('status', 1)
+                ->count();
 
-                if($raceCount == 1) {
+            if($raceCount == 1) {
 
-                    $laneErsteMannschaftId = Lane::where('tabele_id', $tabellenId)
-                        ->where('mannschaft_id', '>', 0)
-                        ->first();
+                $laneErsteMannschaftId = Lane::where('tabele_id', $tabellenId)
+                    ->where('mannschaft_id', '>', 0)
+                    ->first();
 
-                    if($laneErsteMannschaftId) {
-                        $laneMaxRennen = Lane::where('tabele_id', $tabellenId)
-                            ->where('mannschaft_id', $laneErsteMannschaftId->mannschaft_id)
-                            ->count();
+                if($laneErsteMannschaftId) {
+                    $laneMaxRennen = Lane::where('tabele_id', $tabellenId)
+                        ->where('mannschaft_id', $laneErsteMannschaftId->mannschaft_id)
+                        ->count();
 
-                        $tabelle = Tabele::find($tabellenId);
-                        if ($laneMaxRennen != $tabelle->maxrennen) {
-                            $tabelle->maxrennen = $laneMaxRennen;
-                            $tabelle->save();
-                        }
+                    $tabelle = Tabele::find($tabellenId);
+                    if ($laneMaxRennen != $tabelle->maxrennen) {
+                        $tabelle->maxrennen = $laneMaxRennen;
+                        $tabelle->save();
                     }
                 }
             }
+        }
 
-        return redirect()->back()->with('success', 'Die Rennen wurden von der Tabelle verlost.');
+        return redirect()->back()->with('success', 'Die Rennen wurden von der Tabelle verlost, die die Grundlage für die Einteilung der Teilnehmer bildete.');
     }
 
     public function consistency($tabele_id)

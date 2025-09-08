@@ -325,7 +325,8 @@ class LaneController extends Controller
 
         $tabele = Tabele::find($race->tabele_id);
 
-        if($race->status == 2 && $race->rennDatum == Carbon::now()->toDateString() && $race->rennzeit == 0){
+        // ToDo: if($race->ergebnisDatei  muss noch berücksichtigt werden
+        if($race->status == 2 && $race->rennDatum == Carbon::now()->toDateString()) {
             $ractetime1 = Carbon::now();
             $ractetime2 = $ractetime1->subMinute(3);
             $ractetime  = $ractetime2->toTimeString();
@@ -344,6 +345,38 @@ class LaneController extends Controller
                 'ractetime'    => $ractetime
             ]
         );
+    }
+
+
+    public function editPlatzierung($id)
+    {
+        $race = Race::find($id);
+        $lanes = Lane::where('rennen_id', $id)->get()->keyBy('bahn');
+        $tabele = Tabele::find($race->tabele_id);
+
+        // Mannschaften je Bahn
+        $bahnTeams = [];
+        foreach ($lanes as $bahn => $lane) {
+            $bahnTeams[$bahn] = $lane->mannschaft_id ? $lane->regattaTeam : null;
+        }
+
+        // Zeit für Startfeld (wie in editResult)
+        if($race->status == 2 && $race->rennDatum == \Carbon\Carbon::now()->toDateString()) {
+            $ractetime1 = \Carbon\Carbon::now();
+            $ractetime2 = $ractetime1->subMinute(3);
+            $ractetime  = $ractetime2->toTimeString();
+        }
+        else{
+            $ractetime = $race->verspaetungUhrzeit;
+        }
+
+        return view('regattaManagement.lane.editPlatzierung')->with([
+            'race' => $race,
+            'lanes' => $lanes,
+            'tabele' => $tabele,
+            'bahnTeams' => $bahnTeams,
+            'ractetime' => $ractetime
+        ]);
     }
 
     /**
@@ -642,10 +675,10 @@ class LaneController extends Controller
 
                 if ($tabledata) {
                     if($platzAlt[$lane->id] == 0) {
-                        $tabledata->punkte       += $punkte;
-                        $tabledata->rennanzahl   += 1;
+                        $tabledata->punkte        += $punkte;
+                        $tabledata->rennanzahl  += 1;
                         $tabledata->bearbeiter_id = Auth::id();
-                        $tabledata->autor_id      = Auth::id();
+                        $tabledata->autor_id         = Auth::id();
                         $tabledata->updated_at    = Carbon::now();
                         $tabledata->save();
 
@@ -675,15 +708,15 @@ class LaneController extends Controller
                 }
                 else {
                     $tabledata = new Tabledata([
-                        'regatta_id'    => Session::get('regattaSelectId'),
-                        'tabele_id'     => $tabele->id,
+                        'regatta_id'         => Session::get('regattaSelectId'),
+                        'tabele_id'          => $tabele->id,
                         'mannschaft_id' => $lane->mannschaft_id,
-                        'rennanzahl'    => 1,
-                        'punkte'        => $punkte,
-                        'bearbeiter_id' => Auth::id(),
-                        'autor_id'      => Auth::id(),
-                        'updated_at'    => Carbon::now(),
-                        'created_at'    => Carbon::now()
+                        'rennanzahl'      => 1,
+                        'punkte'            => $punkte,
+                        'bearbeiter_id'  => Auth::id(),
+                        'autor_id'          => Auth::id(),
+                        'updated_at'     => Carbon::now(),
+                        'created_at'      => Carbon::now()
                     ]);
                     $tabledata->save();
 
@@ -777,6 +810,47 @@ class LaneController extends Controller
         );
     }
 
+    public function updatePlatzierung(Request $request, $raceId)
+    {
+        $race = Race::find($raceId);
+        $bahnen = $race->bahnen;
+
+        // Platzierungen setzen
+        for ($platz = 1; $platz <= $bahnen; $platz++) {
+            $bahn = $request->input('bahn_' . $platz);
+            if ($bahn) {
+                $lane = Lane::where('rennen_id', $raceId)->where('bahn', $bahn)->first();
+                if ($lane) {
+                    $lane->platz = $platz;
+                    $lane->bearbeiter_id = Auth::id();
+                    $lane->updated_at = now();
+                    $lane->save();
+                }
+            }
+        }
+
+        // Übernehme weitere Felder analog zu updateResult
+        \Session::put('regattaZeit', $request->zeit);
+        \Session::put('regattaZeitMinAbstand', $request->zeitMinAbstand);
+
+        if($request->rennzeit==Null) {
+            $request->rennzeit = 0;
+        }
+
+        // Status ggf. auf 3 setzen
+        $race->verspaetungUhrzeit = $request->rennUhrzeit;
+        $race->rennzeit  = $request->rennzeit;
+        $race->status = 3;
+        $race->bearbeiter_id = \Auth::id();
+        $race->updated_at = now();
+        $race->save();
+
+        // Zeitverschiebung berechnen wie in updateResult
+        $this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+
+        return redirect()->route('race.index')->with('success', 'Platzierungen wurden gespeichert.');
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -821,8 +895,8 @@ class LaneController extends Controller
                 if ($raceTime->verspaetungUhrzeit !== $raceTime->rennUhrzeit) {
                     Race::find($raceTime->id)->update([
                         'verspaetungUhrzeit' => $raceTime->rennUhrzeit,
-                        'bearbeiter_id'      => Auth::id(),
-                        'updated_at'         => Carbon::now()
+                        'bearbeiter_id'            => Auth::id(),
+                        'updated_at'               => Carbon::now()
                     ]);
                 }
                 $letzteStartMin = $nextOrigMin;
@@ -945,4 +1019,5 @@ class LaneController extends Controller
         }
         return redirect()->back()->with('race_id', $race_id);
     }
+
 }

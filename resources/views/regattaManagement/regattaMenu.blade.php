@@ -146,6 +146,21 @@
                                     </div>
                                 </div>
 
+                                <!-- Neuer Button für Kontrolle Ergebnisse -->
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Rennen/Ergebniskontrolle')">
+                                            <div class="justify-between my-2">
+                                                <div class="flex">
+                                                    <p class="font-bold text-lg">
+                                                        Ergebnisse Kontrolle
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
                                         <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Rennen/Ergebnisse/alle')">

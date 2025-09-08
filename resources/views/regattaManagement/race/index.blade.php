@@ -114,11 +114,6 @@
                                                 <box-icon name='shuffle'></box-icon>
                                             </a>
                                         @endif
-                                        @if($funktionStatus == 2 && $race->tabele_id)
-                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/Ergebnisse/'.$race->id) }}">
-                                              <box-icon name='user'></box-icon>
-                                          </a>
-                                        @endif
                                         @if($race['aktuellLiveVideo']==1)
                                              <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveAktuell/inaktiv/'.$race->id) }}">
                                                  <box-icon name='pin' type='solid'></box-icon>
@@ -146,6 +141,14 @@
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveStream/activate/'.$race->id) }}" title="Livestream EIN">
                                                 <box-icon name='video'></box-icon>
                                             </a>
+                                        @endif
+                                        @if($funktionStatus == 2 && $race->tabele_id)
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/Ergebnisse/'.$race->id) }}">
+                                                <box-icon name='user'></box-icon>
+                                           </a>
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/platzierung/'.$race->id) }}" title="Platzierung eingeben">
+                                                <box-icon name='trophy' ></box-icon>
+                                           </a>
                                         @endif
                                      </div>
                                   </div>

@@ -18,6 +18,12 @@ class AddSliteShowResultToRacesTable extends Migration
             if (!Schema::hasColumn('races', 'liveStreamURL')) {
                 $table->string('liveStreamURL')->nullable()->after('liveStream')->comment('Livestream URL');
             }
+            if (!Schema::hasColumn('races', 'einspielerURL')) {
+                $table->string('einspielerURL')->nullable()->after('liveStreamURL')->comment('Einspieler URL');
+            }
+            if (!Schema::hasColumn('races', 'abspielzeit')) {
+                $table->integer('abspielzeit')->nullable()->after('einspielerURL')->comment('Abspielzeit in Sekunden');
+            }
         });
     }
 
@@ -32,6 +38,12 @@ class AddSliteShowResultToRacesTable extends Migration
             }
             if (Schema::hasColumn('races', 'liveStreamURL')) {
                 $table->dropColumn('liveStreamURL');
+            }
+            if (Schema::hasColumn('races', 'einspielerURL')) {
+                $table->dropColumn('einspielerURL');
+            }
+            if (Schema::hasColumn('races', 'abspielzeit')) {
+                $table->dropColumn('abspielzeit');
             }
         });
     }

@@ -137,7 +137,26 @@ class RaceController extends Controller
             ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
-            'titel'  => 'Ergebnissse der Rennen bearbeiten',
+            'titel'                  => 'Ergebnissse der Rennen bearbeiten',
+            'races'               => $races,
+            'funktionStatus' => 2 // Ergebnis
+        ]);
+    }
+
+    public function indexResultControll()
+    {
+        $races = Race::where('event_id',Session::get('regattaSelectId'))
+            ->where(function($query) {
+                $query->whereNull('ergebnisDatei')
+                    ->where('status', 3);
+            })
+            ->where('visible' , 1)
+            ->orderby('rennDatum')
+            ->orderby('rennUhrzeit')
+            ->paginate(10);
+
+        return view('regattaManagement.race.index')->with([
+            'titel'  => 'Rennen die ein Ergebnisse haben kontrollieren',
             'races'  => $races,
             'funktionStatus' => 2 // Ergebnis
         ]);
@@ -198,6 +217,8 @@ class RaceController extends Controller
             'rennUhrzeit'                      => 'required|date_format:H:i',
             'veroeffentlichungUhrzeit'  => 'required|date_format:H:i',
             'liveStreamURL'                   => 'nullable|max:255',
+            'einspielerURL'                    => 'nullable|string|max:255',
+            'abspielzeit'                         => 'nullable|integer|min:0',
         ];
 
         // tabeleId ist nur erforderlich, wenn einzelRennen nicht 1 ist
@@ -246,7 +267,7 @@ class RaceController extends Controller
         }
 
         $race= new Race([
-                'event_id'                         => Session::get('regattaSelectId'),
+                'event_id'                          => Session::get('regattaSelectId'),
                 'tabele_id'                         => $request->tabeleId,
                 'nummer'                          => $request->nummer,
                 'bahnen'                           => $request->rennBahnen,
@@ -259,6 +280,8 @@ class RaceController extends Controller
                 'mix'                                  => $request->rennMix,
                 'visible'                              => 1,
                 'liveStreamURL'                 => $request->liveStreamURL,
+                'einspielerURL'                  => $request->einspielerURL,
+                'abspielzeit'                       => $request->abspielzeit,
                 'bearbeiter_id'                   => Auth::id(),
                 'autor_id'                           => Auth::id(),
                 'updated_at'                      => Carbon::now(),
@@ -425,7 +448,9 @@ class RaceController extends Controller
             ->orderby('rennUhrzeit')
             ->get();
 
-        if($race->ergebnisDatei == NULL && $race->ergebnisBeschreibung == '') {
+        // ToDo: if($race->ergebnisDatei  muss noch berücksichtigt werden
+        // if($race->ergebnisDatei == NULL && $race->ergebnisBeschreibung == '') {
+        if($race->status == 2 && $race->rennDatum == Carbon::now()->toDateString()) {
             $ractetime1 = Carbon::now();
             $ractetime2 = $ractetime1->subMinute(3);
             $ractetime  = $ractetime2->toTimeString();
@@ -451,11 +476,13 @@ class RaceController extends Controller
     public function update(Request $request, $race_id)
     {
         $request->validate([
-                'rennBezeichnung'          => 'required|max:50',
-                'rennDatum'                => 'required|date',
-                'rennUhrzeit'              => 'required|date_format:H:i',
+                'rennBezeichnung'             => 'required|max:50',
+                'rennDatum'                       => 'required|date',
+                'rennUhrzeit'                      => 'required|date_format:H:i',
                 'veroeffentlichungUhrzeit' => 'required|date_format:H:i',
-                'liveStreamURL'            => 'nullable|max:255',
+                'liveStreamURL'                  => 'nullable|max:255',
+                'einspielerURL'                   => 'nullable|string|max:255',
+                'abspielzeit'                        => 'nullable|integer|min:0',
             ]
         );
 
@@ -500,6 +527,8 @@ class RaceController extends Controller
                 'tabele_id'                           => $request->tabeleId,
                 'mix'                                    => $request->rennMix,
                 'liveStreamURL'                  => $request->liveStreamURL,
+                'einspielerURL'                   => $request->einspielerURL,
+                'abspielzeit'                        => $request->abspielzeit,
                 'bearbeiter_id'                     => Auth::id(),
                 'updated_at'                        => Carbon::now()
             ]

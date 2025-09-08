@@ -189,6 +189,19 @@
                                       <small class="form-text text-danger">{!! $errors->first('liveStreamURL') !!}</small>
                                   </div>
 
+                                   <div class="my-4">
+                                       <label for="einspielerURL">Einspieler Video ID Youtube:</label>
+                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('einspielerURL') ? 'bg-red-300' : '' }}"
+                                              id="einspielerURL" name="einspielerURL" placeholder="Video ID" value="{{ old('einspielerURL') }}">
+                                       <small class="form-text text-danger">{!! $errors->first('einspielerURL') !!}</small>
+                                   </div>
+                                   <div class="my-4">
+                                       <label for="abspielzeit">Abspielzeit (Sekunden):</label>
+                                       <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('abspielzeit') ? 'bg-red-300' : '' }}"
+                                              id="abspielzeit" name="abspielzeit" placeholder="z\.B\. 30" value="{{ old('abspielzeit'') }}">
+                                       <small class="form-text text-danger">{!! $errors->first('abspielzeit') !!}</small>
+                                   </div>
+
                                   <div class="py-2">
                                      <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Rennen anlegen</button>
                                   </div>

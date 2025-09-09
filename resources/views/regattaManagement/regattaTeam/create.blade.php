@@ -106,7 +106,7 @@
                 <div class="mb-4">
                     <label for="status" class="block font-semibold mb-1">Status:</label>
                     <select name="status" id="status" class="form-input w-full">
-                        <option value="Neumeldung" @if(old('status', $regattaTeam->status ?? 'Neumeldung') == 'Neumeldung') selected @endif>Neumeldung</option>
+                        <option value="Neuanmeldung" @if(old('status', $regattaTeam->status ?? 'Neuanmeldung') == 'Neuanmeldung') selected @endif>Neuanmeldung</option>
                         <option value="Warteliste" @if(old('status', $regattaTeam->status) == 'Warteliste') selected @endif>Warteliste</option>
                         <option value="Ausgeschieden" @if(old('status', $regattaTeam->status) == 'Ausgeschieden') selected @endif>Ausgeschieden</option>
                         <option value="Gelöscht" @if(old('status', $regattaTeam->status) == 'Gelöscht') selected @endif>Gelöscht</option>

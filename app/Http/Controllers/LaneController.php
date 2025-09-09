@@ -584,12 +584,17 @@ class LaneController extends Controller
 
     public function updateResult(Request $request, $raceId)
     {
+        $race   = Race::find($raceId);
+        // --- Änderung: Wenn Status 3, dann newCalculate setzen ---
+        if ($race && $race->status == 3) {
+            $request->merge(['newCalculate' => 1]);
+        }
+
         $request->validate([
                 'zeit'   => 'min:0|max:10'
             ]
         );
 
-        $race   = Race::find($raceId);
         $tabele = Tabele::find($race->tabele_id);
 
         $changeCount=0;
@@ -776,7 +781,8 @@ class LaneController extends Controller
         Session::put('regattaZeitMinAbstand' , $request->zeitMinAbstand);
 
         if($request->rennzeit==Null) {
-            $request->rennzeit = 0;
+           // Setze 'rennzeit' im Request sauber auf einen Integer (Default 0)
+           $request->merge(['rennzeit' => (int) $request->input('rennzeit', 0)]);
         }
 
         if ($changeCount == 1 && $platzCount == 1) {
@@ -830,25 +836,39 @@ class LaneController extends Controller
         }
 
         // Übernehme weitere Felder analog zu updateResult
-        \Session::put('regattaZeit', $request->zeit);
-        \Session::put('regattaZeitMinAbstand', $request->zeitMinAbstand);
+        Session::put('regattaZeit', $request->zeit);
+        Session::put('regattaZeitMinAbstand', $request->zeitMinAbstand);
 
         if($request->rennzeit==Null) {
             $request->rennzeit = 0;
         }
 
-        // Status ggf. auf 3 setzen
         $race->verspaetungUhrzeit = $request->rennUhrzeit;
         $race->rennzeit  = $request->rennzeit;
-        $race->status = 3;
-        $race->bearbeiter_id = \Auth::id();
-        $race->updated_at = now();
+
+        // Status auf 3 setzen
+        // --- Ergänzung: Status auf 2 setzen, wenn alle Platzierungen leer sind ---
+        $alleLeer = true;
+        for ($platz = 1; $platz <= $bahnen; $platz++) {
+            $bahn = $request->input('bahn_' . $platz);
+            if (!empty($bahn)) {
+                $alleLeer = false;
+                break;
+            }
+        }
+        if ($alleLeer) {
+            $race->status = 2;
+        } else {
+            $race->status = 3;
+        }
+        $race->bearbeiter_id = Auth::id();
+        $race->updated_at    = now();
         $race->save();
 
         // Zeitverschiebung berechnen wie in updateResult
         $this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
 
-        return redirect()->route('race.index')->with('success', 'Platzierungen wurden gespeichert.');
+        return redirect()->route('race.indexResultControll')->with('success', 'Platzierungen wurden gespeichert.');
     }
 
     /**

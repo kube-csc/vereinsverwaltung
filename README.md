@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.09.xx</p>
+<p>Version: V00.10.XX</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -143,8 +143,8 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
     <li>Mannschaften können den Rennen zugeteilt werden</li>
     <li>Tabellen anlegen und bearbeiten</li>
-    <li>Platzierungen können eingegeben werden</li> 
-    <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz Wertung</li>
+    <li>Platzierungen können eingegeben und dann mit einer kontrolle freigeben werden</li> 
+    <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz-Wertung</li>
     <li>Ergebnislisten können für jede Tabelle hochladen</li>
     <li>Platzierungen können eingegeben werden</li> 
     <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz-Wertung</li>
@@ -203,8 +203,8 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
 <h3>Präsentation der Regatta</h3>  
 <p>
     Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
-    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> 
-    ist kompatibel mit der Version V00.05.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+    Die Version V00.14.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> 
+    ist kompatibel mit der Version V00.10.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Regatta Managment</h3>  
 <p>

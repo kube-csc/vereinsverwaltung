@@ -30,7 +30,7 @@ return new class extends Migration
             /**
              * Feld 'status' - Status der Team-Meldung.
              * Mögliche Werte:
-             * - Neumeldung: Aktiv gemeldetes Team
+             * - Neuanmeldung: Aktiv gemeldetes Team
              * - Warteliste: Team steht auf der Warteliste
              * - Gelöscht: Team wurde gelöscht
              * - Abgemeldet: Team hat sich abgemeldet

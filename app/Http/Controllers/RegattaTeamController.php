@@ -95,7 +95,7 @@ class RegattaTeamController extends Controller
         $regattaTeam->kommentar = $request->input('kommentar');
         $regattaTeam->gruppe_id = $request->input('gruppe_id');
         $regattaTeam->werbung = $request->input('werbung');
-        $regattaTeam->status = $request->input('status', 'Neumeldung');
+        $regattaTeam->status = $request->input('status', 'Neuanmeldung');
         // Setze Standardwerte für Felder, die in der Migration als required stehen
         $regattaTeam->datum = now();
         $regattaTeam->training = 0;
@@ -187,7 +187,7 @@ class RegattaTeamController extends Controller
         $regattaTeam->kommentar = $request->input('kommentar');
         $regattaTeam->gruppe_id = $request->input('gruppe_id');
         $regattaTeam->werbung = $request->input('werbung');
-        $regattaTeam->status = $request->input('status', 'Neumeldung');
+        $regattaTeam->status = $request->input('status', 'Neuanmeldung');
         $regattaTeam->save();
 
         return redirect()->route('regattaTeam.index')->with('success', 'Team erfolgreich aktualisiert.');

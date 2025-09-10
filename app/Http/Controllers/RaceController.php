@@ -118,7 +118,7 @@ class RaceController extends Controller
             ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
-            'titel'  => 'Rennen die kein Ergebnisse haben bearbeiten',
+            'titel'  => 'Rennen ohne Ergebnisse bearbeiten',
             'races'  => $races,
             'funktionStatus' => 2 // Ergebnis
         ]);

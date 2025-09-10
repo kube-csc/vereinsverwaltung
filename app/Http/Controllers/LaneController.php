@@ -584,8 +584,8 @@ class LaneController extends Controller
 
     public function updateResult(Request $request, $raceId)
     {
-        $race   = Race::find($raceId);
         // --- Änderung: Wenn Status 3, dann newCalculate setzen ---
+        $race = Race::find($raceId);
         if ($race && $race->status == 3) {
             $request->merge(['newCalculate' => 1]);
         }
@@ -796,6 +796,8 @@ class LaneController extends Controller
             ]);
 
             $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+
+            $this->setAllLiveStreamFalseForCurrentRegatta();
         }
 
         if ($changeCount == 1 && $platzCount == 0) {
@@ -861,6 +863,7 @@ class LaneController extends Controller
         } else {
             $race->status = 3;
         }
+        $race->liveStream     = false;
         $race->bearbeiter_id = Auth::id();
         $race->updated_at    = now();
         $race->save();
@@ -1040,4 +1043,14 @@ class LaneController extends Controller
         return redirect()->back()->with('race_id', $race_id);
     }
 
+    /**
+     * Setzt liveStream für alle Rennen der aktuellen Regatta auf false.
+     */
+    protected function setAllLiveStreamFalseForCurrentRegatta()
+    {
+        $regattaId = Session::get('regattaSelectId');
+        Race::where('event_id', $regattaId)
+            ->where('liveStream', true)
+            ->update(['liveStream' => false]);
+    }
 }

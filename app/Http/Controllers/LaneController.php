@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Helpers\RaceTimeHelper;
 
 class LaneController extends Controller
 {
@@ -795,7 +796,7 @@ class LaneController extends Controller
                 'liveStream'                 => false
             ]);
 
-            $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+            RaceTimeHelper::timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
 
             $this->setAllLiveStreamFalseForCurrentRegatta();
         }
@@ -809,7 +810,7 @@ class LaneController extends Controller
                 'updated_at'               => Carbon::now(),
             ]);
 
-            $berechnung=$this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+           RaceTimeHelper::timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
         }
 
         return redirect('/Rennen/Ergebnisse')->with([
@@ -869,7 +870,7 @@ class LaneController extends Controller
         $race->save();
 
         // Zeitverschiebung berechnen wie in updateResult
-        $this->timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+        RaceTimeHelper::timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
 
         return redirect()->route('race.indexResultControll')->with('success', 'Platzierungen wurden gespeichert.');
     }
@@ -885,97 +886,6 @@ class LaneController extends Controller
         //
     }
 
-    public function timeVerschiebung($race_id, $rennUhrzeit, $zeit, $zeitMinAbstand)
-    {
-        $race = Race::find($race_id);
-        if (!$race) {
-            return;
-        }
-
-        // Startzeit des letzten gestarteten Rennens in Minuten
-        $letzteStartArr = explode(":", $rennUhrzeit);
-        $letzteStartMin = ((int)$letzteStartArr[0]) * 60 + ((int)$letzteStartArr[1]);
-
-        // Hole alle nachfolgenden Rennen am selben Tag, sortiert nach Uhrzeit
-        $raceTimes = Race::where('event_id', Session::get('regattaSelectId'))
-            ->where('id', '!=', $race_id)
-            ->where('rennUhrzeit', '>', $race->rennUhrzeit)
-            ->where('rennDatum', $race->rennDatum)
-            ->orderBy('rennUhrzeit')
-            ->get();
-
-        $aufholProRennen = (int)$zeit;
-        $minAbstand = (int)$zeitMinAbstand;
-
-        $verspaetungAktiv = true;
-
-        foreach ($raceTimes as $raceTime) {
-            $nextOrigArr = explode(":", $raceTime->rennUhrzeit);
-            $nextOrigMin = ((int)$nextOrigArr[0]) * 60 + ((int)$nextOrigArr[1]);
-
-            // Wenn keine Verspätung mehr aktiv, alle weiteren Rennen auf geplante Zeit setzen
-            if (!$verspaetungAktiv) {
-                if ($raceTime->verspaetungUhrzeit !== $raceTime->rennUhrzeit) {
-                    Race::find($raceTime->id)->update([
-                        'verspaetungUhrzeit' => $raceTime->rennUhrzeit,
-                        'bearbeiter_id'            => Auth::id(),
-                        'updated_at'               => Carbon::now()
-                    ]);
-                }
-                $letzteStartMin = $nextOrigMin;
-                continue;
-            }
-
-            // Neuer Start: Letztes Rennen + Mindestabstand
-            $neuerStartMin = $letzteStartMin + $minAbstand;
-
-            // Maximale Aufholzeit: Abstand zwischen geplantem und neuem Start, aber höchstens $aufholProRennen
-            $aufholMoeglich = min($aufholProRennen, max(0, $nextOrigMin - $neuerStartMin));
-
-            // Ziehe die Aufholzeit ab, aber Mindestabstand muss bleiben
-            $berechneteStartMin = $nextOrigMin - $aufholMoeglich;
-
-            // Falls der neue Startzeitpunkt zu früh wäre, setze auf Mindestabstand nach letztem Rennen
-            if ($berechneteStartMin < $letzteStartMin + $minAbstand) {
-                $berechneteStartMin = $letzteStartMin + $minAbstand;
-            }
-
-            // Sicherstellen, dass die neue Startzeit nicht vor der ursprünglichen Startzeit ($rennUhrzeit) liegt
-            if ($berechneteStartMin < $letzteStartMin) {
-                $berechneteStartMin = $letzteStartMin;
-            }
-
-            // --- Fix: Wenn berechnete Startzeit < geplante Startzeit ($nextOrigMin), dann $rennUhrzeit verwenden und ab dann alle weiteren Rennen auch ---
-            if ($berechneteStartMin < $nextOrigMin) {
-                $rennUhrzeitStr = $raceTime->rennUhrzeit;
-                if ($raceTime->verspaetungUhrzeit !== $rennUhrzeitStr) {
-                    Race::find($raceTime->id)->update([
-                        'verspaetungUhrzeit' => $rennUhrzeitStr,
-                        'bearbeiter_id'      => Auth::id(),
-                        'updated_at'         => Carbon::now()
-                    ]);
-                }
-                $letzteStartMin = $nextOrigMin;
-                $verspaetungAktiv = false;
-                continue;
-            }
-
-            // Zeit in hh:mm:00 umwandeln
-            $neueStunde = floor($berechneteStartMin / 60);
-            $neueMinute = $berechneteStartMin % 60;
-            $neueStartzeit = sprintf('%02d:%02d:00', $neueStunde, $neueMinute);
-
-            // Speichern
-            Race::find($raceTime->id)->update([
-                'verspaetungUhrzeit' => $neueStartzeit,
-                'bearbeiter_id'      => Auth::id(),
-                'updated_at'         => Carbon::now()
-            ]);
-
-            $letzteStartMin = $berechneteStartMin;
-        }
-    }
-
     public function newLane($race_id)
     {
         $race = Race::find($race_id);
@@ -983,7 +893,6 @@ class LaneController extends Controller
 
         $lane = Lane::onlyTrashed()->where('rennen_id', $race_id)->orderBy('bahn')->first();
         if (!$lane) {
-            // Suche erneut ohne rennen_id
             $lane = Lane::onlyTrashed()->orderBy('bahn')->first();
         }
         if ($lane && $lane->trashed()) {

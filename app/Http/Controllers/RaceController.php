@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\RaceTimeHelper;
 
 class RaceController extends Controller
 {
@@ -678,7 +679,7 @@ class RaceController extends Controller
             }
         }
 
-        $berechnung=$this->timeVerschiebung($race_id, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+        $berechnung = RaceTimeHelper::timeVerschiebung($race_id, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
 
         return redirect('/Rennen/Ergebnisse')->with(
             [
@@ -792,86 +793,13 @@ class RaceController extends Controller
             'updated_at'           => Carbon::now()
         ]);
 
-        $berechnung=$this->timeVerschiebung($race_id, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+        $berechnung = RaceTimeHelper::timeVerschiebung($race_id, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
 
         return redirect('/Rennen/Ergebnisse')->with(
             [
                 'success'  => 'Die Rennzeit des Rennens wurden gespeichert.'
             ]
         );
-    }
-
-    public function timeVerschiebung($race_id, $rennUhrzeit, $zeit, $zeitMinAbstand){
-        $raceLevel = Race::find($race_id);
-
-        $time1=explode(":" , $raceLevel->rennUhrzeit);
-        $time2=explode(":" , $rennUhrzeit);
-
-        $difftime=($time2[0]*60+$time2[1])-($time1[0]*60+$time1[1]);
-
-        $hour=$difftime/60;
-        $houradd=(int)$hour;
-        $minuteadd=$difftime-$houradd*60;
-        $hourVerspeatet  =$time1[0]+$houradd;
-        $minuteVerspeatet=$time1[1]+$minuteadd;
-        if($minuteVerspeatet>=60){
-            ++$hourVerspeatet;
-            $minuteVerspeatet=$minuteVerspeatet-60;
-        }
-        $timeVerspaetung=$hourVerspeatet.":".$minuteVerspeatet.":00";
-
-        $raceTimes = Race::where('event_id', Session::get('regattaSelectId'))
-            ->where('id', '!=', $race_id)
-            //->where('level', $raceLevel->level)
-            ->where('rennUhrzeit', '>', $raceLevel->rennUhrzeit)
-            ->where('rennDatum', $raceLevel->rennDatum)
-            ->orderby('rennUhrzeit')
-            ->get();
-
-        $rennzeitStop=0;
-        foreach ($raceTimes as $raceTime) {
-            if($raceTime->rennzeit==1){
-                $rennzeitStop=1;
-            }
-            if($rennzeitStop==0) {
-                $time3 = explode(":", $raceTime->rennUhrzeit);
-                $difftimeRace = ($time3[0] * 60 + $time3[1]) - ($time1[0] * 60 + $time1[1]);
-
-                $time1[0] = $time3[0];
-                $time1[1] = $time3[1];
-
-                if ($difftimeRace > $zeitMinAbstand) {
-                    $diffMin = $difftimeRace - $zeitMinAbstand;
-                    $minuteadd = $minuteadd - $diffMin;
-                }
-
-                $hourVerspeatet = $time3[0] + $houradd;
-                $minuteVerspeatet = $time3[1] + $minuteadd;
-                if ($minuteVerspeatet >= 60) {
-                    ++$hourVerspeatet;
-                    $minuteVerspeatet = $minuteVerspeatet - 60;
-                }
-                $timeVerspaetung = $hourVerspeatet . ":" . $minuteVerspeatet . ":00";
-
-                if ($minuteadd > 0) {
-                    Race::find($raceTime->id)->update([
-                        'verspaetungUhrzeit' => $timeVerspaetung,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now()
-                    ]);
-                    $minuteadd = $minuteadd - $zeit;
-                    if ($minuteadd < 0) {
-                        $minuteadd = 0;
-                    }
-                } else {
-                    Race::find($raceTime->id)->update([
-                        'verspaetungUhrzeit' => $raceTime->rennUhrzeit,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now()
-                    ]);
-                }
-            }
-        }
     }
 
     public function sliteShowResultActivate($id)

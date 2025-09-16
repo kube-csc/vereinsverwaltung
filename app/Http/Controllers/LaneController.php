@@ -780,6 +780,7 @@ class LaneController extends Controller
 
         Session::put('regattaZeit' , $request->zeit);
         Session::put('regattaZeitMinAbstand' , $request->zeitMinAbstand);
+        Session::put('regattaRennzeitVorsprung', $request->rennzeit_vorsprung == 1 ? 1 : 0);
 
         if($request->rennzeit==Null) {
            // Setze 'rennzeit' im Request sauber auf einen Integer (Default 0)
@@ -841,6 +842,7 @@ class LaneController extends Controller
         // Übernehme weitere Felder analog zu updateResult
         Session::put('regattaZeit', $request->zeit);
         Session::put('regattaZeitMinAbstand', $request->zeitMinAbstand);
+        Session::put('regattaRennzeitVorsprung', $request->rennzeit_vorsprung == 1 ? 1 : 0);
 
         if($request->rennzeit==Null) {
             $request->rennzeit = 0;

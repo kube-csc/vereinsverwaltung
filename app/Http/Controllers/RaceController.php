@@ -516,24 +516,33 @@ class RaceController extends Controller
             $request->tabeleId=$tabele->id;
         }
 
-        Race::find($race_id)->update([
-                'nummer'                            => $request->nummer,
-                'rennBezeichnung'             => $request->rennBezeichnung,
-                'bahnen'                             => $request->rennBahnen,
-                'rennDatum'                        => $request->rennDatum,
-                'rennUhrzeit'                      => $request->rennUhrzeit,
-                'verspaetungUhrzeit'          => $request->rennUhrzeit,
-                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
-                'level'                                  => $request->regattaLevel,
-                'tabele_id'                           => $request->tabeleId,
-                'mix'                                    => $request->rennMix,
-                'liveStreamURL'                  => $request->liveStreamURL,
-                'einspielerURL'                   => $request->einspielerURL,
-                'abspielzeit'                        => $request->abspielzeit,
-                'bearbeiter_id'                     => Auth::id(),
-                'updated_at'                        => Carbon::now()
-            ]
-        );
+        $updateData = [
+            'nummer'                => $request->nummer,
+            'rennBezeichnung'  => $request->rennBezeichnung,
+            'bahnen'  => $request->rennBahnen,
+            'rennDatum'             => $request->rennDatum,
+            'rennUhrzeit'  => $request->rennUhrzeit,
+            'verspaetungUhrzeit'    => $request->rennUhrzeit,
+            'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
+            'level'                 => $request->regattaLevel,
+            'tabele_id'             => $request->tabeleId,
+            'mix'                   => $request->rennMix,
+            'bearbeiter_id'         => Auth::id(),
+            'updated_at'            => Carbon::now()
+        ];
+
+        // Nur setzen, wenn im Request vorhanden
+        if ($request->has('liveStreamURL')) {
+            $updateData['liveStreamURL'] = $request->liveStreamURL;
+        }
+        if ($request->has('einspielerURL')) {
+            $updateData['einspielerURL'] = $request->einspielerURL;
+        }
+        if ($request->has('abspielzeit')) {
+            $updateData['abspielzeit'] = $request->abspielzeit;
+        }
+
+        Race::find($race_id)->update($updateData);
 
         // Unterscheiden, welche Aktion ausgeführt werden soll
         if ($request->input('action') == 'save_and_edit_next') {
@@ -629,6 +638,7 @@ class RaceController extends Controller
 
         Session::put('regattaZeit' , $request->zeit);
         Session::put('regattaZeitMinAbstand' , $request->zeitMinAbstand);
+        Session::put('regattaRennzeitVorsprung', $request->rennzeit_vorsprung == 1 ? 1 : 0);
 
         if($request->rennzeit==Null){
             $request->rennzeit=0;
@@ -781,6 +791,7 @@ class RaceController extends Controller
 
         Session::put('regattaZeit' , $request->zeit);
         Session::put('regattaZeitMinAbstand' , $request->zeitMinAbstand);
+        Session::put('regattaRennzeitVorsprung', $request->rennzeit_vorsprung == 1 ? 1 : 0);
 
         if($request->rennzeit==Null){
             $request->rennzeit=0;

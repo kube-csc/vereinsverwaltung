@@ -16,6 +16,36 @@ class RaceTimeHelper
             return;
         }
 
+        // Vorsprung der Rennzeit mitnehmen
+        $vorsprungAktiv = Session::get('regattaRennzeitVorsprung') == 1;
+        $rennUhrzeitTimestamp = strtotime($rennUhrzeit);
+        $raceRennUhrzeitTimestamp = strtotime($race->rennUhrzeit);
+
+        if ($vorsprungAktiv && $rennUhrzeitTimestamp < $raceRennUhrzeitTimestamp) {
+            $differenzSekunden = $raceRennUhrzeitTimestamp - $rennUhrzeitTimestamp;
+
+            // Alle späteren Rennen am selben Tag und Event
+            $raceTimes = Race::where('event_id', Session::get('regattaSelectId'))
+                ->where('rennzeit', 0)
+                ->where('rennDatum', $race->rennDatum)
+                ->where('rennUhrzeit', '>', $race->rennUhrzeit)
+                ->orderBy('rennUhrzeit')
+                ->get();
+
+            foreach ($raceTimes as $raceTime) {
+                $origTimestamp = strtotime($raceTime->rennUhrzeit);
+                $neueTimestamp = $origTimestamp - $differenzSekunden;
+                $neueUhrzeit = date('H:i:s', $neueTimestamp);
+
+                Race::find($raceTime->id)->update([
+                    'verspaetungUhrzeit' => $neueUhrzeit,
+                    'bearbeiter_id'            => Auth::id(),
+                    'updated_at'               => Carbon::now()
+                ]);
+            }
+            return;
+        }
+
         $letzteStartArr = explode(":", $rennUhrzeit);
         $letzteStartMin = ((int)$letzteStartArr[0]) * 60 + ((int)$letzteStartArr[1]);
 
@@ -39,8 +69,8 @@ class RaceTimeHelper
                 if ($raceTime->verspaetungUhrzeit !== $raceTime->rennUhrzeit) {
                     Race::find($raceTime->id)->update([
                         'verspaetungUhrzeit' => $raceTime->rennUhrzeit,
-                        'bearbeiter_id'      => Auth::id(),
-                        'updated_at'         => Carbon::now()
+                        'bearbeiter_id'            => Auth::id(),
+                        'updated_at'               => Carbon::now()
                     ]);
                 }
                 $letzteStartMin = $nextOrigMin;
@@ -85,4 +115,3 @@ class RaceTimeHelper
         }
     }
 }
-

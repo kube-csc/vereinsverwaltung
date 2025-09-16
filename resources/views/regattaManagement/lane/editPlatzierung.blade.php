@@ -102,6 +102,12 @@
                                id="rennzeit" name="rennzeit" value="1"
                                @if(old('rennzeit')==1 or (isset($race) && $race->rennzeit==1)) checked @endif>
                     </div>
+                    <div class="my-4">
+                        <label for="rennzeit_vorsprung">Vorsprung der Rennzeit mitnehmen:</label>
+                        <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2"
+                               id="rennzeit_vorsprung" name="rennzeit_vorsprung" value="1"
+                               @if(old('rennzeit_vorsprung', Session::get('regattaRennzeitVorsprung'))==1) checked @endif>
+                    </div>
                     <div>
                         <label for="zeit">Zeit in Minuten die pro Rennen aufgeholt werden kann:</label>
                         <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2"

@@ -59,18 +59,25 @@
                                         </a>
                                         @endif
                                         @if($tabele['tabelleVisible']==0)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Tabelle/aktiv/'.$tabele->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Tabelle/aktiv/'.$tabele->id) }}">
                                             <box-icon name='hide'></box-icon>
                                         </a>
                                         @endif
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Tabelle/anzeigen/'.$tabele->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Tabelle/anzeigen/'.$tabele->id) }}">
                                             <box-icon name='table'></box-icon>
                                         </a>
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Tabelle/verlosen/'.$tabele->id) }}">
+                                            <box-icon name='shuffle'></box-icon>
+                                        </a>
                                         @if($status==2)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Tabelle/Ergebnis/'.$tabele->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Tabelle/Ergebnis/'.$tabele->id) }}">
                                             <box-icon name='file'></box-icon>
                                         </a>
-                                  @endif
+                                        @endif
+                                        <!-- Consistency Check Button -->
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Tabelle/Konsistenzpruefung/'.$tabele->id) }}">
+                                            <box-icon name='check-circle'></box-icon>
+                                        </a>
                                       </div>
                                   </div>
                                   <div class="justify-between my-2">
@@ -81,7 +88,8 @@
                                       <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $tabele->updated_at->diffForHumans() }}</p>
                                     </div>
                                     <div class="flex">
-                                        Regatta Abschnitt von {{ $tabele->tabelleLevelVon }} bis {{ $tabele->tabelleLevelBis }}
+                                        Regatta Abschnitt von {{ $tabele->tabelleLevelVon }} bis {{ $tabele->tabelleLevelBis }}<br>
+                                        Klasse: {{ $tabele->getTeamWertungsGruppe?->typ }}
                                     </div>
                                   </div>
 

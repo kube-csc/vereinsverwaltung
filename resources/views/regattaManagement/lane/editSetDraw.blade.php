@@ -19,7 +19,7 @@
                         @php
                             // ToDo: Beschreibungstext überarbeiten
                         @endphp
-                        Bitte verwalten Sie die Bahn Zuweisungen.
+                        Bitte setze die Mannschaften aus den Tabellen.
                     </div>
                 </div>
 
@@ -31,7 +31,7 @@
 
                             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
                                <label for="name">Nummer:</label>
-                               {{ $race->nummer }} {{ $race->rennBezeichnung }}
+                               {{ $race->nummer }} - {{ $race->rennBezeichnung }}
                                <br>
                                @if($tabele)
                                <label for="name">Tabelle:</label>
@@ -81,7 +81,7 @@
                         <div class="ml-12">
                             <div class="mt-2 text-sm text-gray-500">
 
-                                <form autocomplete="off" action="{{ url('/Teamverlosung/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
+                                <form autocomplete="off" action="{{ url('/Teamverlosung/planen/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
                                     @csrf
                                     @php
                                         // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
@@ -93,24 +93,32 @@
                                         @endphp
 
                                         <div class="my-4" >
-                                            <label for="name">Bahn {{ $lane->bahn }} Team / Klasse:</label>
+                                            <label for="name">Bahn {{ $lane->bahn }} setzen aus Tabelle:</label>
 
                                             <input type="hidden" name="laneId[{{$bahn}}]" value="{{ $lane->id }}">
                                             <br>
-                                            <select name="mannschaftId[{{$bahn}}]]" id="mannschaftId[{{$bahn}}]]" >
+                                            <select name="tabelevorId[{{$bahn}}]]" id="tabelevorId[{{$bahn}}]]" >
                                                 <option value=""
-                                                        @if( $lane->mannschaft_id == NULL )
+                                                    @if( $lane->tabelevor_id == NULL )
                                                             selected
                                                     @endif
-                                                >keine Besetzung</option>
+                                                >keine Tabelle</option>
 
-                                                @foreach($teams as $team)
-                                                    <option value="{{ $team->id }}"
-                                                        @if( $team->id == $lane->mannschaft_id )
+                                                @foreach($tabeleVorRennens as $tabeleVorRennen)
+                                                    <option value="{{ $tabeleVorRennen->id }}"
+                                                        @if( $tabeleVorRennen->id == $lane->tabelevor_id )
                                                                 selected
                                                         @endif
-                                                    >{{ $team->teamname }} / {{ $team->teamWertungsGruppe->typ }}</option>
+                                                        @selected( $lane->tabelevor_id == 0 && $tabele->gruppe_id == $tabeleVorRennen->gruppe_id)
+                                                    >{{ $tabeleVorRennen->ueberschrift }}</option>
                                                 @endforeach
+                                            </select>
+
+                                            <select name="platzvor[{{$bahn}}]" id="platzvor[{{$bahn}}]">
+                                                <option value="">kein Platz</option>
+                                                @for($i = 1; $i <= $teamsCount; $i++)
+                                                    <option value="{{ $i }}" @if(isset($lane->platzvor) && $lane->platzvor == $i) selected @endif>{{ $i }}</option>
+                                                @endfor
                                             </select>
 
                                             @if($race->mix == 1)
@@ -136,9 +144,9 @@
                                         </div>
                                     @endforeach
                                     <div class="mb-4">
-                                        <a href="{{ route('lane.newLane', ['race_id' => $race->id]) }}"
+                                        <a href="{{ url('/Teamverlosung/Bahn/neu/'.$race->id) }}"
                                            class="inline-flex items-center p-2 bg-green-500 rounded shadow text-white hover:bg-green-600">
-                                            <i class="fas fa-plus mr-2"></i> Neue Bahn anlegen
+                                            <i class="fas fa-plus mr-2"></i> Neue Reihe anlegen
                                         </a>
                                         @if($lane && is_null($lane->mannschaft_id))
                                             <a href="{{ route('lane.deleteLast', ['race_id' => $race->id]) }}"

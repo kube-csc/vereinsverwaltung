@@ -46,13 +46,13 @@
                                    <div>
                                       <label for="nummer">Nummer:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('nummer') ? 'bg-red-300' : '' }}"
-                                              id="nummer" placeholder="Nummer" name="nummer" value="{{ Session::get('rennNummer') ?? old('rennBezeichnung')}}">
+                                              id="nummer" placeholder="Nummer" name="nummer" value="{{ Session::get('rennNummer') ?? old('nummer')}}">
                                       <small class="form-text text-danger">{!! $errors->first('nummer') !!}</small>
                                   </div>
                                   <div>
                                       <label for="rennBezeichnung">Bezeichnung des Rennen:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBezeichnung') ? 'bg-red-300' : '' }}"
-                                             id="rennBezeichnung" placeholder="Bezeichnung des Rennen" name="rennBezeichnung" value="{{ old('rennBezeichnung') }}">
+                                             id="rennBezeichnung" placeholder="Bezeichnung des Rennen" name="rennBezeichnung" value="{{ Session::get('regattaSelectRaceName') ?? old('rennBezeichnung') }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennBezeichnung') !!}</small>
                                   </div>
 
@@ -79,7 +79,8 @@
                                   <div>
                                       <label for="rennBahnen">Anzahl der Bahnen:</label>
                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennBahnen') ? 'bg-red-300' : '' }}"
-                                             id="rennBahnen" name="rennBahnen" value="{{ old('rennBahnen') }}">
+                                             id="rennBahnen" name="rennBahnen"
+                                             value="{{ old('rennBahnen') ?? ($rennBahnenSession ?? '') }}">
                                       <small class="form-text text-danger">{!! $errors->first('rennBahnen') !!}</small>
                                   </div>
                                    @php
@@ -91,7 +92,7 @@
                                        }
                                    @endphp
 
-                                   @if($tableId == 0)
+                                   @if($tableId === null || $tableId == 0)
                                        <div class="my-4">
                                            <label for="einzelRennen">Einzelrennen:</label>
                                            <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('einzelRennen') ? 'bg-red-300' : '' }}"
@@ -101,6 +102,36 @@
                                                @endif
                                            >
                                        </div>
+                                       {{-- Gruppen-Auswahl für Einzelrennen --}}
+                                       <div class="my-4" id="gruppeSelectWrapper" @if(old('einzelRennen') != 1) style="display:none;" @endif>
+                                           <label for="gruppe_id">Gruppe für Einzelrennen:</label>
+                                           <select name="gruppe_id" id="gruppe_id" class="w-full border rounded shadow p-2 mr-2 my-2">
+                                               <option value="">Bitte wählen</option>
+                                               @foreach ($raceTypes as $raceType)
+                                                   <option value="{{ $raceType->id }}"
+                                                       @if(old('gruppe_id') == $raceType->id)
+                                                           selected
+                                                       @endif
+                                                   >{{ $raceType->typ }}</option>
+                                               @endforeach
+                                           </select>
+                                           <small class="form-text text-danger">{!! $errors->first('gruppe_id') !!}</small>
+                                       </div>
+                                       <script>
+                                           document.addEventListener('DOMContentLoaded', function() {
+                                               const einzelRennen = document.getElementById('einzelRennen');
+                                               const gruppeSelectWrapper = document.getElementById('gruppeSelectWrapper');
+                                               if(einzelRennen) {
+                                                   einzelRennen.addEventListener('change', function() {
+                                                       if(this.checked) {
+                                                           gruppeSelectWrapper.style.display = '';
+                                                       } else {
+                                                           gruppeSelectWrapper.style.display = 'none';
+                                                       }
+                                                   });
+                                               }
+                                           });
+                                       </script>
                                    @endif
 
 
@@ -130,8 +161,9 @@
                                                    @endif
                                                >{{ $tabele->ueberschrift }}</option>
                                            @endforeach
-
                                        </select>
+                                       <br>
+                                       <small class="text-red-500 ">{!! $errors->first('tabeleId') !!}</small>
                                    </div>
 
                                   <div>
@@ -149,6 +181,26 @@
                                         <option value="{{ $i }}">Abschnitt +</option>
                                     </select>
                                   </div>
+
+                                  <div class="my-4">
+                                      <label for="liveStreamURL">Livestream Video ID Youtube:</label>
+                                      <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('liveStreamURL') ? 'bg-red-300' : '' }}"
+                                             id="liveStreamURL" name="liveStreamURL" placeholder="Video ID" value="{{ old('liveStreamURL') }}">
+                                      <small class="form-text text-danger">{!! $errors->first('liveStreamURL') !!}</small>
+                                  </div>
+
+                                   <div class="my-4">
+                                       <label for="einspielerURL">Einspieler Video ID Youtube:</label>
+                                       <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('einspielerURL') ? 'bg-red-300' : '' }}"
+                                              id="einspielerURL" name="einspielerURL" placeholder="Video ID" value="{{ old('einspielerURL') }}">
+                                       <small class="form-text text-danger">{!! $errors->first('einspielerURL') !!}</small>
+                                   </div>
+                                   <div class="my-4">
+                                       <label for="abspielzeit">Abspielzeit (Sekunden):</label>
+                                       <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('abspielzeit') ? 'bg-red-300' : '' }}"
+                                              id="abspielzeit" name="abspielzeit" placeholder="z\.B\. 30" value="{{ old('abspielzeit'') }}">
+                                       <small class="form-text text-danger">{!! $errors->first('abspielzeit') !!}</small>
+                                   </div>
 
                                   <div class="py-2">
                                      <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">neues Rennen anlegen</button>
@@ -170,4 +222,3 @@
        </div>
     </div>
 </x-app-layout>
-

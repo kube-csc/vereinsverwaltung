@@ -126,6 +126,9 @@
                                             @if($lane->mannschaft_id!=Null)
                                                 {{ $lane->regattaTeam->teamname }}
                                             @endif
+                                            @if($lane->tabelevor_id != Null)
+                                                 [ Tabelle: {{ $lane->getTableLane->ueberschrift }} Platz {{ $lane->platzvor }} ]
+                                            @endif
                                             @if($race->mix == 1)
                                               - {{ $lane->getTableLane->ueberschrift }}
                                             @endif

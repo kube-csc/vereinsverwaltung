@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Race;
 use App\Models\Tabele;
+use App\Models\RaceType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\RaceTimeHelper;
 
 class RaceController extends Controller
 {
@@ -21,7 +23,7 @@ class RaceController extends Controller
     public function aktiv($raceId)
     {
         Race::find($raceId)->update([
-            'visible'          => '1',
+            'visible'               => '1',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
@@ -32,40 +34,12 @@ class RaceController extends Controller
     public function inaktiv($raceId)
     {
         Race::find($raceId)->update([
-            'visible'          => '0',
+            'visible'               => '0',
             'bearbeiter_id'    => Auth::id(),
             'updated_at'       => Carbon::now()
         ]);
 
         return Redirect()->back()->with('success' , 'Das Rennen wurde unsichtbar geschaltet.');
-    }
-
-    public function aktivLive($raceId)
-    {
-        Race::where('aktuellLiveVideo', '1')->update([
-            'aktuellLiveVideo' => '0',
-            'bearbeiter_id'    => Auth::id(),
-            'updated_at'       => Carbon::now()
-        ]);
-
-        Race::find($raceId)->update([
-            'aktuellLiveVideo' => '1',
-            'bearbeiter_id'    => Auth::id(),
-            'updated_at'       => Carbon::now()
-        ]);
-
-        return Redirect()->back()->with('success' , 'Das Rennen wurde für Webliveübertragung aktiviert.');
-    }
-
-    public function inaktivLive($raceId)
-    {
-        Race::find($raceId)->update([
-            'aktuellLiveVideo' => '0',
-            'bearbeiter_id'    => Auth::id(),
-            'updated_at'       => Carbon::now()
-        ]);
-
-        return Redirect()->back()->with('success' , 'Das Rennen wurde für Webliveübertragung deaktiviert.');
     }
 
     /**
@@ -96,7 +70,8 @@ class RaceController extends Controller
             ->where('visible', 1)
             ->where(function($query) {
                 $query->where('status', '<', 2)
-                    ->orWhere('programmDatei', null);
+                    //->orWhere('programmDatei', null);
+                    ->where('programmDatei', null);
             })
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
@@ -114,16 +89,19 @@ class RaceController extends Controller
         $races = Race::where('event_id',Session::get('regattaSelectId'))
             ->where(function($query) {
                 $query->where('programmDatei', '!=', null)
-                    ->orWhere('status', '<', 3);
+                    ->orWhere(function($subQuery) {
+                        $subQuery->where('status', '>', 1)
+                            ->where('status', '<', 3);
+                    });
             })
-            ->where('status', '>', 1)
+            ->where('visible' , 1)
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
             ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
-            'titel'  => 'Programm der Rennen bearbeiten',
-            'races'  => $races,
+            'titel'                  => 'Programm der Rennen bearbeiten',
+            'races'                => $races,
             'funktionStatus' => 1 // Programm
         ]);
     }
@@ -132,17 +110,16 @@ class RaceController extends Controller
     {
         $races = Race::where('event_id',Session::get('regattaSelectId'))
             ->where(function($query) {
-                $query->where('ergebnisDatei', null)
-                    ->orWhere('status', 2);
+                $query->whereNull('ergebnisDatei')
+                    ->where('status', 2);
             })
-            ->where('status', '>', 4)
             ->where('visible' , 1)
             ->orderby('rennDatum')
             ->orderby('rennUhrzeit')
             ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
-            'titel'  => 'Rennen die kein Ergebnisse haben bearbeiten',
+            'titel'  => 'Rennen ohne Ergebnisse bearbeiten',
             'races'  => $races,
             'funktionStatus' => 2 // Ergebnis
         ]);
@@ -155,12 +132,32 @@ class RaceController extends Controller
                 $query->where('programmDatei', '!=', null)
                     ->orWhere('status', 4);
             })
+            ->where('visible' , 1)
             ->orderby('rennDatum' , 'desc')
             ->orderby('rennUhrzeit' , 'desc')
             ->paginate(10);
 
         return view('regattaManagement.race.index')->with([
-            'titel'  => 'Ergebnissse der Rennen bearbeiten',
+            'titel'                  => 'Ergebnissse der Rennen bearbeiten',
+            'races'               => $races,
+            'funktionStatus' => 2 // Ergebnis
+        ]);
+    }
+
+    public function indexResultControll()
+    {
+        $races = Race::where('event_id',Session::get('regattaSelectId'))
+            ->where(function($query) {
+                $query->whereNull('ergebnisDatei')
+                    ->where('status', 3);
+            })
+            ->where('visible' , 1)
+            ->orderby('rennDatum')
+            ->orderby('rennUhrzeit')
+            ->paginate(10);
+
+        return view('regattaManagement.race.index')->with([
+            'titel'  => 'Rennen die ein Ergebnisse haben kontrollieren',
             'races'  => $races,
             'funktionStatus' => 2 // Ergebnis
         ]);
@@ -199,7 +196,13 @@ class RaceController extends Controller
         $tabeles = Tabele::where('event_id' , Session::get('regattaSelectId'))
             ->get();
 
-        return view('regattaManagement.race.create' , compact('levelMax', 'tabeles'));
+        // Nur RaceTypes des aktiven Events laden
+        $raceTypes = RaceType::where('regatta_id', Session::get('regattaSelectId'))->get();
+
+        // Anzahl Bahnen aus Session holen
+        $rennBahnenSession = Session::get('rennBahnen');
+
+        return view('regattaManagement.race.create' , compact('levelMax', 'tabeles', 'raceTypes', 'rennBahnenSession'));
     }
 
     /**
@@ -209,13 +212,25 @@ class RaceController extends Controller
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request) {
-        $request->validate([
-                  'rennBezeichnung'           => 'required|max:50',
-                  'rennDatum'                 => 'required|date',
-                  'rennUhrzeit'               => 'required|date_format:H:i',    //'date_format:H:i|after:time_start',
-                  'veroeffentlichungUhrzeit'  => 'required|date_format:H:i',    //'date_format:H:i|after:rennUhrzeit',
-            ]
-        );
+        $rules = [
+            'rennBezeichnung'             => 'required|max:50',
+            'rennDatum'                        => 'required|date',
+            'rennUhrzeit'                      => 'required|date_format:H:i',
+            'veroeffentlichungUhrzeit'  => 'required|date_format:H:i',
+            'liveStreamURL'                   => 'nullable|max:255',
+            'einspielerURL'                    => 'nullable|string|max:255',
+            'abspielzeit'                         => 'nullable|integer|min:0',
+        ];
+
+        // tabeleId ist nur erforderlich, wenn einzelRennen nicht 1 ist
+        if($request->einzelRennen != 1) {
+            $rules['tabeleId'] = 'required';
+        } else {
+            // Bei Einzelrennen muss gruppe_id gewählt werden
+            $rules['gruppe_id'] = 'required';
+        }
+
+        $request->validate($rules);
 
         if($request->rennMix == Null){
             $request->rennMix=0;
@@ -225,21 +240,27 @@ class RaceController extends Controller
             $request->einzelRennen=0;
         }
 
+        if($request->getrenntewertung==Null){
+            $request->getrenntewertung=0;
+        }
+
         if($request->einzelRennen == 1) {
             $tabele= new Tabele([
-                'event_id'                 => Session::get('regattaSelectId'),
-                'ueberschrift'             => $request->rennBezeichnung,
-                'tabelleLevelVon'          => $request->regattaLevel,
-                'tabelleLevelBis'          => $request->regattaLevel,
-                'tabelleDatumVon'          => $request->rennDatum,
-                'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
-                'wertungsart'              => 3,
-                'tabelleVisible'           => 1,
-                'finale'                   => 0,
-                'bearbeiter_id'            => Auth::id(),
-                'autor_id'                 => Auth::id(),
-                'updated_at'               => Carbon::now(),
-                'created_at'               => Carbon::now()
+                'event_id'                  => Session::get('regattaSelectId'),
+                'gruppe_id'                => $request->gruppe_id,
+                'ueberschrift'            => $request->rennBezeichnung,
+                'tabelleLevelVon'      => $request->regattaLevel,
+                'tabelleLevelBis'        => $request->regattaLevel,
+                'tabelleDatumVon'    => $request->rennDatum,
+                'finaleAnzeigen'        => $request->veroeffentlichungUhrzeit,
+                'getrenntewertung'  => $request->getrenntewertung,
+                'wertungsart'            => 3,
+                'tabelleVisible'          => 0,
+                'finale'                      => 0,
+                'bearbeiter_id'          => Auth::id(),
+                'autor_id'                  => Auth::id(),
+                'updated_at'             => Carbon::now(),
+                'created_at'              => Carbon::now()
             ]);
 
             $tabele->save();
@@ -247,26 +268,29 @@ class RaceController extends Controller
         }
 
         $race= new Race([
-                'event_id'                 => Session::get('regattaSelectId'),
-                'tabele_id'                => $request->tabeleId,
-                'nummer'                   => $request->nummer,
-                'bahnen'                   => $request->rennBahnen,
-                'rennBezeichnung'          => $request->rennBezeichnung,
-                'rennDatum'                => $request->rennDatum,
-                'rennUhrzeit'              => $request->rennUhrzeit,
-                'verspaetungUhrzeit'       => $request->rennUhrzeit,
-                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
-                'level'                    => $request->regattaLevel,
-                'mix'                      => $request->rennMix,
-                'visible'                  => 1,
-                'bearbeiter_id'            => Auth::id(),
-                'autor_id'                 => Auth::id(),
-                'updated_at'               => Carbon::now(),
-                'created_at'               => Carbon::now()
+                'event_id'                          => Session::get('regattaSelectId'),
+                'tabele_id'                         => $request->tabeleId,
+                'nummer'                          => $request->nummer,
+                'bahnen'                           => $request->rennBahnen,
+                'rennBezeichnung'           => $request->rennBezeichnung,
+                'rennDatum'                     => $request->rennDatum,
+                'rennUhrzeit'                    => $request->rennUhrzeit,
+                'verspaetungUhrzeit'        => $request->rennUhrzeit,
+                'veroeffentlichungUhrzeit'=> $request->veroeffentlichungUhrzeit,
+                'level'                                => $request->regattaLevel,
+                'mix'                                  => $request->rennMix,
+                'visible'                              => 1,
+                'liveStreamURL'                 => $request->liveStreamURL,
+                'einspielerURL'                  => $request->einspielerURL,
+                'abspielzeit'                       => $request->abspielzeit,
+                'bearbeiter_id'                   => Auth::id(),
+                'autor_id'                           => Auth::id(),
+                'updated_at'                      => Carbon::now(),
+                'created_at'                       => Carbon::now()
             ]);
         $race->save();
 
-        // ToDo: Wenn es ein Rennen mit Mix ist, dann muss in der Tabele Tabele das Feld maxrennen auf 0 gesetzt werden
+        // ToDo: Wenn es ein Rennen mit Mix ist, dann muss in der Tabele  das Feld maxrennen auf 0 gesetzt werden
         $tabele = Tabele::where('id', $request->tabeleId)
             ->where('maxrennen', '>', 0)
             ->update(['maxrennen' => 0]);
@@ -311,21 +335,42 @@ class RaceController extends Controller
         if($rennNummer==$request->nummer){
             $rennNummer=$rennNummer+1;
         }
-        else{
-            $rennNummer=$request->nummer;
+        else {
+            $prefixPattern = '/[-.]/'; // Unterstützt sowohl "-" als auch "."
+            $teile = preg_split($prefixPattern, $request->nummer, 2);
+            if (count($teile) === 2) {
+                $vordererTeil = $teile[0];
+                $hintererTeil = $teile[1];
+                $originalPrefix = strpos($request->nummer, '-') !== false ? '-' : '.'; // Ermittelt das ursprüngliche Präfix
+
+                // Prüfen, ob der hintere Teil eine Zahl ist
+                if (is_numeric($hintererTeil)) {
+                    $hintererTeil += 1; // Erhöhe die Zahl um 1
+                    $rennNummer = $vordererTeil . $originalPrefix . $hintererTeil; // Verwendet das ursprüngliche Präfix
+                } else {
+                    $rennNummer = $request->nummer;
+                }
+            } else {
+                $rennNummer = $request->nummer;
+            }
         }
 
-        Session::put('regattaSelectRaceDate'      , $request->rennDatum);
-        Session::put('regattaSelectRaceTime'      , $request->rennUhrzeit);
-        Session::put('regattaSelectRaceTimeNew'   , $timeNew);
+        // Anzahl Bahnen in Session speichern, wenn gesetzt
+        if ($request->filled('rennBahnen')) {
+            Session::put('rennBahnen', $request->rennBahnen);
+        }
+
+        Session::put('regattaSelectRaceDate'         , $request->rennDatum);
+        Session::put('regattaSelectRaceTime'         , $request->rennUhrzeit);
+        Session::put('regattaSelectRaceTimeNew'  , $timeNew);
         Session::put('regattaSelectRacePublished' , $request->veroeffentlichungUhrzeit);
-        Session::put('rennNummer'                 , $rennNummer);
-        Session::put('rennLevelSave'              , $request->regattaLevel);
+        Session::put('regattaSelectRaceName'       , $request->rennBezeichnung);
+        Session::put('rennNummer'                        , $rennNummer);
+        Session::put('rennLevelSave'                     , $request->regattaLevel);
 
         return redirect('/Rennen/neu')->with([
-                'success'         => 'Das Rennen <b>' . $request->rennBezeichnung . '</b> wurde angelegt.'
-            ]
-        );
+            'success'         => 'Das Rennen <b>' . $request->rennBezeichnung . '</b> wurde angelegt.'
+        ]);
     }
 
     /**
@@ -359,8 +404,8 @@ class RaceController extends Controller
 
         return view('regattaManagement.race.edit')->with([
             'race'          => $race,
-            'levelMax'      => $raceLevel->level,
-            'tabeles'       => $tabeles
+            'levelMax'   => $raceLevel->level,
+            'tabeles'     => $tabeles
         ]);
     }
 
@@ -382,7 +427,7 @@ class RaceController extends Controller
             ->get();
 
         return view('regattaManagement.race.editProgram')->with([
-            'race'          => $race,
+            'race'                   => $race,
             'raceDocuments' => $raceDocuments
         ]);
     }
@@ -404,7 +449,9 @@ class RaceController extends Controller
             ->orderby('rennUhrzeit')
             ->get();
 
-        if($race->ergebnisDatei == NULL && $race->ergebnisBeschreibung == '') {
+        // ToDo: if($race->ergebnisDatei  muss noch berücksichtigt werden
+        // if($race->ergebnisDatei == NULL && $race->ergebnisBeschreibung == '') {
+        if($race->status == 2 && $race->rennDatum == Carbon::now()->toDateString()) {
             $ractetime1 = Carbon::now();
             $ractetime2 = $ractetime1->subMinute(3);
             $ractetime  = $ractetime2->toTimeString();
@@ -430,10 +477,13 @@ class RaceController extends Controller
     public function update(Request $request, $race_id)
     {
         $request->validate([
-                'rennBezeichnung'          => 'required|max:50',
-                'rennDatum'                => 'required|date',
-                'rennUhrzeit'              => 'required|date_format:H:i',
+                'rennBezeichnung'             => 'required|max:50',
+                'rennDatum'                       => 'required|date',
+                'rennUhrzeit'                      => 'required|date_format:H:i',
                 'veroeffentlichungUhrzeit' => 'required|date_format:H:i',
+                'liveStreamURL'                  => 'nullable|max:255',
+                'einspielerURL'                   => 'nullable|string|max:255',
+                'abspielzeit'                        => 'nullable|integer|min:0',
             ]
         );
 
@@ -448,57 +498,77 @@ class RaceController extends Controller
         if($request->einzelRennen == 1 && $request->tabeleId == Null) {
             $tabele= new Tabele([
                 'event_id'                 => Session::get('regattaSelectId'),
-                'ueberschrift'             => $request->rennBezeichnung,
-                'tabelleLevelVon'          => $request->regattaLevel,
-                'tabelleLevelBis'          => $request->regattaLevel,
-                'tabelleDatumVon'          => $request->rennDatum,
-                'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
-                'wertungsart'              => 3,
-                'tabelleVisible'           => 1,
-                'finale'                   => 0,
-                'bearbeiter_id'            => Auth::id(),
+                'ueberschrift'           => $request->rennBezeichnung,
+                'tabelleLevelVon'     => $request->regattaLevel,
+                'tabelleLevelBis'       => $request->regattaLevel,
+                'tabelleDatumVon'   => $request->rennDatum,
+                'finaleAnzeigen'      => $request->veroeffentlichungUhrzeit,
+                'wertungsart'          => 3,
+                'tabelleVisible'        => 1,
+                'finale'                     => 0,
+                'bearbeiter_id'         => Auth::id(),
                 'autor_id'                 => Auth::id(),
-                'updated_at'               => Carbon::now(),
-                'created_at'               => Carbon::now()
+                'updated_at'            => Carbon::now(),
+                'created_at'             => Carbon::now()
             ]);
 
             $tabele->save();
             $request->tabeleId=$tabele->id;
         }
 
-        Race::find($race_id)->update([
-                'nummer'                   => $request->nummer,
-                'rennBezeichnung'          => $request->rennBezeichnung,
-                'bahnen'                   => $request->rennBahnen,
-                'rennDatum'                => $request->rennDatum,
-                'rennUhrzeit'              => $request->rennUhrzeit,
-                'verspaetungUhrzeit'       => $request->rennUhrzeit,
-                'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
-                'level'                    => $request->regattaLevel,
-                'tabele_id'                => $request->tabeleId,
-                'mix'                      => $request->rennMix,
-                'bearbeiter_id'            => Auth::id(),
-                'updated_at'               => Carbon::now()
-            ]
-        );
+        $updateData = [
+            'nummer'                => $request->nummer,
+            'rennBezeichnung'  => $request->rennBezeichnung,
+            'bahnen'  => $request->rennBahnen,
+            'rennDatum'             => $request->rennDatum,
+            'rennUhrzeit'  => $request->rennUhrzeit,
+            'verspaetungUhrzeit'    => $request->rennUhrzeit,
+            'veroeffentlichungUhrzeit' => $request->veroeffentlichungUhrzeit,
+            'level'                 => $request->regattaLevel,
+            'tabele_id'             => $request->tabeleId,
+            'mix'                   => $request->rennMix,
+            'bearbeiter_id'         => Auth::id(),
+            'updated_at'            => Carbon::now()
+        ];
+
+        // Nur setzen, wenn im Request vorhanden
+        if ($request->has('liveStreamURL')) {
+            $updateData['liveStreamURL'] = $request->liveStreamURL;
+        }
+        if ($request->has('einspielerURL')) {
+            $updateData['einspielerURL'] = $request->einspielerURL;
+        }
+        if ($request->has('abspielzeit')) {
+            $updateData['abspielzeit'] = $request->abspielzeit;
+        }
+
+        Race::find($race_id)->update($updateData);
 
         // Unterscheiden, welche Aktion ausgeführt werden soll
         if ($request->input('action') == 'save_and_edit_next') {
             // Logik für "Speichern & nächstes Rennen bearbeiten"
-
             $nextRace = Race::where([
                 'races.event_id' => Session::get('regattaSelectId')
             ])
                 ->where('rennUhrzeit','>=', $request->rennUhrzeit)
                 ->whereNot('id', $race_id)
-                ->orderby('rennDatum')
-                ->orderby('rennUhrzeit')
+                ->orderBy('rennDatum')
+                ->orderBy('rennUhrzeit')
+                ->orderBy('id')
                 ->first();
 
-            return redirect('Rennen/edit/'.$nextRace->id)->with([
-                'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
-            ]);
-        } else {
+            if ($nextRace) {
+                return redirect('Rennen/edit/'.$nextRace->id)->with([
+                    'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
+                ]);
+            } else {
+                return redirect('/Rennen/alle')->with([
+                    'error' => 'Kein weiteres Rennen gefunden.',
+                    'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
+                ]);
+            }
+        }
+        else {
             // Logik für "Speichern"
             return redirect('/Rennen/alle')->with([
                   'success' => 'Die Daten vom Rennen <b>' . $request->nummer . ' ' . $request->rennBezeichnung . '</b> wurden geändert.'
@@ -568,6 +638,7 @@ class RaceController extends Controller
 
         Session::put('regattaZeit' , $request->zeit);
         Session::put('regattaZeitMinAbstand' , $request->zeitMinAbstand);
+        Session::put('regattaRennzeitVorsprung', $request->rennzeit_vorsprung == 1 ? 1 : 0);
 
         if($request->rennzeit==Null){
             $request->rennzeit=0;
@@ -618,7 +689,7 @@ class RaceController extends Controller
             }
         }
 
-        $berechnung=$this->timeVerschiebung($race_id, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+        $berechnung = RaceTimeHelper::timeVerschiebung($race_id, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
 
         return redirect('/Rennen/Ergebnisse')->with(
             [
@@ -646,17 +717,17 @@ class RaceController extends Controller
             [
                 'programmDatei'     => Null,
                 'fileProgrammDatei' => Null,
-                'bearbeiter_id'     => Auth::id(),
-                'updated_at'        => Carbon::now()
+                'bearbeiter_id'         => Auth::id(),
+                'updated_at'            => Carbon::now()
             ]);
 
         DB::table('races')
             ->where('programmDatei' , $deleteDocumentFile->programmDatei)
             ->update([
-                'programmDatei'     => Null,
+                'programmDatei'      => Null,
                 'fileProgrammDatei' => Null,
-                'bearbeiter_id'     => Auth::id(),
-                'updated_at'        => Carbon::now()
+                'bearbeiter_id'         => Auth::id(),
+                'updated_at'            => Carbon::now()
             ]);
 
         if (isset($deleteDocumentFile->programmDatei)) {
@@ -677,19 +748,19 @@ class RaceController extends Controller
 
         Race::find($race_Id)->update(
             [
-                'ergebnisDatei'     => Null,
+                'ergebnisDatei'      => Null,
                 'fileErgebnisDatei' => Null,
-                'bearbeiter_id'     => Auth::id(),
-                'updated_at'        => Carbon::now()
+                'bearbeiter_id'       => Auth::id(),
+                'updated_at'          => Carbon::now()
             ]);
 
         DB::table('races')
             ->where('ergebnisDatei' , $deleteDocumentFile->ergebnisDatei)
             ->update([
-                'ergebnisDatei'     => Null,
+                'ergebnisDatei'      => Null,
                 'fileErgebnisDatei' => Null,
-                'bearbeiter_id'     => Auth::id(),
-                'updated_at'        => Carbon::now()
+                'bearbeiter_id'       => Auth::id(),
+                'updated_at'          => Carbon::now()
             ]);
 
         if (isset($deleteDocumentFile->ergebnisDatei)) {
@@ -720,6 +791,7 @@ class RaceController extends Controller
 
         Session::put('regattaZeit' , $request->zeit);
         Session::put('regattaZeitMinAbstand' , $request->zeitMinAbstand);
+        Session::put('regattaRennzeitVorsprung', $request->rennzeit_vorsprung == 1 ? 1 : 0);
 
         if($request->rennzeit==Null){
             $request->rennzeit=0;
@@ -732,7 +804,7 @@ class RaceController extends Controller
             'updated_at'           => Carbon::now()
         ]);
 
-        $berechnung=$this->timeVerschiebung($race_id, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
+        $berechnung = RaceTimeHelper::timeVerschiebung($race_id, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
 
         return redirect('/Rennen/Ergebnisse')->with(
             [
@@ -741,77 +813,63 @@ class RaceController extends Controller
         );
     }
 
-    public function timeVerschiebung($race_id, $rennUhrzeit, $zeit, $zeitMinAbstand){
-        $raceLevel = Race::find($race_id);
-
-        $time1=explode(":" , $raceLevel->rennUhrzeit);
-        $time2=explode(":" , $rennUhrzeit);
-
-        $difftime=($time2[0]*60+$time2[1])-($time1[0]*60+$time1[1]);
-
-        $hour=$difftime/60;
-        $houradd=(int)$hour;
-        $minuteadd=$difftime-$houradd*60;
-        $hourVerspeatet  =$time1[0]+$houradd;
-        $minuteVerspeatet=$time1[1]+$minuteadd;
-        if($minuteVerspeatet>=60){
-            ++$hourVerspeatet;
-            $minuteVerspeatet=$minuteVerspeatet-60;
-        }
-        $timeVerspaetung=$hourVerspeatet.":".$minuteVerspeatet.":00";
-
-        $raceTimes = Race::where('event_id', Session::get('regattaSelectId'))
-            ->where('id', '!=', $race_id)
-            //->where('level', $raceLevel->level)
-            ->where('rennUhrzeit', '>', $raceLevel->rennUhrzeit)
-            ->where('rennDatum', $raceLevel->rennDatum)
-            ->orderby('rennUhrzeit')
-            ->get();
-
-        $rennzeitStop=0;
-        foreach ($raceTimes as $raceTime) {
-            if($raceTime->rennzeit==1){
-                $rennzeitStop=1;
-            }
-            if($rennzeitStop==0) {
-                $time3 = explode(":", $raceTime->rennUhrzeit);
-                $difftimeRace = ($time3[0] * 60 + $time3[1]) - ($time1[0] * 60 + $time1[1]);
-
-                $time1[0] = $time3[0];
-                $time1[1] = $time3[1];
-
-                if ($difftimeRace > $zeitMinAbstand) {
-                    $diffMin = $difftimeRace - $zeitMinAbstand;
-                    $minuteadd = $minuteadd - $diffMin;
-                }
-
-                $hourVerspeatet = $time3[0] + $houradd;
-                $minuteVerspeatet = $time3[1] + $minuteadd;
-                if ($minuteVerspeatet >= 60) {
-                    ++$hourVerspeatet;
-                    $minuteVerspeatet = $minuteVerspeatet - 60;
-                }
-                $timeVerspaetung = $hourVerspeatet . ":" . $minuteVerspeatet . ":00";
-
-                if ($minuteadd > 0) {
-                    Race::find($raceTime->id)->update([
-                        'verspaetungUhrzeit' => $timeVerspaetung,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now()
-                    ]);
-                    $minuteadd = $minuteadd - $zeit;
-                    if ($minuteadd < 0) {
-                        $minuteadd = 0;
-                    }
-                } else {
-                    Race::find($raceTime->id)->update([
-                        'verspaetungUhrzeit' => $raceTime->rennUhrzeit,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now()
-                    ]);
-                }
-            }
-        }
+    public function sliteShowResultActivate($id)
+    {
+        $race = \App\Models\Race::findOrFail($id);
+        $race->sliteShowResult = true;
+        $race->save();
+        return back()->with('success', 'Slideshow-Ergebnis aktiviert.');
     }
 
+    public function sliteShowResultDeactivate($id)
+    {
+        $race = \App\Models\Race::findOrFail($id);
+        $race->sliteShowResult = false;
+        $race->save();
+        return back()->with('success', 'Slideshow-Ergebnis deaktiviert.');
+    }
+
+    public function liveStreamActivate($id)
+    {
+        $race = \App\Models\Race::findOrFail($id);
+        $race->liveStream = true;
+        $race->save();
+        return back()->with('success', 'Livestream aktiviert.');
+    }
+
+    public function liveStreamDeactivate($id)
+    {
+        $race = \App\Models\Race::findOrFail($id);
+        $race->liveStream = false;
+        $race->save();
+        return back()->with('success', 'Livestream deaktiviert.');
+    }
+
+    public function aktivLive($raceId)
+    {
+        Race::where('aktuellLiveVideo', '1')->update([
+            'aktuellLiveVideo' => '0',
+            'bearbeiter_id'    => Auth::id(),
+            'updated_at'       => Carbon::now()
+        ]);
+
+        Race::find($raceId)->update([
+            'aktuellLiveVideo' => '1',
+            'bearbeiter_id'    => Auth::id(),
+            'updated_at'       => Carbon::now()
+        ]);
+
+        return Redirect()->back()->with('success' , 'Das Rennen wurde für Webliveübertragung aktiviert.');
+    }
+
+    public function inaktivLive($raceId)
+    {
+        Race::find($raceId)->update([
+            'aktuellLiveVideo' => '0',
+            'bearbeiter_id'    => Auth::id(),
+            'updated_at'       => Carbon::now()
+        ]);
+
+        return Redirect()->back()->with('success' , 'Das Rennen wurde für Webliveübertragung deaktiviert.');
+    }
 }

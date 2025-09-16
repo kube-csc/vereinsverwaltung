@@ -69,6 +69,12 @@
                                    >
                                    <small class="form-text text-danger">{!! $errors->first('rennzeit') !!}</small>
                                 </div>
+                                <div class="my-4">
+                                    <label for="rennzeit_vorsprung">Vorsprung der Rennzeit mitnehmen:</label>
+                                    <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2"
+                                           id="rennzeit_vorsprung" name="rennzeit_vorsprung" value="1"
+                                           @if(old('rennzeit_vorsprung', Session::get('regattaRennzeitVorsprung'))==1) checked @endif>
+                                </div>
                                 <div>
                                   <label for="zeit">Zeit in Minuten die pro Rennen aufgeholt werden kann:</label>
                                   <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeit') ? 'bg-red-300' : '' }}"
@@ -140,7 +146,7 @@
                                             <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $raceDocument->updated_at->diffForHumans() }}</p>
                                         </div>
                                         <div class="flex">
-                                            von {{ date("d.m.Y", strtotime($raceDocument->rennDatum)) }} {{ date("h:m", strtotime($raceDocument->rennUhrzeit)) }}
+                                            von {{ date("d.m.Y", strtotime($raceDocument->rennDatum)) }} {{ date("H:i", strtotime($raceDocument->rennUhrzeit)) }} Uhr
                                         </div>
                                     </div>
 

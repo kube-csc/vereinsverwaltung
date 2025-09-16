@@ -1,4 +1,26 @@
 ## Update Anleitung
+**Version V00.10.00**
+- 
+- migration
+
+***Neue Funktionen***
+- In den Rennen können jetzt youtube Videos und ein youtube LiveStream  Daten für die Slideshow angeben werden
+
+
+**Version V00.09.02**
+
+- werbung_options.php anlegen und mit der Vorlage von werbung_options_example.blade.php ausfüllen
+- .env anpassen: TINYMCE_API_KEY=dein_tinymce_api_key eintragen
+- migration
+
+***Neue Funktionen***
+- Regatta-Teams: Meldung, Bearbeitung und Übersicht erweitert
+- Status-Feld für Teams mit Auswahl (Neuanmeldung, Warteliste, Nicht angetreten, Disqualifiziert, ausgeschieden, gelöscht)
+- TinyMCE-Editor für Beschreibung/Kommentar, API-Key über .env steuerbar, Einbindung als Partial
+- Werbungsquellen-Auswertung für Teams mit Tortendiagramm
+- Werbungsquellen-Optionen und inaktive Werte zentral ausgelagert (resources/views/textimport/werbung_options.php)
+- Slite-Integration für Regatta-Steuericon in der Racebearbeitung, 
+
 **Version V00.09.01**
 
 - migration

@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.09.xx</p>
+<p>Version: V00.10.XX</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -24,12 +24,14 @@ Beispiel für einen Kanuverein mit Abteilungen / Sportarten:
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>
   <li>.htaccess für ionos.de Server</li>
   <li><a href="https://botman.io">Botman</a></li>
+  <li><a href="https://www.tiny.cloud/">TinyMCE</a>(Backend)</li>
 </ul>
 
 <h2>Benötigte Lizenzen</h2>
-Es wird eine Lizenz für
+Folgende Lizenz wird für die Nutzung des Frontends benötigt:
 <a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">Squadfree von bootstrapmade</a>
-benötigt.
+<a href="https://www.tiny.cloud/">TinyMCE Editor </a>
+
 
 <h2>Frontend</h2>
 <ul>
@@ -135,13 +137,14 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
     <li>Rennklassen können als Vorlage angelegt und bearbeitet werden</li>
     <li>Rennklassen können der Regatta zugeordnet werden</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
+    <li>Mannschaften können angelegt und bearbeitet werden</li>
     <li>Rennen anlegen und bearbeiten</li>
     <li>Rennen können Tabellen oder mehrere Tabellen zugeordnet werden</li>
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
     <li>Mannschaften können den Rennen zugeteilt werden</li>
     <li>Tabellen anlegen und bearbeiten</li>
-    <li>Platzierungen können eingegeben werden</li> 
-    <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz Wertung</li>
+    <li>Platzierungen können eingegeben und dann mit einer kontrolle freigeben werden</li> 
+    <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz-Wertung</li>
     <li>Ergebnislisten können für jede Tabelle hochladen</li>
     <li>Platzierungen können eingegeben werden</li> 
     <li>Tabellen werden ausgewertet inc. für die Feinwertung gibt es eine Bucholz-Wertung</li>
@@ -153,8 +156,9 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
 <h2>Installation</h2>
 <ul>
    <li>git clone https://github.com/kube-csc/vereinsverwaltung.git</li>
-   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt.)</li>
    <li>cd vereinsverwaltung</li>
+   <li>.env Datei ausfüllen (Es werden auch Informationen über den Verein abgefragt)</li>
+   <li>php artisan key:generate</li>
    <li>curl -sS https://getcomposer.org/installer</li>
    <li>php composer.phar</li>
    <li>php composer.phar install</li>
@@ -178,6 +182,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
      <li>cssColor.blade.php anlegen und mit der Vorlage von cssColor_example.blade.php ausfüllen</li>
      <li>map.blade.php anlegen und mit der Vorlage von map_example.blade.php ausfüllen</li>
      <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
+     <li>werbung_options.php anlegen und mit der Vorlage von werbung_options_example.blade.php ausfüllen</li>
    </ul>
    <li>in Ordner "public sind die folgenden Dateien anzulegen:
    <ul>
@@ -198,8 +203,8 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
 <h3>Präsentation der Regatta</h3>  
 <p>
     Für die live Präsentation der Regatta kann folgende Software verwendet werden.<br>
-    Die Version V00.13.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> 
-    ist kompatibel mit der Version V00.05.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+    Die Version V00.14.XX <a href="https://github.com/kube-csc/regattaView.git" target="_blank">https://github.com/kube-csc/regattaView.git</a> 
+    ist kompatibel mit der Version V00.10.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Regatta Managment</h3>  
 <p>

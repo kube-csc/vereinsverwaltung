@@ -1,11 +1,15 @@
 ## Update Anleitung
+**Version V00.10.01**
+Umstellung auf Laravel V10
+
+- composer install
+
 **Version V00.10.00**
-- 
+
 - migration
 
 ***Neue Funktionen***
 - In den Rennen können jetzt youtube Videos und ein youtube LiveStream  Daten für die Slideshow angeben werden
-
 
 **Version V00.09.02**
 

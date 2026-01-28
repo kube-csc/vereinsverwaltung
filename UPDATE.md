@@ -1,9 +1,13 @@
 ## Update Anleitung
 **Version V00.10.01**
 Umstellung auf Laravel V10
+Erweiterung der Datenbank  für die Trainingsverwaltung im Regattabereich
+Erweiterung der Datenbank  für FAQ im Regattabereich
 
 - composer install
-
+- migration
+- php artisan db:seed --class=FaqSeeder  für Demodaten FAQ
+- 
 **Version V00.10.00**
 
 - migration

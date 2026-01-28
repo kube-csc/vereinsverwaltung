@@ -29,6 +29,7 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\CoursedateController;
 use App\Http\Controllers\MemberImageController;
 use App\Http\Controllers\RegattaTeamController;
+use App\Http\Controllers\FaqController ;
 
 /*
 |--------------------------------------------------------------------------
@@ -355,8 +356,21 @@ Route::get('/Training/edit/{training_id}',                     [TrainingControll
 Route::post('/Training/update/{training_id}',                  [TrainingController::class, 'update']) ->name('training.update');
 Route::get('/Training/loeschen/{training_id}',                 [TrainingController::class, 'destroy'])->name('training.destroy');
 
-Route::match(['get', 'post'], '/botman',                       [BotManController::class, 'handle']);
+// FAQ Verwaltung
+Route::get('/FAQ/alle', [FaqController::class, 'index'])->name('faq.index');
+Route::get('/FAQ/neu', [FaqController::class, 'create'])->name('faq.create');
+Route::post('/FAQ/speichern', [FaqController::class, 'store'])->name('faq.store');
+Route::get('/FAQ/edit/{faq_id}', [FaqController::class, 'edit'])->name('faq.edit');
+Route::post('/FAQ/update/{faq_id}', [FaqController::class, 'update'])->name('faq.update');
+Route::post('/FAQ/loeschen/{faq_id}', [FaqController::class, 'destroy'])->name('faq.destroy');
+Route::get('/FAQ/top/{faq_id}', [FaqController::class, 'up'])->name('faq.up');
+Route::get('/FAQ/down/{faq_id}', [FaqController::class, 'down'])->name('faq.down');
+Route::get('/FAQ/aktiv/{faq_id}', [FaqController::class, 'aktiv'])->name('faq.aktiv');
+Route::get('/FAQ/inaktiv/{faq_id}', [FaqController::class, 'inaktiv'])->name('faq.inaktiv');
+Route::get('/FAQ/Kategorie/top/{categoryEncoded}', [FaqController::class, 'categoryUp'])->name('faq.category.up');
+Route::get('/FAQ/Kategorie/down/{categoryEncoded}', [FaqController::class, 'categoryDown'])->name('faq.category.down');
 
+Route::match(['get', 'post'], '/botman',                       [BotManController::class, 'handle']);
 Route::resources([
     'BotmanQuestion' => BotmanQuestionController::class,
 ]);

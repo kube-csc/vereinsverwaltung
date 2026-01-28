@@ -147,6 +147,11 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'category' => 'Kategorie',
+        'question' => 'Frage',
+        'answer_html' => 'Antwort',
+        'is_active' => 'Aktiv',
+    ],
 
 ];

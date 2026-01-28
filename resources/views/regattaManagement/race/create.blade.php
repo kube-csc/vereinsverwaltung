@@ -198,7 +198,7 @@
                                    <div class="my-4">
                                        <label for="abspielzeit">Abspielzeit (Sekunden):</label>
                                        <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('abspielzeit') ? 'bg-red-300' : '' }}"
-                                              id="abspielzeit" name="abspielzeit" placeholder="z\.B\. 30" value="{{ old('abspielzeit'') }}">
+                                              id="abspielzeit" name="abspielzeit" placeholder="Zeit in Sekunden" value="{{ old('abspielzeit') }}">
                                        <small class="form-text text-danger">{!! $errors->first('abspielzeit') !!}</small>
                                    </div>
 

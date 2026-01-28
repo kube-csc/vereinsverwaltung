@@ -120,20 +120,24 @@
                                     </div>
 
                                     <div class="my-4">
-                                        <label for="training">Training:</label>
+                                        <label for="training">kostenfreie Trainings pro Meldung:</label>
                                         <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('training') ? 'bg-red-300' : '' }}"
-                                               id="training" placeholder="Training" name="training" value="{{ old('training') }}">
+                                               id="training" placeholder="kostenfreie Trainings pro Meldung" name="training" value="{{ old('training') }}">
                                         <small class="form-text text-danger">{!! $errors->first('training') !!}</small>
                                     </div>
 
-                                    <div class="my-4" >
-                                        <label for="zusatzmanschaft">Zusatzmannschaften:</label>
-                                        <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2"
-                                               id="zusatzmanschaft" name="zusatzmanschaft" value="1"
-                                               @if(old('zusatzmanschaft') == 1)
-                                                   checked
-                                            @endif
-                                        >
+                                    <div class="my-4">
+                                        <label for="max_trainingstermine">Max. buchbare Trainingstermine:</label>
+                                        <input type="number" min="0" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('max_trainingstermine') ? 'bg-red-300' : '' }}"
+                                               id="max_trainingstermine" placeholder="Max. buchbare Trainingstermine" name="max_trainingstermine" value="{{ old('max_trainingstermine', 0) }}">
+                                        <small class="form-text text-danger">{!! $errors->first('max_trainingstermine') !!}</small>
+                                    </div>
+
+                                    <div class="my-4">
+                                        <label for="training_preis">Preis pro Trainingseinheit:</label>
+                                        <input type="number" min="0" step="0.01" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('training_preis') ? 'bg-red-300' : '' }}"
+                                               id="training_preis" placeholder="Preis pro Trainingseinheit" name="training_preis" value="{{ old('training_preis', 0) }}">
+                                        <small class="form-text text-danger">{!! $errors->first('training_preis') !!}</small>
                                     </div>
 
                                     <div class="my-4">
@@ -141,6 +145,16 @@
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('meldeGebuehr') ? 'bg-red-300' : '' }}"
                                                id="meldeGebuehr" placeholder="Meldegebühr" name="meldeGebuehr" value="{{ old('meldeGebuehr') }}">
                                         <small class="form-text text-danger">{!! $errors->first('meldeGebuehr') !!}</small>
+                                    </div>
+
+                                    <div class="my-4" >
+                                        <label for="zusatzmanschaft">Rennen mit Teams auffüllen:</label>
+                                        <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2"
+                                               id="zusatzmanschaft" name="zusatzmanschaft" value="1"
+                                               @if(old('zusatzmanschaft') == 1)
+                                                   checked
+                                            @endif
+                                        >
                                     </div>
 
                                     <div class="py-2">

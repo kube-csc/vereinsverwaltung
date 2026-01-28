@@ -19,6 +19,8 @@ class RaceType extends Model
         'manmin',
         'manmax',
         'training',
+        'max_trainingstermine',
+        'training_preis',
         'bahnen',
         'zusatzmanschaft',
         'beschreibung',

@@ -72,6 +72,8 @@ class RaceTypeController extends Controller
         $raceType->manmin = $raceTypeTemplate->manmin;
         $raceType->manmax = $raceTypeTemplate->manmax;
         $raceType->training = $raceTypeTemplate->training;
+        $raceType->max_trainingstermine = $raceTypeTemplate->max_trainingstermine;
+        $raceType->training_preis = $raceTypeTemplate->training_preis;
         $raceType->bahnen = $raceTypeTemplate->bahnen;
         $raceType->zusatzmanschaft = $raceTypeTemplate->zusatzmanschaft;
         $raceType->meldeGebuehr = $raceTypeTemplate->meldeGebuehr;
@@ -133,6 +135,8 @@ class RaceTypeController extends Controller
             'manmax' => 'required|integer',
             'bahnen' => 'required|integer|min:0',
             'training' => 'required|integer|min:0',
+            'max_trainingstermine' => 'required|integer|min:0',
+            'training_preis' => 'required|numeric|min:0',
             'meldeGebuehr' => 'required|numeric',
             'zusatzmanschaft' => 'boolean',
         ]);

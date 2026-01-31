@@ -29,7 +29,10 @@
                                   <form autocomplete="off" action="{{ route('faq.store') }}" method="post">
                                       @csrf
 
-                                      @include('regattaManagement.faq._form', ['categories' => $categories ?? collect()])
+                                      @include('regattaManagement.faq._form', [
+                                          'categories' => $categories ?? collect(),
+                                          'eventGroupId' => $eventGroupId ?? null,
+                                      ])
 
                                       <div class="py-2">
                                           <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Speichern</button>

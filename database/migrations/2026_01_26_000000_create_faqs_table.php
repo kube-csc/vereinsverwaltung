@@ -25,6 +25,14 @@ return new class extends Migration {
 
             $table->boolean('is_active')->default(true)->index();
 
+            // Neue Felder für Zuordnung zu EventGroup und Event
+            $table->unsignedBigInteger('eventGroup_id')->nullable()->index();
+            $table->unsignedBigInteger('event_id')->nullable()->index();
+
+            // Optional: Foreign-Key-Constraints (nur aktivieren, wenn entsprechende Tabellen/Spalten vorhanden)
+            // $table->foreign('eventGroup_id')->references('id')->on('event_groups')->onDelete('set null');
+            // $table->foreign('event_id')->references('id')->on('events')->onDelete('set null');
+
             $table->timestamps();
         });
     }

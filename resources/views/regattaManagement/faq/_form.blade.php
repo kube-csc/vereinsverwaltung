@@ -1,8 +1,49 @@
 @php
     /** @var \App\Models\Faq|null $faq */
     /** @var \Illuminate\Support\Collection|array|null $categories */
+    /** @var int|null $eventGroupId */
     $categories = $categories ?? collect();
+    $eventGroupId = $eventGroupId ?? ($faq->eventGroup_id ?? null);
+
+    // Checkbox ist aktiv, wenn: old('use_event') true ODER (kein old vorhanden und im Model event_id gesetzt)
+    $useEventOld = old('use_event');
+    $useEvent = $useEventOld !== null
+        ? (bool) $useEventOld
+        : !empty($faq?->event_id);
+
+    // Event-ID kommt aus der ausgewählten Regatta in der Session
+    $sessionEventId = \Illuminate\Support\Facades\Session::get('regattaSelectId');
 @endphp
+
+{{-- eventGroup ist Pflicht (kommt aus der gewählten Regatta / Session) --}}
+<input type="hidden" id="eventGroup_id" name="eventGroup_id" value="{{ old('eventGroup_id', $eventGroupId) }}">
+
+{{-- event_id ist nicht auswählbar: wird nur über die Checkbox gesetzt/geleert --}}
+<input type="hidden" id="event_id" name="event_id" value="{{ old('event_id', $faq->event_id ?? '') }}">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var useEvent = document.getElementById('use_event');
+        var eventIdInput = document.getElementById('event_id');
+
+        // Session-Regatta-ID (fest)
+        var sessionEventId = @json($sessionEventId);
+
+        function syncEventId() {
+            if (!useEvent || !eventIdInput) return;
+
+            if (useEvent.checked) {
+                eventIdInput.value = sessionEventId || '';
+            } else {
+                // beim Abwählen: serverseitig wird event_id ebenfalls auf NULL erzwungen
+                eventIdInput.value = '';
+            }
+        }
+
+        syncEventId();
+        if (useEvent) useEvent.addEventListener('change', syncEventId);
+    });
+</script>
 
 <div class="my-4">
     <label for="category">Kategorie:</label>
@@ -35,6 +76,27 @@
 </div>
 
 {{-- Sortierung (sort_order) wird beim Anlegen automatisch ermittelt --}}
+
+<div class="my-4">
+    <label class="font-semibold">Zuordnung:</label>
+
+    <div class="mt-2">
+        <label for="use_event" class="inline-flex items-center">
+            <input type="checkbox"
+                   id="use_event" name="use_event" value="1"
+                   class="border rounded shadow p-2 mr-2 {{ $errors->has('event_id') ? 'bg-red-300' : '' }}"
+                   {{ $useEvent ? 'checked' : '' }}>
+            <span>Event zuordnen</span>
+        </label>
+
+        <div class="text-xs text-gray-500 mt-1">
+            Event wird automatisch aus der ausgewählten Regatta übernommen.
+        </div>
+
+        <small class="form-text text-danger">{!! $errors->first('event_id') !!}</small>
+        <small class="form-text text-danger">{!! $errors->first('eventGroup_id') !!}</small>
+    </div>
+</div>
 
 <div class="my-4">
     <label for="is_active">Aktiv:</label>

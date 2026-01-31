@@ -44,101 +44,137 @@
                                     </div>
 
                                     @php
-                                        // Kategorien nach category_sort_order sortieren (Fallback: Name)
-                                        $sortedFaqs = $faqs->sortBy(function ($items, $category) {
-                                            $first = $items->first();
-                                            return [
-                                                (int) ($first->category_sort_order ?? 0),
-                                                (string) $category,
-                                            ];
-                                        });
-
-                                        $categories = $sortedFaqs->keys()->values()->all();
+                                        $faqGroups = $faqGroups ?? collect();
                                     @endphp
 
-                                    @forelse($sortedFaqs as $category => $items)
+                                    @forelse($faqGroups as $group)
                                         @php
-                                            $catIndex = array_search($category, $categories, true);
-                                            $categoryEncoded = rawurlencode($category);
-                                            $categorySortOrder = (int) ($items->first()->category_sort_order ?? 0);
+                                            /** @var \Illuminate\Support\Collection $faqs */
+                                            $faqs = $group['faqs'] ?? collect();
+                                            $event = $group['event'] ?? null;
+
+                                            // Kategorien nach category_sort_order sortieren (Fallback: Name)
+                                            $sortedFaqs = $faqs->sortBy(function ($items, $category) {
+                                                $first = $items->first();
+                                                return [
+                                                    (int) ($first->category_sort_order ?? 0),
+                                                    (string) $category,
+                                                ];
+                                            });
+
+                                            $categories = $sortedFaqs->keys()->values()->all();
+
+                                            // Datums-Text für Überschrift
+                                            $dateText = '';
+                                            if ($event && !empty($event->datumvon)) {
+                                                $von = \Illuminate\Support\Carbon::parse($event->datumvon)->format('d.m.Y');
+                                                $bisRaw = $event->datumbis ?? $event->datumvon;
+                                                $bis = \Illuminate\Support\Carbon::parse($bisRaw)->format('d.m.Y');
+                                                $dateText = ($von === $bis) ? $von : ($von . ' - ' . $bis);
+                                            }
                                         @endphp
 
-                                        <div class="rounded border shadow p-3 my-2 bg-blue-200">
-                                            <div class="justify-between my-2">
-                                                <div class="flex items-center justify-between">
-                                                    <p class="font-bold text-lg">
-                                                        {{ $category }}
-                                                        <span class="ml-2 text-xs text-gray-500 font-semibold">(Sort: {{ $categorySortOrder }})</span>
-                                                    </p>
-
-                                                    <div class="flex flex-col">
-                                                        <a class="text-blue-700 {{ $catIndex === 0 ? 'pointer-events-none opacity-40' : '' }}"
-                                                           href="{{ route('faq.category.up', $categoryEncoded) }}" title="Kategorie nach oben">▲</a>
-                                                        <a class="text-blue-700 {{ $catIndex === (count($categories) - 1) ? 'pointer-events-none opacity-40' : '' }}"
-                                                           href="{{ route('faq.category.down', $categoryEncoded) }}" title="Kategorie nach unten">▼</a>
+                                        <div class="rounded border shadow p-3 my-4 bg-white">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <div class="font-bold text-lg text-gray-800">
+                                                        {{ $group['title'] ?? 'FAQ' }}
                                                     </div>
+                                                    @if($dateText)
+                                                        <div class="text-xs text-gray-500 font-semibold">
+                                                            {{ $dateText }}
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
-
-                                            <div class="mt-2 overflow-x-auto">
-                                                <table class="min-w-full text-sm">
-                                                    <thead>
-                                                    <tr class="text-left border-b">
-                                                        <th class="py-2 pr-4">Sort</th>
-                                                        <th class="py-2 pr-4">Frage</th>
-                                                        <th class="py-2 pr-4">Aktiv</th>
-                                                        <th class="py-2 pr-4">Aktionen</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    @foreach($items as $index => $faq)
-                                                        <tr class="border-b">
-                                                            <td class="py-2 pr-4 whitespace-nowrap">
-                                                                <div class="flex items-center gap-2">
-                                                                    <span class="text-gray-500">{{ $faq->sort_order }}</span>
-
-                                                                    <div class="flex flex-col">
-                                                                        <a class="text-blue-700 {{ $index === 0 ? 'pointer-events-none opacity-40' : '' }}"
-                                                                           href="{{ route('faq.up', $faq->id) }}" title="Nach oben">▲</a>
-                                                                        <a class="text-blue-700 {{ $index === (count($items) - 1) ? 'pointer-events-none opacity-40' : '' }}"
-                                                                           href="{{ route('faq.down', $faq->id) }}" title="Nach unten">▼</a>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="py-2 pr-4">
-                                                                <div class="font-semibold">{{ $faq->question }}</div>
-                                                            </td>
-                                                            <td class="py-2 pr-4 whitespace-nowrap">
-                                                                @if($faq['is_active']==1)
-                                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('FAQ/inaktiv/'.$faq->id) }}" title="Aktiv">
-                                                                        <box-icon name='show'></box-icon>
-                                                                    </a>
-                                                                @endif
-                                                                @if($faq['is_active']==0)
-                                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('FAQ/aktiv/'.$faq->id) }}" title="Inaktiv">
-                                                                        <box-icon name='hide'></box-icon>
-                                                                    </a>
-                                                                @endif
-                                                            </td>
-                                                            <td class="py-2 pr-4 whitespace-nowrap">
-                                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ route('faq.edit', $faq->id) }}" title="Bearbeiten">
-                                                                    <box-icon name='edit' type='solid'></box-icon>
-                                                                </a>
-
-                                                                <form class="inline" action="{{ route('faq.destroy', $faq->id) }}" method="post"
-                                                                      onsubmit="return confirm('FAQ wirklich löschen?\n\nKategorie: {{ addslashes($category) }}\nFrage: {{ addslashes($faq->question) }}');">
-                                                                    @csrf
-                                                                    <button class="ml-2 btn btn-sm btn-outline-primary" type="submit" title="Löschen">
-                                                                        <box-icon name='trash' type='solid'></box-icon>
-                                                                    </button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
                                         </div>
+
+                                        @forelse($sortedFaqs as $category => $items)
+                                            @php
+                                                $catIndex = array_search($category, $categories, true);
+                                                $categoryEncoded = rawurlencode($category);
+                                                $categorySortOrder = (int) ($items->first()->category_sort_order ?? 0);
+                                            @endphp
+
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex items-center justify-between">
+                                                        <p class="font-bold text-lg">
+                                                            {{ $category }}
+                                                            <span class="ml-2 text-xs text-gray-500 font-semibold">(Sort: {{ $categorySortOrder }})</span>
+                                                        </p>
+
+                                                        <div class="flex flex-col">
+                                                            <a class="text-blue-700 {{ $catIndex === 0 ? 'pointer-events-none opacity-40' : '' }}"
+                                                               href="{{ route('faq.category.up', $categoryEncoded) }}" title="Kategorie nach oben">▲</a>
+                                                            <a class="text-blue-700 {{ $catIndex === (count($categories) - 1) ? 'pointer-events-none opacity-40' : '' }}"
+                                                               href="{{ route('faq.category.down', $categoryEncoded) }}" title="Kategorie nach unten">▼</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mt-2 overflow-x-auto">
+                                                    <table class="min-w-full text-sm">
+                                                        <thead>
+                                                        <tr class="text-left border-b">
+                                                            <th class="py-2 pr-4">Sort</th>
+                                                            <th class="py-2 pr-4">Frage</th>
+                                                            <th class="py-2 pr-4">Aktiv</th>
+                                                            <th class="py-2 pr-4">Aktionen</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @foreach($items as $index => $faq)
+                                                            <tr class="border-b">
+                                                                <td class="py-2 pr-4 whitespace-nowrap">
+                                                                    <div class="flex items-center gap-2">
+                                                                        <span class="text-gray-500">{{ $faq->sort_order }}</span>
+
+                                                                        <div class="flex flex-col">
+                                                                            <a class="text-blue-700 {{ $index === 0 ? 'pointer-events-none opacity-40' : '' }}"
+                                                                               href="{{ route('faq.up', $faq->id) }}" title="Nach oben">▲</a>
+                                                                            <a class="text-blue-700 {{ $index === (count($items) - 1) ? 'pointer-events-none opacity-40' : '' }}"
+                                                                               href="{{ route('faq.down', $faq->id) }}" title="Nach unten">▼</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="py-2 pr-4">
+                                                                    <div class="font-semibold">{{ $faq->question }}</div>
+                                                                </td>
+                                                                <td class="py-2 pr-4 whitespace-nowrap">
+                                                                    @if($faq['is_active']==1)
+                                                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('FAQ/inaktiv/'.$faq->id) }}" title="Aktiv">
+                                                                            <box-icon name='show'></box-icon>
+                                                                        </a>
+                                                                    @endif
+                                                                    @if($faq['is_active']==0)
+                                                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('FAQ/aktiv/'.$faq->id) }}" title="Inaktiv">
+                                                                            <box-icon name='hide'></box-icon>
+                                                                        </a>
+                                                                    @endif
+                                                                </td>
+                                                                <td class="py-2 pr-4 whitespace-nowrap">
+                                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ route('faq.edit', $faq->id) }}" title="Bearbeiten">
+                                                                        <box-icon name='edit' type='solid'></box-icon>
+                                                                    </a>
+
+                                                                    <form class="inline" action="{{ route('faq.destroy', $faq->id) }}" method="post"
+                                                                          onsubmit="return confirm('FAQ wirklich löschen?\n\nKategorie: {{ addslashes($category) }}\nFrage: {{ addslashes($faq->question) }}');">
+                                                                        @csrf
+                                                                        <button class="ml-2 btn btn-sm btn-outline-primary" type="submit" title="Löschen">
+                                                                            <box-icon name='trash' type='solid'></box-icon>
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <div class="mt-6 text-gray-500">Noch keine FAQs vorhanden.</div>
+                                        @endforelse
                                     @empty
                                         <div class="mt-6 text-gray-500">Noch keine FAQs vorhanden.</div>
                                     @endforelse

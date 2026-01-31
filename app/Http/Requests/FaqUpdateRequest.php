@@ -19,13 +19,24 @@ class FaqUpdateRequest extends FormRequest
             'answer_html' => ['required', 'string'],
             // sort_order wird im Hintergrund (▲/▼ + Normalisierung) verwaltet
             'is_active' => ['nullable', 'boolean'],
+
+            // Zuordnung (kommt beim Speichern aus der Session/Controller-Logik)
+            'eventGroup_id' => ['nullable', 'integer', 'exists:event_groups,id'],
+            'use_event' => ['nullable', 'boolean'],
+            'event_id' => ['nullable', 'integer', 'exists:events,id'],
         ];
     }
 
     protected function prepareForValidation(): void
     {
+        $useEvent = $this->boolean('use_event');
+
         $this->merge([
             'is_active' => $this->boolean('is_active'),
+            'use_event' => $useEvent,
+
+            // Wenn Checkbox nicht aktiv ist, erzwingen wir serverseitig event_id = null
+            'event_id' => $useEvent ? $this->input('event_id') : null,
         ]);
     }
 }

@@ -13,6 +13,8 @@ class Faq extends Model
         'is_active' => 'boolean',
         'category_sort_order' => 'integer',
         'sort_order' => 'integer',
+        'eventGroup_id' => 'integer',
+        'event_id' => 'integer',
     ];
 
     public function scopeOrdered(Builder $query): Builder

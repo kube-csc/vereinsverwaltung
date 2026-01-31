@@ -58,6 +58,9 @@ class FaqSeeder extends Seeder
         foreach ($rows as &$row) {
             $row['created_at'] = $now;
             $row['updated_at'] = $now;
+
+            // neu: eventGroup_id für alle FAQ-Zeilen auf 2 setzen
+            $row['eventGroup_id'] = 2;
         }
 
         Faq::query()->insert($rows);

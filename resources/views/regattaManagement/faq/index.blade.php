@@ -53,6 +53,10 @@
                                             $faqs = $group['faqs'] ?? collect();
                                             $event = $group['event'] ?? null;
 
+                                            // Sortierbarkeit: nur wenn es das aktuell ausgewählte Event ist
+                                            $sessionEventId = \Illuminate\Support\Facades\Session::get('regattaSelectId');
+                                            $isSortableScope = $event && (int) $event->id === (int) $sessionEventId;
+
                                             // Kategorien nach category_sort_order sortieren (Fallback: Name)
                                             $sortedFaqs = $faqs->sortBy(function ($items, $category) {
                                                 $first = $items->first();
@@ -105,10 +109,12 @@
                                                         </p>
 
                                                         <div class="flex flex-col">
-                                                            <a class="text-blue-700 {{ $catIndex === 0 ? 'pointer-events-none opacity-40' : '' }}"
-                                                               href="{{ route('faq.category.up', $categoryEncoded) }}" title="Kategorie nach oben">▲</a>
-                                                            <a class="text-blue-700 {{ $catIndex === (count($categories) - 1) ? 'pointer-events-none opacity-40' : '' }}"
-                                                               href="{{ route('faq.category.down', $categoryEncoded) }}" title="Kategorie nach unten">▼</a>
+                                                            @if($isSortableScope)
+                                                                <a class="text-blue-700 {{ $catIndex === 0 ? 'pointer-events-none opacity-40' : '' }}"
+                                                                   href="{{ route('faq.category.up', $categoryEncoded) }}" title="Kategorie nach oben">▲</a>
+                                                                <a class="text-blue-700 {{ $catIndex === (count($categories) - 1) ? 'pointer-events-none opacity-40' : '' }}"
+                                                                   href="{{ route('faq.category.down', $categoryEncoded) }}" title="Kategorie nach unten">▼</a>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -131,10 +137,12 @@
                                                                         <span class="text-gray-500">{{ $faq->sort_order }}</span>
 
                                                                         <div class="flex flex-col">
-                                                                            <a class="text-blue-700 {{ $index === 0 ? 'pointer-events-none opacity-40' : '' }}"
-                                                                               href="{{ route('faq.up', $faq->id) }}" title="Nach oben">▲</a>
-                                                                            <a class="text-blue-700 {{ $index === (count($items) - 1) ? 'pointer-events-none opacity-40' : '' }}"
-                                                                               href="{{ route('faq.down', $faq->id) }}" title="Nach unten">▼</a>
+                                                                            @if($isSortableScope)
+                                                                                <a class="text-blue-700 {{ $index === 0 ? 'pointer-events-none opacity-40' : '' }}"
+                                                                                   href="{{ route('faq.up', $faq->id) }}" title="Nach oben">▲</a>
+                                                                                <a class="text-blue-700 {{ $index === (count($items) - 1) ? 'pointer-events-none opacity-40' : '' }}"
+                                                                                   href="{{ route('faq.down', $faq->id) }}" title="Nach unten">▼</a>
+                                                                            @endif
                                                                         </div>
                                                                     </div>
                                                                 </td>

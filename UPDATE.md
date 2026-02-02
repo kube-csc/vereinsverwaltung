@@ -3,11 +3,12 @@
 Umstellung auf Laravel V10
 Erweiterung der Datenbank  für die Trainingsverwaltung im Regattabereich
 Erweiterung der Datenbank  für FAQ im Regattabereich
+Erweiterung der Datenbank  für Header für Kurse / Termine / Trainings
+Erweiterung der Datenbank für Trainingstermine
 
-- composer install
 - migration
 - php artisan db:seed --class=FaqSeeder  für Demodaten FAQ
-- 
+
 **Version V00.10.00**
 
 - migration

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('race_types', function (Blueprint $table) {
-            $table->unsignedInteger('max_trainingstermine')->default(0)->after('training');
+            $table->integer('max_trainingstermine')->default(0)->after('training');
             $table->decimal('training_preis', 8, 2)->default(0)->after('max_trainingstermine');
         });
     }

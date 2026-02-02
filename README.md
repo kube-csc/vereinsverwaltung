@@ -210,8 +210,8 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
 <h3>Regatta Managment</h3>  
 <p>
     Meldeportal für Teilnehmer für Regatten<br>
-    Die Version V00.01.XX <a href="https://github.com/kube-csc/regattamanager.git" target="_blank">https://github.com/kube-csc/regattamanager.git</a> 
-    ist kompatibel mit der Version V00.08.XX <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
+    Die Version V00.02.XX <a href="https://github.com/kube-csc/regattamanager.git" target="_blank">https://github.com/kube-csc/regattamanager.git</a> 
+    ist kompatibel mit der Version V00.10.01 <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <h3>Helferlisten</h3>
 <p>

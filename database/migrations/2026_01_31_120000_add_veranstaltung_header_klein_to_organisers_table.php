@@ -10,7 +10,7 @@ class AddVeranstaltungHeaderKleinToOrganisersTable extends Migration
     {
         Schema::table('organisers', function (Blueprint $table) {
             // neue optionale Spalte für kleinen Veranstaltungs-Header
-            $table->string('veranstaltungHeaderKlein')->nullable()->after(veranstaltungHeader);
+            $table->string('veranstaltungHeaderKlein')->nullable()->after('veranstaltungHeader');
         });
     }
 

@@ -28,7 +28,7 @@ class FaqSeeder extends Seeder
                 'question' => 'Bis wann ist Meldeschluss?',
                 'answer_html' => '<p><strong>Meldeschluss ist der 02.08.2026.</strong></p>',
                 'is_active' => true,
-                'event_id' => 1274,
+                'event_id' => 7,
             ],
             [
                 'category' => 'Anmeldung',
@@ -36,7 +36,7 @@ class FaqSeeder extends Seeder
                 'question' => 'Wann wird meine Meldung wirksam?',
                 'answer_html' => '<p>Die Meldung wird erst wirksam, wenn das Startgeld eingegangen ist.</p>',
                 'is_active' => true,
-                'event_id' => 1256,
+                'event_id' => 8,
             ],
 
             // Startgeld & Training

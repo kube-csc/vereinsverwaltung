@@ -30,6 +30,7 @@ use App\Http\Controllers\CoursedateController;
 use App\Http\Controllers\MemberImageController;
 use App\Http\Controllers\RegattaTeamController;
 use App\Http\Controllers\FaqController ;
+use App\Http\Controllers\RegattaSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,7 +109,7 @@ Route::get('/Regatta/wahl/aktiv',                         [EventController::clas
 Route::get('/Regatta/aktiv/{event_id}',                   [EventController::class, 'regattaAktiv'])       ->name('event.regattaAktiv');
 Route::get('/Regatta/inaktiv/{event_id}',                 [EventController::class, 'regattaInaktiv'])     ->name('event.regattaInaktiv');
 Route::get('/Regatta/alle',                               [EventController::class, 'indexRegatta'])       ->name('event.indexRegatta');
-Route::get('/Regatta/{event_id}',                         [EventController::class, 'selectRegatta'])      ->name('event.selectRegatta');
+Route::get('/Regatta/{event_id}',                         [EventController::class, 'selectRegatta'])->whereNumber('event_id')->name('event.selectRegatta');
 
 Route::get('/Eventgruppe/alle',                           [EventGroupController::class, 'index'])         ->name('eventGroup.index');
 Route::get('/Eventgruppe/neu',                            [EventGroupController::class, 'create'])        ->name('eventGroup.create');
@@ -248,6 +249,9 @@ Route::get('/Regattateam/edit/{regattaTeam_id}',      [RegattaTeamController::cl
 Route::post('/Regattateam/update/{regattaTeam_id}',   [RegattaTeamController::class, 'update'])        ->name('regattaTeam.update');
 Route::get('/Regattateam/Werbungsquelle/public/{regatta_id?}', [RegattaTeamController::class, 'werbungsquellePublic'])->name('regattaTeam.werbungsquellePublic');
 
+Route::get('/Regatta/Einstellungen', [RegattaSettingsController::class, 'edit'])->name('regattaSettings.edit');
+Route::post('/Regatta/Einstellungen', [RegattaSettingsController::class, 'update'])->name('regattaSettings.update');
+
 Route::get('/Rennen/alle',                                            [RaceController::class, 'index'])           ->name('race.index');
 Route::get('/Rennen/neu',                                            [RaceController::class, 'create'])          ->name('race.create');
 Route::post('/Rennen/speichern',                                [RaceController::class, 'store'])           ->name('race.store');
@@ -328,6 +332,11 @@ Route::get('/Rennklassenvorlage/neu',                          [RaceTypeTemplate
 Route::post('/Rennklassenvorlage/speichern',                   [RaceTypeTemplateController::class, 'store'])  ->name('raceTypeTemplate.store');
 Route::get('/Rennklassenvorlage/edit/{raceTypeTemplate_id}',   [RaceTypeTemplateController::class, 'edit'])   ->name('raceTypeTemplate.edit');
 Route::post('/Rennklassenvorlage/update/{raceTypeTemplate_id}',[RaceTypeTemplateController::class, 'update']) ->name('raceTypeTemplate.update');
+
+// Regatta Einstellungen (muss vor /Regatta/{event_id} stehen)
+// (moved to Regatta-Block above)
+// Route::get('/Regatta/Einstellungen', [RegattaSettingsController::class, 'edit'])->name('regattaSettings.edit');
+// Route::post('/Regatta/Einstellungen', [RegattaSettingsController::class, 'update'])->name('regattaSettings.update');
 
 Route::get('/Club/alle',                                       [ClubController::class, 'index'])               ->name('club.index');
 Route::get('/Club/neu',                                        [ClubController::class, 'create'])              ->name('club.create');

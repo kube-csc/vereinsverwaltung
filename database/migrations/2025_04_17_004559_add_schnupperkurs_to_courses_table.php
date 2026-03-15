@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->boolean('schnupperkurs')->default('0')->after('trainer');
+            $table->boolean('schnupperkurs')->default(0)->after('trainer');
+            $table->boolean('nicht_anmeldebar')->default(0)->after('schnupperkurs');
         });
     }
 
@@ -27,6 +28,7 @@ return new class extends Migration
     {
         Schema::table('courses', function (Blueprint $table) {
             $table->dropColumn('schnupperkurs');
+            $table->dropColumn('nicht_anmeldebar');
         });
     }
 };

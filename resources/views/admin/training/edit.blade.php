@@ -91,7 +91,7 @@
                                         </div>
 
                                         <div>
-                                            <label for="vorschauTage">Vorschau Tage:</label>
+                                            <label for="vorschauTage">Planungshorizont Tage:</label>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('vorschauTage') ? 'bg-red-300' : '' }}"
                                                    id="vorschauTage" placeholder="Vorschau Tage" name="vorschauTage" value="{{ old('vorschauTage', $training->vorschauTage) }}">
                                             <small class="form-text text-danger">{!! $errors->first('vorschauTage') !!}</small>

@@ -20,7 +20,7 @@ class Training extends Model
         'zeitvon',
         'zeitbis',
         'sportgeraeteanzahl',
-        'sportgeraeteGebucht',
+        'sportgeraeteReserviert',
         'vorschauTage',
         'wiederholung',
         'autor_id',

@@ -58,10 +58,10 @@ class TrainingController extends Controller
             'zeitvon' => 'required',
             'zeitbis' => 'required',
             'courseId' => 'required|integer|min:1',
-            'sportgeraeteanzahl' => 'integer|min:1|max:999|gte:sportgeraeteGebucht',
-            'sportgeraeteReserviert' => 'integer|min:1|max:999|lte:sportgeraeteanzahl',
-            'vorschauTage' => 'integer|min:1|max:400',
-            'wiederholung' => 'integer|min:1|max:365',
+            'sportgeraeteanzahl' => 'integer|min:1|max:999|gte:sportgeraeteReserviert',
+            'sportgeraeteReserviert' => 'nullable|integer|min:0|max:999|lte:sportgeraeteanzahl',
+            'vorschauTage' => 'nullable|integer|min:0|max:400',
+            'wiederholung' => 'nullable|integer|min:0|max:365',
         ]);
 
         $course   = Course::find($request->get('courseId'));
@@ -132,7 +132,7 @@ class TrainingController extends Controller
             //'zeitvon' => 'required|date_format:H:i:s',
             //'zeitbis' => 'required|date_format:H:i:s',
             'courseId' => 'required|integer|min:1',
-            'sportgeraeteanzahl' => 'nullable|integer|min:0|max:999',
+            'sportgeraeteanzahl' => 'integer|min:1|max:999',
             'sportgeraeteReserviert' => 'nullable|integer|min:0|max:999|lte:sportgeraeteanzahl',
             'sportSection_id' => 'required|integer',
             'vorschauTage' => 'nullable|integer|min:0|max:400',

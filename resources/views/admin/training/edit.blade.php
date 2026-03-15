@@ -77,13 +77,13 @@
                                             <label for="sportgeraeteanzahl">Maximale Teilnehmerplätze:</label>
                                             <p class="text-xs text-gray-500">Obergrenze für Anmeldungen pro Termin.</p>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteanzahl') ? 'bg-red-300' : '' }}"
-                                                   id="sportgeraeteanzahl" min="0" placeholder="z. B. 12" name="sportgeraeteanzahl" value="{{ old('sportgeraeteanzahl', $training->sportgeraeteanzahl) }}">
+                                                   id="sportgeraeteanzahl" min="1" placeholder="z. B. 12" name="sportgeraeteanzahl" value="{{ old('sportgeraeteanzahl', $training->sportgeraeteanzahl) }}">
                                             <small class="form-text text-danger">{!! $errors->first('sportgeraeteanzahl') !!}</small>
                                         </div>
 
                                         <div>
                                             <label for="sportgeraeteReserviert">Reservierte Teilnehmerplätze:</label>
-                                            <p class="text-xs text-gray-500">Plätze, die nicht frei gebucht werden können (z. B. für Trainer / Gäste).</p>
+                                            <p class="text-xs text-gray-500">Plätze, die nicht von Zeitgleichen Terminen gebucht werden können (z. B. für Trainer / Gäste).</p>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteReserviert') ? 'bg-red-300' : '' }}"
                                                    id="sportgeraeteReserviert" min="0" placeholder="z. B. 2" name="sportgeraeteReserviert" value="{{ old('sportgeraeteReserviert', $training->sportgeraeteReserviert) }}">
                                             <small class="form-text text-danger">{!! $errors->first('sportgeraeteReserviert') !!}</small>

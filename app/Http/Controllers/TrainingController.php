@@ -58,10 +58,10 @@ class TrainingController extends Controller
             'zeitvon' => 'required',
             'zeitbis' => 'required',
             'courseId' => 'required|integer|min:1',
-            'sportgeraeteanzahl' => 'integer|min:1|max:999|gte:sportgeraeteGebucht',
-            'sportgeraeteReserviert' => 'integer|min:1|max:999|lte:sportgeraeteanzahl',
-            'vorschauTage' => 'integer|min:1|max:400',
-            'wiederholung' => 'integer|min:1|max:365',
+            'sportgeraeteanzahl' => 'nullable|integer|min:0|max:999|gte:sportgeraeteReserviert',
+            'sportgeraeteReserviert' => 'nullable|integer|min:0|max:999|lte:sportgeraeteanzahl',
+            'vorschauTage' => 'nullable|integer|min:0|max:400',
+            'wiederholung' => 'nullable|integer|min:0|max:365',
         ]);
 
         $course   = Course::find($request->get('courseId'));
@@ -131,11 +131,12 @@ class TrainingController extends Controller
             'datumbis' => 'required|date',
             //'zeitvon' => 'required|date_format:H:i:s',
             //'zeitbis' => 'required|date_format:H:i:s',
-            'sportgeraeteanzahl' => 'integer|min:1|max:999|gte:sportgeraeteGebucht',
-            'sportgeraeteReserviert' => 'integer|min:1|max:999|lte:sportgeraeteanzahl',
+            'courseId' => 'required|integer|min:1',
+            'sportgeraeteanzahl' => 'nullable|integer|min:0|max:999',
+            'sportgeraeteReserviert' => 'nullable|integer|min:0|max:999|lte:sportgeraeteanzahl',
             'sportSection_id' => 'required|integer',
-            'vorschauTage' => 'required|string',
-            'wiederholung' => 'required|string',
+            'vorschauTage' => 'nullable|integer|min:0|max:400',
+            'wiederholung' => 'nullable|integer|min:0|max:365',
        ]);
 
         $request['datumAktuell'] = $request->get('datumvon');
@@ -143,7 +144,7 @@ class TrainingController extends Controller
         $training = Training::find($id);
         $training->update($request->all());
 
-        return redirect()->route('training.index', ['sportSection_id' => $request->sportSection_id])->with('success', 'Das Training erfolgreich wurde aktualisiert.');
+        return redirect()->route('training.index', ['sportSection_id' => $request->sportSection_id])->with('success', 'Das Training wurde erfolgreich aktualisiert.');
     }
 
     /**

@@ -14,7 +14,7 @@
                         Training bearbeiten
                     </div>
                     <div class="mt-6 text-gray-500">
-                        Bitte bearbeite das Training.
+                        Bitte passe die Trainingsdaten an.
                     </div>
                 </div>
 
@@ -44,61 +44,71 @@
                                         @csrf
                                         <input type="hidden" name="sportSection_id" value="{{ $training->sportSection_id }}">
                                         <div>
-                                            <label for="datumvon">Start Termin:</label>
+                                            <label for="datumvon">Startdatum:</label>
+                                            <p class="text-xs text-gray-500">Datum des ersten Termins.</p>
                                             <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumvon') ? 'bg-red-300' : '' }}"
-                                                   id="datumvon" placeholder="Event Startdatum" name="datumvon" value="{{ old('datumvon', $training->datumvon) }}">
+                                                   id="datumvon" name="datumvon" value="{{ old('datumvon', $training->datumvon) }}">
                                             <small class="form-text text-danger">{!! $errors->first('datumvon') !!}</small>
                                         </div>
                                         <div>
-                                            <label for="datumbis">End Termin:</label>
+                                            <label for="datumbis">Enddatum:</label>
+                                            <p class="text-xs text-gray-500">Datum des letzten Termins.</p>
                                             <input type="date" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('datumbis') ? 'bg-red-300' : '' }}"
-                                                   id="datumbis" placeholder="Event Enddatum" name="datumbis" value="{{ old('datumbis', $training->datumbis) }}">
+                                                   id="datumbis" name="datumbis" value="{{ old('datumbis', $training->datumbis) }}">
                                             <small class="form-text text-danger">{!! $errors->first('datumbis') !!}</small>
                                         </div>
                                         <div>
-                                            <label for="zeitvon">Start Uhrzeit:</label>
+                                            <label for="zeitvon">Startzeit:</label>
+                                            <p class="text-xs text-gray-500">Uhrzeit, zu der das Training beginnt.</p>
                                             <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeitvon') ? 'bg-red-300' : '' }}"
-                                                   id="zeitvon" placeholder="Start Uhrzeit" name="zeitvon" value="{{ old('zeitvon', $training->zeitvon) }}">
+                                                   id="zeitvon" name="zeitvon" value="{{ old('zeitvon', $training->zeitvon) }}">
                                             <small class="form-text text-danger">{!! $errors->first('zeitvon') !!}</small>
                                         </div>
 
                                         <div>
-                                            <label for="zeitbis">End Uhrzeit:</label>
+                                            <label for="zeitbis">Endzeit:</label>
+                                            <p class="text-xs text-gray-500">Uhrzeit, zu der das Training endet.</p>
                                             <input type="time" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeitbis') ? 'bg-red-300' : '' }}"
-                                                   id="zeitbis" placeholder="End Uhrzeit" name="zeitbis" value="{{ old('zeitbis', $training->zeitbis) }}">
+                                                   id="zeitbis" name="zeitbis" value="{{ old('zeitbis', $training->zeitbis) }}">
                                             <small class="form-text text-danger">{!! $errors->first('zeitbis') !!}</small>
                                         </div>
 
                                         <div>
-                                            <label for="sportgeraeteanzahl">Maximale Anzahl Sportgeräte:</label>
+                                            <label for="sportgeraeteanzahl">Maximale Teilnehmerplätze:</label>
+                                            <p class="text-xs text-gray-500">Obergrenze für Anmeldungen pro Termin.</p>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteanzahl') ? 'bg-red-300' : '' }}"
-                                                   id="sportgeraeteanzahl" placeholder="Maximale Anzahl Sportgeräte" name="sportgeraeteanzahl" value="{{ old('sportgeraeteanzahl', $training->sportgeraeteanzahl) }}">
+                                                   id="sportgeraeteanzahl" min="0" placeholder="z. B. 12" name="sportgeraeteanzahl" value="{{ old('sportgeraeteanzahl', $training->sportgeraeteanzahl) }}">
                                             <small class="form-text text-danger">{!! $errors->first('sportgeraeteanzahl') !!}</small>
                                         </div>
 
                                         <div>
-                                            <label for="sportgeraeteReserviert">Reservierte Sportgeräte:</label>
+                                            <label for="sportgeraeteReserviert">Reservierte Teilnehmerplätze:</label>
+                                            <p class="text-xs text-gray-500">Plätze, die nicht frei gebucht werden können (z. B. für Trainer / Gäste).</p>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('sportgeraeteReserviert') ? 'bg-red-300' : '' }}"
-                                                   id="sportgeraeteReserviert" placeholder="Anzahl Sportgeräte" name="sportgeraeteReserviert" value="{{ old('sportgeraeteReserviert', $training->sportgeraeteReserviert) }}">
+                                                   id="sportgeraeteReserviert" min="0" placeholder="z. B. 2" name="sportgeraeteReserviert" value="{{ old('sportgeraeteReserviert', $training->sportgeraeteReserviert) }}">
                                             <small class="form-text text-danger">{!! $errors->first('sportgeraeteReserviert') !!}</small>
                                         </div>
 
                                         <div>
-                                            <label for="wiederholung">Wiederholung nach vielen Tagen:</label>
+                                            <label for="wiederholung">Wiederholung (alle X Tage):</label>
+                                            <p class="text-xs text-gray-500">Intervall, in dem neue Termine automatisch erstellt werden (0/leer = keine Wiederholung).</p>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('wiederholung') ? 'bg-red-300' : '' }}"
-                                                   id="wiederholung" placeholder="Wiederholung" name="wiederholung" value="{{ old('wiederholung', $training->wiederholung) }}">
+                                                   id="wiederholung" min="0" placeholder="z. B. 7" name="wiederholung" value="{{ old('wiederholung', $training->wiederholung) }}">
                                             <small class="form-text text-danger">{!! $errors->first('wiederholung') !!}</small>
                                         </div>
 
                                         <div>
-                                            <label for="vorschauTage">Vorschau Tage:</label>
+                                            <label for="vorschauTage">Planungshorizont (Tage):</label>
+                                            <p class="text-xs text-gray-500">Wie viele Tage im Voraus Termine (aus dem Kurs/Trainingstyp) automatisch erzeugt werden.</p>
                                             <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('vorschauTage') ? 'bg-red-300' : '' }}"
-                                                   id="vorschauTage" placeholder="Vorschau Tage" name="vorschauTage" value="{{ old('vorschauTage', $training->vorschauTage) }}">
+                                                   id="vorschauTage" min="0" placeholder="z. B. 30" name="vorschauTage" value="{{ old('vorschauTage', $training->vorschauTage) }}">
                                             <small class="form-text text-danger">{!! $errors->first('vorschauTage') !!}</small>
                                         </div>
 
                                         <div class="form-field">
-                                            <label for="courseId" class="form-label">Training:</label><br>
+                                            <label for="courseId" class="form-label">Trainingstyp (Kurs):</label>
+                                            <p class="text-xs text-gray-500">Vorlage/Kurs, aus dem die Termine erzeugt werden.</p>
+                                            <br>
                                             <select name="courseId">
                                                 @foreach ($courses as $course)
                                                     <option value="{{ $course->course_id }}" @selected(old('courseId', $training->course_id) == $course->course_id)>

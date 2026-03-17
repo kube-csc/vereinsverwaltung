@@ -1,4 +1,17 @@
 ## Update Anleitung
+**Version V00.10.02**
+
+- migration
+
+***Neue Funktionen***
+
+***Backend – Trainerverwaltung (Kursangebot)***
+- <strong>Trainertypen verwalten</strong>: Trainerfunktionen (Rollen) können angelegt/bearbeitet und deaktiviert/reaktiviert werden.
+- Pro Trainerfunktion können Voreinstellungen gepflegt werden (z. B. Standard-Veranstaltung/Kursangebot und Standard-Abteilung/Mannschaft).
+- Neue Option <strong>„Im Kursangebot verwendbar“</strong>: steuert, ob eine Trainerfunktion im Kurs-/Training-Bereich angeboten werden soll.
+- <strong>Trainer zuordnen</strong>: Benutzern können eine oder mehrere Trainerfunktionen zugewiesen werden; die Voreinstellungen werden dabei automatisch übernommen.
+- <strong>Übersicht</strong>: Gruppierte Anzeige der Zuordnungen nach Trainerfunktion.
+
 **Version V00.10.01**
 Umstellung auf Laravel V10
 Erweiterung der Datenbank  für die Trainingsverwaltung im Regattabereich

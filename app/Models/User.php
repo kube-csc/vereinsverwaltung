@@ -11,6 +11,9 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 //Ergänzt
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -65,4 +68,19 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function trainerZuordnungen(): HasMany
+    {
+        return $this->hasMany(Trainertable::class, 'user_id');
+    }
+
+    /**
+     * Aktive Trainerfunktionen (Soft-Deleted Zuordnungen werden ausgefiltert).
+     */
+    public function trainertyps(): BelongsToMany
+    {
+        return $this->belongsToMany(Trainertyp::class, 'trainertables', 'user_id', 'trainertyp_id')
+            ->withPivot(['id', 'sportSection_id', 'organiser_id', 'status', 'sichtbar', 'autor_id', 'bearbeiter_id', 'deleted_at', 'created_at', 'updated_at'])
+            ->wherePivotNull('deleted_at');
+    }
 }

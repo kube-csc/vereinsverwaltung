@@ -185,6 +185,33 @@
                                       </div>
                                   </div>
 
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainer.index') }}')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">Trainerverwaltung</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainer.types.index') }}')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">Trainertypen – Übersicht</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                   <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainertyp.index') }}')">
+                                       <div class="flex justify-between my-2">
+                                           <div class="flex">
+                                               <p class="font-bold text-lg">Trainertypen verwalten</p>
+                                               <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                           </div>
+                                       </div>
+                                   </div>
+
                               </div>
 
                          </div>

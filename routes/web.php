@@ -31,6 +31,8 @@ use App\Http\Controllers\MemberImageController;
 use App\Http\Controllers\RegattaTeamController;
 use App\Http\Controllers\FaqController ;
 use App\Http\Controllers\RegattaSettingsController;
+use App\Http\Controllers\TrainerAdminController;
+use App\Http\Controllers\TrainertypAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +66,51 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/Adminmenu', function () {
     return view('admin.adminmenu');
 })->name('adminmenu');
+
+// Trainerverwaltung (Admin)
+Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/trainer', [TrainerAdminController::class, 'index'])->name('trainer.index');
+    Route::get('/trainer/{user}', [TrainerAdminController::class, 'edit'])->whereNumber('user')->name('trainer.edit');
+    Route::post('/trainer/{user}', [TrainerAdminController::class, 'update'])->whereNumber('user')->name('trainer.update');
+    Route::get('/trainer-typen', [TrainerAdminController::class, 'typesIndex'])->name('trainer.types.index');
+
+    // Trainertypen verwalten (Definitionen + Defaults)
+    Route::get('/trainertypen', [TrainertypAdminController::class, 'index'])->name('trainertyp.index');
+    Route::get('/trainertypen/neu', [TrainertypAdminController::class, 'create'])->name('trainertyp.create');
+    Route::post('/trainertypen', [TrainertypAdminController::class, 'store'])->name('trainertyp.store');
+    Route::get('/trainertypen/{trainertyp}', [TrainertypAdminController::class, 'edit'])->whereNumber('trainertyp')->name('trainertyp.edit');
+    Route::post('/trainertypen/{trainertyp}', [TrainertypAdminController::class, 'update'])->whereNumber('trainertyp')->name('trainertyp.update');
+    Route::post('/trainertypen/{trainertyp}/deaktivieren', [TrainertypAdminController::class, 'destroy'])->whereNumber('trainertyp')->name('trainertyp.destroy');
+    Route::post('/trainertypen/{trainertyp}/reaktivieren', [TrainertypAdminController::class, 'restore'])->whereNumber('trainertyp')->name('trainertyp.restore');
+
+    // Hilfs-Endpoint: SportSections für einen Organiser laden (für dynamische Dropdowns)
+    Route::get('/trainertypen/organiser/{organiser}/sportsections', [TrainertypAdminController::class, 'sportSectionsForOrganiser'])
+        ->whereNumber('organiser')
+        ->name('trainertyp.organiser.sportsections');
+    Route::post('/trainer/{user}/zuordnung/{trainertable}/deaktivieren', [TrainerAdminController::class, 'deactivate'])
+        ->whereNumber('user')
+        ->whereNumber('trainertable')
+        ->name('trainer.deactivate');
+    Route::post('/trainer/{user}/zuordnung/{trainertable}/sichtbarkeit', [TrainerAdminController::class, 'toggleVisible'])
+        ->whereNumber('user')
+        ->whereNumber('trainertable')
+        ->name('trainer.toggleVisible');
+    Route::post('/trainer/{user}/zuordnung/{trainertable}/reaktivieren', [TrainerAdminController::class, 'reactivate'])
+        ->whereNumber('user')
+        ->whereNumber('trainertable')
+        ->name('trainer.reactivate');
+
+    // Aktionen aus der Trainertyp-Übersicht
+    Route::post('/trainer-typen/zuordnung/{trainertable}/deaktivieren', [TrainerAdminController::class, 'deactivateFromTypes'])
+        ->whereNumber('trainertable')
+        ->name('trainer.types.deactivate');
+    Route::post('/trainer-typen/zuordnung/{trainertable}/sichtbarkeit', [TrainerAdminController::class, 'toggleVisibleFromTypes'])
+        ->whereNumber('trainertable')
+        ->name('trainer.types.toggleVisible');
+    Route::post('/trainer-typen/zuordnung/{trainertable}/reaktivieren', [TrainerAdminController::class, 'reactivateFromTypes'])
+        ->whereNumber('trainertable')
+        ->name('trainer.types.reactivate');
+});
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/Regattamenu', function () {
     return view('regattaManagement.regattaMenu');

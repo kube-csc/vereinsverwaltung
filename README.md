@@ -98,6 +98,34 @@ Folgende Lizenz wird für die Nutzung des Frontends benötigt:
   <li>Eingabe und Bearbeitung der Vereinsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
+  <li><strong>Trainerverwaltung / Kursangebot</strong>
+      <ul>
+          <li><strong>Trainerfunktionen definieren</strong> (Menü: „Trainertypen verwalten“)
+              <ul>
+                  <li>Hier legst du fest, welche Rollen/Funktionen es gibt (z. B. „SUP Trainer“, „Ferienspass Kursleiter“, „Drachenboot Trainer“).</li>
+                  <li>Eine Trainerfunktion kann ein- und ausgeschaltet werden (deaktivierte Funktionen werden im Normalfall nicht mehr zur Auswahl angeboten).</li>
+                  <li><strong>Voreinstellungen</strong> pro Trainerfunktion:
+                      <ul>
+                          <li>Standardmäßig aktiv/inaktiv, wenn ein Trainer diese Funktion erhält</li>
+                          <li>Standardmäßig sichtbar/unsichtbar (öffentlich)</li>
+                          <li>Standard-Veranstaltung/Kursangebot, zu dem die Funktion gehört</li>
+                          <li>Standard-Abteilung/Mannschaft innerhalb der Veranstaltung</li>
+                          <li><em>Im Kursangebot verwendbar</em>: Steuert, ob diese Funktion im Kurs-/Training-Bereich angeboten werden soll</li>
+                      </ul>
+                  </li>
+              </ul>
+          </li>
+          <li><strong>Trainer einem Benutzer zuordnen</strong> (Menü: „Trainer“)
+              <ul>
+                  <li>Wähle einen Benutzer aus und ordne ihm eine oder mehrere Trainerfunktionen zu.</li>
+                  <li>Beim Zuweisen werden die Voreinstellungen der Trainerfunktion automatisch übernommen (z. B. Standard-Veranstaltung und Standard-Abteilung).</li>
+                  <li>Zuordnungen können deaktiviert und später wieder reaktiviert werden.</li>
+                  <li>Die Sichtbarkeit kann pro Zuordnung umgeschaltet werden.</li>
+              </ul>
+          </li>
+          <li><strong>Übersicht</strong> (Menü: „Trainertypen – Übersicht“): Gruppierte Anzeige aller Zuordnungen nach Trainerfunktion</li>
+      </ul>
+  </li>
   <li>Eingabe und Bearbeitung von Trainingszeiten von Abteilung / Mannschaften</li>
   <li>Eingabe und Bearbeitung von Events
       <ul>
@@ -176,6 +204,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
         <li>sportgeraete</li>
       </ul>
     </li>
+   <li>php artisan storage:link</li>
    <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
    <ul>
      <li>anfahrt.blade.php anlegen und mit der Vorlage von anfahrt_example.blade.php ausfüllen</li>

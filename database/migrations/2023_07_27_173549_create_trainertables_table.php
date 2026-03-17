@@ -39,7 +39,7 @@ return new class extends Migration
     {
         // Entferne die Foren-Keys
         Schema::table('trainertables', function (Blueprint $table) {
-            $table->dropForeign(['trainer_id']);
+            $table->dropForeign(['user_id']);
             $table->dropForeign(['trainertyp_id']);
         });
         Schema::dropIfExists('trainertables');

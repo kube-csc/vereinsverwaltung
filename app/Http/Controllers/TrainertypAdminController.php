@@ -231,8 +231,7 @@ class TrainertypAdminController extends Controller
 
         if (!empty($updates)) {
             $trainerQuery = DB::table('trainertables')
-                ->where('trainertyp_id', $trainertyp->id)
-                ->whereNull('deleted_at');
+                ->where('trainertyp_id', $trainertyp->id);
 
             // Nur die Datensätze ändern, die noch die alten Default-Werte tragen.
             if (array_key_exists('sportSection_id', $updates)) {
@@ -257,6 +256,9 @@ class TrainertypAdminController extends Controller
                 'updated_at' => Carbon::now(),
             ]));
         }
+
+        // Optionaler Konsistenz-Check: wenn beides gesetzt ist, muss die Abteilung zum Organiser passen.
+        // Diese Prüfung ist bereits bei der Validierung oben erfolgt.
 
         return back()->with('success', 'Trainertyp wurde gespeichert.');
     }

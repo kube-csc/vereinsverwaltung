@@ -178,13 +178,6 @@ class TrainertypAdminController extends Controller
 
     public function update(Request $request, Trainertyp $trainertyp): RedirectResponse
     {
-        // Alte Default-Werte merken, um bestehende Trainer-Zuordnungen nur dann zu ändern,
-        // wenn sie noch dem bisherigen Default entsprechen (manuelle Anpassungen bleiben erhalten).
-        $oldDefaults = $trainertyp->only([
-            'default_sportSection_id',
-            'default_organiser_id',
-        ]);
-
         $validated = $request->validate([
             'trainerfunktion' => ['required', 'string', 'max:255'],
             'status' => ['required', 'integer', 'in:0,1'],
@@ -219,43 +212,19 @@ class TrainertypAdminController extends Controller
         $trainertyp->save();
 
         // Werte auf bestehende Trainer-Zuordnungen übertragen (rückwirkend)
-        // Hinweis: status/sichtbar werden NICHT rückwirkend angepasst (nur bei Neuanlage übernehmen).
-        // Regel: update nur, wenn Trainertable-Feld aktuell noch dem alten Wert entspricht.
-        $updates = [];
-        if (($oldDefaults['default_sportSection_id'] ?? null) !== ($validated['default_sportSection_id'] ?? null)) {
-            $updates['sportSection_id'] = $validated['default_sportSection_id'] !== null ? (int)$validated['default_sportSection_id'] : null;
-        }
-        if (($oldDefaults['default_organiser_id'] ?? null) !== ($validated['default_organiser_id'] ?? null)) {
-            $updates['organiser_id'] = $validated['default_organiser_id'] !== null ? (int)$validated['default_organiser_id'] : null;
-        }
+        // Regel (neu): Wenn default_-Einstellungen geändert werden, sollen ALLE vorhandenen Trainer-Zuordnungen
+        // dieses Typs die neuen Einstellungen erhalten (auch deaktivierte/soft-gelöschte).
+        // Hinweis: status/sichtbar auf dem Trainertable werden NICHT automatisch überschrieben.
+        $updates = [
+            'sportSection_id' => $validated['default_sportSection_id'] !== null ? (int)$validated['default_sportSection_id'] : null,
+            'organiser_id' => $validated['default_organiser_id'] !== null ? (int)$validated['default_organiser_id'] : null,
+            'bearbeiter_id' => Auth::id(),
+            'updated_at' => Carbon::now(),
+        ];
 
-        if (!empty($updates)) {
-            $trainerQuery = DB::table('trainertables')
-                ->where('trainertyp_id', $trainertyp->id);
-
-            // Nur die Datensätze ändern, die noch die alten Default-Werte tragen.
-            if (array_key_exists('sportSection_id', $updates)) {
-                $old = $oldDefaults['default_sportSection_id'] ?? null;
-                if ($old === null) {
-                    $trainerQuery->whereNull('sportSection_id');
-                } else {
-                    $trainerQuery->where('sportSection_id', (int)$old);
-                }
-            }
-            if (array_key_exists('organiser_id', $updates)) {
-                $old = $oldDefaults['default_organiser_id'] ?? null;
-                if ($old === null) {
-                    $trainerQuery->whereNull('organiser_id');
-                } else {
-                    $trainerQuery->where('organiser_id', (int)$old);
-                }
-            }
-
-            $trainerQuery->update(array_merge($updates, [
-                'bearbeiter_id' => Auth::id(),
-                'updated_at' => Carbon::now(),
-            ]));
-        }
+        DB::table('trainertables')
+            ->where('trainertyp_id', $trainertyp->id)
+            ->update($updates);
 
         // Optionaler Konsistenz-Check: wenn beides gesetzt ist, muss die Abteilung zum Organiser passen.
         // Diese Prüfung ist bereits bei der Validierung oben erfolgt.

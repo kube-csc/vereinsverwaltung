@@ -291,6 +291,7 @@ class TrainerAdminController extends Controller
         $showInactive = (bool)$request->boolean('inactive');
 
         $trainertyps = Trainertyp::query()
+            ->when($showInactive, fn ($q) => $q->withTrashed(), fn ($q) => $q->whereNull('deleted_at'))
             ->orderBy('trainerfunktion')
             ->get();
 
@@ -360,7 +361,16 @@ class TrainerAdminController extends Controller
         // - Hier gibt es keinen User-Parameter, weil die Aktion aus einer globalen Übersicht kommt.
         // - Es wird nur anhand der trainertable-ID reaktiviert.
         // - Redirect geht zurück auf die Übersicht.
-        $assignment = Trainertable::withTrashed()->findOrFail($trainertable);
+        $assignment = Trainertable::withTrashed()
+            ->with('trainertyp')
+            ->findOrFail($trainertable);
+
+        // Aktivieren ist nicht erlaubt, wenn der zugehörige Trainertyp selbst deaktiviert ist.
+        // (z.B. status=0 oder soft-gelöscht)
+        $type = $assignment->trainertyp;
+        if (!$type || (int)($type->status ?? 0) !== 1 || $type->deleted_at) {
+            return back()->with('success', 'Aktivierung nicht möglich: die Trainerfunktion ist deaktiviert.');
+        }
 
         if (!$assignment->trashed()) {
             return back()->with('success', 'Zuordnung ist bereits aktiv.');

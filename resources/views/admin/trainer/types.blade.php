@@ -44,12 +44,18 @@
                         @php
                             $assignments = $groupedAssignments->get($typ->id, collect());
                             $typeOrganiser = collect($organisers ?? [])->firstWhere('id', $typ->organiser_id ?? null);
+                            $typIsActive = !$typ->deleted_at && (int)($typ->status ?? 0) === 1;
                         @endphp
 
-                        <div class="border rounded p-4">
+                        <div class="border rounded p-4 {{ $typIsActive ? '' : 'bg-gray-50' }}">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <div class="text-lg font-semibold">{{ $typ->trainerfunktion }}</div>
+                                    <div class="text-lg font-semibold">
+                                        {{ $typ->trainerfunktion }}
+                                        @if(!$typIsActive)
+                                            <span class="ml-2 text-sm font-normal text-red-700">(Trainerfunktion deaktiviert)</span>
+                                        @endif
+                                    </div>
                                     <div class="mt-1 text-sm text-gray-600">
                                         Veranstaltung: <span class="font-medium">{{ $typeOrganiser?->veranstaltung ?? '—' }}</span>
                                     </div>
@@ -77,6 +83,7 @@
                                         @foreach($assignments as $a)
                                             @php
                                                 $fullName = trim(($a->user->vorname ?? '') . ' ' . ($a->user->nachname ?? ''));
+                                                 $typeIsActive = !$a->trainertyp?->deleted_at && (int)($a->trainertyp?->status ?? 0) === 1;
                                             @endphp
                                             <tr class="border-b">
                                                 <td class="py-2">{{ $fullName !== '' ? $fullName : ('User ID ' . $a->user_id) }}</td>
@@ -121,10 +128,14 @@
                                                              </form>
                                                          </div>
                                                     @else
-                                                        <form method="POST" action="{{ route('admin.trainer.types.reactivate', $a->id) }}">
-                                                            @csrf
-                                                            <button type="submit" class="p-2 bg-green-600 rounded shadow text-white">Reaktivieren</button>
-                                                        </form>
+                                                         @if($typeIsActive)
+                                                             <form method="POST" action="{{ route('admin.trainer.types.reactivate', $a->id) }}">
+                                                                 @csrf
+                                                                 <button type="submit" class="p-2 bg-green-600 rounded shadow text-white">Reaktivieren</button>
+                                                             </form>
+                                                         @else
+                                                             <span class="text-sm text-gray-500">(Zuordnung deaktiviert – Trainerfunktion ist deaktiviert)</span>
+                                                         @endif
                                                     @endif
                                                 </td>
                                             </tr>

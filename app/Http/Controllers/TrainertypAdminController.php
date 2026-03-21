@@ -135,6 +135,22 @@ class TrainertypAdminController extends Controller
         $trainertyp->updated_at = Carbon::now();
         $trainertyp->save();
 
+        // Wenn eine Trainerfunktion deaktiviert wird, sollen auch alle Zuordnungen (trainertables)
+        // dieses Typs deaktiviert werden.
+        // Wir markieren sie als inaktiv und soft-löschen sie, damit sie nicht mehr als aktiv gelten.
+        $assignments = Trainertable::query()
+            ->where('trainertyp_id', $trainertyp->id)
+            ->whereNull('deleted_at')
+            ->get();
+
+        foreach ($assignments as $assignment) {
+            $assignment->status = 0;
+            $assignment->bearbeiter_id = (int)Auth::id();
+            $assignment->updated_at = Carbon::now();
+            $assignment->save();
+            $assignment->delete();
+        }
+
         // SoftDelete: Datensätze bleiben erhalten
         $trainertyp->delete();
 

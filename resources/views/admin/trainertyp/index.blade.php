@@ -54,7 +54,6 @@
                             <th class="py-2">aktiv</th>
                             <th class="py-2">Trainer öffentlich</th>
                              <th class="py-2">Trainer-Veranstaltung</th>
-                             <th class="py-2">Trainer-Abteilung</th>
                             <th class="py-2">Aktion</th>
                         </tr>
                         </thead>
@@ -71,20 +70,13 @@
                                 </td>
                                 <td class="py-2">{{ (int)($t->default_sichtbar ?? 1) === 1 ? 'ja' : 'nein' }}</td>
                                 @php
-                                    $section = ($sportSections ?? collect())->firstWhere('id', (int)($t->default_sportSection_id ?? 0));
-                                    $organiser = ($organisers ?? collect())->firstWhere('id', (int)($t->default_organiser_id ?? 0));
-                                    $sectionLabel = $section
-                                        ? trim(($section->abteilung ?? '') . ((isset($section->domain) && $section->domain) ? ' (' . $section->domain . ')' : ''))
-                                        : '';
+                                    $organiser = ($organisers ?? collect())->firstWhere('id', (int)($t->organiser_id ?? 0));
                                     $organiserLabel = $organiser
                                         ? trim(($organiser->veranstaltung ?? '') . ((isset($organiser->veranstaltungDomain) && $organiser->veranstaltungDomain) ? ' (' . $organiser->veranstaltungDomain . ')' : ''))
                                         : '';
                                 @endphp
                                 <td class="py-2">
                                     {{ $organiserLabel !== '' ? $organiserLabel : '—' }}
-                                </td>
-                                <td class="py-2">
-                                    {{ $sectionLabel !== '' ? $sectionLabel : '—' }}
                                 </td>
                                 <td class="py-2">
                                     <div class="flex gap-2">

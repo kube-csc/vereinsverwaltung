@@ -10,16 +10,49 @@ use App\Models\SportSection;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class TrainerAdminController extends Controller
 {
+    public function sportSectionsForOrganiser(int $organiser): JsonResponse
+    {
+        $sportSectionIds = DB::table('organiser_sport_section')
+            ->where('organiser_id', $organiser)
+            ->pluck('sport_section_id')
+            ->map(fn ($v) => (int)$v)
+            ->all();
+
+        if (empty($sportSectionIds)) {
+            return response()->json([]);
+        }
+
+        $sections = SportSection::query()
+            ->whereIn('id', $sportSectionIds)
+            ->whereNull('deleted_at')
+            ->orderBy('abteilung')
+            ->get()
+            ->map(fn ($s) => [
+                'id' => (int)$s->id,
+                'label' => trim(($s->abteilung ?? '') . ((isset($s->domain) && $s->domain) ? ' (' . $s->domain . ')' : '')),
+            ])
+            ->values();
+
+        return response()->json($sections);
+    }
+
     public function index(Request $request): View
     {
         $q = trim((string)$request->get('q', ''));
 
         $users = User::query()
+            // Nur Mitglieder anzeigen, die nicht ausgetreten sind.
+            ->where(function ($q) {
+                $q->whereNull('vereinsaustritt')
+                    ->orWhere('vereinsaustritt', '>', Carbon::today());
+            })
             ->when($q !== '', function ($query) use ($q) {
                 $query->where(function ($sub) use ($q) {
                     $sub->where('vorname', 'like', '%' . $q . '%')
@@ -45,15 +78,20 @@ class TrainerAdminController extends Controller
             ->orderBy('trainerfunktion')
             ->get();
 
+        $organisers = Organiser::query()
+            ->whereNull('deleted_at')
+            ->orderBy('veranstaltung')
+            ->get();
+
         $activeAssignments = Trainertable::query()
-            ->with('trainertyp')
+            ->with(['trainertyp', 'organiser', 'sportSection'])
             ->where('user_id', $user->id)
             ->whereNull('deleted_at')
             ->orderBy('trainertyp_id')
             ->get();
 
         $inactiveAssignments = Trainertable::query()
-            ->with('trainertyp')
+            ->with(['trainertyp', 'organiser', 'sportSection'])
             ->where('user_id', $user->id)
             ->onlyTrashed()
             ->orderByDesc('deleted_at')
@@ -64,6 +102,7 @@ class TrainerAdminController extends Controller
             'trainertyps' => $trainertyps,
             'activeAssignments' => $activeAssignments,
             'inactiveAssignments' => $inactiveAssignments,
+            'organisers' => $organisers,
         ]);
     }
 
@@ -76,6 +115,7 @@ class TrainerAdminController extends Controller
         $validated = $request->validate([
             'trainertyp_ids' => ['nullable', 'array'],
             'trainertyp_ids.*' => ['integer', 'exists:trainertyps,id'],
+            'sportSection_id' => ['nullable', 'integer', 'exists:sport_sections,id'],
         ]);
 
         $trainertypIds = collect($validated['trainertyp_ids'] ?? [])
@@ -87,42 +127,100 @@ class TrainerAdminController extends Controller
             return back()->with('success', 'Keine Änderungen gespeichert.');
         }
 
-        $existingActive = Trainertable::query()
-            ->where('user_id', $user->id)
-            ->whereNull('deleted_at')
-            ->pluck('trainertyp_id')
-            ->map(fn ($v) => (int)$v)
-            ->all();
-
-        $toAdd = $trainertypIds->diff($existingActive);
-
-        foreach ($toAdd as $trainertypId) {
+        foreach ($trainertypIds as $trainertypId) {
             $typ = Trainertyp::query()
                 ->where('status', 1)
                 ->findOrFail((int)$trainertypId);
 
-            // Reaktivieren, falls schon mal soft-gelöscht existiert
-            $existingTrashed = Trainertable::query()
+            $organiserId = (int)($typ->organiser_id ?? 0);
+            $sportSectionIdInput = (int)($validated['sportSection_id'] ?? 0);
+
+            // Wenn der Trainertyp keine Veranstaltung hat, darf auch keine Abteilung gespeichert werden.
+            if ($organiserId <= 0) {
+                $sportSectionIdInput = 0;
+            } else {
+                // SportSection muss zur Veranstaltung (organiser) passen (organiser_sport_section).
+                if ($sportSectionIdInput > 0) {
+                    $exists = DB::table('organiser_sport_section')
+                        ->where('organiser_id', $organiserId)
+                        ->where('sport_section_id', $sportSectionIdInput)
+                        ->exists();
+
+                    if (!$exists) {
+                        return back()
+                            ->withErrors(['sportSection_id' => 'Die ausgewählte Abteilung gehört nicht zur ausgewählten Veranstaltung.'])
+                            ->withInput();
+                    }
+                }
+            }
+
+            // Wenn bereits eine AKTIVE Zuordnung mit gleicher Abteilung existiert,
+            // dann nichts neu anlegen (Duplikat vermeiden).
+            // WICHTIG: Es kann mehrere Zuordnungen pro User+Trainertyp geben,
+            // solange sich die Abteilung (sportSection_id) unterscheidet.
+            $alreadyActiveSameSection = Trainertable::query()
+                ->where('user_id', $user->id)
+                ->where('trainertyp_id', $trainertypId)
+                ->where('sportSection_id', $sportSectionIdInput)
+                ->whereNull('deleted_at')
+                ->exists();
+
+            if ($alreadyActiveSameSection) {
+                continue;
+            }
+
+            // Wiederverwendung von soft-gelöschten Datensätzen zur Reduktion unnötiger DB-Einträge.
+            // Priorität:
+            //  1) exakt passende deaktivierte Zuordnung des Users (gleicher Typ + gleiche Abteilung)
+            //  2) sonst irgendeine deaktivierte Zuordnung des Users ("Recycling" -> Typ/Abteilung werden umgehängt)
+            //  3) sonst irgendeine deaktivierte Zuordnung ("Recycling" über alle User)
+            //  4) sonst neu anlegen
+            // Beim Recycling gilt fachlich: "Neuanlage" (Store) => created_at + autor_id neu setzen.
+            $reuseCandidate = Trainertable::query()
                 ->onlyTrashed()
                 ->where('user_id', $user->id)
                 ->where('trainertyp_id', $trainertypId)
+                ->where('sportSection_id', $sportSectionIdInput)
                 ->latest('deleted_at')
                 ->first();
 
-            if ($existingTrashed) {
-                $existingTrashed->restore();
-                $existingTrashed->status = 1;
-                $existingTrashed->bearbeiter_id = (int)Auth::id();
-                $existingTrashed->updated_at = Carbon::now();
-                $existingTrashed->save();
+            if (!$reuseCandidate) {
+                $reuseCandidate = Trainertable::query()
+                    ->onlyTrashed()
+                    ->where('user_id', $user->id)
+                    ->latest('deleted_at')
+                    ->first();
+            }
+
+            if (!$reuseCandidate) {
+                $reuseCandidate = Trainertable::query()
+                    ->onlyTrashed()
+                    ->latest('deleted_at')
+                    ->first();
+            }
+
+            if ($reuseCandidate) {
+                // Restore + Umhängen auf Zielkombination.
+                $reuseCandidate->restore();
+                $reuseCandidate->status = 1;
+                $reuseCandidate->sichtbar = (int)($typ->default_sichtbar ?? 1);
+                $reuseCandidate->user_id = $user->id;
+                $reuseCandidate->trainertyp_id = (int)$trainertypId;
+                $reuseCandidate->organiser_id = $organiserId;
+                $reuseCandidate->sportSection_id = $sportSectionIdInput;
+                $reuseCandidate->autor_id = (int)Auth::id();
+                $reuseCandidate->bearbeiter_id = (int)Auth::id();
+                $reuseCandidate->created_at = Carbon::now();
+                $reuseCandidate->updated_at = Carbon::now();
+                $reuseCandidate->save();
                 continue;
             }
 
             Trainertable::create([
                 'user_id' => $user->id,
                 'trainertyp_id' => (int)$trainertypId,
-                'sportSection_id' => (int)($typ->default_sportSection_id ?? 0),
-                'organiser_id' => (int)($typ->default_organiser_id ?? 0),
+                'sportSection_id' => $sportSectionIdInput,
+                'organiser_id' => $organiserId,
                 'status' => 1,
                 'sichtbar' => (int)($typ->default_sichtbar ?? 1),
                 'autor_id' => (int)Auth::id(),
@@ -164,6 +262,11 @@ class TrainerAdminController extends Controller
 
     public function reactivate(User $user, int $trainertable): RedirectResponse
     {
+        // Reaktivierung aus der Benutzer-Detailansicht (/admin/trainer/{user}).
+        // Unterschied zu reactivateFromTypes():
+        // - Hier wird die Zuordnung IM KONTEXT EINES BESTIMMTEN USERS reaktiviert.
+        // - Wir filtern extra auf user_id, damit keine fremde Zuordnung reaktiviert werden kann.
+        // - Redirect geht zurück auf die User-Detailseite.
         $trainertable = Trainertable::withTrashed()
             ->where('user_id', $user->id)
             ->findOrFail($trainertable);
@@ -174,6 +277,8 @@ class TrainerAdminController extends Controller
 
         $trainertable->restore();
         $trainertable->status = 1;
+        // Reaktivieren ist NICHT die "Neuanlage" (Store), sondern nur das Wieder-Aktivieren.
+        // Daher bleiben autor_id/created_at unverändert.
         $trainertable->bearbeiter_id = (int)Auth::id();
         $trainertable->updated_at = Carbon::now();
         $trainertable->save();
@@ -250,6 +355,11 @@ class TrainerAdminController extends Controller
 
     public function reactivateFromTypes(int $trainertable): RedirectResponse
     {
+        // Reaktivierung aus der Trainertyp-Übersicht (/admin/trainer-typen).
+        // Unterschied zu reactivate():
+        // - Hier gibt es keinen User-Parameter, weil die Aktion aus einer globalen Übersicht kommt.
+        // - Es wird nur anhand der trainertable-ID reaktiviert.
+        // - Redirect geht zurück auf die Übersicht.
         $assignment = Trainertable::withTrashed()->findOrFail($trainertable);
 
         if (!$assignment->trashed()) {
@@ -258,6 +368,8 @@ class TrainerAdminController extends Controller
 
         $assignment->restore();
         $assignment->status = 1;
+        // Reaktivieren ist NICHT die "Neuanlage" (Store), sondern nur das Wieder-Aktivieren.
+        // Daher bleiben autor_id/created_at unverändert.
         $assignment->bearbeiter_id = (int)Auth::id();
         $assignment->updated_at = Carbon::now();
         $assignment->save();

@@ -42,17 +42,94 @@
                         @csrf
 
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1">Trainerfunktionen (Mehrfachauswahl)</label>
-                            <select name="trainertyp_ids[]" multiple class="w-full rounded border-gray-300" size="8">
+                            <label class="block text-sm text-gray-600 mb-1">Trainerfunktion auswählen</label>
+                            <select id="trainertyp_id" name="trainertyp_ids[]" class="w-full rounded border-gray-300">
                                 @foreach($trainertyps as $typ)
-                                    <option value="{{ $typ->id }}">{{ $typ->trainerfunktion }}</option>
+                                    <option value="{{ $typ->id }}" data-organiser-id="{{ (int)($typ->organiser_id ?? 0) }}">
+                                        {{ $typ->trainerfunktion }}
+                                    </option>
                                 @endforeach
                             </select>
-                            <div class="text-xs text-gray-500 mt-1">Mit STRG/CTRL mehrere Funktionen auswählen.</div>
+                            <div class="text-xs text-gray-500 mt-1">Es kann pro Speichern-Vorgang eine Trainerfunktion hinzugefügt werden.</div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Abteilung auswählen</label>
+                            <select id="sportSection_id" name="sportSection_id" class="w-full rounded border-gray-300">
+                                <option value="0">keine</option>
+                            </select>
+                            <div class="text-xs text-gray-500 mt-1" id="sportSectionHint"></div>
                         </div>
 
                         <button type="submit" class="p-2 bg-blue-500 rounded shadow text-white">Speichern</button>
                     </form>
+
+                    <script>
+                        (function () {
+                            var typSelect = document.getElementById('trainertyp_id');
+                            var sectionSelect = document.getElementById('sportSection_id');
+                            var hint = document.getElementById('sportSectionHint');
+
+                            if (!typSelect || !sectionSelect) return;
+
+                            function setHint(text, isError) {
+                                if (!hint) return;
+                                hint.textContent = text || '';
+                                hint.className = 'text-xs mt-1 ' + (isError ? 'text-red-600' : 'text-gray-500');
+                            }
+
+                            function clearOptions() {
+                                while (sectionSelect.options.length > 0) {
+                                    sectionSelect.remove(0);
+                                }
+                            }
+
+                            async function loadSectionsForSelectedType() {
+                                var opt = typSelect.options[typSelect.selectedIndex];
+                                var organiserId = opt ? String(opt.getAttribute('data-organiser-id') || '0') : '0';
+
+                                clearOptions();
+                                var noneOpt = document.createElement('option');
+                                noneOpt.value = '0';
+                                noneOpt.textContent = 'keine';
+                                sectionSelect.appendChild(noneOpt);
+
+                                if (!organiserId || organiserId === '0') {
+                                    sectionSelect.value = '0';
+                                    setHint('Für diese Trainerfunktion ist keine Veranstaltung hinterlegt.', false);
+                                    return;
+                                }
+
+                                setHint('Lade Abteilungen…', false);
+
+                                try {
+                                    var url = '/admin/trainer/organiser/' + encodeURIComponent(organiserId) + '/sportsections';
+                                    var res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                                    var data = await res.json();
+
+                                    if (!Array.isArray(data) || data.length === 0) {
+                                        setHint('Für die Veranstaltung sind keine Abteilungen hinterlegt.', true);
+                                        return;
+                                    }
+
+                                    data.forEach(function (s) {
+                                        var o = document.createElement('option');
+                                        o.value = String(s.id);
+                                        o.textContent = String(s.label || 'SportSection');
+                                        sectionSelect.appendChild(o);
+                                    });
+
+                                    setHint('', false);
+                                } catch (e) {
+                                    setHint('Fehler beim Laden der Abteilungen (' + (e && e.message ? e.message : 'unbekannt') + ').', true);
+                                }
+                            }
+
+                            typSelect.addEventListener('change', loadSectionsForSelectedType);
+                            loadSectionsForSelectedType();
+                        })();
+                    </script>
 
                     <div class="mt-10">
                         <h3 class="font-semibold text-lg mb-2">Aktive Zuordnungen</h3>
@@ -64,6 +141,8 @@
                                 <thead>
                                 <tr class="text-left border-b">
                                     <th class="py-2">Trainerfunktion</th>
+                                    <th class="py-2">Veranstaltung</th>
+                                    <th class="py-2">Abteilung</th>
                                     <th class="py-2">Öffentlich</th>
                                     <th class="py-2">Status</th>
                                     <th class="py-2">Aktion</th>
@@ -73,6 +152,14 @@
                                 @foreach($activeAssignments as $a)
                                     <tr class="border-b">
                                         <td class="py-2">{{ $a->trainertyp?->trainerfunktion ?? ('ID ' . $a->trainertyp_id) }}</td>
+                                        <td class="py-2">
+                                            {{ $a->organiser?->veranstaltung ? $a->organiser->veranstaltung : '—' }}
+                                        </td>
+
+                                        <td class="py-2">
+                                            {{ $a->sportSection?->abteilung ? $a->sportSection->abteilung : '—' }}
+                                        </td>
+
                                         <td class="py-2">
                                             {{ (int)$a->sichtbar === 1 ? 'ja' : 'nein' }}
                                         </td>
@@ -109,7 +196,8 @@
                                 <thead>
                                 <tr class="text-left border-b">
                                     <th class="py-2">Trainerfunktion</th>
-                                    <th class="py-2">Deaktiviert am</th>
+                                    <th class="py-2">Veranstaltung</th>
+                                    <th class="py-2">Abteilung</th>
                                     <th class="py-2">Aktion</th>
                                 </tr>
                                 </thead>
@@ -117,7 +205,12 @@
                                 @foreach($inactiveAssignments as $a)
                                     <tr class="border-b">
                                         <td class="py-2">{{ $a->trainertyp?->trainerfunktion ?? ('ID ' . $a->trainertyp_id) }}</td>
-                                        <td class="py-2">{{ optional($a->deleted_at)->format('d.m.Y H:i') }}</td>
+                                        <td class="py-2">
+                                            {{ $a->organiser?->veranstaltung ? $a->organiser->veranstaltung : '—' }}
+                                        </td>
+                                        <td class="py-2">
+                                            {{ $a->sportSection?->abteilung ? $a->sportSection->abteilung : '—' }}
+                                        </td>
                                         <td class="py-2">
                                             <form method="POST" action="{{ route('admin.trainer.reactivate', [$user->id, $a->id]) }}">
                                                 @csrf
@@ -135,5 +228,6 @@
             </div>
         </div>
     </div>
+
 </x-app-layout>
 

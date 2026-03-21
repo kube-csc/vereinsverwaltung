@@ -83,10 +83,6 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')
     Route::post('/trainertypen/{trainertyp}/deaktivieren', [TrainertypAdminController::class, 'destroy'])->whereNumber('trainertyp')->name('trainertyp.destroy');
     Route::post('/trainertypen/{trainertyp}/reaktivieren', [TrainertypAdminController::class, 'restore'])->whereNumber('trainertyp')->name('trainertyp.restore');
 
-    // Hilfs-Endpoint: SportSections für einen Organiser laden (für dynamische Dropdowns)
-    Route::get('/trainertypen/organiser/{organiser}/sportsections', [TrainertypAdminController::class, 'sportSectionsForOrganiser'])
-        ->whereNumber('organiser')
-        ->name('trainertyp.organiser.sportsections');
     Route::post('/trainer/{user}/zuordnung/{trainertable}/deaktivieren', [TrainerAdminController::class, 'deactivate'])
         ->whereNumber('user')
         ->whereNumber('trainertable')
@@ -99,6 +95,11 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')
         ->whereNumber('user')
         ->whereNumber('trainertable')
         ->name('trainer.reactivate');
+
+    // Hilfs-Endpoint: SportSections für einen Organiser laden (für Trainer-Zuordnung)
+    Route::get('/trainer/organiser/{organiser}/sportsections', [TrainerAdminController::class, 'sportSectionsForOrganiser'])
+        ->whereNumber('organiser')
+        ->name('trainer.organiser.sportsections');
 
     // Aktionen aus der Trainertyp-Übersicht
     Route::post('/trainer-typen/zuordnung/{trainertable}/deaktivieren', [TrainerAdminController::class, 'deactivateFromTypes'])

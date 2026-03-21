@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::table('trainertyps', function (Blueprint $table) {
             $table->integer('default_sichtbar')->default(1)->after('status');
-            $table->unsignedBigInteger('default_sportSection_id')->default(0)->after('default_sichtbar');
-            $table->unsignedBigInteger('default_organiser_id')->default(0)->after('default_sportSection_id');
+            $table->unsignedBigInteger('organiser_id')->default(0)->after('default_sichtbar');
         });
     }
 
@@ -26,8 +25,7 @@ return new class extends Migration
         Schema::table('trainertyps', function (Blueprint $table) {
             $table->dropColumn([
                 'default_sichtbar',
-                'default_sportSection_id',
-                'default_organiser_id',
+                'organiser_id',
             ]);
         });
     }

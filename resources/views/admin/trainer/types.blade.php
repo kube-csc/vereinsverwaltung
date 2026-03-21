@@ -43,8 +43,7 @@
                     @foreach($trainertyps as $typ)
                         @php
                             $assignments = $groupedAssignments->get($typ->id, collect());
-                            $typeOrganiser = collect($organisers ?? [])->firstWhere('id', $typ->default_organiser_id ?? null);
-                            $typeSportSection = collect($sportSections ?? [])->firstWhere('id', $typ->default_sportSection_id ?? null);
+                            $typeOrganiser = collect($organisers ?? [])->firstWhere('id', $typ->organiser_id ?? null);
                         @endphp
 
                         <div class="border rounded p-4">
@@ -53,8 +52,6 @@
                                     <div class="text-lg font-semibold">{{ $typ->trainerfunktion }}</div>
                                     <div class="mt-1 text-sm text-gray-600">
                                         Veranstaltung: <span class="font-medium">{{ $typeOrganiser?->veranstaltung ?? '—' }}</span>
-                                        <span class="mx-2">|</span>
-                                        Abteilung: <span class="font-medium">{{ $typeSportSection?->abteilung ?? '—' }}</span>
                                     </div>
                                 </div>
                                 <div class="text-sm text-gray-500">Zuordnungen: {{ $assignments->count() }}</div>

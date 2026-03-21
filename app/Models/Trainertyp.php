@@ -15,15 +15,13 @@ class Trainertyp extends Model
         'trainerfunktion',
         'status',
         'default_sichtbar',
-        'default_sportSection_id',
-        'default_organiser_id',
+        'organiser_id',
     ];
 
     protected $casts = [
         'status' => 'integer',
         'default_sichtbar' => 'integer',
-        'default_sportSection_id' => 'integer',
-        'default_organiser_id' => 'integer',
+        'organiser_id' => 'integer',
         'deleted_at' => 'datetime',
     ];
 

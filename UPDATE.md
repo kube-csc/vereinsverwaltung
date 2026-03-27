@@ -1,4 +1,11 @@
 ## Update Anleitung
+**Version V00.10.03**
+
+***Datenbankanpassungen***
+- Fahrtenbuch 
+
+- migration
+
 **Version V00.10.02**
 
 - migration

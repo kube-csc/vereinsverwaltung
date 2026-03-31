@@ -363,6 +363,22 @@
                                         @endif
                                     </div>
                                 </div>
+
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        @if(Session::has('regattaSelectUeberschrift'))
+                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/RegattateamManager')">
+                                                <div class="justify-between my-2">
+                                                    <div class="flex">
+                                                        <p class="font-bold text-lg">
+                                                            Mannschaften verwalten
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
 
                         </div>

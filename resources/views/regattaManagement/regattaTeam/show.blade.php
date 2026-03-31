@@ -15,7 +15,7 @@
             <div class="mb-2"><strong>Telefon:</strong> {{ $regattaTeam->telefon }}</div>
             <div class="mb-2"><strong>E-Mail:</strong> {{ $regattaTeam->email }}</div>
             <div class="mb-2"><strong>Homepage:</strong> {{ $regattaTeam->homepage }}</div>
-            <div class="mb-2"><strong>Beschreibung:</strong> {{ $regattaTeam->beschreibung }}</div>
+            <div class="mb-2"><strong>Beschreibung:</strong> {!! $regattaTeam->beschreibung !!}</div>
             <div class="mb-2"><strong>Kommentar:</strong> {{ $regattaTeam->kommentar }}</div>
             <div class="mb-2"><strong>Status:</strong> {{ $regattaTeam->status ?? '-' }}</div>
             <div class="mb-2"><strong>Wertungsgruppe:</strong> {{ $regattaTeam->teamWertungsGruppe->typ }}</div>

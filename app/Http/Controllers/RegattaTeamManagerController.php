@@ -26,30 +26,19 @@ class RegattaTeamManagerController extends Controller
         }
 
         $query = trim((string)$request->get('q', ''));
-        $templateId = $request->get('template_id');
+        $raceTypeId = $request->get('race_type_id');
 
         // Basis: alle Teams der aktuellen Regatta
         $regattaTeamsQuery = RegattaTeam::query()
             ->where('regatta_id', $regattaId)
-            ->with(['teamWertungsGruppe']);
+            ->with(['teamWertungsGruppe.raceTypeTemplate', 'regatta']);
 
-        if ($query !== '' || $templateId) {
-            // Wenn Filter aktiv sind, laden wir zuerst die teamlink IDs, die den Kriterien entsprechen
-            $filteredQuery = RegattaTeam::query()->where('regatta_id', $regattaId);
+        if ($query !== '') {
+            $regattaTeamsQuery->where('teamname', 'like', '%' . $query . '%');
+        }
 
-            if ($query !== '') {
-                $filteredQuery->where('teamname', 'like', '%' . $query . '%');
-            }
-
-            if ($templateId) {
-                $raceTypeIds = RaceType::where('race_type_template_id', $templateId)->pluck('id');
-                $filteredQuery->whereIn('gruppe_id', $raceTypeIds);
-            }
-
-            $matchingTeamlinks = $filteredQuery->pluck('teamlink')->unique()->filter();
-
-            // Nun laden wir ALLE Teams dieser Mannschaften (teamlink)
-            $regattaTeamsQuery->whereIn('teamlink', $matchingTeamlinks);
+        if ($raceTypeId) {
+            $regattaTeamsQuery->where('gruppe_id', $raceTypeId);
         }
 
         $regattaTeams = $regattaTeamsQuery
@@ -58,22 +47,17 @@ class RegattaTeamManagerController extends Controller
             ->orderBy('datum')
             ->get();
 
-        // Gruppenbildung: teamlink => Teams
-        $groups = $regattaTeams->groupBy('teamlink');
-
-        // Alle verfügbaren Bootsklassen-Templates für das Dropdown laden (nur die der Regatta zugeordnet sind)
-        $templates = RaceTypeTemplate::whereIn('id', function($query) use ($regattaId) {
-            $query->select('race_type_template_id')
-                ->from('race_types')
-                ->where('regatta_id', $regattaId);
-        })->orderBy('typ')->get();
+        // Alle verfügbaren Bootsklassen für das Dropdown laden (direkt aus race_types der Regatta)
+        $raceTypes = RaceType::where('regatta_id', $regattaId)
+            ->orderBy('typ')
+            ->get();
 
         return view('regattaManagement.regattaTeamManager.index', [
             'regattaId' => $regattaId,
-            'groups' => $groups,
+            'regattaTeams' => $regattaTeams,
             'query' => $query,
-            'templateId' => $templateId,
-            'templates' => $templates,
+            'raceTypeId' => $raceTypeId,
+            'raceTypes' => $raceTypes,
         ]);
     }
 }

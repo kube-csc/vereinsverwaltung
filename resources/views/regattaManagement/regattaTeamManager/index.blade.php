@@ -30,12 +30,12 @@
                     </div>
 
                     <div>
-                        <label for="template_id" class="block font-semibold mb-1">Bootsklasse</label>
-                        <select id="template_id" name="template_id" class="form-select w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <label for="race_type_id" class="block font-semibold mb-1">Bootsklasse</label>
+                        <select id="race_type_id" name="race_type_id" class="form-select w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             <option value="">-- Alle --</option>
-                            @foreach($templates as $template)
-                                <option value="{{ $template->id }}" {{ $templateId == $template->id ? 'selected' : '' }}>
-                                    {{ $template->typ }} ({{ $template->id }})
+                            @foreach($raceTypes as $raceType)
+                                <option value="{{ $raceType->id }}" {{ $raceTypeId == $raceType->id ? 'selected' : '' }}>
+                                    {{ $raceType->typ }} ({{ $raceType->id }})
                                 </option>
                             @endforeach
                         </select>
@@ -52,45 +52,48 @@
                 </form>
 
                 <p class="text-xs text-gray-500 mt-2">
-                    Hinweis: Diese Seite gruppiert nach <code>teamlink</code>. Die Suche ist aktuell eine einfache LIKE-Suche auf <code>teamname</code>.
+                    Hinweis: Diese Seite listet alle Teams der Regatta auf. Die Suche filtert nach <code>teamname</code> und <code>Bootsklasse</code>.
                 </p>
             </div>
 
             <div class="mt-8">
-                @if($groups->isEmpty())
+                @if($regattaTeams->isEmpty())
                     <div class="p-4 bg-yellow-50 border border-yellow-200 rounded">
                         Keine Teams gefunden.
                     </div>
                 @else
                     <div class="space-y-6">
-                        @foreach($groups as $teamlink => $teams)
-                            <div class="border rounded-lg overflow-hidden">
+                        @foreach($regattaTeams as $team)
+                            <div class="border rounded-lg overflow-hidden mb-6">
                                 <div class="bg-gray-100 px-4 py-3 flex items-center justify-between">
                                     <div>
                                         <div class="font-semibold text-lg text-blue-800">
-                                            Mannschaft: {{ $teams->first()->teamname ?? '-' }}
+                                            Team: {{ $team->teamname ?? '-' }} (#{{ $team->id }})
                                         </div>
                                         <div class="text-xs text-gray-600">
-                                            Teamlink-ID: {{ $teamlink ?? '-' }} | Teams in dieser Mannschaft: {{ $teams->count() }}
+                                            Teamlink-ID: {{ $team->teamlink ?? '-' }}
+                                        </div>
+                                        <div class="text-xs text-blue-600 italic">
+                                            Bootstyp: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ $team->gruppe_id ?? '-' }})
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="divide-y">
-                                    @foreach($teams as $team)
-                                        <div class="px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                                            <div>
-                                                <div class="font-semibold">{{ $team->teamname }}</div>
-                                                <div class="text-xs text-gray-600">
-                                                    Wertungsart: {{ optional($team->teamWertungsGruppe)->typ ?? '-' }} | Gruppe-ID: {{ $team->gruppe_id }}
-                                                </div>
-                                                <div class="text-xs text-gray-500">
-                                                    PLZ: {{ $team->plz ?? '-' }} | Telefon: {{ $team->telefon ?? '-' }} | E-Mail: {{ $team->email ?? '-' }}
-                                                </div>
+                                    <div class="px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                                        <div>
+                                            <div class="font-semibold">{{ $team->teamname }} (#{{ $team->id }})</div>
+                                            <div class="text-xs text-gray-600">
+                                                Wertungsart: {{ optional($team->teamWertungsGruppe)->typ ?? '-' }} | Gruppe-ID: {{ $team->gruppe_id }}
                                             </div>
-
+                                            <div class="text-xs text-gray-500">
+                                                Regatta: {{ optional($team->regatta)->ueberschrift ?? '-' }}
+                                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                PLZ: {{ $team->plz ?? '-' }} | Telefon: {{ $team->telefon ?? '-' }} | E-Mail: {{ $team->email ?? '-' }}
+                                            </div>
                                         </div>
-                                    @endforeach
+                                    </div>
                                 </div>
                             </div>
                         @endforeach

@@ -27,11 +27,38 @@ class RegattaTeamManagerController extends Controller
 
         $query = trim((string)$request->get('q', ''));
         $raceTypeId = $request->get('race_type_id');
+        $teamlinkFilter = $request->get('teamlink_filter');
 
         // Basis: alle Teams der aktuellen Regatta
         $regattaTeamsQuery = RegattaTeam::query()
-            ->where('regatta_id', $regattaId)
             ->with(['teamWertungsGruppe.raceTypeTemplate', 'regatta']);
+
+        if ($teamlinkFilter === 'all_db_0') {
+            // Regatta-übergreifend: nur Teams mit teamlink 0 oder NULL
+            $regattaTeamsQuery->where(function($q) {
+                $q->where('teamlink', 0)->orWhereNull('teamlink');
+            });
+        } elseif ($teamlinkFilter === 'once') {
+            // Nur Teams, deren teamlink genau einmal vorkommt (ID > 0)
+            $regattaTeamsQuery->where('regatta_id', $regattaId)
+                ->where('teamlink', '>', 0)
+                ->whereIn('teamlink', function($q) {
+                    $q->select('teamlink')
+                        ->from('regatta_teams')
+                        ->where('teamlink', '>', 0)
+                        ->groupBy('teamlink')
+                        ->havingRaw('COUNT(*) = 1');
+                });
+        } else {
+            // Standard: nur Teams der aktuellen Regatta
+            $regattaTeamsQuery->where('regatta_id', $regattaId);
+
+            if ($teamlinkFilter === '0') {
+                $regattaTeamsQuery->where(function($q) {
+                    $q->where('teamlink', 0)->orWhereNull('teamlink');
+                });
+            }
+        }
 
         if ($query !== '') {
             $regattaTeamsQuery->where('teamname', 'like', '%' . $query . '%');
@@ -47,6 +74,23 @@ class RegattaTeamManagerController extends Controller
             ->orderBy('datum')
             ->get();
 
+        // NEU: Für jedes Team mit teamlink > 0 andere Regatten laden, in denen sie gestartet sind
+        foreach ($regattaTeams as $team) {
+            $team->andereRegatten = collect();
+
+            if ($team->teamlink > 0) {
+                // Finde andere Teams mit gleichem teamlink, aber anderer Regatta
+                $team->andereRegatten = RegattaTeam::query()
+                    ->where('teamlink', $team->teamlink)
+                    ->where('regatta_id', '!=', $regattaId)
+                    ->with(['regatta', 'teamWertungsGruppe.raceTypeTemplate'])
+                    ->get()
+                    ->sortBy(function($item) {
+                        return optional($item->regatta)->datumvon;
+                    });
+            }
+        }
+
         // Alle verfügbaren Bootsklassen für das Dropdown laden (direkt aus race_types der Regatta)
         $raceTypes = RaceType::where('regatta_id', $regattaId)
             ->orderBy('typ')
@@ -57,6 +101,7 @@ class RegattaTeamManagerController extends Controller
             'regattaTeams' => $regattaTeams,
             'query' => $query,
             'raceTypeId' => $raceTypeId,
+            'teamlinkFilter' => $teamlinkFilter,
             'raceTypes' => $raceTypes,
         ]);
     }

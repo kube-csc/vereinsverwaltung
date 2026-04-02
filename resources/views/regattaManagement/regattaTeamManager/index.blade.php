@@ -80,12 +80,12 @@
                         @foreach($regattaTeams as $team)
                             <div class="border rounded-lg overflow-hidden mb-6">
                                 <div class="bg-gray-100 px-4 py-3 flex items-center justify-between">
-                                    <div>
+                                    <div class="flex-1">
                                         <div class="font-semibold text-lg text-blue-800">
                                             Team: {{ $team->teamname ?? '-' }} (#{{ $team->id }})
                                         </div>
                                         <div class="text-xs text-gray-600">
-                                            Teamlink-ID: {{ $team->teamlink ?? '-' }}<br>
+                                            Team-ID: #{{ $team->id }} | Teamlink-ID: {{ $team->teamlink ?? '-' }}<br>
                                             PLZ: {{ $team->plz ?? '-' }} | Telefon: {{ $team->telefon ?? '-' }} | E-Mail: {{ $team->email ?? '-' }}
                                         </div>
                                         <div class="text-xs text-blue-600 italic mt-1">
@@ -100,6 +100,11 @@
                                             (Min: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->min ?? '-' }}, Max: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->max ?? '-' }}, Distanz: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->distanz ?? '-' }})
                                         </div>
                                     </div>
+                                    <div class="ml-4 flex items-center gap-2">
+                                        <a href="{{ route('regattaTeamManager.edit', $team->id) }}" class="text-blue-600 hover:text-blue-900" title="Teamlink bearbeiten">
+                                            <box-icon name='edit-alt'></box-icon>
+                                        </a>
+                                    </div>
                                 </div>
 
                                 <div class="divide-y">
@@ -110,13 +115,22 @@
                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 @foreach($team->andereRegatten as $anderes)
                                                     <div class="text-xs border-l-2 border-blue-300 pl-2">
-                                                        <div class="font-bold">
-                                                            {{ optional($anderes->regatta)->ueberschrift ?? 'Unbekannte Regatta' }}
-                                                            @if(optional($anderes->regatta)->datumvon)
-                                                                ({{ \Carbon\Carbon::parse($anderes->regatta->datumvon)->format('d.m.Y') }})
-                                                            @endif
+                                                        <div class="flex justify-between items-start">
+                                                            <div>
+                                                                <div class="font-bold">
+                                                                    {{ optional($anderes->regatta)->ueberschrift ?? 'Unbekannte Regatta' }}
+                                                                    @if(optional($anderes->regatta)->datumvon)
+                                                                        ({{ \Carbon\Carbon::parse($anderes->regatta->datumvon)->format('d.m.Y') }})
+                                                                    @endif
+                                                                </div>
+                                                                <div>{{ $anderes->teamname }} (#{{ $anderes->id }})</div>
+                                                            </div>
+                                                            <div class="ml-2 flex items-center">
+                                                                <a href="{{ route('regattaTeamManager.edit', $anderes->id) }}" class="text-blue-600 hover:text-blue-900" title="Teamlink bearbeiten">
+                                                                    <box-icon name='edit-alt' size='xs'></box-icon>
+                                                                </a>
+                                                            </div>
                                                         </div>
-                                                        <div>{{ $anderes->teamname }} (#{{ $anderes->id }})</div>
                                                         <div class="italic">
                                                             Rennklasse: {{ optional($anderes->teamWertungsGruppe)->typ ?? '-' }} (#{{ $anderes->gruppe_id ?? '-' }})
                                                             (Min: {{ optional($anderes->teamWertungsGruppe)->min ?? '-' }}, Max: {{ optional($anderes->teamWertungsGruppe)->max ?? '-' }}, Distanz: {{ optional($anderes->teamWertungsGruppe)->distanz ?? '-' }})<br>

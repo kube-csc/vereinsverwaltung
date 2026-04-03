@@ -282,6 +282,30 @@ class RegattaTeamManagerController extends Controller
             $team->teamlink = $otherTeam->teamlink;
             $team->save();
             return redirect()->route('regattaTeamManager.edit', $team->id)->with('success', 'Teamlink vom Vorschlag übernommen.');
+        } elseif ($direction === 'merge_new') {
+            // Beide Teams haben teamlink=0 -> neue ID finden und beiden zuweisen
+            $existingTeamlinks = RegattaTeam::where('teamlink', '>', 0)
+                ->distinct()
+                ->orderBy('teamlink')
+                ->pluck('teamlink')
+                ->toArray();
+
+            $nextFree = 1;
+            foreach ($existingTeamlinks as $link) {
+                if ($link == $nextFree) {
+                    $nextFree++;
+                } elseif ($link > $nextFree) {
+                    break;
+                }
+            }
+
+            $team->teamlink = $nextFree;
+            $team->save();
+
+            $otherTeam->teamlink = $nextFree;
+            $otherTeam->save();
+
+            return redirect()->route('regattaTeamManager.edit', $team->id)->with('success', "Beide Teams wurden mit dem neuen Teamlink #{$nextFree} verknüpft.");
         } else {
             // Vorschlag übernimmt den Teamlink vom aktuellen Team
             $otherTeam->teamlink = $team->teamlink;

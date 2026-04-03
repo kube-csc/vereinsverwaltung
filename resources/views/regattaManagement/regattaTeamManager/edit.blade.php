@@ -187,16 +187,18 @@
                                     </div>
                                     <div class="ml-4 flex flex-col gap-1.5 min-w-[200px]">
                                         <!-- Aktuelles Team übernimmt ID vom Vorschlag -->
-                                        <form action="{{ route('regattaTeamManager.sync', $team->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="other_id" value="{{ $suggestion->id }}">
-                                            <input type="hidden" name="direction" value="take">
-                                            <button type="submit"
-                                                    class="w-full text-left text-[9px] bg-green-100 text-green-700 border border-green-300 px-2 py-1 rounded font-semibold hover:bg-green-200 transition">
-                                                <span class="block text-[10px] mb-0.5"><box-icon name='download' size='xs' class="align-middle"></box-icon> Bearbeitetes Team (#{{ $team->id }}) übernimmt Teamlink-ID {{ $suggestion->teamlink }}</span>
-                                                <span class="block font-normal opacity-75 leading-tight">Vom Vorschlag: "{{ $suggestion->teamname }}" (#{{ $suggestion->id }})</span>
-                                            </button>
-                                        </form>
+                                        @if($suggestion->teamlink > 0)
+                                            <form action="{{ route('regattaTeamManager.sync', $team->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="other_id" value="{{ $suggestion->id }}">
+                                                <input type="hidden" name="direction" value="take">
+                                                <button type="submit"
+                                                        class="w-full text-left text-[9px] bg-green-100 text-green-700 border border-green-300 px-2 py-1 rounded font-semibold hover:bg-green-200 transition">
+                                                    <span class="block text-[10px] mb-0.5"><box-icon name='download' size='xs' class="align-middle"></box-icon> Bearbeitetes Team (#{{ $team->id }}) übernimmt Teamlink-ID {{ $suggestion->teamlink }}</span>
+                                                    <span class="block font-normal opacity-75 leading-tight">Vom Vorschlag: "{{ $suggestion->teamname }}" (#{{ $suggestion->id }})</span>
+                                                </button>
+                                            </form>
+                                        @endif
 
                                         <!-- Vorschlag übernimmt ID von aktuellem Team -->
                                         @if($team->teamlink > 0)
@@ -208,6 +210,20 @@
                                                         class="w-full text-left text-[9px] bg-blue-100 text-blue-700 border border-blue-300 px-2 py-1 rounded font-semibold hover:bg-blue-200 transition">
                                                     <span class="block text-[10px] mb-0.5"><box-icon name='upload' size='xs' class="align-middle"></box-icon> Vorschlag (#{{ $suggestion->id }}) übernimmt Teamlink-ID {{ $team->teamlink }}</span>
                                                     <span class="block font-normal opacity-75 leading-tight">Vom bearbeiteten Team: "{{ $team->teamname }}" (#{{ $team->id }})</span>
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        <!-- Beide Teams verknüpfen (neuer Teamlink), wenn beide 0 haben -->
+                                        @if($team->teamlink == 0 && $suggestion->teamlink == 0)
+                                            <form action="{{ route('regattaTeamManager.sync', $team->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="other_id" value="{{ $suggestion->id }}">
+                                                <input type="hidden" name="direction" value="merge_new">
+                                                <button type="submit"
+                                                        class="w-full text-left text-[9px] bg-yellow-100 text-yellow-700 border border-yellow-300 px-2 py-1 rounded font-semibold hover:bg-yellow-200 transition">
+                                                    <span class="block text-[10px] mb-0.5"><box-icon name='link' size='xs' class="align-middle"></box-icon> Beide Teams verknüpfen (neuer Teamlink)</span>
+                                                    <span class="block font-normal opacity-75 leading-tight">Für (#{{ $team->id }}) und (#{{ $suggestion->id }})</span>
                                                 </button>
                                             </form>
                                         @endif

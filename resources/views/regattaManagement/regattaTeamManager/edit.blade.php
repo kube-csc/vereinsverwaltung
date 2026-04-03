@@ -38,15 +38,15 @@
                             </a>
                         @endif
                         <br>
-                        <span class="font-bold">PLZ:</span> {{ $team->plz ?? '-' }}<br>
+                        <span class="font-bold">PLZ:</span> {{ $team->plz ?? '-' }} {{ $team->ort ?? '' }}<br>
                         <span class="font-bold">Email:</span> {{ $team->email ?? '-' }}<br>
                         <span class="font-bold">Telefon:</span> {{ $team->telefon ?? '-' }}
                     </div>
                     <div class="flex flex-col justify-between">
                         <div>
-                            <span class="font-bold">Rennklasse:</span> {{ optional($team->teamWertungsGruppe)->typ }} (#{{ $team->gruppe_id }})
+                            <span class="font-bold">Rennklasse:</span> {{ optional($team->teamWertungsGruppe)->typ }} (#{{ $team->gruppe_id }})<br>
                             (Min: {{ optional($team->teamWertungsGruppe)->min ?? '-' }}, Max: {{ optional($team->teamWertungsGruppe)->max ?? '-' }}, Distanz: {{ optional($team->teamWertungsGruppe)->distanz ?? '-' }})<br>
-                            <span class="font-bold">Bootstyp:</span> {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->typ }} (#{{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->id }})
+                            <span class="font-bold">Bootstyp:</span> {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->typ }} (#{{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->id }})<br>
                             (Min: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->min ?? '-' }}, Max: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->max ?? '-' }}, Distanz: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->distanz ?? '-' }})
                         </div>
                     </div>
@@ -85,7 +85,8 @@
                                             Team: {{ $linked->teamname ?? '-' }} (#{{ $linked->id }})
                                         </div>
                                         <div class="text-xs text-gray-600">
-                                            PLZ: {{ $linked->plz ?? '-' }} | Telefon: {{ $linked->telefon ?? '-' }} | E-Mail: {{ $linked->email ?? '-' }}
+                                            PLZ: {{ $linked->plz ?? '-' }} {{ $linked->ort ?? '' }}<br>
+                                            Telefon: {{ $linked->telefon ?? '-' }} | E-Mail: {{ $linked->email ?? '-' }}
                                         </div>
                                         <div class="text-xs text-green-600 italic mt-1">
                                             Regatta: {{ optional($linked->regatta)->ueberschrift ?? '-' }}
@@ -93,9 +94,9 @@
                                                 ({{ \Carbon\Carbon::parse($linked->regatta->datumvon)->format('d.m.Y') }})
                                             @endif
                                             <br>
-                                            Rennklasse: {{ optional($linked->teamWertungsGruppe)->typ ?? '-' }} (#{{ $linked->gruppe_id ?? '-' }})
+                                            Rennklasse: {{ optional($linked->teamWertungsGruppe)->typ ?? '-' }} (#{{ $linked->gruppe_id ?? '-' }})<br>
                                             (Min: {{ optional($linked->teamWertungsGruppe)->min ?? '-' }}, Max: {{ optional($linked->teamWertungsGruppe)->max ?? '-' }}, Distanz: {{ optional($linked->teamWertungsGruppe)->distanz ?? '-' }})<br>
-                                            Bootstyp: {{ optional(optional($linked->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ optional(optional($linked->teamWertungsGruppe)->raceTypeTemplate)->id ?? '-' }})
+                                            Bootstyp: {{ optional(optional($linked->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ optional(optional($linked->teamWertungsGruppe)->raceTypeTemplate)->id ?? '-' }})<br>
                                             (Min: {{ optional(optional($linked->teamWertungsGruppe)->raceTypeTemplate)->min ?? '-' }}, Max: {{ optional(optional($linked->teamWertungsGruppe)->raceTypeTemplate)->max ?? '-' }}, Distanz: {{ optional(optional($linked->teamWertungsGruppe)->raceTypeTemplate)->distanz ?? '-' }})
                                         </div>
                                     </div>
@@ -171,7 +172,8 @@
                                         </div>
                                         <div class="text-xs text-gray-600">
                                             Teamlink-ID: {{ $suggestion->teamlink ?? '-' }}<br>
-                                            PLZ: {{ $suggestion->plz ?? '-' }} | Telefon: {{ $suggestion->telefon ?? '-' }} | E-Mail: {{ $suggestion->email ?? '-' }}
+                                            PLZ: {{ $suggestion->plz ?? '-' }} {{ $suggestion->ort ?? '' }}<br>
+                                            Telefon: {{ $suggestion->telefon ?? '-' }} | E-Mail: {{ $suggestion->email ?? '-' }}
                                         </div>
                                         <div class="text-xs text-blue-600 italic mt-1">
                                             Regatta: {{ optional($suggestion->regatta)->ueberschrift ?? '-' }}
@@ -179,9 +181,9 @@
                                                 ({{ \Carbon\Carbon::parse($suggestion->regatta->datumvon)->format('d.m.Y') }})
                                             @endif
                                             <br>
-                                            Rennklasse: {{ optional($suggestion->teamWertungsGruppe)->typ ?? '-' }} (#{{ $suggestion->gruppe_id ?? '-' }})
+                                            Rennklasse: {{ optional($suggestion->teamWertungsGruppe)->typ ?? '-' }} (#{{ $suggestion->gruppe_id ?? '-' }})<br>
                                             (Min: {{ optional($suggestion->teamWertungsGruppe)->min ?? '-' }}, Max: {{ optional($suggestion->teamWertungsGruppe)->max ?? '-' }}, Distanz: {{ optional($suggestion->teamWertungsGruppe)->distanz ?? '-' }})<br>
-                                            Bootstyp: {{ optional(optional($suggestion->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ optional(optional($suggestion->teamWertungsGruppe)->raceTypeTemplate)->id ?? '-' }})
+                                            Bootstyp: {{ optional(optional($suggestion->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ optional(optional($suggestion->teamWertungsGruppe)->raceTypeTemplate)->id ?? '-' }})<br>
                                             (Min: {{ optional(optional($suggestion->teamWertungsGruppe)->raceTypeTemplate)->min ?? '-' }}, Max: {{ optional(optional($suggestion->teamWertungsGruppe)->raceTypeTemplate)->max ?? '-' }}, Distanz: {{ optional(optional($suggestion->teamWertungsGruppe)->raceTypeTemplate)->distanz ?? '-' }})
                                         </div>
                                     </div>

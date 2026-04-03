@@ -86,7 +86,8 @@
                                         </div>
                                         <div class="text-xs text-gray-600">
                                             Team-ID: #{{ $team->id }} | Teamlink-ID: {{ $team->teamlink ?? '-' }}<br>
-                                            PLZ: {{ $team->plz ?? '-' }} | Telefon: {{ $team->telefon ?? '-' }} | E-Mail: {{ $team->email ?? '-' }}
+                                            PLZ: {{ $team->plz ?? '-' }} {{ $team->ort ?? '' }}<br>
+                                            Telefon: {{ $team->telefon ?? '-' }} | E-Mail: {{ $team->email ?? '-' }}
                                         </div>
                                         <div class="text-xs text-blue-600 italic mt-1">
                                             Regatta: {{ optional($team->regatta)->ueberschrift ?? '-' }}
@@ -94,9 +95,9 @@
                                                 ({{ \Carbon\Carbon::parse($team->regatta->datumvon)->format('d.m.Y') }})
                                             @endif
                                             <br>
-                                            Rennklasse: {{ optional($team->teamWertungsGruppe)->typ ?? '-' }} (#{{ $team->gruppe_id ?? '-' }})
+                                            Rennklasse: {{ optional($team->teamWertungsGruppe)->typ ?? '-' }} (#{{ $team->gruppe_id ?? '-' }})<br>
                                             (Min: {{ optional($team->teamWertungsGruppe)->min ?? '-' }}, Max: {{ optional($team->teamWertungsGruppe)->max ?? '-' }}, Distanz: {{ optional($team->teamWertungsGruppe)->distanz ?? '-' }})<br>
-                                            Bootstyp: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->id ?? '-' }})
+                                            Bootstyp: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->id ?? '-' }})<br>
                                             (Min: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->min ?? '-' }}, Max: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->max ?? '-' }}, Distanz: {{ optional(optional($team->teamWertungsGruppe)->raceTypeTemplate)->distanz ?? '-' }})
                                         </div>
                                     </div>
@@ -132,9 +133,9 @@
                                                             </div>
                                                         </div>
                                                         <div class="italic">
-                                                            Rennklasse: {{ optional($anderes->teamWertungsGruppe)->typ ?? '-' }} (#{{ $anderes->gruppe_id ?? '-' }})
+                                                            Rennklasse: {{ optional($anderes->teamWertungsGruppe)->typ ?? '-' }} (#{{ $anderes->gruppe_id ?? '-' }})<br>
                                                             (Min: {{ optional($anderes->teamWertungsGruppe)->min ?? '-' }}, Max: {{ optional($anderes->teamWertungsGruppe)->max ?? '-' }}, Distanz: {{ optional($anderes->teamWertungsGruppe)->distanz ?? '-' }})<br>
-                                                            Bootstyp: {{ optional(optional($anderes->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ optional(optional($anderes->teamWertungsGruppe)->raceTypeTemplate)->id ?? '-' }})
+                                                            Bootstyp: {{ optional(optional($anderes->teamWertungsGruppe)->raceTypeTemplate)->typ ?? '-' }} (#{{ optional(optional($anderes->teamWertungsGruppe)->raceTypeTemplate)->id ?? '-' }})<br>
                                                             (Min: {{ optional(optional($anderes->teamWertungsGruppe)->raceTypeTemplate)->min ?? '-' }}, Max: {{ optional(optional($anderes->teamWertungsGruppe)->raceTypeTemplate)->max ?? '-' }}, Distanz: {{ optional(optional($anderes->teamWertungsGruppe)->raceTypeTemplate)->distanz ?? '-' }})
                                                         </div>
                                                     </div>

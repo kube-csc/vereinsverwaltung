@@ -29,4 +29,9 @@ class RaceType extends Model
         'autor_id',
         'bearbeiter_id'
     ];
+
+    public function raceTypeTemplate()
+    {
+        return $this->belongsTo(RaceTypeTemplate::class, 'race_type_template_id');
+    }
 }

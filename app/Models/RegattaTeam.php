@@ -27,4 +27,9 @@ class RegattaTeam extends Model
         return $this->belongsTo(RaceType::class, 'gruppe_id');
     }
 
+    public function regatta()
+    {
+        return $this->belongsTo(Event::class, 'regatta_id');
+    }
+
 }

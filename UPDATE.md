@@ -1,8 +1,21 @@
 ## Update Anleitung
+**Version V00.10.04**
+
+***Neue Funktionen***
+****Regatta-Verwaltung – RegattaTeamManager****
+- **Team-Verlinkung (Historie):** Teams können über verschiedene Regatten hinweg mittels einer `teamlink`-ID verknüpft werden.
+- **Andere Regatten:** Automatische Anzeige aller historischen Teilnahmen eines Teams (chronologisch sortiert) in der Übersicht.
+- **Erweiterte Filter:** Neue Filter für Teams ohne Teamlink, regattaübergreifende Suche (0) und Teams mit nur einer Verwendung der ID.
+- **Bearbeitungs-Ansicht:** Neue Seite zur Verwaltung von Teamlinks mit intelligenter Vorschlagslogik (gleicher Bootstyp, ähnliche Merkmale).
+- **Synchronisation:** Direkte bidirektionale Zuweisung von Teamlink-IDs zwischen dem bearbeiteten Team und Vorschlägen.
+- **ID-Generierung:** Automatische Vergabe neuer Teamlink-IDs inklusive Lückensuche im vorhandenen Nummernbereich.
+- **UI-Optimierung:** Umstellung des Filters auf ein zweizeiliges Layout und Integration von Boxicons für alle Aktionen.
+- **Detail-Anzeige:** Integration von technischen Parametern (Min/Max Paddler, Distanz) für Rennklassen und Bootstypen in allen Ansichten.
+
 **Version V00.10.03**
 
 ***Datenbankanpassungen***
-- Fahrtenbuch 
+- Für das Fahrtenbuch erfolgen Datenbankanpassungen 
 
 - migration
 

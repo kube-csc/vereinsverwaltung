@@ -125,6 +125,9 @@
                                                                     @endif
                                                                 </div>
                                                                 <div>{{ $anderes->teamname }} (#{{ $anderes->id }})</div>
+                                                                <div class="text-[10px] text-gray-600">
+                                                                    PLZ: {{ $anderes->plz ?? '-' }} {{ $anderes->ort ?? '' }}
+                                                                </div>
                                                             </div>
                                                             <div class="ml-2 flex items-center">
                                                                 <a href="{{ route('regattaTeamManager.edit', $anderes->id) }}" class="text-blue-600 hover:text-blue-900" title="Teamlink bearbeiten">

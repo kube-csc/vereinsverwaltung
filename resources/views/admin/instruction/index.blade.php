@@ -43,9 +43,13 @@
                               </div>
                              @php
                                $menulevel=0;
+                               $hasPreviousDropdownContext = false;
                              @endphp
-                              @foreach ( $instructions as $instruction )
-                                  <div class="rounded border shadow p-3 my-2 {{$instruction->hauptmenu == 2 ? 'bg-blue-300' : 'bg-blue-200'}}">
+                               @foreach ( $instructions as $instruction )
+                                   @php
+                                     $isChild = ($instruction->hauptmenu == 3);
+                                   @endphp
+                                   <div class="rounded border shadow p-3 my-2 {{$instruction->hauptmenu == 2 ? 'bg-blue-300' : 'bg-blue-200'}} {{$isChild ? 'ml-6 border-l-4 border-blue-500' : ''}}">
                                       <div class="justify-between my-2">
                                         <div>
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/edit/'.$instruction->id) }}">
@@ -61,7 +65,7 @@
                                                     <box-icon name='hide' type='solid'></box-icon>
                                                 </a>
                                             @endif
-                                            @if($instruction['hauptmenuspalte']>10 | ($instruction['hauptmenuspalte']==10 && $instruction['position']>10) | $instruction['hauptmenu']==2 )
+                                            @if($instruction['hauptmenuspalte']>10 || ($instruction['hauptmenuspalte']==10 && $instruction['position']>10) || $instruction['hauptmenu']==2 )
                                                 <a href="{{ url('Instruction/maxtop/'.$instruction->id) }}">
                                                     <box-icon name='chevrons-up' ></box-icon>
                                                 </a>
@@ -69,7 +73,7 @@
                                                     <box-icon name='chevron-up'></box-icon>
                                                 </a>
                                             @endif
-                                            @if(!$loop->last && ($instruction['hauptmenuspalte']>=10 && ($instruction['hauptmenuspalte']<$instructionMaxID) | ($instruction['hauptmenuspalte']==$instructionMaxID && $instruction['hauptmenu']==0) ))
+                                            @if(!$loop->last && ($instruction['hauptmenuspalte']>=10 && (($instruction['hauptmenuspalte']<$instructionMaxID) || ($instruction['hauptmenuspalte']==$instructionMaxID && $instruction['hauptmenu']==0)) ))
                                                 <a href="{{ url('Instruction/down/'.$instruction->id) }}">
                                                     <box-icon name='chevron-down' ></box-icon>
                                                 </a>
@@ -88,16 +92,28 @@
                                                 </a>
                                             @endif
                                             @if($instruction['hauptmenu']==2)
-                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuMinus/'.$instruction->id) }}">
-                                                    <box-icon name='chevrons-left'></box-icon>
-                                                </a>
+                                                @php
+                                                    $containerHasChildren = \App\Models\Instruction::where('hauptmenuspalte', $instruction->hauptmenuspalte)
+                                                        ->where('hauptmenu', 3)
+                                                        ->exists();
+                                                @endphp
+
+
+                                                @if(!$containerHasChildren)
+                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuMinus/'.$instruction->id) }}" title="Container auflösen">
+                                                        <box-icon name='chevrons-left'></box-icon>
+                                                    </a>
+                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/ToMainLinkIfNoChildren/'.$instruction->id) }}" title="Container zu Hauptmenüpunkt (nur ohne Unterpunkte)">
+                                                        <box-icon name='chevrons-left'></box-icon>
+                                                    </a>
+                                                @endif
                                             @endif
-                                            @if($instruction['hauptmenu']==1)
-                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuPlus/'.$instruction->id) }}">
+                                            @if($instruction['hauptmenu']==1 && $hasPreviousDropdownContext)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuPlus/'.$instruction->id) }}" title="Als Unterpunkt (Dropdown) einordnen">
                                                     <box-icon name='chevron-right'></box-icon>
                                                 </a>
                                             @endif
-                                            @if($instruction['hauptmenu']<2 | $instruction['hauptmenu']==3)
+                                            @if($instruction['hauptmenu']<2)
                                                 <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuNeu/'.$instruction->id) }}">
                                                     <box-icon name='chevrons-right'></box-icon>
                                                 </a>
@@ -109,18 +125,110 @@
                                               @if($instruction->systemmenu==1)
                                                   Systemprogramm<br>
                                               @endif
-                                              @if($instruction->hauptmenu==1 | $instruction->hauptmenu==2 )
+                                               @if($instruction->hauptmenu==1 || $instruction->hauptmenu==2 )
                                                   @php
                                                       ++$menulevel
                                                   @endphp
                                                   Hauptmenu: {{ $menulevel }}<br>
                                               @endif
+                                                  @if($isChild)
+                                                      <span class="text-sm font-normal text-gray-700">↳</span>
+                                                  @endif
                                                   {{ $instruction->ueberschrift }}</p>
                                           <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $instruction->updated_at->diffForHumans() }}</p>
                                         </div>
+
+                                        @if(config('app.debug'))
+                                            @php
+                                                $debugBg = 'bg-gray-100 text-gray-800';
+                                                if ($instruction->hauptmenu == 2) {
+                                                    $debugBg = 'bg-blue-200 text-blue-900';
+                                                } elseif ($instruction->hauptmenu == 3) {
+                                                    $debugBg = 'bg-indigo-100 text-indigo-900';
+                                                } elseif ($instruction->hauptmenu == 1) {
+                                                    $debugBg = 'bg-emerald-100 text-emerald-900';
+                                                } elseif ($instruction->hauptmenu == 0) {
+                                                    $debugBg = 'bg-slate-100 text-slate-900';
+                                                }
+                                            @endphp
+                                            <div class="mt-2 inline-block px-2 py-1 rounded text-xs {{ $debugBg }}">
+                                                <span class="font-semibold">debug #{{$instruction->id}}</span>
+                                                <span class="opacity-80">(HM={{ $instruction->hauptmenu }})</span>:
+                                                <span class="font-mono">hauptmenuspalte={{ $instruction->hauptmenuspalte }}</span>,
+                                                <span class="font-mono">position={{ $instruction->position }}</span>,
+                                                <span class="font-mono">
+                                                    systemmenu={{ $instruction->systemmenu }}
+                                                    @if($instruction->systemmenu)
+                                                        <span class="ml-1 font-semibold">SYSTEM</span>
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        @endif
                                       </div>
                                   </div>
+
+                                   @php
+                                       // Kontext-Merker: Ab dem ersten Container/Unterpunkt ist "Pfeil nach rechts" erlaubt,
+                                       // weil dann ein Dropdown-Kontext existiert.
+                                       if ($instruction->hauptmenu == 2 || $instruction->hauptmenu == 3) {
+                                           $hasPreviousDropdownContext = true;
+                                       }
+                                   @endphp
                               @endforeach
+
+                              @if(isset($infoPagesWithoutMenu) && $infoPagesWithoutMenu->count() > 0)
+                                  <div class="mt-8 mb-2 text-lg font-semibold text-gray-700">
+                                      Informationseiten ohne Menü im Frontend
+                                  </div>
+
+                                  @foreach($infoPagesWithoutMenu as $instruction)
+                                      <div class="rounded border shadow p-3 my-2 bg-blue-200">
+                                          <div class="justify-between my-2">
+                                              <div>
+                                                  <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/edit/'.$instruction->id) }}">
+                                                      <box-icon name='edit' type='solid'></box-icon>
+                                                  </a>
+                                                  @if($instruction['visible']==1)
+                                                      <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/inaktiv/'.$instruction->id) }}">
+                                                          <box-icon name='show' type='solid'></box-icon>
+                                                      </a>
+                                                  @endif
+                                                  @if($instruction['visible']==0)
+                                                      <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/aktiv/'.$instruction->id) }}">
+                                                          <box-icon name='hide' type='solid'></box-icon>
+                                                      </a>
+                                                  @endif
+
+                                                  {{-- Zu Hauptmenu machen (hauptmenu=1, neue Spalte, position=10) --}}
+                                                  <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/ToMainMenu/'.$instruction->id) }}" title="Zu Hauptmenu machen">
+                                                      <box-icon name='chevrons-right'></box-icon>
+                                                  </a>
+                                              </div>
+
+                                              <div class="flex">
+                                                  <p class="font-bold text-lg">
+                                                      @if($instruction->systemmenu==1)
+                                                          Systemprogramm<br>
+                                                      @endif
+                                                      {{ $instruction->ueberschrift }}
+                                                  </p>
+                                                  <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $instruction->updated_at->diffForHumans() }}</p>
+                                              </div>
+
+                                              @if(config('app.debug'))
+                                                  <div class="mt-2 inline-block px-2 py-1 rounded text-xs bg-blue-100 text-blue-900">
+                                                      <span class="font-semibold">debug</span>
+                                                      <span class="opacity-80">(HM={{ $instruction->hauptmenu }})</span>:
+                                                      <span class="font-mono">hauptmenuspalte={{ $instruction->hauptmenuspalte }}</span>,
+                                                      <span class="font-mono">position={{ $instruction->position }}</span>,
+                                                      <span class="font-mono">systemmenu={{ $instruction->systemmenu }}</span>
+                                                  </div>
+                                              @endif
+                                          </div>
+                                      </div>
+                                  @endforeach
+                              @endif
+
                              <br>
                              <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                             </div>

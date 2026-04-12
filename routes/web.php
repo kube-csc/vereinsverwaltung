@@ -204,6 +204,8 @@ Route::get('/Instruction/MenuMinus/{instruction_id}',     [InstructionController
 Route::get('/Instruction/MenuPlus/{instruction_id}',      [InstructionController::class, 'menuPlus'])     ->name('instruction.menuPlus');
 Route::get('/Instruction/MenuDelete/{instruction_id}',    [InstructionController::class, 'menuDelete'])   ->name('instruction.menuDelete');
 Route::get('/Instruction/MenuDown/{instruction_id}',      [InstructionController::class, 'MenuDown'])     ->name('instruction.MenuDown');
+Route::get('/Instruction/ToMainMenu/{instruction_id}',   [InstructionController::class, 'toMainMenu'])   ->name('instruction.toMainMenu');
+Route::get('/Instruction/ToMainLinkIfNoChildren/{instruction_id}', [InstructionController::class, 'toMainLinkIfNoChildren'])->name('instruction.toMainLinkIfNoChildren');
 
 Route::get('/newBotmanQuestion/alle',                            [NewBotmanQuestionController::class, 'index'])     ->name('newBotmanQuestion.index');
 Route::get('/newBotmanQuestion/aktiv/{newBotmanQuestionId}',     [NewBotmanQuestionController::class, 'aktiv'])     ->name('newBotmanQuestion.aktiv');

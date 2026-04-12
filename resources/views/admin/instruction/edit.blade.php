@@ -3,7 +3,6 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Informationsseite - Dashboard') }}
         </h2>
-        </h2>
     </x-slot>
 
     <div class="py-12">
@@ -13,6 +12,10 @@
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
                      {{ $instruction->ueberschrift }}
+                  </div>
+
+                  <div class="mt-2 text-sm text-gray-500">
+                      ID: <span class="font-mono font-semibold">{{ $instruction->id }}</span>
                   </div>
 
                   <div class="mt-6 text-gray-500">
@@ -38,7 +41,7 @@
                                   // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
                                 @endphp
 
-                                @if($instruction->ueberschrift <> "Datenschutzerklärung" | $instruction->ueberschrift <> "MENUE_VEREIN" | $instruction->ueberschrift <> "MENUE_VERBAND")
+                                @if($instruction->ueberschrift !== 'Datenschutzerklärung' && $instruction->ueberschrift !== 'MENUE_VEREIN' && $instruction->ueberschrift !== 'MENUE_VERBAND')
                                 <div class="my-4" >
                                   <label for="name">Name der Seite</label>
                                   <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ueberschrift') ? 'bg-red-300' : '' }}"
@@ -69,6 +72,6 @@
 
             </div>
         </div>
-    </div>    @php   // TODO:  Wird der div benötigt?
-              @endphp
+    @php   // TODO:  Wird der div benötigt?
+    @endphp
 </x-app-layout>

@@ -65,10 +65,13 @@
                                                     <box-icon name='hide' type='solid'></box-icon>
                                                 </a>
                                             @endif
-                                            @if($instruction['hauptmenuspalte']>10 || ($instruction['hauptmenuspalte']==10 && $instruction['position']>10) || $instruction['hauptmenu']==2 )
+                                            @if($instruction['hauptmenuspalte']>10 && $instruction['hauptmenu'] < 3  || ($instruction['hauptmenu'] == 3 && $instruction['position']>10))
+                                                <!--|| ($instruction['hauptmenuspalte']==10 && $instruction['position']>10) || $instruction['hauptmenu']==2 ) -->
                                                 <a href="{{ url('Instruction/maxtop/'.$instruction->id) }}">
                                                     <box-icon name='chevrons-up' ></box-icon>
                                                 </a>
+                                            @endif
+                                            @if( $instruction['hauptmenuspalte']>10 && $instruction['hauptmenu'] < 3  || $instruction['position']>10 && $instruction['hauptmenu']==3 )
                                                 <a href="{{ url('Instruction/top/'.$instruction->id) }}">
                                                     <box-icon name='chevron-up'></box-icon>
                                                 </a>
@@ -86,6 +89,11 @@
                                                     <box-icon name='chevron-down'></box-icon>
                                                 </a>
                                             @endif
+                                            @if($instruction['hauptmenu']==1)
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/ToMainLinkIfNoChildren/'.$instruction->id) }}" title="Container auflösen">
+                                                    <box-icon name='chevron-left'></box-icon>
+                                                </a>
+                                            @endif
                                             @if($instruction['hauptmenu']==3)
                                                 <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuDelete/'.$instruction->id) }}">
                                                     <box-icon name='chevron-left'></box-icon>
@@ -97,13 +105,11 @@
                                                         ->where('hauptmenu', 3)
                                                         ->exists();
                                                 @endphp
-
-
                                                 @if(!$containerHasChildren)
-                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuMinus/'.$instruction->id) }}" title="Container auflösen">
-                                                        <box-icon name='chevrons-left'></box-icon>
+                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/ToMainLinkIfNoChildren/'.$instruction->id) }}" title="Container auflösen">
+                                                        <box-icon name='chevron-left'></box-icon>
                                                     </a>
-                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/ToMainLinkIfNoChildren/'.$instruction->id) }}" title="Container zu Hauptmenüpunkt (nur ohne Unterpunkte)">
+                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuMinus/'.$instruction->id) }}" title="Container zu Hauptmenüpunkt (nur ohne Unterpunkte)">
                                                         <box-icon name='chevrons-left'></box-icon>
                                                     </a>
                                                 @endif

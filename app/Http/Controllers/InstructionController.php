@@ -11,6 +11,63 @@ use Illuminate\Support\Facades\Log;
 class InstructionController extends Controller
 {
     /**
+     * Verschiebt alle Menü-Einträge (hauptmenu 1..3) in Spalten links von $fromCol um $delta.
+     * Bestimmte Instruction-IDs können dabei ausgeschlossen werden (z.B. weil sie bereits
+     * separat in eine Zielspalte umgehängt wurden).
+     */
+    private function shiftMenuColumnsLeftOf(int $fromCol, array $excludeIds = [], int $delta = 10): void
+    {
+        if ($delta === 0) {
+            return;
+        }
+
+        $query = Instruction::whereIn('hauptmenu', [1, 2, 3])
+            ->where('hauptmenuspalte', '<', $fromCol);
+
+        if (!empty($excludeIds)) {
+            $query->whereNotIn('id', $excludeIds);
+        }
+
+        $others = $query->get(['id', 'hauptmenuspalte']);
+
+        foreach ($others as $col) {
+            Instruction::where('id', $col->id)
+                ->update([
+                    'hauptmenuspalte' => $col->hauptmenuspalte + $delta,
+                    'bearbeiter_id' => Auth::id(),
+                    'updated_at' => Carbon::now(),
+                ]);
+        }
+    }
+
+    /**
+     * Erhöht die Position aller Unterpunkte (hauptmenu=3), die VOR $fromPosition liegen,
+     * um $delta. Bestimmte IDs können ausgeschlossen werden (z.B. die eigene Spalte/der
+     * gerade geklickte Datensatz).
+     *
+     * Hinweis: Diese Logik ist bewusst "global" wie im bisherigen Code (ohne Filter auf hauptmenuspalte).
+     */
+    private function shiftHm3PositionsBefore(int $fromPosition, array $includeIds = [], int $delta = 10): void
+    {
+        if ($delta === 0 || $fromPosition <= 0 || $includeIds === []) {
+            return;
+        }
+
+        $others = Instruction::whereIn('id', $includeIds)
+            ->where('position', '<', $fromPosition)
+            ->get(['id', 'position']);
+
+        foreach ($others as $col) {
+            Instruction::where('id', $col->id)
+                ->update([
+                    'position' => $col->position + $delta,
+                    'bearbeiter_id' => Auth::id(),
+                    'updated_at' => Carbon::now(),
+                ]);
+        }
+    }
+
+    /**
      * Block-Konsistenz: Wenn ein Container (hauptmenu=2) die Menüspalte wechselt,
      * müssen alle zugehörigen Unterpunkte (hauptmenu=3) mitgezogen werden.
      *
@@ -309,7 +366,6 @@ class InstructionController extends Controller
                 $this->normalizeMenuColumn(((int)$col) + 10);
             }
 
-
             // Betroffene Spalten sauber sortieren.
             $this->normalizeMenuColumn(10);
             if ($fromCol !== 10 && $fromCol > 0) {
@@ -338,19 +394,8 @@ class InstructionController extends Controller
                     ]);
             }
 
-            $others = Instruction::whereNotIn('id', $colsToShift)
-                ->where('hauptmenuspalte', '<', $fromCol)
-                ->get(['id','hauptmenuspalte']);
-
-            foreach ($others as $col) {
-
-                Instruction::where('id', $col->id)
-                    ->update([
-                        'hauptmenuspalte' => $col->hauptmenuspalte + 10,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now(),
-                    ]);
-            }
+            // Alle anderen Menüspalten links der Quellspalte um +10 nach rechts schieben.
+            $this->shiftMenuColumnsLeftOf($fromCol, $colsToShift->all(), 10);
 
             return Redirect()->back()->with('success', 'Das Hauptmenu wurde in die erste Menüspalte verschoben (Spalte 10) und alle anderen Menüspalten wurden um +10 erhöht.');
         }
@@ -362,33 +407,20 @@ class InstructionController extends Controller
 
             $colsToShift = Instruction::where('hauptmenuspalte', '=', $fromCol)
                 ->where('hauptmenu', 3)
+                ->where('id', '!=', $instructionId)
                 ->pluck('id')
                 ->values();
 
-            Instruction::where('id', $instruction->id)
+            Instruction::where('id', $instructionId)
                     ->update([
                         'position' => 10,
                         'bearbeiter_id' => Auth::id(),
                         'updated_at' => Carbon::now(),
                     ]);
 
-            $others = Instruction::whereNotIn('id', $colsToShift)
-                ->where('hauptmenu', 3)
-                ->where('position', '<', $fromPosition)
-                ->get(['id','position']);
-
-            foreach ($others as $col) {
-
-                Instruction::where('id', $col->id)
-                    ->update([
-                        'position' => $col->position + 11,
-                        'bearbeiter_id' => Auth::id(),
-                        'updated_at' => Carbon::now(),
-                    ]);
-            }
+            $this->shiftHm3PositionsBefore((int)$fromPosition, $colsToShift->all(), 10);
 
             return Redirect()->back()->with('success', 'Der Unterpunkt wurde auf die Top-Position (Spalte 10 / Position 10) gesetzt.');
-
         }
 
         return Redirect()->back()->with('success', 'Die Informationsseite wurde zur Top Position verschoben.');
@@ -397,30 +429,72 @@ class InstructionController extends Controller
     public function top($instructionId)
     {
         $instruction = Instruction::findOrFail($instructionId);
-        $positionFilter = $instruction->hauptmenuspalte;
-        if ($instruction->hauptmenu == 2 && $instruction->hauptmenuspalte == 10 ) {
+        $fromhauptmenuspalte = (int)$instruction->hauptmenuspalte;
+        $fromPosition = (int)$instruction->position;
 
-            $this->menulevel1($instructionId , $positionFilter);
+        if ($instruction->hauptmenu == 1 || $instruction->hauptmenu == 2) {
 
-        }
-        else{
-            // Wenn ein Sammelmenü-Container verschoben wird, muss die ganze Gruppe mit.
-            if ((int)$instruction->hauptmenu === 2) {
-                $this->moveMenuColumn($positionFilter, -1);
-                return Redirect()->back()->with('success', 'Das Hauptmenu wurde inkl. Unterpunkten nach oben verschoben.');
+            $colsToShiftNew = Instruction::whereIn('hauptmenu', [1, 2, 3])
+                ->where('hauptmenuspalte', $fromhauptmenuspalte)
+                ->pluck('id')
+                ->values();
+
+            foreach ($colsToShiftNew as $col) {
+                Instruction::where('id', $col)
+                    ->update([
+                        'hauptmenuspalte' => $fromhauptmenuspalte -10,
+                        'bearbeiter_id' => Auth::id(),
+                        'updated_at' => Carbon::now(),
+                    ]);
             }
 
-            $positionNew = $instruction->position - 11;
+            $colsToShift = Instruction::whereIn('hauptmenu', [1, 2, 3])
+                ->whereNotIn('id', $colsToShiftNew)
+                ->where('hauptmenuspalte', $fromhauptmenuspalte - 10)
+                ->pluck('id')
+                ->values();
 
-            Instruction::findOrFail($instructionId)->update([
-                'position' => $positionNew,
-                'bearbeiter_id' => Auth::id(),
-                'updated_at' => Carbon::now()
-            ]);
+            foreach ($colsToShift as $col) {
+                Instruction::where('id', $col)
+                    ->update([
+                        'hauptmenuspalte' => $fromhauptmenuspalte,
+                        'bearbeiter_id' => Auth::id(),
+                        'updated_at' => Carbon::now(),
+                    ]);
+            }
 
-            $this->normalizeMenuColumn($positionFilter);
+            return Redirect()->back()->with('success', 'Der Unterpunkt wurde auf die Top-Position (Spalte 10 / Position 10) gesetzt.');
         }
-        return Redirect()->back()->with('success', 'Die Informationsseite wurde eine Position nach oben verschoben.');
+
+        if ($instruction->hauptmenu == 3) {
+
+            Instruction::where('id', $instructionId)
+                ->update([
+                    'position' => $fromPosition - 10,
+                    'bearbeiter_id' => Auth::id(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+            $colsToShift = Instruction::where('hauptmenuspalte', $fromhauptmenuspalte)
+                ->where('position', $fromPosition - 10)
+                ->where('hauptmenu', 3)
+                ->where('id', '!=', $instructionId)
+                ->pluck('id')
+                ->values();
+
+            foreach ($colsToShift as $col) {
+                Instruction::where('id', $col)
+                    ->update([
+                        'position' => $fromPosition,
+                        'bearbeiter_id' => Auth::id(),
+                        'updated_at' => Carbon::now(),
+                    ]);
+            }
+
+            return Redirect()->back()->with('success', 'Der Unterpunkt wurde auf die Top-Position (Spalte 10 / Position 10) gesetzt.');
+        }
+
+        return Redirect()->back()->with('warning', 'Es konnte nichts verschoben werden.');
     }
 
     public function down($instructionId)

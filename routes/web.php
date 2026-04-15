@@ -188,29 +188,29 @@ Route::get('/Bericht/start/{report_id}',                  [ReportController::cla
 // TEMP: Route nur für die Übername der Bilder zuständig
 Route::get('/Berichtbilder/uebernehmen',                  [ReportController::class, 'takeover'])          ->name('report.takeover');
 
-Route::get('/Instruction/alle',                           [InstructionController::class, 'index'])        ->name('instruction.index');
-Route::get('/Instruction/neu',                            [InstructionController::class, 'create'])       ->name('instruction.create');
-Route::post('/Instruction/speichern',                     [InstructionController::class, 'store'])        ->name('instruction.store');
-Route::get('/Instruction/edit/{instruction_id}',          [InstructionController::class, 'edit'])         ->name('instruction.edit');
-Route::post('/Instruction/update/{instruction_id}',       [InstructionController::class, 'update'])       ->name('instruction.update');
-Route::get('/Instruction/aktiv/{instruction_id}',         [InstructionController::class, 'aktiv'])        ->name('instruction.aktiv');
-Route::get('/Instruction/inaktiv/{instruction_id}',       [InstructionController::class, 'inaktiv'])      ->name('instruction.inaktiv');
-Route::get('/Instruction/maxtop/{instruction_id}',        [InstructionController::class, 'maxtop'])       ->name('instruction.maxtop');
-Route::get('/Instruction/top/{instruction_id}',           [InstructionController::class, 'top'])          ->name('instruction.top');
-Route::get('/Instruction/down/{instruction_id}',          [InstructionController::class, 'down'])         ->name('instruction.down');
-Route::get('/Instruction/maxdown/{instruction_id}',       [InstructionController::class, 'maxdown'])      ->name('instruction.maxdown');
-Route::get('/Instruction/MenuNeu/{instruction_id}',       [InstructionController::class, 'menuNew'])      ->name('instruction.menuNew');
-Route::get('/Instruction/MenuMinus/{instruction_id}',     [InstructionController::class, 'menuMinus'])    ->name('instruction.menuMinus');
-Route::get('/Instruction/MenuPlus/{instruction_id}',      [InstructionController::class, 'menuPlus'])     ->name('instruction.menuPlus');
-Route::get('/Instruction/MenuDelete/{instruction_id}',    [InstructionController::class, 'menuDelete'])   ->name('instruction.menuDelete');
-Route::get('/Instruction/MenuDown/{instruction_id}',      [InstructionController::class, 'MenuDown'])     ->name('instruction.MenuDown');
-Route::get('/Instruction/ToMainMenu/{instruction_id}',   [InstructionController::class, 'toMainMenu'])   ->name('instruction.toMainMenu');
-Route::get('/Instruction/ToMainLinkIfNoChildren/{instruction_id}', [InstructionController::class, 'toMainLinkIfNoChildren'])->name('instruction.toMainLinkIfNoChildren');
+Route::get('/Instruction/alle', [InstructionController::class, 'index'])        ->name('instruction.index');
+Route::get('/Instruction/neu', [InstructionController::class, 'create'])       ->name('instruction.create');
+Route::post('/Instruction/speichern', [InstructionController::class, 'store'])        ->name('instruction.store');
+Route::get('/Instruction/edit/{instruction_id}', [InstructionController::class, 'edit'])         ->name('instruction.edit');
+Route::post('/Instruction/update/{instruction_id}', [InstructionController::class, 'update'])->name('instruction.update');
+Route::get('/Instruction/aktiv/{instruction_id}', [InstructionController::class, 'aktiv'])->name('instruction.aktiv');
+Route::get('/Instruction/inaktiv/{instruction_id}', [InstructionController::class, 'inaktiv'])->name('instruction.inaktiv');
+Route::get('/Instruction/maxtop/{instruction_id}', [InstructionController::class, 'maxtop'])       ->name('instruction.maxtop');
+Route::get('/Instruction/top/{instruction_id}', [InstructionController::class, 'top'])          ->name('instruction.top');
+Route::get('/Instruction/down/{instruction_id}', [InstructionController::class, 'down'])->name('instruction.down');
+Route::get('/Instruction/maxdown/{instruction_id}', [InstructionController::class, 'maxdown'])->name('instruction.maxdown');
+Route::get('/Instruction/MenuNeu/{instruction_id}', [InstructionController::class, 'menuNew'])->name('instruction.menuNew');
+Route::get('/Instruction/MenuMinus/{instruction_id}', [InstructionController::class, 'menuMinus'])->name('instruction.menuMinus');
+Route::get('/Instruction/MenuPlus/{instruction_id}', [InstructionController::class, 'menuPlus'])->name('instruction.menuPlus');
+Route::get('/Instruction/MenuDelete/{instruction_id}', [InstructionController::class, 'menuDelete'])->name('instruction.menuDelete');
+Route::get('/Instruction/MenuDown/{instruction_id}', [InstructionController::class, 'MenuDown'])->name('instruction.MenuDown');
+Route::get('/Instruction/aktivMenu/{instruction_id}',  [InstructionController::class, 'aktivMenu'])->name('instruction.aktivMenu');
+Route::get('/Instruction/keinMenu/{instruction_id}', [InstructionController::class, 'keinMenu'])->name('instruction.keinMenu');
 
-Route::get('/newBotmanQuestion/alle',                            [NewBotmanQuestionController::class, 'index'])     ->name('newBotmanQuestion.index');
-Route::get('/newBotmanQuestion/aktiv/{newBotmanQuestionId}',     [NewBotmanQuestionController::class, 'aktiv'])     ->name('newBotmanQuestion.aktiv');
-Route::get('/newBotmanQuestion/inaktiv/{newBotmanQuestionId}',   [NewBotmanQuestionController::class, 'inaktiv'])   ->name('newBotmanQuestion.inaktiv');
-Route::get('/newBotmanQuestion/softDelete/{newBotmanQuestionId}',[NewBotmanQuestionController::class, 'softDelete']);
+Route::get('/newBotmanQuestion/alle', [NewBotmanQuestionController::class, 'index'])->name('newBotmanQuestion.index');
+Route::get('/newBotmanQuestion/aktiv/{newBotmanQuestionId}', [NewBotmanQuestionController::class, 'aktiv'])->name('newBotmanQuestion.aktiv');
+Route::get('/newBotmanQuestion/inaktiv/{newBotmanQuestionId}', [NewBotmanQuestionController::class, 'inaktiv'])->name('newBotmanQuestion.inaktiv');
+Route::get('/newBotmanQuestion/softDelete/{newBotmanQuestionId}', [NewBotmanQuestionController::class, 'softDelete']);
 
 Route::get('/Team/alle',                         [BoardController::class, 'index'])     ->name('board.index');
 Route::get('/Team/neu',                          [BoardController::class, 'create'])    ->name('board.create');

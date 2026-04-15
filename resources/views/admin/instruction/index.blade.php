@@ -44,10 +44,22 @@
                              @php
                                $menulevel=0;
                                $hasPreviousDropdownContext = false;
+
+                               // Für Lookahead ("nächster Menüpunkt") brauchen wir konsistente numerische Indizes.
+                               $instructions = $instructions->values();
                              @endphp
                                @foreach ( $instructions as $instruction )
                                    @php
-                                     $isChild = ($instruction->hauptmenu == 3);
+                                     $isChild = ((int)$instruction->hauptmenu === 3);
+
+                                     // UI-Regel: Bei HM=3 dürfen die Down-Pfeile nur erscheinen, wenn der nächste
+                                     // Menüpunkt wieder HM=3 ist (sonst ist es das letzte Dropdown-Item im Block).
+                                     $nextInstruction = $instructions->get($loop->index + 1);
+                                     $nextIsChildSameBlock = $nextInstruction
+                                         && ((int)$nextInstruction->hauptmenu === 3)
+                                         && ((int)$nextInstruction->hauptmenuspalte === (int)$instruction->hauptmenuspalte);
+
+                                     $allowDownArrows = !$loop->last && (!$isChild || $nextIsChildSameBlock);
                                    @endphp
                                    <div class="rounded border shadow p-3 my-2 {{$instruction->hauptmenu == 2 ? 'bg-blue-300' : 'bg-blue-200'}} {{$isChild ? 'ml-6 border-l-4 border-blue-500' : ''}}">
                                       <div class="justify-between my-2">
@@ -76,7 +88,7 @@
                                                     <box-icon name='chevron-up'></box-icon>
                                                 </a>
                                             @endif
-                                            @if(!$loop->last && ($instruction['hauptmenuspalte']>=10 && (($instruction['hauptmenuspalte']<$instructionMaxID) || ($instruction['hauptmenuspalte']==$instructionMaxID && $instruction['hauptmenu']==0)) ))
+                                            @if($allowDownArrows && ($instruction['hauptmenuspalte']>=10 && (($instruction['hauptmenuspalte']<$instructionMaxID) || ($instruction['hauptmenuspalte']==$instructionMaxID && $instruction['hauptmenu']==0)) ))
                                                 <a href="{{ url('Instruction/down/'.$instruction->id) }}">
                                                     <box-icon name='chevron-down' ></box-icon>
                                                 </a>
@@ -90,7 +102,7 @@
                                                 </a>
                                             @endif
                                             @if($instruction['hauptmenu']==1)
-                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/ToMainLinkIfNoChildren/'.$instruction->id) }}" title="Container auflösen">
+                                                <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/keinMenu/'.$instruction->id) }}" title="Container auflösen">
                                                     <box-icon name='chevron-left'></box-icon>
                                                 </a>
                                             @endif
@@ -106,7 +118,7 @@
                                                         ->exists();
                                                 @endphp
                                                 @if(!$containerHasChildren)
-                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/ToMainLinkIfNoChildren/'.$instruction->id) }}" title="Container auflösen">
+                                                    <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/keinMenu/'.$instruction->id) }}" title="Container auflösen">
                                                         <box-icon name='chevron-left'></box-icon>
                                                     </a>
                                                     <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/MenuMinus/'.$instruction->id) }}" title="Container zu Hauptmenüpunkt (nur ohne Unterpunkte)">
@@ -206,7 +218,7 @@
                                                   @endif
 
                                                   {{-- Zu Hauptmenu machen (hauptmenu=1, neue Spalte, position=10) --}}
-                                                  <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/ToMainMenu/'.$instruction->id) }}" title="Zu Hauptmenu machen">
+                                                  <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Instruction/aktivMenu/'.$instruction->id) }}" title="Zu Hauptmenu machen">
                                                       <box-icon name='chevrons-right'></box-icon>
                                                   </a>
                                               </div>

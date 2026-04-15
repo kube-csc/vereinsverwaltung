@@ -500,22 +500,71 @@ class InstructionController extends Controller
     public function down($instructionId)
     {
         $instruction = Instruction::findOrFail($instructionId);
-        // Wenn ein Sammelmenü-Container verschoben wird, muss die ganze Gruppe mit.
-        if ((int)$instruction->hauptmenu === 2) {
-            $this->moveMenuColumn((int)$instruction->hauptmenuspalte, +1);
-            return Redirect()->back()->with('success', 'Das Hauptmenu wurde inkl. Unterpunkten nach unten verschoben.');
+        $fromhauptmenuspalte = (int)$instruction->hauptmenuspalte;
+        $fromPosition = (int)$instruction->position;
+
+        if ($instruction->hauptmenu == 1 || $instruction->hauptmenu == 2) {
+
+            $colsToShiftNew = Instruction::whereIn('hauptmenu', [1, 2, 3])
+                ->where('hauptmenuspalte', $fromhauptmenuspalte)
+                ->pluck('id')
+                ->values();
+
+            foreach ($colsToShiftNew as $col) {
+                Instruction::where('id', $col)
+                    ->update([
+                        'hauptmenuspalte' => $fromhauptmenuspalte + 10,
+                        'bearbeiter_id' => Auth::id(),
+                        'updated_at' => Carbon::now(),
+                    ]);
+            }
+
+            $colsToShift = Instruction::whereIn('hauptmenu', [1, 2, 3])
+                ->whereNotIn('id', $colsToShiftNew)
+                ->where('hauptmenuspalte', $fromhauptmenuspalte + 10)
+                ->pluck('id')
+                ->values();
+
+            foreach ($colsToShift as $col) {
+                Instruction::where('id', $col)
+                    ->update([
+                        'hauptmenuspalte' => $fromhauptmenuspalte,
+                        'bearbeiter_id' => Auth::id(),
+                        'updated_at' => Carbon::now(),
+                    ]);
+            }
+
+            return Redirect()->back()->with('success', 'Die Informationsseite wurde eine Position nach unten verschoben.');
         }
 
-        $positionNew = $instruction->position + 11;
-        $menulevel = $instruction->hauptmenuspalte;
-        Instruction::findOrFail($instructionId)->update([
-            'position' => $positionNew,
-            'bearbeiter_id' => Auth::id(),
-            'updated_at' => Carbon::now()
-        ]);
+        if ($instruction->hauptmenu == 3) {
 
-        $this->normalizeMenuColumn($menulevel);
-        return Redirect()->back()->with('success', 'Die Informationsseite wurde eine Position nach unten verschoben.');
+            Instruction::where('id', $instructionId)
+                ->update([
+                    'position' => $fromPosition + 10,
+                    'bearbeiter_id' => Auth::id(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+            $colsToShift = Instruction::where('hauptmenuspalte', $fromhauptmenuspalte)
+                ->where('position', $fromPosition + 10)
+                ->where('hauptmenu', 3)
+                ->where('id', '!=', $instructionId)
+                ->pluck('id')
+                ->values();
+
+            foreach ($colsToShift as $col) {
+                Instruction::where('id', $col)
+                    ->update([
+                        'position' => $fromPosition,
+                        'bearbeiter_id' => Auth::id(),
+                        'updated_at' => Carbon::now(),
+                    ]);
+            }
+
+            return Redirect()->back()->with('success', 'Der Unterpunkt wurde eine Position nach unten verschoben.');
+        }
+
     }
 
     public function maxdown($instructionId)
@@ -641,7 +690,7 @@ class InstructionController extends Controller
      * Container (hauptmenu=2) zu normalem Hauptmenüpunkt (hauptmenu=1) umwandeln,
      * aber NUR wenn es in dieser Spalte keine Unterpunkte (hauptmenu=3) gibt.
      */
-    public function toMainLinkIfNoChildren($instructionId)
+    public function keinMenu($instructionId)
     {
         $instruction = Instruction::findOrFail($instructionId);
         $fromCol = (int)$instruction->hauptmenuspalte;
@@ -862,7 +911,7 @@ class InstructionController extends Controller
      * Macht eine Informationsseite (typischerweise hauptmenu=0) zu einem Top-Level-Menüpunkt.
      * Ergebnis: hauptmenu=1, neue hauptmenuspalte (am Ende), position=10.
      */
-    public function toMainMenu($instructionId)
+    public function aktivMenu($instructionId)
     {
         $instruction = Instruction::findOrFail($instructionId);
 

@@ -31,6 +31,7 @@ use App\Http\Controllers\MemberImageController;
 use App\Http\Controllers\RegattaTeamController;
 use App\Http\Controllers\FaqController ;
 use App\Http\Controllers\RegattaSettingsController;
+use App\Http\Controllers\RegattaTeamManagerController;
 use App\Http\Controllers\TrainerAdminController;
 use App\Http\Controllers\TrainertypAdminController;
 
@@ -298,6 +299,12 @@ Route::get('/Regattateam/{regattaTeam_id}',           [RegattaTeamController::cl
 Route::get('/Regattateam/edit/{regattaTeam_id}',      [RegattaTeamController::class, 'edit'])          ->name('regattaTeam.edit');
 Route::post('/Regattateam/update/{regattaTeam_id}',   [RegattaTeamController::class, 'update'])        ->name('regattaTeam.update');
 Route::get('/Regattateam/Werbungsquelle/public/{regatta_id?}', [RegattaTeamController::class, 'werbungsquellePublic'])->name('regattaTeam.werbungsquellePublic');
+
+// RegattaTeamManager (Mannschaften/teamlink verwalten)
+Route::get('/RegattateamManager',                     [RegattaTeamManagerController::class, 'index'])  ->name('regattaTeamManager.index');
+Route::get('/RegattateamManager/edit/{id}',           [RegattaTeamManagerController::class, 'edit'])   ->name('regattaTeamManager.edit');
+Route::post('/RegattateamManager/update/{id}',         [RegattaTeamManagerController::class, 'update']) ->name('regattaTeamManager.update');
+Route::post('/RegattateamManager/sync/{id}',           [RegattaTeamManagerController::class, 'sync'])   ->name('regattaTeamManager.sync');
 
 Route::get('/Regatta/Einstellungen', [RegattaSettingsController::class, 'edit'])->name('regattaSettings.edit');
 Route::post('/Regatta/Einstellungen', [RegattaSettingsController::class, 'update'])->name('regattaSettings.update');

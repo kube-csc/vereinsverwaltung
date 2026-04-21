@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.10.03</p>
+<p>Version: V00.10.04</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -165,7 +165,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
     <li>Rennklassen können als Vorlage angelegt und bearbeitet werden</li>
     <li>Rennklassen können der Regatta zugeordnet werden</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
-    <li>FAQ für die Regattamanagment APP</li>
+    <li>FAQ für die Regattamanagement APP</li>
     <li>Mannschaften können angelegt und bearbeitet werden</li>
     <li>Rennen anlegen und bearbeiten</li>
     <li>Rennen können Tabellen oder mehrere Tabellen zugeordnet werden</li>

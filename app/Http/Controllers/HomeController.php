@@ -248,24 +248,32 @@ class HomeController extends Controller
             ->get();
 
         $search = str_replace('_' , ' ' , $instructionSearch);
-        $instructions = instruction::where('ueberschrift' , $search)->get();
 
-        foreach($instructions as $instruction){
-            $instructionId = $instruction->id;
-        }
+        /** @var Instruction $instruction */
+        $instruction = Instruction::where('ueberschrift' , $search)->firstOrFail();
 
-        $documents = Document::where('instruction_id' , $instructionId)
-                             ->where('startDatum' , '<=' , Carbon::now()->toDateString())
-                             ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
-                             ->where('dokumentenFile' ,'!=' , NULL)
-                             ->where('visible' , 1)
-                             ->get();
+        $documents = Document::where('instruction_id' , $instruction->id)
+            ->where('startDatum' , '<=' , Carbon::now()->toDateString())
+            ->where('endDatum'   , '>=' , Carbon::now()->toDateString())
+            ->where('dokumentenFile' ,'!=' , NULL)
+            ->where('visible' , 1)
+            ->get();
+
+        // Frontend-Layout abhängig vom optionalen Headerbild.
+        $layout = !empty($instruction->headerBild) ? 'layouts.headFrontend' : 'layouts.frontend';
+        $heroBackgroundUrl = !empty($instruction->headerBild)
+            ? asset('storage/' . $instruction->headerBild)
+            : null;
 
         return view('instruction.show')->with([
-            'documents'                   => $documents,
-            'instructions'                => $instructions,
-            'footerDocuments'             => $footerDocuments,
-            'sportSectionTeamNameMenu'    => $sportSectionTeamNameMenu
+            'documents' => $documents,
+            'instruction' => $instruction,
+            // Legacy: bisher wurde eine Collection als `instructions` übergeben.
+            'instructions' => collect([$instruction]),
+            'layout' => $layout,
+            'heroBackgroundUrl' => $heroBackgroundUrl,
+            'footerDocuments' => $footerDocuments,
+            'sportSectionTeamNameMenu' => $sportSectionTeamNameMenu,
         ]);
     }
 

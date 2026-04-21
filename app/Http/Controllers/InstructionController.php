@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Instruction;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class InstructionController extends Controller
 {
@@ -283,6 +286,7 @@ class InstructionController extends Controller
             $new += 10;
         }
     }
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -497,7 +501,7 @@ class InstructionController extends Controller
         return Redirect()->back()->with('warning', 'Es konnte nichts verschoben werden.');
     }
 
-    public function down($instructionId)
+    public function down($instructionId): RedirectResponse
     {
         $instruction = Instruction::findOrFail($instructionId);
         $fromhauptmenuspalte = (int)$instruction->hauptmenuspalte;
@@ -564,6 +568,8 @@ class InstructionController extends Controller
 
             return Redirect()->back()->with('success', 'Der Unterpunkt wurde eine Position nach unten verschoben.');
         }
+
+        return Redirect()->back()->with('warning', 'Es konnte nichts verschoben werden.');
 
     }
 
@@ -961,9 +967,9 @@ class InstructionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function index()
+    public function index(): View
     {
         // Menü-Einträge (alles außer hauptmenu=0) werden wie gewohnt in der Menüreihenfolge gelistet.
         $instructions = Instruction::where('hauptmenu', '!=', 0)
@@ -993,9 +999,9 @@ class InstructionController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin.instruction.create');
     }
@@ -1004,9 +1010,9 @@ class InstructionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
                 'ueberschrift'  => 'required|max:50',
@@ -1044,21 +1050,24 @@ class InstructionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\instruction  $instruction
-     * @return \Illuminate\Http\Response
+     * In diesem Projekt gibt es keine separate Admin-"show"-Ansicht.
+     * Wir leiten daher auf die Bearbeiten-Seite um.
+     *
+     * @param  int  $instruction_id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function show()
+    public function show($instruction_id): RedirectResponse
     {
-      //
+        return redirect()->route('instruction.edit', $instruction_id);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\instruction  $instruction
-     * @return \Illuminate\Http\Response
+     * @param  int  $instruction_id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function edit($instruction_id)
+    public function edit($instruction_id): View
     {
         $instruction = Instruction::findOrFail($instruction_id);
 
@@ -1069,16 +1078,23 @@ class InstructionController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\instruction  $instruction
-     * @return \Illuminate\Http\Response
+     * @param  int  $instruction_id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $instruction_id)
+    public function update(Request $request, $instruction_id): RedirectResponse
     {
         $instruction = Instruction::findOrFail($instruction_id);
 
         // Validierung: Überschrift ist nur bei Nicht-Systemseiten zwingend änderbar.
         $rules = [
             'beschreibung' => 'nullable',
+            // Optionales Headerbild (wird als Pfad auf Disk "public" gespeichert)
+            'headerBild' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            // Optional: Text-Overrides für den Hero-Bereich (werden nur genutzt, wenn `headerBild` gesetzt ist)
+            'headerTitel' => 'nullable|string|max:255',
+            'headerSlogen' => 'nullable|string|max:255',
+            // Checkbox zum Entfernen des bestehenden Bildes
+            'headerBild_remove' => 'nullable|boolean',
         ];
         if ((int) $instruction->systemmenu !== 1) {
             $rules['ueberschrift'] = 'required|max:50';
@@ -1090,9 +1106,32 @@ class InstructionController extends Controller
 
         $update = [
             'beschreibung'  => $validated['beschreibung'] ?? null,
+            'headerTitel'   => $validated['headerTitel'] ?? null,
+            'headerSlogen'  => $validated['headerSlogen'] ?? null,
             'bearbeiter_id' => Auth::id(),
             'updated_at'  => Carbon::now(),
         ];
+
+        // Headerbild-Logik:
+        // - Upload überschreibt das bestehende Bild.
+        // - Entfernen löscht die Datei (falls vorhanden) und setzt DB-Feld auf NULL.
+        if ($request->hasFile('headerBild')) {
+            $file = $request->file('headerBild');
+            $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+            $fileName = 'instruction_header_' . $instruction->id . '_' . time() . '.' . $ext;
+            $path = $file->storeAs('instructionHeader', $fileName, 'public');
+
+            if (!empty($instruction->headerBild)) {
+                Storage::disk('public')->delete($instruction->headerBild);
+            }
+
+            $update['headerBild'] = $path;
+        } elseif ($request->boolean('headerBild_remove')) {
+            if (!empty($instruction->headerBild)) {
+                Storage::disk('public')->delete($instruction->headerBild);
+            }
+            $update['headerBild'] = null;
+        }
 
         $headlineWasBlocked = false;
         if ((int) $instruction->systemmenu !== 1) {
@@ -1116,12 +1155,12 @@ class InstructionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\instruction  $instruction
-     * @return \Illuminate\Http\Response
+     * Hinweis: Im aktuellen Projekt ist das Löschen von Informationsseiten über den Resource-Controller
+     * nicht vorgesehen.
      */
-    public function destroy(instruction $instruction)
+    public function destroy(Instruction $instruction): RedirectResponse
     {
-        //
+        return redirect()->back()->with('warning', 'Löschen ist derzeit nicht implementiert.');
     }
 
     public function menulevel1($instructionId , $positionFilter)

@@ -15,14 +15,21 @@ class CreateInstructionsTable extends Migration
     {
         Schema::create('instructions', function (Blueprint $table) {
             $table->id();
+
             $table->string('ueberschrift' ,50);
             $table->unsignedBigInteger('event_id')->nullable();
             $table->text('beschreibung')->nullable();
-            $table->boolean('hauptmenu');    // true = 1 = Hauptmenuüberschrift
-            $table->boolean('visible');      // true = 1 = sichtbar
+            $table->boolean('hauptmenu');
+             /*
+                0 = Informationseite ohne Hauptmenü und Untermenü
+                1 = Hauptmenü ohne Dropdown
+                2 = Hauptmenü mit Dropdown (Untermenü)
+                3 = Untermenü vom Dropdown Hauptmenü
+            */
             $table->integer('hauptmenuspalte');
-            $table->boolean('systemmenu');    // true = 1 = Systemmenu
+            $table->boolean('systemmenu');    // true = 1 = Systemmenü
             $table->integer('position');
+            $table->boolean('visible');      // true = 1 = sichtbar
             $table->text('route')->nullable();
             $table->unsignedBigInteger('freigeber_id')->nullable();
             $table->unsignedBigInteger('bearbeiter_id');

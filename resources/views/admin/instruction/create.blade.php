@@ -15,7 +15,9 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                    Bitte gebe eine neue Informationsseite ein.
+                    Bitte gib eine neue Informationsseite ein.
+                    Nach dem Anlegen wirst du direkt zur Bearbeitung weitergeleitet, um Inhalte (Seiteninhalt, Headerbild usw.) zu pflegen.
+                    Die Seite wird zunächst als Menüpunkt am Ende des Frontend-Menüs eingeordnet (Menüspalte = max + 10, Position = 10).
                   </div>
 
               </div>
@@ -49,6 +51,35 @@
                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('ueberschrift') ? 'bg-red-300' : '' }}"
                                     id="ueberschrift" placeholder="Name der Informationsseite" name="ueberschrift" value="{{ old('ueberschrift') }}">
                                     <small class="form-text text-danger">{!! $errors->first('ueberschrift') !!}</small>
+                                </div>
+
+                                <div class="mt-4">
+                                    <label for="accentColor">Akzentfarbe (optional)</label>
+                                    <div class="text-xs text-gray-600">Hex-Farbe, z.B. <span class="font-mono">#0ea5e9</span>. Leer lassen = Standard.</div>
+                                    <div class="flex items-center gap-4">
+                                        <input
+                                            type="color"
+                                            id="accentColorPicker"
+                                            value="#000000"
+                                            class="h-10 w-16 border rounded shadow"
+                                            title="Akzentfarbe auswählen"
+                                        >
+
+                                        <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('accentColor') ? 'bg-red-300' : '' }}"
+                                               id="accentColor" placeholder="#RRGGBB" name="accentColor" value="{{ old('accentColor') }}" inputmode="text">
+                                    </div>
+                                    <small class="form-text text-danger">{!! $errors->first('accentColor') !!}</small>
+
+                                    <script>
+                                        (function () {
+                                            var picker = document.getElementById('accentColorPicker');
+                                            var text = document.getElementById('accentColor');
+                                            if (!picker || !text) return;
+                                            picker.addEventListener('input', function () {
+                                                text.value = picker.value;
+                                            });
+                                        })();
+                                    </script>
                                 </div>
                                 <div class="py-2">
                                 <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">anlegen</button>

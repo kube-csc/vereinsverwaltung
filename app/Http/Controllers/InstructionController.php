@@ -1016,35 +1016,34 @@ class InstructionController extends Controller
     {
         $request->validate([
                 'ueberschrift'  => 'required|max:50',
+                // Optional: Hex-Farbe (#RGB oder #RRGGBB)
+                'accentColor'   => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
             ]
         );
 
+        // Neue Informationsseiten sollen standardmäßig als Top-Level-Menüpunkt am Ende des Menüs angelegt werden.
+        // Regel: hauptmenuspalte = (max vorhandene hauptmenuspalte mit >0) + 10, position = 10.
+        $maxMenuCol = (int) (Instruction::where('hauptmenuspalte', '>', 0)->max('hauptmenuspalte') ?? 0);
+        $newMenuCol = $maxMenuCol > 0 ? ($maxMenuCol + 10) : 10;
+
         $instruction = new Instruction([
                 'ueberschrift'             => $request->ueberschrift,
-                'hauptmenuspalte'          => 10,
+                'hauptmenuspalte'          => $newMenuCol,
                 'systemmenu'               => 0,
                 'visible'                  => 1,
                 'hauptmenu'                => 1,
                 'position'                 => 10,
+                'accentColor'              => $request->input('accentColor') ?: null,
                 'bearbeiter_id'            => Auth::id(),
                 'user_id'                  => Auth::id(),
-                'updated_at'               => Carbon::now(),
-                'created_at'               => Carbon::now()
             ]
         );
 
-        /* ToDo: mit welchen Werten soll die Felder angelegt werden?
-                  'hauptmenuspalte'          => 10,
-                  'systemmenu'               => 0,
-                  'hauptmenu'                => 1,
-                  'position'                 => 10,
-
-         */
-
         $instruction->save();
 
-        return redirect()->route('instruction.index')
-            ->with('success', 'Informationsseite wurde angelegt.');
+        // Direkt weiter bearbeiten, damit Beschreibung/Headerbild etc. gepflegt werden können.
+        return redirect()->route('instruction.edit', $instruction->id)
+            ->with('success', 'Informationsseite wurde angelegt und kann nun bearbeitet werden.');
     }
 
     /**
@@ -1093,6 +1092,9 @@ class InstructionController extends Controller
             // Optional: Text-Overrides für den Hero-Bereich (werden nur genutzt, wenn `headerBild` gesetzt ist)
             'headerTitel' => 'nullable|string|max:255',
             'headerSlogen' => 'nullable|string|max:255',
+            // Optional: Akzentfarbe (Hex)
+            'accentColor' => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
+            'accentColor_reset' => 'nullable|boolean',
             // Checkbox zum Entfernen des bestehenden Bildes
             'headerBild_remove' => 'nullable|boolean',
         ];
@@ -1111,6 +1113,16 @@ class InstructionController extends Controller
             'bearbeiter_id' => Auth::id(),
             'updated_at'  => Carbon::now(),
         ];
+
+        // Akzentfarbe: leer/Reset => NULL
+        if ($request->boolean('accentColor_reset')) {
+            $update['accentColor'] = null;
+        } else {
+            // Bei nullable-Feld: wenn leerer String kommt, speichern wir NULL.
+            $update['accentColor'] = !empty($validated['accentColor'] ?? null)
+                ? $validated['accentColor']
+                : null;
+        }
 
         // Headerbild-Logik:
         // - Upload überschreibt das bestehende Bild.
@@ -1163,17 +1175,5 @@ class InstructionController extends Controller
         return redirect()->back()->with('warning', 'Löschen ist derzeit nicht implementiert.');
     }
 
-    public function menulevel1($instructionId , $positionFilter)
-    {
-        // Historischer Sonderfall: früher wurde hier manuell ein Container/Level-1 umgebaut.
-        // Ziel ist aber: wenn ein Hauptmenu-Container verschoben wird, müssen ALLE Unterpunkte
-        // (gleiche hauptmenuspalte) mit verschoben werden.
-        // Daher nutzen wir jetzt die neue Block-Logik.
-        $instruction = Instruction::findOrFail($instructionId);
-
-        // Wenn wir hier landen, ist es immer ein Sammelmenü-Container auf Spalte 10.
-        // "MaxTop/Top" bedeutet: diese Spalte als Block nach oben verschieben.
-        $this->moveMenuColumn((int)$instruction->hauptmenuspalte, -1);
-    }
 
 }

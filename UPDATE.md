@@ -1,4 +1,26 @@
 ## Update Anleitung
+**Version V00.10.05**
+
+***Neue Funktionen***
+- **Informationsseiten: optionaler Header (Hero) im Frontend**
+  - Pro Informationsseite kann optional ein **Headerbild** gesetzt werden.
+  - Optional können zusätzlich **Header-Titel** und **Header-Slogen** gepflegt werden.
+  - **Frontend-Layout-Switch:** Wenn `headerBild` gesetzt ist, wird automatisch `layouts.headFrontend` verwendet, ansonsten `layouts.frontend`.
+- **Backend: Informationsseiten-Menüverwaltung**
+  - Bei Menü-Unterpunkten (`hauptmenu = 3`) werden **Down-/MaxDown-Pfeile** nur angezeigt, wenn der nächste Menüpunkt ebenfalls ein Unterpunkt im gleichen Block ist.
+  - Am **letzten Menüpunkt** werden keine Down-Pfeile angezeigt.
+
+***Datenbankanpassungen***
+- Migration: `instructions` um folgende Felder erweitert:
+  - `headerBild` (nullable)
+  - `headerTitel` (nullable)
+  - `headerSlogen` (nullable)
+- **Speicherort Headerbilder:** `storage/app/public/instructionHeader` (öffentlich über `/public/storage/...` nach `php artisan storage:link`).
+
+***Hinweise nach dem Update***
+- `php artisan migrate`
+- Falls noch nicht vorhanden: `php artisan storage:link`
+
 **Version V00.10.04**
 
 ***Neue Funktionen***

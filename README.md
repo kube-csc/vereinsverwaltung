@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.10.04</p>
+<p>Version: V00.10.05</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -16,7 +16,7 @@ Beispiel für einen Kanuverein mit Abteilungen / Sportarten:
 
 <h2>Installierte Programme / Templets</h2>
 <ul>
-  <li>Installation Laravel 9.* mit jetstream 2.* , livewire 2.* teams  und tailwindcss</li>
+  <li>Installation Laravel 10.* mit Jetstream/Livewire 2.* (Teams) und TailwindCSS</li>
   <li><a href="https://jetstream.laravel.com/2.x/introduction.html">jetstream 2.x Anleitung</a></li>
   <li><a href="https://jetstream.laravel.com/2.x/stacks/livewire.html">livewire 2.x</a></li>
   <li><a href="https://boxicons.com/">boxicons</a>(Forntend)</li>
@@ -67,6 +67,7 @@ Folgende Lizenz wird für die Nutzung des Frontends benötigt:
     <ul>
         <li>Anfahrt **</li>
         <li>Selbst angelegte Informationsseiten</li>
+        <li><strong>Optionaler Header (Hero)</strong>: wenn ein <code>headerBild</code> gesetzt ist, wird im Frontend automatisch ein Hero-Bereich mit Hintergrundbild angezeigt (Layout <code>layouts.headFrontend</code>). Optional sind <code>headerTitel</code> und <code>headerSlogen</code> möglich.</li>
         <li>Abteilungen *
           <ul>
             <li>Sportarten *</li>
@@ -151,6 +152,7 @@ Folgende Lizenz wird für die Nutzung des Frontends benötigt:
         <li>Übernachtungskosten</li>
         <li>Impresssum</li>
         <li>Datenschutzerklärung</li>
+        <li><strong>Optionales Headerbild</strong> (inkl. Header-Titel/Slogen) kann pro Informationsseite im Edit-Formular gepflegt werden.</li>
     </ul>
   </li>
 <li>Backlinksverwaltung Umleitung von Links die nicht mehr Existieren</li>
@@ -199,12 +201,14 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
         <li>eventDokumente</li>
         <li>eventImage</li>
         <li>header</li>
+          <li>instructionHeader <small>(Headerbilder für Informationsseiten)</small></li>
         <li>raceDokumente</li>
         <li>tabeleDokumente</li>
         <li>sportgeraete</li>
       </ul>
     </li>
    <li>php artisan storage:link</li>
+    <li><strong>Info:</strong> Headerbilder für Informationsseiten werden im Disk <code>public</code> gespeichert, standardmäßig unter <code>storage/app/public/instructionHeader</code> und sind danach über <code>/storage/instructionHeader/...</code> erreichbar.</li>
    <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
    <ul>
      <li>anfahrt.blade.php anlegen und mit der Vorlage von anfahrt_example.blade.php ausfüllen</li>

@@ -49,6 +49,9 @@
 
   @include('layouts.header')
 
+  {{-- Optional: Seiten-spezifische Styles (z.B. Akzentfarbe für Informationsseiten) --}}
+  @yield('page_styles')
+
   <!-- =======================================================
   * Template Name: Squadfree - v2.2.0
   * Template URL: https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/
@@ -235,22 +238,28 @@
   </header><!-- End Header -->
 
 <!-- ======= Hero Section ======= -->
-<section id="hero">
+@php
+    $Verein = str_replace('_', ' ', env('VEREIN_NAME'));
+    $SLogen = str_replace('_', ' ', env('VEREIN_SLOGEN'));
+
+    // Optional: Unterviews (z.B. Informationsseiten) können das Hero-Background überschreiben.
+    $heroBg = trim($__env->yieldContent('hero_background_url'));
+@endphp
+
+<section id="hero" @if($heroBg !== '') style="background: url('{{ $heroBg }}') top center; background-size: cover;" @endif>
     <div class="hero-container" data-aos="fade-up">
-       @php
-        $Verein = str_replace('_', ' ', env('VEREIN_NAME'));
-        $SLogen = str_replace('_', ' ', env('VEREIN_SLOGEN'));
-       @endphp
-      <h1>{{ $Verein }}</h1>
-      <h2>{{ $SLogen }}</h2>
-      <?php // ToDo:     <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> ?>
-      <a href="@yield( 'about' , '' )#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
-      @php
-      /* ToDo: vor dem #About den Routenname hinzufügen verbessern
-      benutzt in:
-      resources\views\instruction\datenschutzerklaerung.blade.php
-      */
-      @endphp
+        <h1>@yield('hero_h1', $Verein)</h1>
+        <h2>@yield('hero_h2', $SLogen)</h2>
+
+        @hasSection('hero_button_href')
+            @php $heroBtn = trim($__env->yieldContent('hero_button_href')); @endphp
+            @if($heroBtn !== '')
+                <a href="{{ $heroBtn }}" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
+            @endif
+        @else
+            <?php // Default (Home): Scroll zu #about ?>
+            <a href="@yield( 'about' , '' )#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
+        @endif
     </div>
 </section><!-- End Hero -->
 

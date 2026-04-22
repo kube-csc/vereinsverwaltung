@@ -48,6 +48,9 @@
 
   @include('layouts.header')
 
+  {{-- Optional: Seiten-spezifische Styles (z.B. Akzentfarbe für Informationsseiten) --}}
+  @yield('page_styles')
+
   <!-- =======================================================
   * Template Name: Squadfree - v2.2.0
   * Template URL: https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/

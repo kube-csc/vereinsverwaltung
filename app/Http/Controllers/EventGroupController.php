@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\eventGroup;
 use Illuminate\Support\Carbon;
 use Auth;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
 
@@ -59,7 +60,8 @@ class EventGroupController extends Controller
     {
         $request->validate(
             [
-                'termingruppe' => 'required|max:50'
+                'termingruppe' => 'required|max:50',
+                'headerBild'   => 'nullable|image|max:5120',
             ]
         );
 
@@ -75,6 +77,19 @@ class EventGroupController extends Controller
             ]
         );
         $eventGroup->save();
+
+        // Headerbild-Upload (analog zu Instruction: Dateiname mit ID + Timestamp)
+        if ($request->hasFile('headerBild')) {
+            $file = $request->file('headerBild');
+            $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+            $fileName = 'eventgroup_header_' . $eventGroup->id . '_' . time() . '.' . $ext;
+            $path = $file->storeAs('groupEventHeader', $fileName, 'public');
+
+            $eventGroup->update([
+                'headerBild' => $path,
+                'updated_at' => Carbon::now(),
+            ]);
+        }
 
         return redirect('/Eventgruppe/alle')->with(
             [
@@ -115,19 +130,45 @@ class EventGroupController extends Controller
      */
     public function update(Request $request, $eventGroup_id)
     {
+        $eventGroup = eventGroup::findOrFail($eventGroup_id);
+
         $request->validate(
             [
-                'termingruppe'         => 'required|max:50'
+                'termingruppe' => 'required|max:50',
+                'headerBild'   => 'nullable|image|max:5120',
             ]
         );
 
-        eventGroup::find($eventGroup_id)->update([
+        $update = [
             'termingruppe'    => $request->termingruppe,
             'domain'          => $request->domain,
             'headerTitel'     => $request->headerTitel,
             'headerSlogen'    => $request->headerSlogen,
             'updated_at'      => Carbon::now()
-        ]);
+        ];
+
+        // Headerbild-Logik:
+        // - Upload überschreibt das bestehende Bild.
+        // - Entfernen löscht die Datei (falls vorhanden) und setzt DB-Feld auf NULL.
+        if ($request->hasFile('headerBild')) {
+            $file = $request->file('headerBild');
+            $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+            $fileName = 'eventgroup_header_' . $eventGroup->id . '_' . time() . '.' . $ext;
+            $path = $file->storeAs('groupEventHeader', $fileName, 'public');
+
+            if (!empty($eventGroup->headerBild)) {
+                Storage::disk('public')->delete($eventGroup->headerBild);
+            }
+
+            $update['headerBild'] = $path;
+        } elseif ($request->boolean('headerBild_remove')) {
+            if (!empty($eventGroup->headerBild)) {
+                Storage::disk('public')->delete($eventGroup->headerBild);
+            }
+            $update['headerBild'] = null;
+        }
+
+        $eventGroup->update($update);
 
         return redirect('/Eventgruppe/alle')->with(
             [

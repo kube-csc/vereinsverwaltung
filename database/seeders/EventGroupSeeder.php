@@ -19,8 +19,25 @@ class EventGroupSeeder extends Seeder
         DB::table('event_groups')
             ->insert(
                 [
-                    array('id' => '1','termingruppe' => 'Eventserie 1','user_id' => '1','created_at' => '2021-03-28 13:06:42','updated_at' => '2021-03-28 13:06:42'),
-                    array('id' => '2','termingruppe' => 'Eventserie 2','user_id' => '1','created_at' => '2021-03-28 13:06:42','updated_at' => '2021-03-28 13:06:42')
+                    array(
+                        'id' => '1',
+                        'termingruppe' => 'Eventserie 1',
+                        'headerTitel' => 'Eventserie 1',
+                        'headerBild' => '',
+                        'user_id' => '1',
+                        'created_at' => '2021-03-28 13:06:42',
+                        'updated_at' => '2021-03-28 13:06:42'
+                    ),
+
+                    array(
+                        'id' => '2',
+                        'termingruppe' => 'Kanucup',
+                        'headerTitel' => 'Kanucup',
+                        'headerBild' => 'eventgroup-header-1.png',
+                        'user_id' => '1',
+                        'created_at' => '2021-03-28 13:06:42',
+                        'updated_at' => '2021-03-28 13:06:42'
+                    ),
                 ]
             );
     }

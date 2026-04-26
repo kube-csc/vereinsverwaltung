@@ -18,8 +18,11 @@
 - **Speicherort Headerbilder:** `storage/app/public/instructionHeader` (öffentlich über `/public/storage/...` nach `php artisan storage:link`).
 
 ***Hinweise nach dem Update***
+- Neue/fehlende Migration für **`sport_sections`** ergänzt.
+- Feld **`tabeles.beschreibung`** wurde auf **`TEXT`** geändert (vermeidet MySQL Row-Size Probleme bei großen Texten).
 - `php artisan migrate`
 - Falls noch nicht vorhanden: `php artisan storage:link`
+
 
 **Version V00.10.04**
 

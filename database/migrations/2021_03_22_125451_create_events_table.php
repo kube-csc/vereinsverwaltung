@@ -39,6 +39,14 @@ class CreateEventsTable extends Migration
             $table->unsignedBigInteger('eventGroup_id')->nullable();
             $table->text('einverstaendnis')->nullable();
             $table->integer('teilnehmer')->default(0);
+
+             /* Teilnehmermax::
+               0 = unbegrenzt;
+               1 = maximale Teilnehmerzahl keine Meldung möglich keine Warteliste;
+               2 = maximale Teilnehmerzahl mit Warteliste;
+               3 = maximale Teilnehmerzahl mit Warteliste aber  automatischer Bahnauffühlung
+             */
+
             $table->integer('teilnehmermax')->default(0);
             $table->unsignedBigInteger('externerCalender_id')->nullable();
             $table->text('externerCalenderEvent_id')->nullable();

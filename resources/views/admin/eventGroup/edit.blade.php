@@ -52,12 +52,86 @@
                                     </div>
 
                                     <div class="my-4">
+                                        <label class="block font-semibold" for="accentColor">Akzentfarbe (optional)</label>
+                                        <div class="text-xs text-gray-600">Hex-Farbe, z.B. <span class="font-mono">#0ea5e9</span>. Leer lassen = Standardfarbe.</div>
+
+                                        @php
+                                            // HTML <input type="color"> erwartet i.d.R. #RRGGBB.
+                                            // Wenn eine Kurzform (#RGB) gespeichert wurde, erweitern wir sie für die Picker-Initialisierung.
+                                            $accentColorText = old('accentColor') ?? $eventGroup->accentColor;
+                                            $accentColorPicker = '#000000';
+                                            if (!empty($accentColorText) && preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $accentColorText)) {
+                                                if (strlen($accentColorText) === 4) {
+                                                    $accentColorPicker = '#' . $accentColorText[1] . $accentColorText[1] . $accentColorText[2] . $accentColorText[2] . $accentColorText[3] . $accentColorText[3];
+                                                } else {
+                                                    $accentColorPicker = $accentColorText;
+                                                }
+                                            }
+                                        @endphp
+
+                                        <div class="flex items-center gap-4">
+                                            <input
+                                                type="color"
+                                                id="accentColorPicker"
+                                                value="{{ $accentColorPicker }}"
+                                                class="h-10 w-16 border rounded shadow"
+                                                title="Akzentfarbe auswählen"
+                                            >
+
+                                            <input
+                                                type="text"
+                                                id="accentColor"
+                                                name="accentColor"
+                                                placeholder="#RRGGBB"
+                                                value="{{ $accentColorText }}"
+                                                class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('accentColor') ? 'bg-red-300' : '' }}"
+                                            >
+
+                                            @if(!empty($eventGroup->accentColor))
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 rounded border" style="background: {{ $eventGroup->accentColor }}" title="{{ $eventGroup->accentColor }}"></div>
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <small class="form-text text-danger">{!! $errors->first('accentColor') !!}</small>
+
+                                        @if(!empty($eventGroup->accentColor))
+                                            <label class="inline-flex items-center mt-2">
+                                                <input type="checkbox" name="accentColor_reset" value="1" class="mr-2">
+                                                <span class="text-sm text-gray-700">Akzentfarbe zurücksetzen (Standard verwenden)</span>
+                                            </label>
+                                        @endif
+
+                                        <script>
+                                            (function () {
+                                                var picker = document.getElementById('accentColorPicker');
+                                                var text = document.getElementById('accentColor');
+                                                var reset = document.querySelector('input[name="accentColor_reset"]');
+                                                if (!picker || !text) return;
+
+                                                picker.addEventListener('input', function () {
+                                                    text.value = picker.value;
+                                                    if (reset) reset.checked = false;
+                                                });
+                                            })();
+                                        </script>
+                                    </div>
+
+                                    <div class="my-4">
                                         <label class="block font-semibold" for="headerBild">Headerbild (optional)</label>
 
                                         @if(!empty($eventGroup->headerBild))
                                             <div class="my-2">
                                                 <div class="text-xs text-gray-600">Aktuelles Headerbild:</div>
-                                                <img src="{{ asset('storage/'.$eventGroup->headerBild) }}" alt="Headerbild" style="max-height: 180px;" class="rounded border">
+                                                @php
+                                                    // Abwärtskompatibilität: ggf. ist nur der Dateiname gespeichert.
+                                                    $headerBildPath = $eventGroup->headerBild;
+                                                    if (!str_contains($headerBildPath, '/')) {
+                                                        $headerBildPath = 'groupEventHeader/' . $headerBildPath;
+                                                    }
+                                                @endphp
+                                                <img src="{{ asset('storage/'.$headerBildPath) }}" alt="Headerbild" style="max-height: 180px;" class="rounded border">
                                             </div>
 
                                             <label class="inline-flex items-center mt-2">

@@ -18,6 +18,7 @@ return new class extends Migration
                 $table->string('headerTitel')->after('domain')->nullable();
                 $table->string('headerSlogen')->after('headerTitel')->nullable();
                 $table->string('headerBild')->after('headerSlogen')->nullable();
+                $table->string('accentColor', 9)->nullable()->after('headerSlogen');
         });
     }
 
@@ -33,6 +34,7 @@ return new class extends Migration
             $table->dropColumn('headerBild');
             $table->dropColumn('headerSlogen');
             $table->dropColumn('headerTitel');
+            $table->dropColumn('accentColor');
         });
     }
 };

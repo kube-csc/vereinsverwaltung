@@ -65,6 +65,42 @@
                                             <small class="form-text text-danger">{!! $errors->first('headerSlogen') !!}</small>
                                         </div>
 
+                                        <div class="mt-4">
+                                            <label for="accentColor">Akzentfarbe (optional)</label>
+                                            <div class="text-xs text-gray-600">Hex-Farbe, z.B. <span class="font-mono">#0ea5e9</span>. Leer lassen = Standard.</div>
+                                            <div class="flex items-center gap-4">
+                                                <input
+                                                    type="color"
+                                                    id="accentColorPicker"
+                                                    value="#000000"
+                                                    class="h-10 w-16 border rounded shadow"
+                                                    title="Akzentfarbe auswählen"
+                                                >
+
+                                                <input
+                                                    type="text"
+                                                    id="accentColor"
+                                                    name="accentColor"
+                                                    placeholder="#RRGGBB"
+                                                    value="{{ old('accentColor') }}"
+                                                    inputmode="text"
+                                                    class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('accentColor') ? 'bg-red-300' : '' }}"
+                                                >
+                                            </div>
+                                            <small class="form-text text-danger">{!! $errors->first('accentColor') !!}</small>
+
+                                            <script>
+                                                (function () {
+                                                    var picker = document.getElementById('accentColorPicker');
+                                                    var text = document.getElementById('accentColor');
+                                                    if (!picker || !text) return;
+                                                    picker.addEventListener('input', function () {
+                                                        text.value = picker.value;
+                                                    });
+                                                })();
+                                            </script>
+                                        </div>
+
                                         <div>
                                             <label class="block font-semibold" for="headerBild">Headerbild (optional)</label>
                                             <input

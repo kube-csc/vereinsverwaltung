@@ -25,6 +25,7 @@ class EventGroupSeeder extends Seeder
                         'headerTitel' => 'Eventserie 1',
                         'headerBild' => '',
                         'user_id' => '1',
+                        'bearbeiter_id' => '1',
                         'created_at' => '2021-03-28 13:06:42',
                         'updated_at' => '2021-03-28 13:06:42'
                     ),
@@ -35,6 +36,7 @@ class EventGroupSeeder extends Seeder
                         'headerTitel' => 'Kanucup',
                         'headerBild' => 'eventgroup-header-1.png',
                         'user_id' => '1',
+                        'bearbeiter_id' => '1',
                         'created_at' => '2021-03-28 13:06:42',
                         'updated_at' => '2021-03-28 13:06:42'
                     ),

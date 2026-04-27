@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\eventGroup;
-use Illuminate\Support\Carbon;
 use Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,17 +13,17 @@ class EventGroupController extends Controller
     public function aktiv($sportSection_id)
     {
         eventGroup::find($sportSection_id)->update([
-            'visible'      => '2',
-            'updated_at'   => Carbon::now()
+            'visible'  => '2',
+            'bearbeiter_id' => Auth::user()->id,
         ]);
-        return Redirect()->back()->with('success' , 'Event Grupe wurde sichtbar geschaltet.');
+        return Redirect()->back()->with('success' , 'Event Gruppe wurde sichtbar geschaltet.');
     }
 
     public function inaktiv($sportSection_id)
     {
         eventGroup::find($sportSection_id)->update([
-            'visible'      => '0',
-            'updated_at'   => Carbon::now()
+            'visible'  => '0',
+            'bearbeiter_id' => Auth::user()->id,
         ]);
         return Redirect()->back()->with('success' , 'Event Gruppe wurde unsichtbar geschaltet.');
     }
@@ -32,18 +31,21 @@ class EventGroupController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory
      */
     public function index()
     {
-        $eventGroups = eventGroup::paginate(5);
+        $eventGroups = eventGroup::query()
+            ->withCount('events')
+            ->orderBy('termingruppe')
+            ->paginate(5);
         return view('admin.eventGroup.index' , compact('eventGroups'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory
      */
     public function create()
     {
@@ -58,23 +60,30 @@ class EventGroupController extends Controller
      */
     public function store(Request $request)
     {
+        // Hostname-Regel: erlaubt z.B. example.de oder sub.example.de (ohne Protokoll, ohne Port, ohne Pfad)
+        $hostnameRule = ['nullable', 'string', 'max:255', 'regex:/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i'];
+
         $validated = $request->validate([
             'termingruppe' => 'required|max:50',
-            'headerBild'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            // Optional: Hex-Farbe (#RGB oder #RRGGBB)
-            'accentColor'  => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
+            'domain'  => $hostnameRule,
+            'liveDomain' => $hostnameRule,
+            'headerTitel' => 'nullable|string|max:255',
+            'headerSlogen' => 'nullable|string|max:255',
+            'headerBild' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            // Optional: Hex-Farbe (#RGB, #RRGGBB oder #RRGGBBAA)
+            'accentColor' => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
         ]);
 
         $eventGroup= new eventGroup(
             [
-                'termingruppe'     => $request->termingruppe,
-                'domain'           => $request->domain,
-                'headerTitel'      => $request->headerTitel,
-                'headerSlogen'     => $request->headerSlogen,
-                'accentColor'      => !empty($validated['accentColor'] ?? null) ? $validated['accentColor'] : null,
-                'user_id'          => Auth::user()->id,
-                'updated_at'       => Carbon::now(),
-                'created_at'       => Carbon::now()
+                'termingruppe' => $request->termingruppe,
+                'domain' => $validated['domain'] ?? null,
+                'liveDomain' => $validated['liveDomain'] ?? null,
+                'headerTitel' => $validated['headerTitel'] ?? null,
+                'headerSlogen' => $validated['headerSlogen'] ?? null,
+                'accentColor' => !empty($validated['accentColor'] ?? null) ? $validated['accentColor'] : null,
+                'user_id'  => Auth::user()->id,
+                'bearbeiter_id' => Auth::user()->id,
             ]
         );
         $eventGroup->save();
@@ -88,7 +97,6 @@ class EventGroupController extends Controller
             $file->storeAs('groupEventHeader', $fileName, 'public');
 
             $eventGroup->headerBild = $fileName;
-            $eventGroup->updated_at = Carbon::now();
             $eventGroup->save();
         }
 
@@ -107,14 +115,14 @@ class EventGroupController extends Controller
      */
     public function show(eventGroup $eventGroup)
     {
-        //
+        return response()->noContent();
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\eventGroup  $eventGroup
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory
      */
     public function edit($eventGroup_id)
     {
@@ -133,20 +141,29 @@ class EventGroupController extends Controller
     {
         $eventGroup = eventGroup::findOrFail($eventGroup_id);
 
+        // Hostname-Regel: erlaubt z.B. example.de oder sub.example.de (ohne Protokoll, ohne Port, ohne Pfad)
+        $hostnameRule = ['nullable', 'string', 'max:255', 'regex:/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i'];
+
         $validated = $request->validate([
             'termingruppe' => 'required|max:50',
+            'domain'       => $hostnameRule,
+            'liveDomain'   => $hostnameRule,
+            'headerTitel'  => 'nullable|string|max:255',
+            'headerSlogen' => 'nullable|string|max:255',
             'headerBild'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             // Optional: Hex-Farbe (#RGB oder #RRGGBB)
-            'accentColor'  => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
+            'accentColor'  => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
             'accentColor_reset' => 'nullable|boolean',
+            'headerBild_remove' => 'nullable|boolean',
         ]);
 
         $update = [
             'termingruppe'    => $request->termingruppe,
-            'domain'          => $request->domain,
-            'headerTitel'     => $request->headerTitel,
-            'headerSlogen'    => $request->headerSlogen,
-            'updated_at'      => Carbon::now()
+            'domain'          => $validated['domain'] ?? null,
+            'liveDomain'      => $validated['liveDomain'] ?? null,
+            'headerTitel'     => $validated['headerTitel'] ?? null,
+            'headerSlogen'    => $validated['headerSlogen'] ?? null,
+            'bearbeiter_id'   => Auth::user()->id,
         ];
 
         // Akzentfarbe: leer/Reset => NULL
@@ -207,7 +224,7 @@ class EventGroupController extends Controller
      */
     public function destroy(eventGroup $eventGroup)
     {
-        //
+        return response()->noContent();
     }
 
     public function softDelete($eventGroup_id)

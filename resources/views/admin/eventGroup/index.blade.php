@@ -59,21 +59,34 @@
                                                 <box-icon name='hide' type='solid'></box-icon>
                                             </a>
                                         @endif
-                                        @php
-                                            //ToDo: Count mit einer lösung im Controller
-                                            $eventCount = DB::table('events')->where('eventGroup_id' , $eventGroup->id)->count();
-                                        @endphp
-                                        @if($eventCount==0)
+                                            @php
+                                                $eventCount = $eventGroup->events_count ?? 0;
+                                            @endphp
+                                            @if($eventCount==0)
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Eventgruppe/softDelete/'.$eventGroup->id) }}">
                                                 <box-icon type='solid' name='x-square'></box-icon>
                                             </a>
                                         @endif
                                     </div>
 
-                                      <div class="flex">
-                                      <p class="font-bold text-lg">{{ $eventGroup->termingruppe }}</p>
-                                      <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $eventGroup->updated_at->diffForHumans() }}</p>
-                                    </div>
+                                      <div>
+                                          <div class="flex items-center">
+                                              <p class="font-bold text-lg">{{ $eventGroup->termingruppe }}</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold">{{ $eventGroup->updated_at->diffForHumans() }}</p>
+                                              <p class="ml-2 py-1 text-xs text-gray-500">({{ $eventCount }} Events)</p>
+                                          </div>
+
+                                          @if(!empty($eventGroup->domain) || !empty($eventGroup->liveDomain))
+                                              <div class="text-xs text-gray-600">
+                                                  @if(!empty($eventGroup->domain))
+                                                      <span class="font-semibold">Event Domain:</span> <span class="font-mono">{{ $eventGroup->domain }}</span>
+                                                  @endif
+                                                  @if(!empty($eventGroup->liveDomain))
+                                                      <span class="ml-3 font-semibold">Live Event Domain:</span> <span class="font-mono">{{ $eventGroup->liveDomain }}</span>
+                                                  @endif
+                                              </div>
+                                          @endif
+                                      </div>
                                   </div>
                               </div>
                               @endforeach

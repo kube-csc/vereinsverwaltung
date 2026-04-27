@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::table('event_groups', function (Blueprint $table) {
                 $table->string('domain')->after('visible')->nullable();
-                $table->string('headerTitel')->after('domain')->nullable();
+                $table->string('liveDomain')->after('domain')->nullable();
+                $table->string('headerTitel')->after('liveDomain')->nullable();
                 $table->string('headerSlogen')->after('headerTitel')->nullable();
                 $table->string('headerBild')->after('headerSlogen')->nullable();
-                $table->string('accentColor', 9)->nullable()->after('headerSlogen');
+                $table->string('accentColor', 9)->nullable()->after('headerBild');
+                $table->unsignedBigInteger('bearbeiter_id')->nullable()->after('user_id');
         });
     }
 
@@ -31,10 +33,12 @@ return new class extends Migration
     {
         Schema::table('event_groups', function (Blueprint $table) {
             $table->dropColumn('domain');
+            $table->dropColumn('liveDomain');
             $table->dropColumn('headerBild');
             $table->dropColumn('headerSlogen');
             $table->dropColumn('headerTitel');
             $table->dropColumn('accentColor');
+            $table->dropColumn('bearbeiter_id');
         });
     }
 };

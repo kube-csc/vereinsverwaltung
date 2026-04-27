@@ -114,10 +114,17 @@
                                         </div>
 
                                         <div>
-                                            <label for="domain">Domain:</label>
+                                            <label for="domain">Event Domain (Hostname, z.B. example.de):</label>
                                             <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('domain') ? 'bg-red-300' : '' }}"
-                                                   id="domain" placeholder="Domain" name="domain" value="{{ old('domain') }}">
+                                                   id="domain" placeholder="example.de" name="domain" value="{{ old('domain') }}">
                                             <small class="form-text text-danger">{!! $errors->first('domain') !!}</small>
+                                        </div>
+
+                                        <div>
+                                            <label for="liveDomain">Event Live-Domain (Hostname, z.B. live.example.de):</label>
+                                            <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('liveDomain') ? 'bg-red-300' : '' }}"
+                                                   id="liveDomain" placeholder="live.example.de" name="liveDomain" value="{{ old('liveDomain') }}">
+                                            <small class="form-text text-danger">{!! $errors->first('liveDomain') !!}</small>
                                         </div>
                                         <div class="py-2">
                                             <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Eventgruppe anlegen</button>

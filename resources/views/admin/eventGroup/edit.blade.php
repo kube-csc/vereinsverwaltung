@@ -60,9 +60,12 @@
                                             // Wenn eine Kurzform (#RGB) gespeichert wurde, erweitern wir sie für die Picker-Initialisierung.
                                             $accentColorText = old('accentColor') ?? $eventGroup->accentColor;
                                             $accentColorPicker = '#000000';
-                                            if (!empty($accentColorText) && preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $accentColorText)) {
-                                                if (strlen($accentColorText) === 4) {
+                                             if (!empty($accentColorText) && preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/', $accentColorText)) {
+                                                 if (strlen($accentColorText) === 4) {
                                                     $accentColorPicker = '#' . $accentColorText[1] . $accentColorText[1] . $accentColorText[2] . $accentColorText[2] . $accentColorText[3] . $accentColorText[3];
+                                                 } elseif (strlen($accentColorText) === 9) {
+                                                     // #RRGGBBAA -> Picker kann kein Alpha, daher Alpha abschneiden.
+                                                     $accentColorPicker = substr($accentColorText, 0, 7);
                                                 } else {
                                                     $accentColorPicker = $accentColorText;
                                                 }
@@ -151,10 +154,17 @@
                                     </div>
 
                                     <div class="my-4" >
-                                        <label for="domain">Domain:</label>
+                                        <label for="domain">Event Domain (Hostname, z.B. example.de):</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('domain') ? 'bg-red-300' : '' }}"
-                                               id="domain" placeholder="Domain" name="domain" value="{{ old('domain') ?? $eventGroup->domain }}">
+                                               id="domain" placeholder="example.de" name="domain" value="{{ old('domain') ?? $eventGroup->domain }}">
                                         <small class="form-text text-danger">{!! $errors->first('domain') !!}</small>
+                                    </div>
+
+                                    <div class="my-4" >
+                                        <label for="liveDomain">Event Live-Domain (Hostname, z.B. live.example.de):</label>
+                                        <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('liveDomain') ? 'bg-red-300' : '' }}"
+                                               id="liveDomain" placeholder="live.example.de" name="liveDomain" value="{{ old('liveDomain') ?? $eventGroup->liveDomain }}">
+                                        <small class="form-text text-danger">{!! $errors->first('liveDomain') !!}</small>
                                     </div>
                                     <div class="py-2">
                                         <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>

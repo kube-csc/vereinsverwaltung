@@ -3,7 +3,6 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Regatta Verwaltung') }} {{ Session::get('regattaSelectUeberschrift') }}
         </h2>
-        </h2>
     </x-slot>
 
     <div class="py-12">
@@ -16,9 +15,6 @@
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                    @php
-                      // ToDo: Beschreibungstext überarbeiten
-                    @endphp
                     Bitte gebe die Daten der Tabelle ein.
                   </div>
               </div>
@@ -102,12 +98,27 @@
                                      <small class="form-text text-danger">{!! $errors->first('wertungsart') !!}</small>
                                   </div>
 
-                                 <div class="my-4">
-                                     <label for="tabelleSystem">Tabellen Punkte System:</label>
-                                     <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('tabelleSystem') ? 'bg-red-300' : '' }}"
-                                            id="tabelleSystem" placeholder="System" name="tabelleSystem" value="{{ old('tabelleSystem') ?? $tabele->system_id }}">
-                                     <small class="form-text text-danger">{!! $errors->first('tabelleSystem') !!}</small>
-                                 </div>
+                                  <div class="my-4" id="tabelleSystemWrapper">
+                                      <label for="tabelleSystem">Tabellen Punkte System:</label>
+
+                                      @php
+                                          $defaultSystemId = old('tabelleSystem', $tabele->system_id ?? ($pointsystemIds->first() ?? 1));
+                                      @endphp
+
+                                      <select class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('tabelleSystem') ? 'bg-red-300' : '' }}"
+                                              id="tabelleSystem" name="tabelleSystem">
+                                          @forelse($pointsystemIds as $systemId)
+                                              <option value="{{ $systemId }}" {{ (string)$defaultSystemId === (string)$systemId ? 'selected' : '' }}>
+                                                  System {{ $systemId }}
+                                              </option>
+                                          @empty
+                                              <option value="" selected>Kein Punktesystem vorhanden</option>
+                                          @endforelse
+                                      </select>
+                                      <small class="form-text text-danger">{!! $errors->first('tabelleSystem') !!}</small>
+
+                                      <div id="tabelleSystemPreview" class="mt-2 text-sm text-gray-600"></div>
+                                  </div>
 
                                  <div class="my-4">
                                         <label for="getrenntewertung">Getrennte Wertung bei Mixrennen:</label><br>
@@ -167,6 +178,75 @@
                                      <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Speichern</button>
                                   </div>
                              </form>
+
+                              <script>
+                                  (function () {
+                                      var pointsystemsBySystem = @json($pointsystemsBySystem ?? []);
+
+                                      function renderPreview() {
+                                          var previewEl = document.getElementById('tabelleSystemPreview');
+                                          var systemEl = document.getElementById('tabelleSystem');
+                                          if (!previewEl || !systemEl) return;
+
+                                          var systemId = String(systemEl.value || '');
+                                          var rows = pointsystemsBySystem[systemId] || [];
+
+                                          if (!systemId || rows.length === 0) {
+                                              previewEl.innerHTML = '<span class="text-gray-500">Keine Vorschau verfügbar.</span>';
+                                              return;
+                                          }
+
+                                          var html = '<div class="font-semibold mb-1">Punktevergabe (System ' + systemId + ')</div>';
+                                          html += '<table class="min-w-full text-sm">';
+                                          html += '<thead><tr><th class="text-left pr-4">Platz</th><th class="text-left">Punkte</th></tr></thead>';
+                                          html += '<tbody>';
+                                          for (var i = 0; i < rows.length; i++) {
+                                              html += '<tr><td class="pr-4">' + rows[i].platz + '</td><td>' + rows[i].punkte + '</td></tr>';
+                                          }
+                                          html += '</tbody></table>';
+
+                                          previewEl.innerHTML = html;
+                                      }
+
+                                      function syncTabelleSystemVisibility() {
+                                          var wertungsartEl = document.getElementById('wertungsart');
+                                          var wrapper = document.getElementById('tabelleSystemWrapper');
+                                          var systemEl = document.getElementById('tabelleSystem');
+                                          var previewEl = document.getElementById('tabelleSystemPreview');
+
+                                          if (!wertungsartEl || !wrapper || !systemEl) return;
+
+                                          var isPunkte = String(wertungsartEl.value) === '1';
+
+                                          wrapper.style.display = isPunkte ? '' : 'none';
+                                          systemEl.disabled = !isPunkte;
+                                          systemEl.required = isPunkte;
+
+                                          if (previewEl) {
+                                              previewEl.style.display = isPunkte ? '' : 'none';
+                                          }
+
+                                          if (isPunkte) {
+                                              renderPreview();
+                                          }
+                                      }
+
+                                      document.addEventListener('DOMContentLoaded', function () {
+                                          var wertungsartEl = document.getElementById('wertungsart');
+                                          if (wertungsartEl) {
+                                              wertungsartEl.addEventListener('change', syncTabelleSystemVisibility);
+                                          }
+
+                                          var systemEl = document.getElementById('tabelleSystem');
+                                          if (systemEl) {
+                                              systemEl.addEventListener('change', renderPreview);
+                                          }
+
+                                          syncTabelleSystemVisibility();
+                                      });
+                                  })();
+                              </script>
+
                              <br>
                              <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Tabelle/alle"><i class="fas fa-arrow-circle-up"></i>Zurück</a>
                            </div>

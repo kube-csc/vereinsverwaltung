@@ -14,9 +14,6 @@
                     </div>
 
                     <div class="mt-6 text-gray-500">
-                        @php
-                            // ToDo: Beschreibungstext überarbeiten
-                        @endphp
                         Bitte gebe die Daten von Renntypevorlage ein.
                     </div>
                 </div>
@@ -113,13 +110,6 @@
                                     </div>
 
                                     <div class="my-4">
-                                        <label for="bahnen">Bahnen:</label>
-                                        <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
-                                               id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') }}">
-                                        <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
-                                    </div>
-
-                                    <div class="my-4">
                                         <label for="training">kostenfreie Trainings pro Meldung:</label>
                                         <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('training') ? 'bg-red-300' : '' }}"
                                                id="training" placeholder="kostenfreie Trainings pro Meldung" name="training" value="{{ old('training') }}">
@@ -147,14 +137,25 @@
                                         <small class="form-text text-danger">{!! $errors->first('meldeGebuehr') !!}</small>
                                     </div>
 
+                                    <div class="my-4">
+                                        <label for="bahnen">Bahnen:</label>
+                                        <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
+                                               id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') }}">
+                                        <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
+                                    </div>
+
                                     <div class="my-4" >
-                                        <label for="zusatzmanschaft">Rennen mit Teams auffüllen:</label>
+                                        <label for="zusatzmanschaft">Rennen  mit Teams auffüllen (freie Bahnen):</label>
                                         <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2"
                                                id="zusatzmanschaft" name="zusatzmanschaft" value="1"
                                                @if(old('zusatzmanschaft') == 1)
                                                    checked
                                             @endif
                                         >
+                                        <small class="form-text text-gray-600">
+                    v                      Ist die maximale Meldezahl einer Klasse erreicht, sind weitere Meldungen zulässig, bis die Gesamtmeldezahl ein Vielfaches der Anzahl der Bahnen ist.
+                                            So werden freie Bahnen aufgefüllt, damit die Rennen mit der maximalen Bahnzahl belegt sind.
+                                        </small>
                                     </div>
 
                                     <div class="py-2">

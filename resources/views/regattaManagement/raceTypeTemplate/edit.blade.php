@@ -14,9 +14,6 @@
                     </div>
 
                     <div class="mt-6 text-gray-500">
-                        @php
-                            // ToDo: Beschreibungstext überarbeiten
-                        @endphp
                         Bitte gebe die Daten von Renntypevorlage ein.
                     </div>
                 </div>
@@ -24,7 +21,7 @@
                 <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                     <div class="p-6">
                         <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Renntypenvorlagen ändern</div>
+                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Renntypenvorlagen Ändern</div>
                         </div>
 
                         <div class="ml-12">
@@ -32,9 +29,6 @@
 
                                 <form autocomplete="off" action="{{ url('/Rennklassenvorlage/update/'.$raceTypeTemplate->id) }}" name="action" id="action" method="post" enctype="multipart/form-data">
                                     @csrf
-                                    @php
-                                        // ToDo: @method('PUT') in Hobby Projekt noch mal erlernen
-                                    @endphp
                                     <div class="my-4" >
                                         <label for="typ">Typ:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('typ') ? 'bg-red-300' : '' }}"
@@ -99,24 +93,17 @@
                                     </div>
 
                                     <div class="my-4">
-                                        <label for="manmin">Maximale männliche Teilnehmer:</label>
+                                        <label for="manmin">Maximale mÃ¤nnliche Teilnehmer:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('manmin') ? 'bg-red-300' : '' }}"
-                                               id="manmin" placeholder="Maximale männliche Teilnehmer" name="manmin" value="{{ old('manmin') ?? $raceTypeTemplate->manmin }}">
+                                               id="manmin" placeholder="Maximale mÃ¤nnliche Teilnehmer" name="manmin" value="{{ old('manmin') ?? $raceTypeTemplate->manmin }}">
                                         <small class="form-text text-danger">{!! $errors->first('manmin') !!}</small>
                                     </div>
 
                                     <div class="my-4">
-                                        <label for="manmax">Maximale männliche Teilnehmer:</label>
+                                        <label for="manmax">Maximale mÃ¤nnliche Teilnehmer:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('manmax') ? 'bg-red-300' : '' }}"
-                                               id="manmax" placeholder="Maximale männliche Teilnehmer" name="manmax" value="{{ old('manmax') ?? $raceTypeTemplate->manmax }}">
+                                               id="manmax" placeholder="Maximale mÃ¤nnliche Teilnehmer" name="manmax" value="{{ old('manmax') ?? $raceTypeTemplate->manmax }}">
                                         <small class="form-text text-danger">{!! $errors->first('manmax') !!}</small>
-                                    </div>
-
-                                    <div class="my-4">
-                                        <label for="bahnen">Bahnen:</label>
-                                        <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
-                                               id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') ?? $raceTypeTemplate->bahnen }}">
-                                        <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
                                     </div>
 
                                     <div class="my-4">
@@ -143,18 +130,29 @@
                                     <div class="my-4">
                                         <label for="meldeGebuehr">Meldegebühr:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('meldeGebuehr') ? 'bg-red-300' : '' }}"
-                                               id="meldeGebuehr" placeholder="Meldegebühr" name="meldeGebuehr" value="{{ old('meldeGebuehr') ?? $raceTypeTemplate->meldeGebuehr }}">
+                                               id="meldeGebuehr" placeholder="MeldegebÃ¼hr" name="meldeGebuehr" value="{{ old('meldeGebuehr') ?? $raceTypeTemplate->meldeGebuehr }}">
                                         <small class="form-text text-danger">{!! $errors->first('meldeGebuehr') !!}</small>
                                     </div>
 
+                                    <div class="my-4">
+                                        <label for="bahnen">Bahnen:</label>
+                                        <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
+                                               id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') ?? $raceTypeTemplate->bahnen }}">
+                                        <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
+                                    </div>
+
                                     <div class="my-4" >
-                                        <label for="zusatzmanschaft">Rennen mit Teams auffüllen:</label>
+                                        <label for="zusatzmanschaft">Rennen mit Teams auffüllen (freie Bahnen):</label>
                                         <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zusatzmanschaft') ? 'bg-red-300' : '' }}"
                                                id="zusatzmanschaft" name="zusatzmanschaft" value="1"
                                                @if(old('zusatzmanschaft') == 1 or $raceTypeTemplate->zusatzmanschaft == 1)
                                                    checked
                                                @endif
                                         >
+                                        <small class="form-text text-gray-600">
+                                            Ist die maximale Meldezahl einer Klasse erreicht, sind weitere Meldungen zulässig, bis die Gesamtmeldezahl ein Vielfaches der Anzahl der Bahnen ist.
+                                            So werden freie Bahnen aufgefüllt, damit die Rennen mit der maximalen Bahnzahl belegt sind.
+                                        </small>
                                     </div>
 
                                     <div class="py-2">

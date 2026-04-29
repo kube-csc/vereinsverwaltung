@@ -7,6 +7,7 @@ use App\Models\Race;
 use App\Models\RaceType;
 use App\Models\Tabele;
 use App\Models\Tabledata;
+use App\Models\Pointsystem;
 use App\Models\RegattaTeam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -132,10 +133,32 @@ class TabeleController extends Controller
             ->orderby('typ')
             ->get();
 
+        $pointsystemIds = Pointsystem::query()
+            ->select('system_id')
+            ->distinct()
+            ->orderBy('system_id')
+            ->pluck('system_id');
+
+        $pointsystemsBySystem = Pointsystem::query()
+            ->orderBy('system_id')
+            ->orderBy('platz')
+            ->get()
+            ->groupBy('system_id')
+            ->map(function ($rows) {
+                return $rows->map(function ($row) {
+                    return [
+                        'platz' => (int)$row->platz,
+                        'punkte' => (int)$row->punkte,
+                    ];
+                })->values();
+            });
+
         return view('regattaManagement.tabele.create')->with([
             'levelMaxVon'  => $levelMaxVon,
             'levelMaxBis'  => $levelMaxBis,
-            'raceTypes'    => $raceTypes
+            'raceTypes'    => $raceTypes,
+            'pointsystemIds' => $pointsystemIds,
+            'pointsystemsBySystem' => $pointsystemsBySystem,
         ]);
     }
 
@@ -150,20 +173,22 @@ class TabeleController extends Controller
                 'tabelleBezeichnung'       => 'required|max:50',
                 'tabelleDatum'             => 'required|date',
                 'veroeffentlichungUhrzeit' => 'required|date_format:H:i',
+                // system_id wird nur bei Punktewertung benötigt
+                'tabelleSystem'            => 'exclude_unless:wertungsart,1|required|integer|min:1|exists:pointsystems,system_id',
             ]
         );
 
-        if($request->finaleTable==Null){
-            $request->finaleTable=0;
+        $finaleTable = $request->has('finaleTable') ? 1 : 0;
+        $getrenntewertung = $request->has('getrenntewertung') ? 1 : 0;
+        $buchholzwertungaktiv = ($request->has('buchholzwertungaktiv') && (int)$request->wertungsart !== 3) ? 1 : 0;
+
+        $systemId = null;
+        if ((int)$request->wertungsart === 1) {
+            // Falls das Feld im Formular nicht angepasst wurde, nutzen wir Default 1.
+            $systemId = (int)($request->input('tabelleSystem') ?: 1);
         }
 
-        if($request->getrenntewertung==Null){
-            $request->getrenntewertung=0;
-        }
 
-        if($request->buchholzwertungaktiv == Null){
-            $request->buchholzwertungaktiv=0;
-        }
 
         $tabele= new Tabele([
             'event_id'                       => Session::get('regattaSelectId'),
@@ -174,11 +199,11 @@ class TabeleController extends Controller
             'tabelleDatumVon'         => $request->tabelleDatum,
             'finaleAnzeigen'             => $request->veroeffentlichungUhrzeit,
             'wertungsart'                 => $request->wertungsart,
-            'system_id'                     => $request->tabelleSystem,
+            'system_id'                     => $systemId,
             'tabelleVisible'                => "1",
-            'finale'                            => $request->finaleTable,
-            'getrenntewertung'        => $request->getrenntewertung,
-            'buchholzwertungaktiv'  => $request->buchholzwertungaktiv,
+            'finale'                            => $finaleTable,
+            'getrenntewertung'        => $getrenntewertung,
+            'buchholzwertungaktiv'  => $buchholzwertungaktiv,
             'bearbeiter_id'                => Auth::id(),
             'autor_id'                        => Auth::id(),
             'updated_at'                   => Carbon::now(),
@@ -261,11 +286,33 @@ class TabeleController extends Controller
             ->orderby('typ')
             ->get();
 
+        $pointsystemIds = Pointsystem::query()
+            ->select('system_id')
+            ->distinct()
+            ->orderBy('system_id')
+            ->pluck('system_id');
+
+        $pointsystemsBySystem = Pointsystem::query()
+            ->orderBy('system_id')
+            ->orderBy('platz')
+            ->get()
+            ->groupBy('system_id')
+            ->map(function ($rows) {
+                return $rows->map(function ($row) {
+                    return [
+                        'platz' => (int)$row->platz,
+                        'punkte' => (int)$row->punkte,
+                    ];
+                })->values();
+            });
+
         return view('regattaManagement.tabele.edit')->with([
             'tabele'            => $tabele,
             'raceTypes'         => $raceTypes,
             'levelMaxVon'       => $tabeleLevel->tabelleLevelVon,
-            'levelMaxBis'       => $tabeleLevel->tabelleLevelBis
+            'levelMaxBis'       => $tabeleLevel->tabelleLevelBis,
+            'pointsystemIds' => $pointsystemIds,
+            'pointsystemsBySystem' => $pointsystemsBySystem,
         ]);
     }
 
@@ -290,37 +337,38 @@ class TabeleController extends Controller
                 'tabelleDatum'             => 'required|date',
                 //'tabelleLevelVon'        => 'tabelleLevelVon<=tabelleLevelBis', //ToDo:: Valedierung vebessern
                 'veroeffentlichungUhrzeit' => 'required|date_format:H:i',
-                'tabelleGruppe'            => 'required|integer|not_in:0'
+                'tabelleGruppe'            => 'required|integer|not_in:0',
+                // system_id wird nur bei Punktewertung benötigt
+                'tabelleSystem'            => 'exclude_unless:wertungsart,1|required|integer|min:1|exists:pointsystems,system_id',
             ]
         );
 
-        if($request->tabelleLevelVon > $request->tabelleLevelBis){
-            $request->tabelleLevelVon=$request->tabelleLevelBis;
+        $tabelleLevelVon = (int)$request->tabelleLevelVon;
+        $tabelleLevelBis = (int)$request->tabelleLevelBis;
+        if($tabelleLevelVon > $tabelleLevelBis){
+            $tabelleLevelVon = $tabelleLevelBis;
         }
 
-        if($request->finaleTable == Null){
-            $request->finaleTable=0;
-        }
+        $finaleTable = $request->has('finaleTable') ? 1 : 0;
+        $getrenntewertung = $request->has('getrenntewertung') ? 1 : 0;
+        $buchholzwertungaktiv = ($request->has('buchholzwertungaktiv') && (int)$request->wertungsart !== 3) ? 1 : 0;
 
-        if($request->getrenntewertung==Null){
-            $request->getrenntewertung=0;
-        }
-
-        if($request->buchholzwertungaktiv == Null or $request->wertungsart == 3){
-            $request->buchholzwertungaktiv=0;
+        $systemId = null;
+        if ((int)$request->wertungsart === 1) {
+            $systemId = (int)($request->input('tabelleSystem') ?: 1);
         }
 
         Tabele::find($tabelleid)->update([
                 'ueberschrift'             => $request->tabelleBezeichnung,
                 'gruppe_id'                => $request->tabelleGruppe,
-                'system_id'                => $request->tabelleSystem,
+                'system_id'                => $systemId,
                 'tabelleDatumVon'          => $request->tabelleDatum,
-                'tabelleLevelVon'          => $request->tabelleLevelVon,
-                'tabelleLevelBis'          => $request->tabelleLevelBis,
+                'tabelleLevelVon'          => $tabelleLevelVon,
+                'tabelleLevelBis'          => $tabelleLevelBis,
                 'wertungsart'              => $request->wertungsart,
-                'finale'                   => $request->finaleTable,
-                'getrenntewertung'         => $request->getrenntewertung,
-                'buchholzwertungaktiv'     => $request->buchholzwertungaktiv,
+                'finale'                   => $finaleTable,
+                'getrenntewertung'         => $getrenntewertung,
+                'buchholzwertungaktiv'     => $buchholzwertungaktiv,
                 'finaleAnzeigen'           => $request->veroeffentlichungUhrzeit,
                 'bearbeiter_id'            => Auth::id(),
                 'updated_at'               => Carbon::now()
@@ -333,14 +381,18 @@ class TabeleController extends Controller
         );
     }
 
+    /**
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     */
     public function updateResult(Request $request, $tabelleid)
     {
-        if($request->tabelleBeschreibung==""){
-            $request->tabelleBeschreibung=Null;
+        $beschreibung = $request->tabelleBeschreibung;
+        if($beschreibung === ""){
+            $beschreibung = null;
         }
 
         Tabele::find($tabelleid)->update([
-            'beschreibung'    => $request->tabelleBeschreibung,
+            'beschreibung'    => $beschreibung,
             'bearbeiter_id'   => Auth::id(),
             'updated_at'      => Carbon::now()
         ]);
@@ -377,11 +429,11 @@ class TabeleController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Tabele  $tabele
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Tabele $tabele)
     {
-        //
+        return redirect()->back();
     }
 
     public function deleteResult($tabelleid)
@@ -517,7 +569,6 @@ class TabeleController extends Controller
                 $auffaellig[] = $item;
             }
         }
-
 
         return view('regattaManagement.tabele.consistency', [
             'tabele' => $tabele,

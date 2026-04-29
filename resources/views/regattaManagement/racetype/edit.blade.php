@@ -14,9 +14,6 @@
                     </div>
 
                     <div class="mt-6 text-gray-500">
-                        @php
-                            // ToDo: Beschreibungstext überarbeiten
-                        @endphp
                         Bitte gebe die Daten von Renntype ein.
                     </div>
                 </div>
@@ -32,9 +29,6 @@
 
                                 <form autocomplete="off" action="{{ url('/Rennklassen/update/'.$raceType->id) }}" name="action" id="action" method="post" enctype="multipart/form-data">
                                     @csrf
-                                    @php
-                                        // ToDo: @method('PUT') in Hobby Projekt noch mal erlernen
-                                    @endphp
                                     <div class="my-4" >
                                         <label for="typ">Typ:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('typ') ? 'bg-red-300' : '' }}"
@@ -113,13 +107,6 @@
                                     </div>
 
                                     <div class="my-4">
-                                        <label for="bahnen">Bahnen:</label>
-                                        <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
-                                               id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') ?? $raceType->bahnen }}">
-                                        <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
-                                    </div>
-
-                                    <div class="my-4">
                                         <label for="training">kostenfreie Trainings pro Meldung:</label>
                                         <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('training') ? 'bg-red-300' : '' }}"
                                                id="training" placeholder="kostenfreie Trainings pro Meldung" name="training" value="{{ old('training') ?? $raceType->training }}">
@@ -147,14 +134,25 @@
                                         <small class="form-text text-danger">{!! $errors->first('meldeGebuehr') !!}</small>
                                     </div>
 
+                                    <div class="my-4">
+                                        <label for="bahnen">Bahnen:</label>
+                                        <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
+                                               id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') ?? $raceType->bahnen }}">
+                                        <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
+                                    </div>
+
                                     <div class="my-4" >
-                                        <label for="zusatzmanschaft">Rennen mit Teams auffüllen:</label>
+                                        <label for="zusatzmanschaft">Rennen  mit Teams auffüllen (freie Bahnen):</label>
                                         <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zusatzmanschaft') ? 'bg-red-300' : '' }}"
                                                id="zusatzmanschaft" name="zusatzmanschaft" value="1"
                                                @if(old('zusatzmanschaft') == 1 or $raceType->zusatzmanschaft == 1)
                                                    checked
                                                @endif
                                         >
+                                        <small class="form-text text-gray-600">
+                                            Ist die maximale Meldezahl einer Klasse erreicht, sind weitere Meldungen zulässig, bis die Gesamtmeldezahl ein Vielfaches der Anzahl der Bahnen ist.
+                                            So werden freie Bahnen aufgefüllt, damit die Rennen mit der maximalen Bahnzahl belegt sind.
+                                        </small>
                                     </div>
 
                                     <div class="py-2">

@@ -9,13 +9,13 @@ if (!function_exists('textmax')) {
             return;
         }
 
-        $abgeschnitten = 1;
         $result = '';
         $count = 0;
         $open_tags = [];
+        $len = strlen($beschreibung);
+        $found_limit = false;
 
         // Wir parsen den Text Zeichen für Zeichen, um Tags zu erkennen
-        $len = strlen($beschreibung);
         for ($i = 0; $i < $len; $i++) {
             $char = $beschreibung[$i];
 
@@ -53,13 +53,27 @@ if (!function_exists('textmax')) {
             $result .= $char;
             $count++;
 
+            // Wenn wir die Soll-Länge erreicht haben, merken wir uns das
             if ($count >= $sollang) {
-                break;
+                $found_limit = true;
+            }
+
+            // Wenn das Limit erreicht ist, brechen wir beim nächsten Leerzeichen ab
+            if ($found_limit) {
+                if ($char == ' ' || $char == "\n" || $char == "\r" || $char == "\t") {
+                    break;
+                }
             }
         }
 
-        // Punkt anhängen
-        $result .= "...";
+        // Prüfen, ob wir wirklich gekürzt haben
+        if (strlen(strip_tags($result)) < strlen(strip_tags($beschreibung))) {
+            $result = rtrim($result); // Leerzeichen am Ende entfernen
+            $result .= "...";
+            $abgeschnitten = 1;
+        } else {
+            $abgeschnitten = 0;
+        }
 
         // Offene Tags in umgekehrter Reihenfolge schließen
         foreach (array_reverse($open_tags) as $tag) {

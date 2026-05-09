@@ -1,3 +1,4 @@
+@include('_partials.function')
 <?php
 $textlaengeabteilung=300;
 $textlaenge=$abteilungsCount/2*($textlaengeabteilung+100);
@@ -30,7 +31,7 @@ foreach ( $abteilungHomes as $abteilungHome)
                   <!-- ======= Facebook======= -->
                   <!-- ToDo: Facebook funktioniert nicht -->
                       <center>
-                          <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('VEREIN_DOMAIN')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                          <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('VEREIN_DOMAIN')) }}" data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
                       </center>
                 @endif
                 <h3>{{ $abteilungHome->abteilung }}</h3>
@@ -89,6 +90,7 @@ foreach ( $abteilungHomes as $abteilungHome)
                 if ($abteilung->event_id>0)
                  {
                 ?>
+              <p>
                   {!! $ausgabetext !!}
                   @php
                    $sportTeams = DB::table('sport_sections')

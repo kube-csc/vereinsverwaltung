@@ -17,8 +17,15 @@ foreach ( $abteilungHomes as $abteilungHome)
     {
      if (isset($abteilungHome->event_id))
       {
-       $ausgabetext=$abteilungHome->event->beschreibung;
-       textmax($ausgabetext,$textlaenge,$abgeschnitten);
+       if ($abteilungHome->status == 1 && $abteilungHome->event->nachtermin != '')
+       {
+           $ausgabetext=$abteilungHome->event->nachtermin;
+       }
+       else
+       {
+           $ausgabetext=$abteilungHome->event->beschreibung;
+           textmax($ausgabetext,$textlaenge,$abgeschnitten);
+       }
       }
       ?>
       <!-- ======= About Section ======= -->
@@ -38,8 +45,8 @@ foreach ( $abteilungHomes as $abteilungHome)
                 {!! $ausgabetext !!}
                 @if ($abgeschnitten==1)
                     <div class="read-more">
-                      <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="about">
-                          mehr<i class="bx bx-chevron-right"></i>
+                      <a href="/{{env('MENUE_ABTEILUNG')}}/{{ str_replace(' ', '_', $abteilungHome->abteilung) }}" class="icofont-arrow-right">
+                          mehr
                       </a>
                     </div>
                 @endif

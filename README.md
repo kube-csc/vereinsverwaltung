@@ -99,7 +99,6 @@ Folgende Lizenz wird für die Nutzung des Frontends benötigt:
   <li>Eingabe und Bearbeitung der Vereinsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Abteilungsbeschreibung</li>
   <li>Eingabe und Bearbeitung der Mannschaftsbeschreibung</li>
-  <li><strong>Intelligente Textverarbeitung</strong>: HTML-sichere Textkürzung in Übersichten verhindert Layout-Fehler.</li>
   <li><strong>Trainerverwaltung / Kursangebot</strong>
       <ul>
           <li><strong>Trainerfunktionen definieren</strong> (Menü: „Trainertypen verwalten“)
@@ -145,15 +144,6 @@ Folgende Lizenz wird für die Nutzung des Frontends benötigt:
       </ul>
   </li>
   <li>Eingabe und Bearbeitung von Event Gruppen</li>
-  <li><strong>Einladungsmanagement</strong>
-      <ul>
-          <li>Einladungen per E-Mail versenden oder als Link (z. B. WhatsApp) generieren.</li>
-          <li>Optionale E-Mail-Pflicht: Einladungen können auch nur mit einem Label (z. B. Name) erstellt werden.</li>
-          <li>WhatsApp-Integration: Registrierungslinks direkt über WhatsApp teilen.</li>
-          <li>Sicherheit: Einmal-Token-Logik und automatische Verknüpfung mit dem erstellten Benutzer.</li>
-      </ul>
-  </li>
-  <li><strong>Lokalisierung</strong>: Vollständige deutsche Übersetzung der Benutzeroberfläche und Fehlermeldungen.</li>
   <li>Dokumentenmanagement</li>
   <li>Anfahrt</li>
   <li>Informationsseiten

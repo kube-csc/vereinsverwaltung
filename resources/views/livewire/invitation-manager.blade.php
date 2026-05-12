@@ -1,7 +1,7 @@
 <div class="p-6 bg-white border-b border-gray-200">
     <div class="mb-4">
-        <h3 class="text-lg font-medium text-gray-900">Mitglieder zur {{ config('app.name') }} einladen</h3>
-        <p class="text-sm text-gray-600">Senden Sie einen Registrierungslink für {{ config('app.name') }} an ein neues Mitglied.</p>
+        <h3 class="text-lg font-medium text-gray-900">Mitglieder zur {{ config('app.verein_name') }} einladen</h3>
+        <p class="text-sm text-gray-600">Senden Sie einen Registrierungslink für {{ config('app.verein_name') }} an ein neues Mitglied.</p>
     </div>
 
     @if (session()->has('message'))
@@ -44,7 +44,7 @@
                             {{ $invitation->email }}
                         @endif
                         @if($invitation->label)
-                            <span class="text-xs text-gray-500 block italic">Label: {{ $invitation->label }}</span>
+                            <span class="text-xs text-gray-500 block italic">Name: {{ $invitation->label }}</span>
                         @endif
                         @if(!$invitation->email && !$invitation->label)
                             <span class="text-gray-400">-</span>
@@ -62,7 +62,7 @@
                         @if(!$invitation->registered_at)
                             @php
                                 $registerUrl = route('register', ['token' => $invitation->token]);
-                                $shareText = "Hallo, hier ist dein Link zur Registrierung bei " . config('app.name') . ": " . $registerUrl;
+                                $shareText = "Hallo, hier ist dein Link zur Registrierung bei " . config('app.verein_name') . ": " . $registerUrl;
                                 $whatsappUrl = "https://wa.me/?text=" . urlencode($shareText);
                             @endphp
                             <div class="flex items-center space-x-2">

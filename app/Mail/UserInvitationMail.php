@@ -32,7 +32,8 @@ class UserInvitationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Einladung zur ' . config('app.name'),
+            from: config('mail.from.address'),
+            subject: 'Einladung zur ' . config('app.verein_name'),
         );
     }
 

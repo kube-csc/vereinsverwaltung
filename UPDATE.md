@@ -21,15 +21,18 @@
 
 ***Neue Funktionen / Layout-Verbesserungen (Branch: TextOptimierung) (Fix)***
 - **Zentralisierung der Textverarbeitung:**
-  - Die Funktion `textmax` wurde in ein zentrales Partial `resources/views/_partials/function.blade.php` ausgelagert.
-  - Automatische Einbindung der Funktionen in die Frontend-Layouts (`frontend`, `headFrontend`, `frontendLivewire`).
+    - Die Funktion `textmax` wurde in ein zentrales Partial `resources/views/_partials/function.blade.php` ausgelagert.
+    - Automatische Einbindung der Funktionen in die Frontend-Layouts (`frontend`, `headFrontend`, `frontendLivewire`).
 - **Intelligente Textkürzung mit HTML-Support:**
-  - Die `textmax`-Funktion berücksichtigt nun HTML-Tags beim Kürzen.
-  - **Tag-Sicherheit:** Offene HTML-Tags werden automatisch geschlossen, um Layout-Fehler zu vermeiden.
-  - **Wort-Erhalt:** Texte werden nicht mitten im Wort abgeschnitten.
+    - Die `textmax`-Funktion berücksichtigt nun HTML-Tags beim Kürzen.
+    - **Tag-Sicherheit:** Offene HTML-Tags werden automatisch geschlossen, um Layout-Fehler zu vermeiden.
+    - **Wort-Erhalt:** Texte werden nicht mitten im Wort abgeschnitten.
 
 ***Hinweise nach dem Update***
 - `php artisan migrate`
+- in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
+   mailImpressum.blade.php anlegen und mit der Vorlage von mailImpressum_example.blade.php ausfüllen
+- - .env   - Korrektur der E-Mail-Konfiguration für SMTP-Server (Absenderadresse und Name).
 
 **Version V00.10.05**
 
@@ -54,6 +57,7 @@
 - Feld **`tabeles.beschreibung`** wurde auf **`TEXT`** geändert (vermeidet MySQL Row-Size Probleme bei großen Texten).
 - `php artisan migrate`
 - Falls noch nicht vorhanden: `php artisan storage:link`
+
 
 **Version V00.10.04**
 

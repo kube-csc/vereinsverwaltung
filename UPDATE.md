@@ -1,4 +1,9 @@
 ## Update Anleitung
+**Version V00.10.06**
+
+***Fix***
+Übertarebitung der Informationsausgabe für  dei Ausgabe der Informationen vom Vein und Mannschaften
+
 **Version V00.10.05**
 
 ***Neue Funktionen***
@@ -22,7 +27,6 @@
 - Feld **`tabeles.beschreibung`** wurde auf **`TEXT`** geändert (vermeidet MySQL Row-Size Probleme bei großen Texten).
 - `php artisan migrate`
 - Falls noch nicht vorhanden: `php artisan storage:link`
-
 
 **Version V00.10.04**
 

@@ -112,6 +112,10 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')
     Route::post('/trainer-typen/zuordnung/{trainertable}/reaktivieren', [TrainerAdminController::class, 'reactivateFromTypes'])
         ->whereNumber('trainertable')
         ->name('trainer.types.reactivate');
+
+    Route::get('/einladungen', function () {
+        return view('admin.invitations');
+    })->name('invitations');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/Regattamenu', function () {

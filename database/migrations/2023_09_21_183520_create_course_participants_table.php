@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('telefon', 60);
             $table->integer('nachricht');
-            $table->char('teilnehmernachricht', 1)->default('0'); /ToDo::Muss noch mal in einer Migration geändert werden, da es hier um die Benachrichtigung des Trainers geht, ob er eine Nachricht erhalten möchte oder nicht. Es könnte auch ein Boolean sein, aber da es in der Datenbank als char gespeichert wird, bleibt es erstmal so.
+            $table->char('teilnehmernachricht', 1)->default('0'); //ToDo::Muss noch mal in einer Migration geändert werden, da es hier um die Benachrichtigung des Trainers geht, ob er eine Nachricht erhalten möchte oder nicht. Es könnte auch ein Boolean sein, aber da es in der Datenbank als char gespeichert wird, bleibt es erstmal so.
             $table->decimal('kredit' ,8, 2)->nullable();
             $table->integer('status');
 

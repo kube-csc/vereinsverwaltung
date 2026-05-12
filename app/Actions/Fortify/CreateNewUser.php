@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\Invitation;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -23,18 +24,42 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input)
     {
         Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
+            'vorname' => ['required', 'string', 'max:40'],
+            'nachname' => ['required', 'string', 'max:40'],
+            'geschlecht' => ['required', 'string', 'max:1'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
+            'sportSections_id' => ['required', 'integer', 'exists:sport_sections,id'],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['required', 'accepted'] : '',
-        ])->validate();
+            'token' => ['required', 'string', 'exists:invitations,token'],
+        ])->after(function ($validator) use ($input) {
+            if (isset($input['token'])) {
+                $invitation = Invitation::where('token', $input['token'])->first();
+                if ($invitation && $invitation->email && $invitation->email !== $input['email']) {
+                    $validator->errors()->add('email', 'Diese E-Mail-Adresse stimmt nicht mit der Einladung überein.');
+                }
+                if ($invitation && $invitation->registered_at) {
+                    $validator->errors()->add('token', 'Diese Einladung wurde bereits verwendet.');
+                }
+            }
+        })->validate();
 
         return DB::transaction(function () use ($input) {
             return tap(User::create([
-                'name' => $input['name'],
+                'name' => $input['vorname'] . ' ' . $input['nachname'],
+                'vorname' => $input['vorname'],
+                'nachname' => $input['nachname'],
+                'geschlecht' => $input['geschlecht'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
-            ]), function (User $user) {
+                'admin' => 1,
+                'sportSections_id' => $input['sportSections_id'],
+            ]), function (User $user) use ($input) {
+                Invitation::where('token', $input['token'])->update([
+                    'registered_at' => now(),
+                    'user_id' => $user->id,
+                    'email' => $input['email']
+                ]);
                 $this->createTeam($user);
             });
         });

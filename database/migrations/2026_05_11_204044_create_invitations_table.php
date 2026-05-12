@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('token', 64)->unique();
             $table->timestamp('registered_at')->nullable();
             $table->timestamps();
+
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

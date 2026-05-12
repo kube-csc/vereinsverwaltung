@@ -13,9 +13,15 @@ class Invitation extends Model
         'email',
         'token',
         'registered_at',
+        'user_id',
     ];
 
     protected $casts = [
         'registered_at' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -55,7 +55,10 @@ class CreateNewUser implements CreatesNewUsers
                 'admin' => 1,
                 'sportSections_id' => $input['sportSections_id'],
             ]), function (User $user) use ($input) {
-                Invitation::where('token', $input['token'])->update(['registered_at' => now()]);
+                Invitation::where('token', $input['token'])->update([
+                    'registered_at' => now(),
+                    'user_id' => $user->id
+                ]);
                 $this->createTeam($user);
             });
         });

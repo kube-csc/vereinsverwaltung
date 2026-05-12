@@ -20,6 +20,7 @@
 
               </div>
 
+              @if(Auth::user()->admin >= 4)
               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
@@ -185,6 +186,15 @@
                                       </div>
                                   </div>
 
+                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainertyp.index') }}')">
+                                      <div class="flex justify-between my-2">
+                                          <div class="flex">
+                                              <p class="font-bold text-lg">Trainertypen verwalten</p>
+                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
+                                          </div>
+                                      </div>
+                                  </div>
+
                                   <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainer.index') }}')">
                                       <div class="flex justify-between my-2">
                                           <div class="flex">
@@ -203,15 +213,14 @@
                                       </div>
                                   </div>
 
-                                   <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainertyp.index') }}')">
+                                   <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.invitations') }}')">
                                        <div class="flex justify-between my-2">
                                            <div class="flex">
-                                               <p class="font-bold text-lg">Trainertypen verwalten</p>
+                                               <p class="font-bold text-lg">Mitglieder einladen</p>
                                                <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
                                            </div>
                                        </div>
                                    </div>
-
                               </div>
 
                          </div>
@@ -293,6 +302,11 @@
                       </div>
                   </div>
               </div>
+              @else
+              <div class="p-6 text-center text-gray-500 border-t border-gray-200">
+                  {{ __('Sie haben keine Berechtigung, die Menüpunkte zu sehen.') }}
+              </div>
+              @endif
 
             </div>
         </div>

@@ -1,3 +1,4 @@
+@include('_partials.function')
 @if($eventsPast->count() > 0)
   <!-- ======= Services Section ======= -->
   <section id="services" class="services">

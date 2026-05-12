@@ -11,24 +11,38 @@ use Livewire\Component;
 class InvitationManager extends Component
 {
     public $email;
+    public $label;
 
     protected $rules = [
-        'email' => 'required|email|unique:users,email|unique:invitations,email',
+        'email' => 'nullable|email|unique:users,email|unique:invitations,email',
+        'label' => 'nullable|string|max:255',
     ];
 
     public function sendInvitation()
     {
         $this->validate();
 
+        if (empty($this->email) && empty($this->label)) {
+            $this->addError('email', 'Entweder E-Mail oder Name/Label muss ausgefüllt werden.');
+            return;
+        }
+
         $invitation = Invitation::create([
-            'email' => $this->email,
+            'email' => $this->email ?: null,
+            'label' => $this->label ?: null,
             'token' => Str::random(64),
         ]);
 
-        Mail::to($this->email)->send(new UserInvitationMail($invitation));
+        if ($this->email) {
+            Mail::to($this->email)->send(new UserInvitationMail($invitation));
+            $message = 'Einladung erfolgreich versendet an ' . $invitation->email;
+        } else {
+            $message = 'Einladungslink erfolgreich generiert für ' . $invitation->label;
+        }
 
         $this->email = '';
-        session()->flash('message', 'Einladung erfolgreich versendet an ' . $invitation->email);
+        $this->label = '';
+        session()->flash('message', $message);
     }
 
     public function deleteInvitation($id)

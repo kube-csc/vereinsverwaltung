@@ -15,8 +15,12 @@
             <x-jet-input type="email" wire:model.defer="email" placeholder="E-Mail Adresse" class="w-full" />
             <x-jet-input-error for="email" class="mt-2" />
         </div>
+        <div class="flex-grow">
+            <x-jet-input type="text" wire:model.defer="label" placeholder="Name / Label (optional wenn E-Mail)" class="w-full" />
+            <x-jet-input-error for="label" class="mt-2" />
+        </div>
         <x-jet-button>
-            Einladung senden
+            Einladung erstellen
         </x-jet-button>
     </form>
 
@@ -25,7 +29,7 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead>
                 <tr>
-                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email / Label</th>
                     <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Erstellt am</th>
                     <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link / WhatsApp</th>
@@ -35,7 +39,17 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($invitations as $invitation)
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $invitation->email }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        @if($invitation->email)
+                            {{ $invitation->email }}
+                        @endif
+                        @if($invitation->label)
+                            <span class="text-xs text-gray-500 block italic">Label: {{ $invitation->label }}</span>
+                        @endif
+                        @if(!$invitation->email && !$invitation->label)
+                            <span class="text-gray-400">-</span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $invitation->created_at->format('d.m.Y H:i') }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         @if($invitation->registered_at)

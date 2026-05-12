@@ -60,7 +60,7 @@
 
             <div class="mt-4">
                 <x-jet-label for="email" value="{{ __('Email') }}" />
-                <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $invitation?->email)" required :readonly="$invitation" :disabled="!$isValidInvitation" />
+                <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $invitation?->email)" required :readonly="$invitation && $invitation->email" :disabled="!$isValidInvitation" />
             </div>
 
             <div class="mt-4">

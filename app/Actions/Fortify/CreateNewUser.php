@@ -35,7 +35,7 @@ class CreateNewUser implements CreatesNewUsers
         ])->after(function ($validator) use ($input) {
             if (isset($input['token'])) {
                 $invitation = Invitation::where('token', $input['token'])->first();
-                if ($invitation && $invitation->email !== $input['email']) {
+                if ($invitation && $invitation->email && $invitation->email !== $input['email']) {
                     $validator->errors()->add('email', 'Diese E-Mail-Adresse stimmt nicht mit der Einladung überein.');
                 }
                 if ($invitation && $invitation->registered_at) {
@@ -57,7 +57,8 @@ class CreateNewUser implements CreatesNewUsers
             ]), function (User $user) use ($input) {
                 Invitation::where('token', $input['token'])->update([
                     'registered_at' => now(),
-                    'user_id' => $user->id
+                    'user_id' => $user->id,
+                    'email' => $input['email']
                 ]);
                 $this->createTeam($user);
             });

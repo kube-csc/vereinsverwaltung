@@ -1,8 +1,35 @@
 ## Update Anleitung
 **Version V00.10.06**
 
-***Fix***
-Übertarebitung der Informationsausgabe für  dei Ausgabe der Informationen vom Vein und Mannschaften
+***Neue Funktionen***
+- **Vollständige deutsche Übersetzung:**
+    - Erstellung der zentralen Sprachdatei `resources/lang/de.json` für UI-Elemente.
+    - Übersetzung der Authentifizierungs-Meldungen (`auth.php`).
+    - Komplette deutsche Validierungsfehlermeldungen (`validation.php`) inklusive Attribut-Mapping (z.B. "email" -> "E-Mail-Adresse").
+    - Lokalisierung aller Jetstream-Standardansichten (Login, Register, Passwort vergessen, etc.).
+
+***Erweiterung Einladungs-System***
+- **Flexible Einladungsmodi:**
+    - Unterstützung von Einladungen ohne feste E-Mail-Adresse (nur mit Label/Name).
+    - Automatisches Nachpflegen der E-Mail-Adresse in die Einladungs-Tabelle bei erfolgreicher Registrierung.
+- **Einmal-Verwendung & Sicherheit:**
+    - Striktes Tracking der Token-Nutzung (`registered_at`).
+    - Verknüpfung des neu erstellten Benutzers mit der Einladung (`user_id`).
+- **WhatsApp-Integration:**
+    - Button zum direkten Teilen des Registrierungslinks via WhatsApp.
+    - Dynamischer Einladungstext unter Verwendung des konfigurierten App-Namens.
+
+***Neue Funktionen / Layout-Verbesserungen (Branch: TextOptimierung) (Fix)***
+- **Zentralisierung der Textverarbeitung:**
+  - Die Funktion `textmax` wurde in ein zentrales Partial `resources/views/_partials/function.blade.php` ausgelagert.
+  - Automatische Einbindung der Funktionen in die Frontend-Layouts (`frontend`, `headFrontend`, `frontendLivewire`).
+- **Intelligente Textkürzung mit HTML-Support:**
+  - Die `textmax`-Funktion berücksichtigt nun HTML-Tags beim Kürzen.
+  - **Tag-Sicherheit:** Offene HTML-Tags werden automatisch geschlossen, um Layout-Fehler zu vermeiden.
+  - **Wort-Erhalt:** Texte werden nicht mitten im Wort abgeschnitten.
+
+***Hinweise nach dem Update***
+- `php artisan migrate`
 
 **Version V00.10.05**
 

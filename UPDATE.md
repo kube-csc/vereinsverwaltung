@@ -1,4 +1,39 @@
 ## Update Anleitung
+**Version V00.10.06**
+
+***Neue Funktionen***
+- **Vollständige deutsche Übersetzung:**
+    - Erstellung der zentralen Sprachdatei `resources/lang/de.json` für UI-Elemente.
+    - Übersetzung der Authentifizierungs-Meldungen (`auth.php`).
+    - Komplette deutsche Validierungsfehlermeldungen (`validation.php`) inklusive Attribut-Mapping (z.B. "email" -> "E-Mail-Adresse").
+    - Lokalisierung aller Jetstream-Standardansichten (Login, Register, Passwort vergessen, etc.).
+
+***Erweiterung Einladungs-System***
+- **Flexible Einladungsmodi:**
+    - Unterstützung von Einladungen ohne feste E-Mail-Adresse (nur mit Label/Name).
+    - Automatisches Nachpflegen der E-Mail-Adresse in die Einladungs-Tabelle bei erfolgreicher Registrierung.
+- **Einmal-Verwendung & Sicherheit:**
+    - Striktes Tracking der Token-Nutzung (`registered_at`).
+    - Verknüpfung des neu erstellten Benutzers mit der Einladung (`user_id`).
+- **WhatsApp-Integration:**
+    - Button zum direkten Teilen des Registrierungslinks via WhatsApp.
+    - Dynamischer Einladungstext unter Verwendung des konfigurierten App-Namens.
+
+*** Layout-Verbesserungen (Fix)***
+- **Zentralisierung der Textverarbeitung:**
+    - Die Funktion `textmax` wurde in ein zentrales Partial `resources/views/_partials/function.blade.php` ausgelagert.
+    - Automatische Einbindung der Funktionen in die Frontend-Layouts (`frontend`, `headFrontend`, `frontendLivewire`).
+- **Intelligente Textkürzung mit HTML-Support:**
+    - Die `textmax`-Funktion berücksichtigt nun HTML-Tags beim Kürzen.
+    - **Tag-Sicherheit:** Offene HTML-Tags werden automatisch geschlossen, um Layout-Fehler zu vermeiden.
+    - **Wort-Erhalt:** Texte werden nicht mitten im Wort abgeschnitten.
+
+***Hinweise nach dem Update***
+- `php artisan migrate`
+- in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
+   mailImpressum.blade.php anlegen und mit der Vorlage von mailImpressum_example.blade.php ausfüllen
+- - .env   - Korrektur der E-Mail-Konfiguration für SMTP-Server (Absenderadresse und Name).
+
 **Version V00.10.05**
 
 ***Neue Funktionen***
@@ -22,7 +57,6 @@
 - Feld **`tabeles.beschreibung`** wurde auf **`TEXT`** geändert (vermeidet MySQL Row-Size Probleme bei großen Texten).
 - `php artisan migrate`
 - Falls noch nicht vorhanden: `php artisan storage:link`
-
 
 **Version V00.10.04**
 

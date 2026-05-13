@@ -13,7 +13,9 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Vereinsverwaltung'),
+
+    'verein_name' => env('VEREIN_NAME', 'Vereinsverwaltung'),
 
     /*
     |--------------------------------------------------------------------------

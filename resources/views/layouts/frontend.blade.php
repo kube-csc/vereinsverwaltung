@@ -1,3 +1,4 @@
+@include('_partials.function')
 <!DOCTYPE html>
 <html lang="de">
 

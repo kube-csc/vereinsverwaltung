@@ -1,3 +1,4 @@
+@include('_partials.function')
 <section id="services" class="services"> <!-- ======= Services Section ======= -->
     <div class="container">
         <div class="section-title">
@@ -100,8 +101,8 @@
                 <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
                     <div class="icon-box">
                        Für den eingestellten Filter sind keine Termine vorhanden.
-                    <div>
-                <div>
+                    </div>
+                </div>
             @endif
             @foreach($eventsFuture as $eventFuture)
                 @php
@@ -236,19 +237,3 @@
 
     </div>
 </section><!-- End Services Section -->
-
-
-@php
-    // ToDo: Funktion anderes Integrieren
-    function textmax(&$beschreibung,$sollang,&$abgeschnitten)
-    {
-     $abgeschnitten=0;
-     $laenge=strlen($beschreibung);
-     if ($laenge>$sollang)
-      {
-        $beschreibung=substr($beschreibung,0,$sollang);
-        $beschreibung=$beschreibung."...";
-        $abgeschnitten=1;
-      }
-    }
-@endphp

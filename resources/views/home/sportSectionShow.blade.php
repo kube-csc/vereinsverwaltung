@@ -1,3 +1,4 @@
+@include('_partials.function')
     <!-- ======= About Section ======= -->
         <section id="about" class="about">
             <div class="container">
@@ -10,7 +11,7 @@
                              <!-- ======= Facebook======= -->
                              <!-- ToDo: Facebook funktioniert nicht -->
                                  <center>
-                               <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('VEREIN_DOMAIN')) }} data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
+                               <div class="fb-like" data-href="http://www.{{ str_replace('_' , ' ' , env('VEREIN_DOMAIN')) }}" data-send="true" data-layout="box_count" data-width="183" data-show-faces="true" data-font="arial"></div>
                              </center>
                             @endif
                             <h3>{{ $sportSectionName->abteilung }}</h3>
@@ -69,6 +70,7 @@
                                    if ($abteilung->event_id>0)
                                     {
                                        ?>
+                                       <p>
                                        {!! $ausgabetext !!}
                                        @if ($abgeschnitten==1)
                                          <div class="read-more">

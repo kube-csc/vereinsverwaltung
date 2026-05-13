@@ -29,14 +29,28 @@ class RegattaRaffleController extends Controller
         // Teams für die aktuelle Regatta laden
         $teams = RegattaTeam::where('regatta_id', $regattaId)
             ->with(['teamWertungsGruppe'])
-            ->get();
+            ->get()
+            ->sortBy(['verein', 'ort', 'plz']);
 
         $raceTypes = RaceType::where('regatta_id', $regattaId)->get();
+
+        // Maximale Anzahl an Finals berechnen (für die UI)
+        $teamsByGroup = $teams->where('status', 'Neuanmeldung')->groupBy('gruppe_id');
+        $maxFinalsTotal = 0;
+        foreach ($teamsByGroup as $gruppeId => $gruppeTeams) {
+            $raceType = $raceTypes->firstWhere('id', $gruppeId);
+            $lanesCount = $raceType->bahnen ?? 4;
+            $maxFinalsInGroup = ceil($gruppeTeams->count() / $lanesCount);
+            if ($maxFinalsInGroup > $maxFinalsTotal) {
+                $maxFinalsTotal = $maxFinalsInGroup;
+            }
+        }
 
         return view('regattaManagement.regattaRaffle.index', [
             'regattaId' => $regattaId,
             'teams' => $teams,
             'raceTypes' => $raceTypes,
+            'maxFinalsTotal' => $maxFinalsTotal,
             'previewData' => $this->hydratePreview(Session::get('rafflePreview')),
             'teamOpponents' => Session::get('raffleOpponents'),
             'maxHeatEndTime' => Session::get('raffleMaxHeatEndTime')
@@ -221,21 +235,28 @@ class RegattaRaffleController extends Controller
             $maxSaneFinals = ceil($totalTeamsInGroup / $lanesCount);
             $actualFinalsCount = min($finalsCount, $maxSaneFinals);
 
-            for ($f = $actualFinalsCount - 1; $f >= 0; $f--) {
-                $finalLetter = chr(65 + $f); // A, B, C...
+            for ($f = 0; $f < $actualFinalsCount; $f++) {
+                $finalLetter = chr(65 + ($actualFinalsCount - 1 - $f)); // A-Finale ist das letzte (bei z.B. 3 Finals: C, B, A)
                 $finalTypeName = $finalLetter . '-Finale';
 
                 $startPlatz = ($f * $lanesCount) + 1;
                 $endPlatz = ($f + 1) * $lanesCount;
 
-                for ($l = 1; $l <= $lanesCount; $l++) {
-                    $platzImRanking = $startPlatz + $l - 1;
+                // Bahnverteilung: Stärkste Teams (niedrigerer Platz) in die Mitte
+                // Beispiel 4 Bahnen: 3, 1, 2, 4
+                // Beispiel 5 Bahnen: 5, 3, 1, 2, 4
+                $laneAssignment = $this->calculateSeededLanes($lanesCount);
+
+                foreach ($laneAssignment as $lIdx => $laneNumber) {
+                    $platzImRanking = $startPlatz + $lIdx;
+                    if ($platzImRanking > $totalTeamsInGroup) continue;
+
                     $preview[] = [
                         'time' => $currentGlobalTime->format('H:i'),
                         'pause' => '-',
                         'conflicts' => 0,
                         'race_number' => $raceNumber,
-                        'lane' => $l,
+                        'lane' => $laneNumber,
                         'team_id' => null, // Platzhalter
                         'placeholder_name' => "Platz $platzImRanking der Tabelle $gruppeName",
                         'gruppe_id' => $gruppeId,
@@ -285,6 +306,164 @@ class RegattaRaffleController extends Controller
         Session::put('raffleParams', $request->only(['start_time', 'interval', 'wertungsart', 'heats_count', 'min_pause', 'pause_after_heats', 'finals_start_time', 'finals_count']));
 
         return redirect()->route('regattaRaffle.index')->with('success', 'Vorschlag generiert.');
+    }
+
+    /**
+     * Verschiebt ein Rennen in der Reihenfolge nach oben oder unten.
+     */
+    public function moveRace(Request $request)
+    {
+        $direction = $request->input('direction'); // 'up' oder 'down'
+        $raceNumber = $request->input('race_number');
+        $preview = Session::get('rafflePreview');
+
+        if (!$preview || !$raceNumber) return back();
+
+        // Gruppiere nach race_number um die Reihenfolge der Blöcke zu manipulieren
+        $grouped = collect($preview)->groupBy('race_number');
+
+        $keys = $grouped->keys()->toArray(); // Das sind die race_numbers in ihrer aktuellen Reihenfolge
+        $index = array_search($raceNumber, $keys);
+
+        if ($index === false) return back();
+
+        if ($direction === 'up' && $index > 0) {
+            $prevKey = $keys[$index - 1];
+            $keys[$index - 1] = $raceNumber;
+            $keys[$index] = $prevKey;
+        } elseif ($direction === 'down' && $index < count($keys) - 1) {
+            $nextKey = $keys[$index + 1];
+            $keys[$index + 1] = $raceNumber;
+            $keys[$index] = $nextKey;
+        } else {
+            return back();
+        }
+
+        // Baue Preview in neuer physischer Reihenfolge zusammen
+        $newPreview = [];
+        foreach ($keys as $key) {
+            foreach ($grouped[$key] as $lane) {
+                $newPreview[] = $lane;
+            }
+        }
+
+        Session::put('rafflePreview', $newPreview);
+        return back()->with('success', 'Rennreihenfolge angepasst. Bitte Zeiten neu berechnen.');
+    }
+
+    /**
+     * Berechnet die Startzeiten basierend auf der aktuellen Reihenfolge neu.
+     */
+    public function recalculateTimes(Request $request)
+    {
+        $preview = Session::get('rafflePreview');
+        if (!$preview) return back()->with('error', 'Keine Daten zum Aktualisieren.');
+
+        $startTime = $request->input('start_time');
+        $interval = $request->input('interval', 10);
+        $finalsStartTimeStr = $request->input('finals_start_time');
+        $pauseAfterHeats = $request->input('pause_after_heats', 30);
+
+        $currentGlobalTime = \Carbon\Carbon::createFromFormat('H:i', $startTime);
+        $finalsStartTime = \Carbon\Carbon::createFromFormat('H:i', $finalsStartTimeStr);
+
+        // Gruppiere nach race_number (Physische Reihenfolge in der Liste beibehalten)
+        $raceGroups = [];
+        foreach ($preview as $lane) {
+            $rn = $lane['race_number'];
+            if (!isset($raceGroups[$rn])) {
+                $raceGroups[$rn] = [];
+            }
+            $raceGroups[$rn][] = $lane;
+        }
+
+        $newPreview = [];
+        $maxHeatEndTime = $currentGlobalTime->copy();
+        $isFirstFinal = true;
+
+        foreach ($raceGroups as $rk => $lanes) {
+            $isFinal = $lanes[0]['is_final'];
+
+            if ($isFinal && $isFirstFinal) {
+                // Pause nach Vorläufen berücksichtigen
+                $earliestFinalStart = $maxHeatEndTime->copy()->addMinutes($pauseAfterHeats);
+                if ($finalsStartTime->lt($earliestFinalStart)) {
+                    $currentGlobalTime = $earliestFinalStart;
+                } else {
+                    $currentGlobalTime = $finalsStartTime->copy();
+                }
+                $isFirstFinal = false;
+            }
+
+            foreach ($lanes as &$lane) {
+                $lane['time'] = $currentGlobalTime->format('H:i');
+                $newPreview[] = $lane;
+            }
+
+            if (!$isFinal) {
+                $maxHeatEndTime = $currentGlobalTime->copy();
+            }
+
+            $currentGlobalTime->addMinutes($interval);
+        }
+
+        // Pausen neu berechnen
+        $lastStartTimes = [];
+        foreach ($newPreview as &$lane) {
+            if ($lane['team_id']) {
+                $tId = $lane['team_id'];
+                $currentTime = \Carbon\Carbon::createFromFormat('H:i', $lane['time']);
+                if (isset($lastStartTimes[$tId])) {
+                    $diff = $currentTime->diffInMinutes($lastStartTimes[$tId]);
+                    $lane['pause'] = $diff . " Min";
+                } else {
+                    $lane['pause'] = '-';
+                }
+                $lastStartTimes[$tId] = $currentTime;
+            }
+        }
+
+        Session::put('rafflePreview', $newPreview);
+        Session::put('raffleMaxHeatEndTime', $maxHeatEndTime->format('H:i'));
+
+        // Parameter in Session aktualisieren
+        $params = Session::get('raffleParams', []);
+        $params['start_time'] = $startTime;
+        $params['interval'] = $interval;
+        $params['finals_start_time'] = $finalsStartTimeStr;
+        $params['pause_after_heats'] = $pauseAfterHeats;
+        Session::put('raffleParams', $params);
+
+        return back()->with('success', 'Startzeiten wurden neu berechnet.');
+    }
+
+    /**
+     * Berechnet die Bahnverteilung basierend auf dem Seeding.
+     * Stärkste Teams in die Mitte, schwächere nach außen.
+     */
+    private function calculateSeededLanes($lanesCount)
+    {
+        // Logik für Drachenboot:
+        // 4 Bahnen: 1.Platz -> B2, 2.Platz -> B3, 3.Platz -> B1, 4.Platz -> B4
+        // Allgemein: Mitte finden, dann abwechselnd rechts/links
+        $lanes = [];
+        $center = ceil($lanesCount / 2);
+
+        $currentLane = $center;
+        $step = 1;
+        $direction = 1; // 1 = rechts, -1 = links
+
+        for ($i = 0; $i < $lanesCount; $i++) {
+            $lanes[] = $currentLane;
+            $currentLane = $currentLane + ($step * $direction);
+            $direction *= -1;
+            $step++;
+        }
+
+        // Die Reihenfolge in $lanes entspricht den Plätzen 1, 2, 3...
+        // Wir wollen aber wissen, welcher Platz auf welcher Bahn landet.
+        // Index 0 (Platz 1) -> Wert (Bahn)
+        return $lanes;
     }
 
     /**

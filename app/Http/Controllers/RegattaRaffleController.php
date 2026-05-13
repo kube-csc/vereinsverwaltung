@@ -37,8 +37,29 @@ class RegattaRaffleController extends Controller
             'regattaId' => $regattaId,
             'teams' => $teams,
             'raceTypes' => $raceTypes,
-            'previewData' => Session::get('rafflePreview')
+            'previewData' => $this->hydratePreview(Session::get('rafflePreview')),
+            'teamOpponents' => Session::get('raffleOpponents'),
+            'maxHeatEndTime' => Session::get('raffleMaxHeatEndTime')
         ]);
+    }
+
+    private function hydratePreview($preview)
+    {
+        if (!$preview) return null;
+
+        $gruppeNames = Session::get('raffleGruppeNames', []);
+        $teamNames = Session::get('raffleTeamNames', []);
+
+        foreach ($preview as &$row) {
+            $row['gruppe_name'] = $gruppeNames[$row['gruppe_id']] ?? 'Unbekannt';
+            if ($row['is_final']) {
+                $row['team_name'] = $row['placeholder_name'] ?? 'Platzhalter';
+            } else {
+                $row['team_name'] = $teamNames[$row['team_id']] ?? 'Unbekannt';
+            }
+        }
+
+        return $preview;
     }
 
     /**
@@ -53,6 +74,11 @@ class RegattaRaffleController extends Controller
         $interval = $request->input('interval', 10); // Minuten
         $wertungsart = $request->input('wertungsart', 1); // 1 = Punkte
         $heatsCount = $request->input('heats_count', 3);
+        $minPause = $request->input('min_pause', 20);
+        $pauseAfterHeats = $request->input('pause_after_heats', 30);
+        $finalsStartTimeStr = $request->input('finals_start_time', '14:00');
+
+        $finalsCount = $request->input('finals_count', 1);
 
         $teamsByGroup = RegattaTeam::where('regatta_id', $regattaId)
             ->where('status', 'Neuanmeldung')
@@ -60,76 +86,203 @@ class RegattaRaffleController extends Controller
             ->groupBy('gruppe_id');
 
         $preview = [];
-        $currentTime = \Carbon\Carbon::createFromFormat('H:i', $startTime);
+        $startTimeObj = \Carbon\Carbon::createFromFormat('H:i', $startTime);
+
+        // Globaler Zeit-Tracker für alle Rennen
+        $currentGlobalTime = $startTimeObj->copy();
+
         $raceNumber = 1;
-        $lastStartTimes = []; // Trackt den letzten Startzeitpunkt jedes Teams
+        $opponentHistory = []; // Trackt, gegen wen ein Team bereits gefahren ist: [team_id => [opponent_id => count]]
+        $lastStartTimes = []; // Trackt die letzte Startzeit pro Team: [team_id => Carbon]
 
-        // Wir gehen alle gewünschten Vorläufe (Heats) durch
-        for ($h = 1; $h <= $heatsCount; $h++) {
-            foreach ($teamsByGroup as $gruppeId => $gruppeTeams) {
-                $raceType = RaceType::find($gruppeId);
-                $lanesCount = $raceType->bahnen ?? 4;
+        // Wir berechnen die maximale Endzeit der Vorläufe, um danach die Pause einzuhalten
+        $maxHeatEndTime = $startTimeObj->copy();
 
-                // Teams sortieren nach letztem Startzeitpunkt (um Pause zu maximieren)
-                // Teams, die noch nie gestartet sind oder am längsten her, kommen zuerst.
-                $sortedTeams = $gruppeTeams->shuffle()->sortBy(function($team) use ($lastStartTimes) {
-                    return $lastStartTimes[$team->id] ?? -1;
-                });
+        // Vorläufe sammeln und planen
+        $allHeats = [];
+        $gruppeNames = []; // Cache für Gruppennamen
+        $teamNames = [];   // Cache für Teamnamen
+
+        foreach ($teamsByGroup as $gruppeId => $gruppeTeams) {
+            $raceType = RaceType::find($gruppeId);
+            $lanesCount = $raceType->bahnen ?? 4;
+            $gruppeNames[$gruppeId] = $raceType->typ ?? 'Unbekannt';
+
+            $teamList = $gruppeTeams->shuffle()->values();
+            $totalTeams = $teamList->count();
+            if ($totalTeams === 0) continue;
+
+            foreach ($teamList as $t) {
+                $teamNames[$t->id] = $t->teamname;
+            }
+
+            $neededHeatsPerRound = ceil($totalTeams / $lanesCount);
+
+            for ($h = 1; $h <= $heatsCount; $h++) {
+                $rotatedTeams = [];
+                for ($i = 0; $i < $totalTeams; $i++) {
+                    $rotatedTeams[] = $teamList->get(($i + ($h - 1)) % $totalTeams);
+                }
 
                 $heats = [];
-                foreach ($sortedTeams as $team) {
-                    $placed = false;
-                    foreach ($heats as &$heat) {
-                        if (count($heat) < $lanesCount) {
-                            $clubExists = false;
-                            foreach ($heat as $heatTeam) {
-                                if ($heatTeam->plz == $team->plz && $heatTeam->ort == $team->ort) {
-                                    $clubExists = true;
-                                    break;
-                                }
-                            }
-                            if (!$clubExists) {
-                                $heat[] = $team;
-                                $placed = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!$placed) {
-                        $heats[] = [$team];
+                for ($i = 0; $i < $neededHeatsPerRound; $i++) {
+                    $heats[$i] = [];
+                }
+
+                foreach ($rotatedTeams as $idx => $team) {
+                    $heatIdx = $idx % $neededHeatsPerRound;
+                    if (count($heats[$heatIdx]) < $lanesCount) {
+                        $heats[$heatIdx][] = $team;
                     }
                 }
 
-                foreach ($heats as $heatTeams) {
-                    foreach ($heatTeams as $index => $team) {
-                        $pauseStr = '-';
-                        if (isset($lastStartTimes[$team->id])) {
-                            $diff = $currentTime->diffInMinutes(\Carbon\Carbon::createFromFormat('H:i', $lastStartTimes[$team->id]));
-                            $pauseStr = $diff . ' Min';
-                        }
-
-                        $preview[] = [
-                            'time' => $currentTime->format('H:i'),
-                            'pause' => $pauseStr,
-                            'race_number' => $raceNumber,
-                            'lane' => $index + 1,
-                            'team_id' => $team->id,
-                            'team_name' => $team->teamname,
-                            'gruppe_id' => $gruppeId,
-                            'gruppe_name' => $raceType->typ ?? 'Unbekannt',
-                            'wertungsart' => $wertungsart,
-                            'heat_index' => $h
-                        ];
-                        $lastStartTimes[$team->id] = $currentTime->format('H:i');
-                    }
-                    $currentTime->addMinutes($interval);
-                    $raceNumber++;
+                foreach ($heats as $heatIdx => $heatTeams) {
+                    $allHeats[] = [
+                        'gruppe_id' => $gruppeId,
+                        'heat_index' => $h,
+                        'teams' => $heatTeams,
+                        'lanes_count' => $lanesCount,
+                        'type' => 'heat'
+                    ];
                 }
             }
         }
 
+        // Vorläufe chronologisch planen
+        foreach ($allHeats as $heatData) {
+            $currentRaceConflicts = [];
+            foreach ($heatData['teams'] as $teamA) {
+                $conflictsForA = 0;
+                foreach ($heatData['teams'] as $teamB) {
+                    if ($teamA->id !== $teamB->id) {
+                        if (isset($opponentHistory[$teamA->id][$teamB->id])) {
+                            $conflictsForA += $opponentHistory[$teamA->id][$teamB->id];
+                        }
+                    }
+                }
+                $currentRaceConflicts[$teamA->id] = $conflictsForA;
+            }
+
+            foreach ($heatData['teams'] as $teamA) {
+                foreach ($heatData['teams'] as $teamB) {
+                    if ($teamA->id !== $teamB->id) {
+                        $opponentHistory[$teamA->id][$teamB->id] = ($opponentHistory[$teamA->id][$teamB->id] ?? 0) + 1;
+                    }
+                }
+            }
+
+            $raceTime = $currentGlobalTime->copy();
+            if ($raceTime->gt($maxHeatEndTime)) {
+                $maxHeatEndTime = $raceTime->copy();
+            }
+
+            foreach ($heatData['teams'] as $index => $team) {
+                $pause = '-';
+                if (isset($lastStartTimes[$team->id])) {
+                    $diff = $lastStartTimes[$team->id]->diffInMinutes($raceTime);
+                    $pause = $diff . ' Min';
+                }
+                $lastStartTimes[$team->id] = $raceTime;
+
+                $preview[] = [
+                    'time' => $raceTime->format('H:i'),
+                    'pause' => $pause,
+                    'conflicts' => $currentRaceConflicts[$team->id] ?? 0,
+                    'race_number' => $raceNumber,
+                    'lane' => $index + 1,
+                    'team_id' => $team->id,
+                    'gruppe_id' => $heatData['gruppe_id'],
+                    'heat_index' => $heatData['heat_index'],
+                    'is_final' => false
+                ];
+            }
+            $raceNumber++;
+            $currentGlobalTime->addMinutes($interval);
+        }
+
+        // Finale generieren
+        $finalsStartTime = \Carbon\Carbon::createFromFormat('H:i', $finalsStartTimeStr);
+        // Sicherstellen, dass Finals nach Vorläufen + Pause starten
+        $earliestFinalsStart = $maxHeatEndTime->copy()->addMinutes($pauseAfterHeats);
+        if ($finalsStartTime->lt($earliestFinalsStart)) {
+            $finalsStartTime = $earliestFinalsStart;
+        }
+
+        $currentGlobalTime = $finalsStartTime->copy();
+
+        foreach ($teamsByGroup as $gruppeId => $gruppeTeams) {
+            $raceType = RaceType::find($gruppeId);
+            $lanesCount = $raceType->bahnen ?? 4;
+            $gruppeName = $gruppeNames[$gruppeId] ?? 'Unbekannt';
+            $totalTeamsInGroup = $gruppeTeams->count();
+
+            // Berechne, wie viele Finals für diese Gruppe maximal sinnvoll sind
+            // (Alle Teams sollen maximal ein Finale fahren)
+            $maxSaneFinals = ceil($totalTeamsInGroup / $lanesCount);
+            $actualFinalsCount = min($finalsCount, $maxSaneFinals);
+
+            for ($f = $actualFinalsCount - 1; $f >= 0; $f--) {
+                $finalLetter = chr(65 + $f); // A, B, C...
+                $finalTypeName = $finalLetter . '-Finale';
+
+                $startPlatz = ($f * $lanesCount) + 1;
+                $endPlatz = ($f + 1) * $lanesCount;
+
+                for ($l = 1; $l <= $lanesCount; $l++) {
+                    $platzImRanking = $startPlatz + $l - 1;
+                    $preview[] = [
+                        'time' => $currentGlobalTime->format('H:i'),
+                        'pause' => '-',
+                        'conflicts' => 0,
+                        'race_number' => $raceNumber,
+                        'lane' => $l,
+                        'team_id' => null, // Platzhalter
+                        'placeholder_name' => "Platz $platzImRanking der Tabelle $gruppeName",
+                        'gruppe_id' => $gruppeId,
+                        'is_final' => true,
+                        'final_type' => $finalTypeName
+                    ];
+                }
+                $raceNumber++;
+                $currentGlobalTime->addMinutes($interval);
+            }
+        }
+
+        $preview = collect($preview)->sortBy([
+            ['time', 'asc'],
+            ['race_number', 'asc'],
+            ['lane', 'asc']
+        ])->values()->all();
+
+        // Gegner-Zusammenfassung erstellen
+        $teamOpponents = [];
+        foreach ($opponentHistory as $teamId => $opponents) {
+            $opponentsList = [];
+            foreach ($opponents as $oppId => $count) {
+                if (isset($teamNames[$oppId])) {
+                    $opponentsList[] = $teamNames[$oppId] . ($count > 1 ? " ({$count}x)" : "");
+                }
+            }
+
+            $teamName = $teamNames[$teamId] ?? "Unbekannt ($teamId)";
+            $gruppeId = RegattaTeam::where('id', $teamId)->value('gruppe_id');
+            $gruppeName = $gruppeNames[$gruppeId] ?? 'Unbekannt';
+
+            $teamOpponents[$gruppeName][$teamName] = $opponentsList;
+        }
+
+        // Sortiere nach Gruppennamen und dann nach Teamnamen
+        ksort($teamOpponents);
+        foreach ($teamOpponents as $gruppeName => &$teams) {
+            ksort($teams);
+        }
+
         Session::put('rafflePreview', $preview);
-        Session::put('raffleParams', $request->only(['start_time', 'interval', 'wertungsart', 'heats_count']));
+        Session::put('raffleOpponents', $teamOpponents);
+        Session::put('raffleGruppeNames', $gruppeNames);
+        Session::put('raffleTeamNames', $teamNames);
+        Session::put('raffleMaxHeatEndTime', $maxHeatEndTime->format('H:i'));
+        Session::put('raffleParams', $request->only(['start_time', 'interval', 'wertungsart', 'heats_count', 'min_pause', 'pause_after_heats', 'finals_start_time', 'finals_count']));
 
         return redirect()->route('regattaRaffle.index')->with('success', 'Vorschlag generiert.');
     }
@@ -140,7 +293,7 @@ class RegattaRaffleController extends Controller
     public function store(Request $request)
     {
         $regattaId = Session::get('regattaSelectId');
-        $preview = Session::get('rafflePreview');
+        $preview = $this->hydratePreview(Session::get('rafflePreview'));
         $params = Session::get('raffleParams');
 
         if (!$regattaId || !$preview) {
@@ -167,7 +320,15 @@ class RegattaRaffleController extends Controller
                     $tabele->event_id = $regattaId;
                     $tabele->gruppe_id = $gruppeId;
                     $tabele->tabelleDatumVon = now();
-                    $tabele->ueberschrift = $heatIndex . '. Vorlauf ' . $firstLane['gruppe_name'];
+
+                    if ($firstLane['is_final']) {
+                        $tabele->ueberschrift = $firstLane['final_type'] . ' ' . $firstLane['gruppe_name'];
+                        $tabele->finale = 1;
+                    } else {
+                        $tabele->ueberschrift = $heatIndex . '. Vorlauf ' . $firstLane['gruppe_name'];
+                        $tabele->finale = 0;
+                    }
+
                     $tabele->tabelleLevelVon = 0;
                     $tabele->tabelleLevelBis = 0;
                     $tabele->wertungsart = $params['wertungsart'] ?? 1;
@@ -184,7 +345,13 @@ class RegattaRaffleController extends Controller
                 $race->gruppe_id = $gruppeId;
                 $race->rennDatum = now();
                 $race->rennUhrzeit = $firstLane['time'];
-                $race->rennBezeichnung = 'Lauf ' . $raceNum;
+
+                if ($firstLane['is_final']) {
+                    $race->rennBezeichnung = $firstLane['final_type'];
+                } else {
+                    $race->rennBezeichnung = 'Lauf ' . $raceNum;
+                }
+
                 $race->bahnen = count($laneData);
                 $race->autor_id = $userId;
                 $race->bearbeiter_id = $userId;
@@ -195,7 +362,7 @@ class RegattaRaffleController extends Controller
                     $laneModel->regatta_id = $regattaId;
                     $laneModel->rennen_id = $race->id;
                     $laneModel->tabele_id = $tabeleIds[$key];
-                    $laneModel->mannschaft_id = $lane['team_id'];
+                    $laneModel->mannschaft_id = $lane['team_id'] ?? null;
                     $laneModel->bahn = $lane['lane'];
                     $laneModel->zeit = '00:00:00';
                     $laneModel->hundert = 0;

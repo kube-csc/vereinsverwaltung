@@ -19,7 +19,7 @@
     - Button zum direkten Teilen des Registrierungslinks via WhatsApp.
     - Dynamischer Einladungstext unter Verwendung des konfigurierten App-Namens.
 
-***Neue Funktionen / Layout-Verbesserungen (Branch: TextOptimierung) (Fix)***
+*** Layout-Verbesserungen (Fix)***
 - **Zentralisierung der Textverarbeitung:**
     - Die Funktion `textmax` wurde in ein zentrales Partial `resources/views/_partials/function.blade.php` ausgelagert.
     - Automatische Einbindung der Funktionen in die Frontend-Layouts (`frontend`, `headFrontend`, `frontendLivewire`).
@@ -57,7 +57,6 @@
 - Feld **`tabeles.beschreibung`** wurde auf **`TEXT`** geändert (vermeidet MySQL Row-Size Probleme bei großen Texten).
 - `php artisan migrate`
 - Falls noch nicht vorhanden: `php artisan storage:link`
-
 
 **Version V00.10.04**
 

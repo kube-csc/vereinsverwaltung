@@ -123,8 +123,16 @@ class RegattaRaffleController extends Controller
         $raceNumber = 1;
         $opponentHistory = []; // Trackt, gegen wen ein Team bereits gefahren ist: [team_id => [opponent_id => count]]
         $lastStartTimes = []; // Trackt die letzte Startzeit pro Team: [team_id => Carbon]
-        $lastOrgStartTimes = []; // Trackt die letzte Startzeit pro Organisation (Verein/PLZ/Ort): [org_key => Carbon]
-        $lastOrgTeamId = []; // Trackt die letzte Team-ID pro Organisation: [org_key => team_id]
+        $lastOrgStartTimes = [
+            'verein' => [],
+            'plz' => [],
+            'ort' => []
+        ]; // Trackt die letzte Startzeit pro Kriterium
+        $lastOrgTeamId = [
+            'verein' => [],
+            'plz' => [],
+            'ort' => []
+        ]; // Trackt die letzte Team-ID pro Kriterium
 
         // Wir berechnen die maximale Endzeit der Vorläufe pro Gruppe, um danach den Abstand zum ersten Finale berechnen zu können
         $maxHeatEndTimePerGroup = [];
@@ -241,23 +249,37 @@ class RegattaRaffleController extends Controller
                         $pauseInMinutes = $currentGlobalTime->diffInMinutes($lastStartTimes[$teamId]);
                     }
 
-                    // Organisations-Pause berücksichtigen (Verein/PLZ/Ort)
+                    // Organisations-Pause berücksichtigen (Verein ODER PLZ ODER Ort)
                     $teamObj = $teamsByGroup[$gruppeId]->firstWhere('id', $teamId);
-                    $orgKey = ($teamObj->verein ?? '') . '|' . ($teamObj->plz ?? '') . '|' . ($teamObj->ort ?? '');
                     $orgPauseInMinutes = 9999;
-                    if (isset($lastOrgStartTimes[$orgKey])) {
-                        $orgPauseInMinutes = $currentGlobalTime->diffInMinutes($lastOrgStartTimes[$orgKey]);
-                    }
-
-                    // Score-Formel:
-                    // ConflictScore ist sehr hoch gewichtet (1000 pro Konflikt im aktuellen Heat)
-                    // HistoryConflicts (10 pro Konflikt)
-                    // Pause (Inverser Wert, damit längere Pause den Score senkt)
-                    // Organisations-Pause (Zusätzlicher Malus wenn die Organisation zu kurz hintereinander startet)
-                    // Nur wenn es ein anderes Team derselben Organisation ist
                     $orgMalus = 0;
-                    if (isset($lastOrgTeamId[$orgKey]) && $lastOrgTeamId[$orgKey] != $teamId) {
-                        $orgMalus = ($orgPauseInMinutes < $minPause) ? (1000 * ($minPause - $orgPauseInMinutes)) : 0;
+                    $matchedCriteria = [];
+
+                    $criteria = [
+                        'verein' => $teamObj->verein ?? '',
+                        'plz' => $teamObj->plz ?? '',
+                        'ort' => $teamObj->ort ?? ''
+                    ];
+
+                    foreach ($criteria as $key => $value) {
+                        if (empty($value)) continue;
+
+                        if (isset($lastOrgStartTimes[$key][$value])) {
+                            $diff = $currentGlobalTime->diffInMinutes($lastOrgStartTimes[$key][$value]);
+                            if ($diff < $orgPauseInMinutes) {
+                                $orgPauseInMinutes = $diff;
+                            }
+
+                            // Malus berechnen, wenn es ein anderes Team mit diesem Kriterium ist
+                            if (isset($lastOrgTeamId[$key][$value]) && $lastOrgTeamId[$key][$value] != $teamId) {
+                                if ($diff < $minPause) {
+                                    $malus = 1000 * ($minPause - $diff);
+                                    if ($malus > $orgMalus) {
+                                        $orgMalus = $malus;
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     $score = $conflictScore + ($totalHistoryConflicts * 10) - ($pauseInMinutes) + $orgMalus;
@@ -321,20 +343,39 @@ class RegattaRaffleController extends Controller
                 $lastStartTimes[$team->id] = $raceTime;
 
                 // Organisations-Zeit aktualisieren und Abstand tracken
-                $orgKey = ($team->verein ?? '') . '|' . ($team->plz ?? '') . '|' . ($team->ort ?? '');
+                $criteria = [
+                    'verein' => $team->verein ?? '',
+                    'plz' => $team->plz ?? '',
+                    'ort' => $team->ort ?? ''
+                ];
                 $orgPause = '-';
-                if (isset($lastOrgStartTimes[$orgKey]) && isset($lastOrgTeamId[$orgKey]) && $lastOrgTeamId[$orgKey] != $team->id) {
-                    $orgDiff = $lastOrgStartTimes[$orgKey]->diffInMinutes($raceTime);
-                    $orgPause = $orgDiff;
+                $orgName = '';
+                $orgTeamName = '';
+
+                foreach ($criteria as $key => $value) {
+                    if (empty($value)) continue;
+
+                    if (isset($lastOrgStartTimes[$key][$value]) && isset($lastOrgTeamId[$key][$value]) && $lastOrgTeamId[$key][$value] != $team->id) {
+                        $orgDiff = $lastOrgStartTimes[$key][$value]->diffInMinutes($raceTime);
+                        if ($orgPause === '-' || $orgDiff < $orgPause) {
+                            $orgPause = $orgDiff;
+                            $orgName = $value;
+                            $orgTeamName = $teamNames[$lastOrgTeamId[$key][$value]] ?? 'Unbekannt';
+                            if (is_array($orgTeamName)) {
+                                $orgTeamName = $orgTeamName['name'] ?? 'Unbekannt';
+                            }
+                        }
+                    }
+                    $lastOrgStartTimes[$key][$value] = $raceTime;
+                    $lastOrgTeamId[$key][$value] = $team->id;
                 }
-                $lastOrgStartTimes[$orgKey] = $raceTime;
-                $lastOrgTeamId[$orgKey] = $team->id;
 
                 $preview[] = [
                     'time' => $raceTime->format('H:i'),
                     'pause' => $pause,
                     'org_pause' => $orgPause,
-                    'org_name' => str_replace('|', ' ', $orgKey),
+                    'org_name' => $orgName ?: ($team->verein ?: 'Verein/Ort'),
+                    'org_team_name' => $orgTeamName,
                     'conflicts' => $currentRaceConflicts[$team->id] ?? 0,
                     'race_number' => $raceNumber,
                     'lane' => $index + 1,
@@ -650,8 +691,16 @@ class RegattaRaffleController extends Controller
 
         // Pausen neu berechnen (für Vorläufe: Abstand zum letzten Rennen des Teams; für Finals: s.o.)
         $lastStartTimes = [];
-        $lastOrgStartTimes = [];
-        $lastOrgTeamId = [];
+        $lastOrgStartTimes = [
+            'verein' => [],
+            'plz' => [],
+            'ort' => []
+        ];
+        $lastOrgTeamId = [
+            'verein' => [],
+            'plz' => [],
+            'ort' => []
+        ];
         $teamNames = Session::get('raffleTeamNames', []);
 
         foreach ($newPreview as &$lane) {
@@ -671,16 +720,36 @@ class RegattaRaffleController extends Controller
                 // Organisations-Pause
                 $team = \App\Models\RegattaTeam::find($tId);
                 if ($team) {
-                    $orgKey = ($team->verein ?? '') . '|' . ($team->plz ?? '') . '|' . ($team->ort ?? '');
-                    if (isset($lastOrgStartTimes[$orgKey]) && isset($lastOrgTeamId[$orgKey]) && $lastOrgTeamId[$orgKey] != $tId) {
-                        $orgDiff = $currentTime->diffInMinutes($lastOrgStartTimes[$orgKey]);
-                        $lane['org_pause'] = $orgDiff;
-                    } else {
-                        $lane['org_pause'] = '-';
+                    $criteria = [
+                        'verein' => $team->verein ?? '',
+                        'plz' => $team->plz ?? '',
+                        'ort' => $team->ort ?? ''
+                    ];
+                    $orgPause = '-';
+                    $orgName = '';
+                    $orgTeamName = '';
+
+                    foreach ($criteria as $key => $value) {
+                        if (empty($value)) continue;
+
+                        if (isset($lastOrgStartTimes[$key][$value]) && isset($lastOrgTeamId[$key][$value]) && $lastOrgTeamId[$key][$value] != $tId) {
+                            $orgDiff = $currentTime->diffInMinutes($lastOrgStartTimes[$key][$value]);
+                            if ($orgPause === '-' || $orgDiff < $orgPause) {
+                                $orgPause = $orgDiff;
+                                $orgName = $value;
+                                $orgTeamName = $teamNames[$lastOrgTeamId[$key][$value]] ?? 'Unbekannt';
+                                if (is_array($orgTeamName)) {
+                                    $orgTeamName = $orgTeamName['name'] ?? 'Unbekannt';
+                                }
+                            }
+                        }
+                        $lastOrgStartTimes[$key][$value] = $currentTime;
+                        $lastOrgTeamId[$key][$value] = $tId;
                     }
-                    $lane['org_name'] = str_replace('|', ' ', $orgKey);
-                    $lastOrgStartTimes[$orgKey] = $currentTime;
-                    $lastOrgTeamId[$orgKey] = $tId;
+
+                    $lane['org_pause'] = $orgPause;
+                    $lane['org_name'] = $orgName ?: ($team->verein ?: 'Verein/Ort');
+                    $lane['org_team_name'] = $orgTeamName;
                 }
             }
         }

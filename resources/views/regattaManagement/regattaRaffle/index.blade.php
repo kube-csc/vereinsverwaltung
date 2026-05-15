@@ -35,6 +35,7 @@
                             <table class="min-w-full text-xs">
                                 <thead class="bg-gray-200">
                                     <tr>
+                                        <th class="px-2 py-1 text-left">ID</th>
                                         <th class="px-2 py-1 text-left">Team</th>
                                         <th class="px-2 py-1 text-left">Klasse</th>
                                         <th class="px-2 py-1 text-left">PLZ / Ort</th>
@@ -42,18 +43,86 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
-                                    @foreach($teams as $team)
-                                        <tr>
-                                            <td class="px-2 py-1">
-                                                {{ $team->teamname }}
-                                                @if($team->teamlink > 0 && isset($finalTeamlinks[$team->teamlink]))
-                                                    <span title="War bei der letzten Regatta in einem Finale ({{ $finalTeamlinks[$team->teamlink]['tabelle'] }}, Platz {{ $finalTeamlinks[$team->teamlink]['platz'] }})" class="cursor-help">🏆 {{ $finalTeamlinks[$team->teamlink]['platz'] }}.</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-2 py-1 text-gray-500">{{ optional($team->teamWertungsGruppe)->typ }}</td>
-                                            <td class="px-2 py-1 text-gray-500">{{ $team->plz }} {{ $team->ort }}</td>
-                                            <td class="px-2 py-1 text-gray-500">{{ $team->verein }}</td>
-                                        </tr>
+                                    @php
+                                        // Gruppiere Teams nach den ODER-Kriterien (Verein, PLZ, Ort)
+                                        // Wir erstellen "Blöcke", um zu visualisieren, welche Teams zusammengehören
+                                        $orgBlocks = [];
+                                        $processedTeamIds = [];
+                                        foreach($teams as $team) {
+                                            if (in_array($team->id, $processedTeamIds)) continue;
+
+                                            $keys = array_filter([$team->verein, $team->plz, $team->ort]);
+                                            $foundBlock = false;
+                                            foreach($orgBlocks as &$block) {
+                                                foreach($keys as $k) {
+                                                    if(in_array($k, $block['criteria'])) {
+                                                        $block['teams'][$team->id] = $team;
+                                                        $block['criteria'] = array_unique(array_merge($block['criteria'], $keys));
+                                                        $foundBlock = true;
+                                                        $processedTeamIds[] = $team->id;
+                                                        break 2;
+                                                    }
+                                                }
+                                            }
+                                            if(!$foundBlock) {
+                                                $orgBlocks[] = [
+                                                    'criteria' => $keys,
+                                                    'teams' => [$team->id => $team]
+                                                ];
+                                                $processedTeamIds[] = $team->id;
+                                            }
+                                        }
+
+                                        // Konsolidierung der Blöcke (falls durch ODER-Ketten Blöcke verschmelzen)
+                                        $changed = true;
+                                        while($changed) {
+                                            $changed = false;
+                                            for($i=0; $i < count($orgBlocks); $i++) {
+                                                for($j=$i+1; $j < count($orgBlocks); $j++) {
+                                                    $intersect = array_intersect($orgBlocks[$i]['criteria'], $orgBlocks[$j]['criteria']);
+                                                    if(!empty($intersect)) {
+                                                        $orgBlocks[$i]['criteria'] = array_unique(array_merge($orgBlocks[$i]['criteria'], $orgBlocks[$j]['criteria']));
+                                                        // Teams mergen und dabei Eindeutigkeit über die ID (Key) bewahren
+                                                        foreach($orgBlocks[$j]['teams'] as $id => $t) {
+                                                            $orgBlocks[$i]['teams'][$id] = $t;
+                                                        }
+                                                        array_splice($orgBlocks, $j, 1);
+                                                        $changed = true;
+                                                        break 2;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    @endphp
+                                    @foreach($orgBlocks as $index => $block)
+                                        @foreach($block['teams'] as $teamIndex => $team)
+                                            <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-50' }} hover:bg-blue-50 transition-colors">
+                                                <td class="px-2 py-1 text-gray-400 font-mono">{{ $team->id }}</td>
+                                                <td class="px-2 py-1 border-l-2 {{ $index % 2 == 0 ? 'border-blue-400' : 'border-indigo-400' }}">
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="font-medium">{{ $team->teamname }}</span>
+                                                        @if($team->teamlink > 0 && isset($finalTeamlinks[$team->teamlink]))
+                                                            <span title="War bei der letzten Regatta in einem Finale ({{ $finalTeamlinks[$team->teamlink]['tabelle'] }}, Platz {{ $finalTeamlinks[$team->teamlink]['platz'] }})" class="cursor-help whitespace-nowrap">🏆 {{ $finalTeamlinks[$team->teamlink]['platz'] }}.</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="px-2 py-1 text-gray-500">{{ optional($team->teamWertungsGruppe)->typ }}</td>
+                                                <td class="px-2 py-1">
+                                                    <div class="flex flex-wrap gap-1">
+                                                        <span class="px-1 rounded {{ $team->plz ? 'bg-blue-100 text-blue-800' : 'text-gray-400' }}">{{ $team->plz ?: '-' }}</span>
+                                                        <span class="px-1 rounded {{ $team->ort ? 'bg-indigo-100 text-indigo-800' : 'text-gray-400' }}">{{ $team->ort ?: '-' }}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-2 py-1">
+                                                    <span class="px-1 rounded {{ $team->verein ? 'bg-purple-100 text-purple-800 font-medium' : 'text-gray-400' }}">
+                                                        {{ $team->verein ?: '-' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        @if(!$loop->last)
+                                            <tr class="h-1 bg-gray-200"><td colspan="4"></td></tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                             </table>
@@ -235,8 +304,8 @@
                                                                         @endif
                                                                     </div>
                                                                     @if(isset($row['org_pause']) && $row['org_pause'] !== '-')
-                                                                        <div class="text-[9px] text-blue-400 italic leading-tight cursor-help" title="Abstand zur letzten Aktivität derselben Organisation">
-                                                                            ({{ $row['org_name'] ?? 'Verein/Ort' }})
+                                                                        <div class="text-[9px] text-blue-400 italic leading-tight cursor-help" title="Abstand zur letzten Aktivität derselben Organisation)">
+                                                                            ({{ $row['org_name'] ?? 'Verein/Ort' }}{{ !empty($row['org_team_name']) ? ', Team: '.$row['org_team_name'] : '' }})
                                                                         </div>
                                                                     @endif
                                                                 </div>
@@ -366,7 +435,7 @@
                                                                     </div>
                                                                     @if(isset($l['org_pause']) && $l['org_pause'] !== '-')
                                                                         <div class="text-[9px] text-blue-400 italic leading-tight ml-5 cursor-help" title="Abstand zur letzten Aktivität derselben Organisation">
-                                                                            Org: {{ $l['org_pause'] }} Min ({{ $l['org_name'] ?? 'Verein/Ort' }})
+                                                                            {{ $l['org_pause'] }} Min ({{ $l['org_name'] ?? 'Verein/Ort' }}{{ !empty($l['org_team_name']) ? ', Team: '.$l['org_team_name'] : '' }})
                                                                         </div>
                                                                     @endif
                                                                 </div>

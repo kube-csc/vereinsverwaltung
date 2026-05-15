@@ -265,6 +265,32 @@
 
                 <!-- Rechte Seite: Generator -->
                 <div>
+                    <!-- Versions-Verwaltung -->
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <h3 class="font-bold text-blue-800 flex items-center mb-2">
+                            <box-icon name='save' class="mr-2" color="#1e40af"></box-icon>
+                            Gespeicherte Versionen
+                        </h3>
+                        <div class="flex gap-2 items-end">
+                            <div class="flex-1">
+                                <label class="block text-xs font-medium text-gray-700">Version laden</label>
+                                <select onchange="if(this.value) window.location.href='/Regatta/Rennplan-Logik/load-version/'+this.value" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                    <option value="">-- Version wählen --</option>
+                                    @foreach($plans as $plan)
+                                        <option value="{{ $plan->id }}">{{ $plan->version_name }} ({{ $plan->created_at->format('d.m. H:i') }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <form action="{{ route('regattaRaffle.clearDraft') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 font-semibold py-2 px-3 rounded text-sm flex items-center gap-1" title="Entwurf leeren">
+                                    <box-icon name='trash' size="xs"></box-icon>
+                                    Neu
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                         <h3 class="font-bold text-yellow-800 flex items-center">
                             <box-icon name='terminal' class="mr-2" color="#854d0e"></box-icon>
@@ -275,58 +301,58 @@
                             <input type="hidden" name="mode" value="full">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Anzahl der Vorläufe</label>
-                                <input type="number" name="heats_count" value="{{ Session::get('raffleParams.heats_count', 3) }}" min="1" max="10" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <input type="number" name="heats_count" value="{{ $draft ? ($draft->params['heats_count'] ?? 3) : 3 }}" min="1" max="10" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Startzeit</label>
-                                    <input type="time" name="start_time" value="{{ Session::get('raffleParams.start_time', '10:00') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    <input type="time" name="start_time" value="{{ $draft ? ($draft->params['start_time'] ?? '10:00') : '10:00' }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Intervall (Minuten)</label>
-                                    <input type="number" name="interval" value="{{ Session::get('raffleParams.interval', 10) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    <input type="number" name="interval" value="{{ $draft ? ($draft->params['interval'] ?? 10) : 10 }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Wertungsmodus</label>
                                 <select name="wertungsart" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                                    <option value="1" {{ Session::get('raffleParams.wertungsart') == 1 ? 'selected' : '' }}>Punktwertung</option>
-                                    <option value="2" {{ Session::get('raffleParams.wertungsart') == 2 ? 'selected' : '' }}>Zeitwertung</option>
+                                    <option value="1" {{ ($draft && ($draft->params['wertungsart'] ?? 1) == 1) ? 'selected' : '' }}>Punktwertung</option>
+                                    <option value="2" {{ ($draft && ($draft->params['wertungsart'] ?? 1) == 2) ? 'selected' : '' }}>Zeitwertung</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Mindestpause (Min.)</label>
-                                <input type="number" name="min_pause" value="{{ Session::get('raffleParams.min_pause', 20) }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <input type="number" name="min_pause" value="{{ $draft ? ($draft->params['min_pause'] ?? 20) : 20 }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             </div>
                             <div class="border-t pt-4 mt-4">
                                 <label class="block text-sm font-bold text-blue-800">Final-Einstellungen</label>
                                 <div class="grid grid-cols-2 gap-4 mt-2">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Anzahl pro Gruppe</label>
-                                        <input type="number" name="finals_count" value="{{ Session::get('raffleParams.finals_count', 1) }}" min="0" max="{{ $maxFinalsTotal ?? 10 }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                        <input type="number" name="finals_count" value="{{ $draft ? ($draft->params['finals_count'] ?? 1) : 1 }}" min="0" max="{{ $maxFinalsTotal ?? 10 }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Startzeit Finals</label>
-                                        <input type="time" name="finals_start_time" value="{{ Session::get('raffleParams.finals_start_time', '14:00') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                        <input type="time" name="finals_start_time" value="{{ $draft ? ($draft->params['finals_start_time'] ?? '14:00') : '14:00' }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                     </div>
                                 </div>
                                 <div class="mt-2">
                                     <label class="block text-sm font-medium text-gray-700">Pause nach Vorläufen (Min.)</label>
-                                    <input type="number" name="pause_after_heats" value="{{ Session::get('raffleParams.pause_after_heats', 30) }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    <input type="number" name="pause_after_heats" value="{{ $draft ? ($draft->params['pause_after_heats'] ?? 30) : 30 }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 </div>
                                 <div class="mt-2">
                                     <label class="block text-sm font-medium text-gray-700">Veröffentlichung Finale (Uhrzeit)</label>
-                                    <input type="time" name="finale_publish_time" value="{{ Session::get('raffleParams.finale_publish_time', '19:00') }}" class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm" readonly>
+                                    <input type="time" name="finale_publish_time" value="{{ $draft ? ($draft->params['finale_publish_time'] ?? '19:00') : '19:00' }}" class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm" readonly>
                                     <p class="text-xs text-gray-500 mt-1 italic">Wird automatisch auf 1 Stunde nach der Siegerehrung gesetzt.</p>
                                 </div>
                                 <div class="mt-2">
                                     <label class="block text-sm font-medium text-gray-700">Mindestzeit bis zur Siegerehrung (Minuten)</label>
-                                    <input type="number" name="min_time_before_ceremony" value="{{ Session::get('raffleParams.min_time_before_ceremony', 30) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    <input type="number" name="min_time_before_ceremony" value="{{ $draft ? ($draft->params['min_time_before_ceremony'] ?? 30) : 30 }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                     <p class="text-xs text-gray-500 mt-1 italic">Mindestpause zwischen dem letzten Rennen und der Siegerehrung.</p>
                                 </div>
                                 <div class="mt-2">
                                     <label class="block text-sm font-medium text-gray-700">Siegerehrung (Uhrzeit)</label>
-                                    <input type="time" name="award_ceremony_time" value="{{ Session::get('raffleParams.award_ceremony_time', '18:00') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    <input type="time" name="award_ceremony_time" value="{{ $draft ? ($draft->params['award_ceremony_time'] ?? '18:00') : '18:00' }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                     <p class="text-xs text-gray-500 mt-1 italic">Voraussichtlicher Zeitpunkt der Siegerehrung.</p>
                                 </div>
                             </div>
@@ -363,6 +389,9 @@
                                 @endphp
 
                                 @foreach($groupedPreview as $gruppeName => $rows)
+                                    @if($gruppeName === 'Siegerehrung')
+                                        @continue
+                                    @endif
                                     @if($gruppeName === 'Unbekannt' || empty($gruppeName))
                                         @php
                                             // Falls es nur die Siegerehrung in dieser "Gruppe" gibt, überspringen wir sie in der gruppierten Ansicht
@@ -402,9 +431,9 @@
                                                     @foreach($rows as $row)
                                                         @if(!empty($row['is_award_ceremony'])) @continue @endif
                                                          <tr>
-                                                            <td class="px-2 py-1 font-semibold">{{ $row['time'] }}</td>
+                                                            <td class="px-2 py-1 font-semibold">{{ substr($row['time'], 0, 5) }}</td>
                                                             <td class="px-2 py-1 text-gray-500">
-                                                                <div>{{ $row['pause'] ?? '-' }}</div>
+                                                                <div>{{ $row['pause_minutes'] ?? '-' }}</div>
                                                             </td>
                                                             <td class="px-2 py-1">
                                                                 @php
@@ -443,7 +472,7 @@
                                                                         @php
                                                                             $teamId = $row['team_id'];
                                                                             $orgTeams = $teamToOrgTeams[$teamId];
-                                                                            $currentTime = \Carbon\Carbon::createFromFormat('H:i', $row['time']);
+                                                                            $currentTime = \Carbon\Carbon::parse($row['time']);
 
                                                                             $intervals = [];
                                                                             foreach($orgTeams as $otherTeam) {
@@ -452,7 +481,7 @@
                                                                                 // Suche den zeitlich engsten Vorher-Start eines anderen Teams dieser Organisation
                                                                                 $lastOtherStart = collect($previewData)
                                                                                     ->where('team_id', $otherTeam->id)
-                                                                                    ->map(fn($r) => \Carbon\Carbon::createFromFormat('H:i', $r['time']))
+                                                                                    ->map(fn($r) => \Carbon\Carbon::parse($r['time']))
                                                                                     ->filter(fn($time) => $time->lt($currentTime))
                                                                                     ->sortByDesc(fn($time) => $time->timestamp)
                                                                                     ->first();
@@ -483,12 +512,22 @@
                                     </div>
                                 @endforeach
                             </div>
-                            <form action="{{ route('regattaRaffle.store') }}" method="POST" class="mt-4">
-                                @csrf
-                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('Soll der Rennplan so gespeichert werden?')">
-                                    Plan übernehmen & speichern
-                                </button>
-                            </form>
+                            <div class="flex gap-4 mt-4">
+                                <form action="{{ route('regattaRaffle.saveVersion') }}" method="POST" class="flex-1 flex gap-2">
+                                    @csrf
+                                    <input type="text" name="version_name" placeholder="Versionsname (z.B. Entwurf 1)" class="flex-1 border rounded px-3 py-2 text-sm" required>
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
+                                        Als neue Version speichern
+                                    </button>
+                                </form>
+
+                                <form action="{{ route('regattaRaffle.store') }}" method="POST" class="flex-1">
+                                    @csrf
+                                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm h-full" onclick="return confirm('Soll der Rennplan so übernommen und in die Renn-Tabellen geschrieben werden? Dies überschreibt bestehende Renn-Tabellen.')">
+                                        Plan übernehmen & finalisieren
+                                    </button>
+                                </form>
+                            </div>
                         </div>
 
                         @if(isset($teamOpponents) && count($teamOpponents) > 0)
@@ -511,11 +550,66 @@
                                         </thead>
                                         <tbody class="divide-y divide-gray-200">
                                             @php
-                                                $chronologicalRaces = collect($previewData)->groupBy(function($item) {
-                                                    return $item['time'] . '_' . ($item['race_number'] ?? 'special');
-                                                })->sortBy(function($item, $key) {
-                                                    return $key;
+                                                $chronologicalRaces = collect($previewData)->groupBy('race_number')->sortBy(function($lanes, $raceNumber) {
+                                                    $firstLane = $lanes->first();
+                                                    $timeStr = $firstLane['time'] ?? '00:00';
+                                                    $parts = explode(':', $timeStr);
+                                                    $minutes = ((int)($parts[0] ?? 0) * 60) + (int)($parts[1] ?? 0);
+
+                                                    // Wir nutzen race_number als primäres Sortierkriterium (außer für 0)
+                                                    // Aber wenn race_number 0 ist (Siegerehrung), soll es sich nach der Zeit einordnen.
+                                                    // Da normale Rennen race_number 1, 2, 3... haben,
+                                                    // können wir für die Sortierung einen Wert berechnen:
+                                                    // (race_number * 10000) + minutes
+                                                    // Für race_number 0 (Siegerehrung) nutzen wir einen speziellen Wert, der es zeitlich einordnet.
+
+                                                    if ((int)$raceNumber === 0) {
+                                                        // Suche das Rennen, das zeitlich am nächsten davor liegt
+                                                        // Oder einfacher: Nutze nur die Zeit für die Gesamtsortierung,
+                                                        // wenn race_number nicht zuverlässig ist.
+                                                        // Aber der User wollte race_number Sortierung für Verschiebungen.
+
+                                                        // Wenn wir Siegerehrung (0) haben, geben wir ihr eine "virtuelle" race_number basierend auf der Zeit.
+                                                        return $minutes; // Sortierung rein nach Minuten für Siegerehrung? Nein, das mischt sie an den Anfang.
+                                                    }
+
+                                                    // Normales Rennen: race_number hat Vorrang
+                                                    // Da race_numbers meistens chronologisch sind,
+                                                    // ist (int)$raceNumber oft identisch mit der zeitlichen Sortierung.
+                                                    return (int)$raceNumber * 10000;
                                                 });
+
+                                                // Zweiter Versuch: Wir sortieren ALLES nach race_number,
+                                                // aber wenn race_number 0 ist, berechnen wir eine passende Position.
+                                                // Einfacher: Wir sortieren nach Zeit, aber innerhalb gleicher Zeiten nach race_number?
+                                                // Nein, Verschiebungen ändern race_number, nicht unbedingt die Zeit sofort.
+
+                                                // BESSER: Wir sortieren nach race_number, aber behandeln 0 als "Sonderfall".
+                                                // Wenn race_number 0 ist, weisen wir ihm einen Sortierwert zu, der zwischen den passenden race_numbers liegt.
+
+                                                $chronologicalRaces = collect($previewData)->groupBy('race_number')->sortBy(function($lanes, $raceNumber) use ($previewData) {
+                                                    $firstLane = $lanes->first();
+                                                    if ((int)$raceNumber > 0) {
+                                                        return (int)$raceNumber;
+                                                    }
+
+                                                    // Es ist eine Siegerehrung (race_number 0)
+                                                    $ceremonyTime = substr($firstLane['time'] ?? '00:00', 0, 5);
+
+                                                    // Finde die race_number des Rennens, das unmittelbar vor dieser Zeit liegt
+                                                    $lastRaceBefore = collect($previewData)
+                                                        ->where('race_number', '>', 0)
+                                                        ->filter(fn($item) => substr($item['time'] ?? '00:00', 0, 5) <= $ceremonyTime)
+                                                        ->sortByDesc('race_number')
+                                                        ->first();
+
+                                                    if ($lastRaceBefore) {
+                                                        return (int)$lastRaceBefore['race_number'] + 0.5;
+                                                    }
+
+                                                    return 0; // Bleibt am Anfang wenn nichts davor ist
+                                                });
+
                                                 $pauseShown = false;
                                                 $maxHeatEnd = $maxHeatEndTime ?? null;
                                             @endphp
@@ -523,7 +617,7 @@
                                             @foreach($chronologicalRaces as $raceId => $lanes)
                                                 @php
                                                     $firstLane = $lanes->first();
-                                                    $raceTime = $firstLane['time'];
+                                                    $raceTime = substr($firstLane['time'] ?? '00:00', 0, 5);
                                                     $raceNumber = $firstLane['race_number'] ?? null;
                                                 @endphp
 
@@ -537,23 +631,28 @@
                                                 @endif
 
                                                 @if(isset($firstLane['is_award_ceremony']) && $firstLane['is_award_ceremony'])
-                                                    <tr class="bg-purple-100">
+                                                    <tr id="race-0" class="bg-purple-100 border-y-2 border-purple-200">
                                                         <td class="px-2 py-4 font-bold text-purple-900">{{ $raceTime }}</td>
-                                                        <td colspan="5" class="px-4 py-4 text-center font-bold text-purple-900 uppercase tracking-widest">
-                                                            <box-icon name='trophy' class="inline-block mr-2" color="#581c87" size="xs"></box-icon>
+                                                        <td class="px-2 py-4 text-center">
+                                                            <div class="flex justify-center items-center h-full">
+                                                                <box-icon name='trophy' type='solid' color='#581c87'></box-icon>
+                                                            </div>
+                                                        </td>
+                                                        <td colspan="4" class="px-4 py-4 text-center font-bold text-purple-900 uppercase tracking-widest text-lg">
                                                             Siegerehrung
                                                         </td>
                                                     </tr>
                                                     @continue
                                                 @endif
 
-                                                <tr class="{{ $firstLane['is_final'] ? 'bg-blue-50' : '' }}">
+                                                <tr id="race-{{ $raceNumber }}" class="{{ $firstLane['is_final'] ? 'bg-blue-50' : '' }}">
                                                     <td class="px-2 py-2 font-bold">{{ $raceTime }}</td>
                                                     <td class="px-2 py-2 text-center">
                                                         <div class="flex flex-col items-center gap-1">
                                                             @if(!$loop->first)
                                                                 <form action="{{ route('regattaRaffle.move') }}" method="POST">
                                                                     @csrf
+                                                                    <input type="hidden" name="regatta_id" value="{{ $regattaId }}">
                                                                     <input type="hidden" name="race_number" value="{{ $raceNumber }}">
                                                                     <input type="hidden" name="direction" value="up">
                                                                     <button type="submit" class="text-blue-600 hover:text-blue-800" title="Nach oben verschieben">
@@ -564,6 +663,7 @@
                                                             @if(!$loop->last)
                                                                 <form action="{{ route('regattaRaffle.move') }}" method="POST">
                                                                     @csrf
+                                                                    <input type="hidden" name="regatta_id" value="{{ $regattaId }}">
                                                                     <input type="hidden" name="race_number" value="{{ $raceNumber }}">
                                                                     <input type="hidden" name="direction" value="down">
                                                                     <button type="submit" class="text-blue-600 hover:text-blue-800" title="Nach unten verschieben">
@@ -603,7 +703,7 @@
                                                                         @php
                                                                             $teamId = $l['team_id'];
                                                                             $orgTeams = $teamToOrgTeams[$teamId];
-                                                                            $currentTime = \Carbon\Carbon::createFromFormat('H:i', $l['time']);
+                                                                            $currentTime = \Carbon\Carbon::parse($l['time']);
 
                                                                             $intervals = [];
                                                                             foreach($orgTeams as $otherTeam) {
@@ -612,7 +712,7 @@
                                                                                 // Suche den zeitlich engsten Vorher-Start eines anderen Teams dieser Organisation
                                                                                 $lastOtherStart = collect($previewData)
                                                                                     ->where('team_id', $otherTeam->id)
-                                                                                    ->map(fn($r) => \Carbon\Carbon::createFromFormat('H:i', $r['time']))
+                                                                                    ->map(fn($r) => \Carbon\Carbon::parse($r['time']))
                                                                                     ->filter(fn($time) => $time->lt($currentTime))
                                                                                     ->sortByDesc(fn($time) => $time->timestamp)
                                                                                     ->first();

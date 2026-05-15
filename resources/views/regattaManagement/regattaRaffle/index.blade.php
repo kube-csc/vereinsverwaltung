@@ -23,111 +23,244 @@
             </div>
 
             <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Linke Seite: Daten-Übersicht -->
+                <!-- Linke Seite: Daten-Übersicht & Organisations-Management -->
                 <div class="space-y-4">
-                    <h3 class="font-bold text-lg">Daten-Übersicht</h3>
-                    <div class="bg-gray-50 rounded-lg p-4 border">
-                        <p class="text-sm text-gray-700 mb-4">
-                            Diese Daten dienen als Test- und Referenzdaten für die Entwicklung und Validierung der Planungs-Logik.
-                        </p>
-
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full text-xs">
-                                <thead class="bg-gray-200">
-                                    <tr>
-                                        <th class="px-2 py-1 text-left">ID</th>
-                                        <th class="px-2 py-1 text-left">Team</th>
-                                        <th class="px-2 py-1 text-left">Klasse</th>
-                                        <th class="px-2 py-1 text-left">PLZ / Ort</th>
-                                        <th class="px-2 py-1 text-left">Verein</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    @php
-                                        // Gruppiere Teams nach den ODER-Kriterien (Verein, PLZ, Ort)
-                                        // Wir erstellen "Blöcke", um zu visualisieren, welche Teams zusammengehören
-                                        $orgBlocks = [];
-                                        $processedTeamIds = [];
-                                        foreach($teams as $team) {
-                                            if (in_array($team->id, $processedTeamIds)) continue;
-
-                                            $keys = array_filter([$team->verein, $team->plz, $team->ort]);
-                                            $foundBlock = false;
-                                            foreach($orgBlocks as &$block) {
-                                                foreach($keys as $k) {
-                                                    if(in_array($k, $block['criteria'])) {
-                                                        $block['teams'][$team->id] = $team;
-                                                        $block['criteria'] = array_unique(array_merge($block['criteria'], $keys));
-                                                        $foundBlock = true;
-                                                        $processedTeamIds[] = $team->id;
-                                                        break 2;
-                                                    }
-                                                }
-                                            }
-                                            if(!$foundBlock) {
-                                                $orgBlocks[] = [
-                                                    'criteria' => $keys,
-                                                    'teams' => [$team->id => $team]
-                                                ];
-                                                $processedTeamIds[] = $team->id;
-                                            }
-                                        }
-
-                                        // Konsolidierung der Blöcke (falls durch ODER-Ketten Blöcke verschmelzen)
-                                        $changed = true;
-                                        while($changed) {
-                                            $changed = false;
-                                            for($i=0; $i < count($orgBlocks); $i++) {
-                                                for($j=$i+1; $j < count($orgBlocks); $j++) {
-                                                    $intersect = array_intersect($orgBlocks[$i]['criteria'], $orgBlocks[$j]['criteria']);
-                                                    if(!empty($intersect)) {
-                                                        $orgBlocks[$i]['criteria'] = array_unique(array_merge($orgBlocks[$i]['criteria'], $orgBlocks[$j]['criteria']));
-                                                        // Teams mergen und dabei Eindeutigkeit über die ID (Key) bewahren
-                                                        foreach($orgBlocks[$j]['teams'] as $id => $t) {
-                                                            $orgBlocks[$i]['teams'][$id] = $t;
-                                                        }
-                                                        array_splice($orgBlocks, $j, 1);
-                                                        $changed = true;
-                                                        break 2;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    @endphp
-                                    @foreach($orgBlocks as $index => $block)
-                                        @foreach($block['teams'] as $teamIndex => $team)
-                                            <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-50' }} hover:bg-blue-50 transition-colors">
-                                                <td class="px-2 py-1 text-gray-400 font-mono">{{ $team->id }}</td>
-                                                <td class="px-2 py-1 border-l-2 {{ $index % 2 == 0 ? 'border-blue-400' : 'border-indigo-400' }}">
-                                                    <div class="flex items-center gap-1">
-                                                        <span class="font-medium">{{ $team->teamname }}</span>
-                                                        @if($team->teamlink > 0 && isset($finalTeamlinks[$team->teamlink]))
-                                                            <span title="War bei der letzten Regatta in einem Finale ({{ $finalTeamlinks[$team->teamlink]['tabelle'] }}, Platz {{ $finalTeamlinks[$team->teamlink]['platz'] }})" class="cursor-help whitespace-nowrap">🏆 {{ $finalTeamlinks[$team->teamlink]['platz'] }}.</span>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="px-2 py-1 text-gray-500">{{ optional($team->teamWertungsGruppe)->typ }}</td>
-                                                <td class="px-2 py-1">
-                                                    <div class="flex flex-wrap gap-1">
-                                                        <span class="px-1 rounded {{ $team->plz ? 'bg-blue-100 text-blue-800' : 'text-gray-400' }}">{{ $team->plz ?: '-' }}</span>
-                                                        <span class="px-1 rounded {{ $team->ort ? 'bg-indigo-100 text-indigo-800' : 'text-gray-400' }}">{{ $team->ort ?: '-' }}</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-2 py-1">
-                                                    <span class="px-1 rounded {{ $team->verein ? 'bg-purple-100 text-purple-800 font-medium' : 'text-gray-400' }}">
-                                                        {{ $team->verein ?: '-' }}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        @if(!$loop->last)
-                                            <tr class="h-1 bg-gray-200"><td colspan="4"></td></tr>
-                                        @endif
-                                    @endforeach
-                                </tbody>
-                            </table>
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg">Organisationen & Teams</h3>
+                        <div class="flex gap-2">
+                            <form action="{{ route('raffleOrganizations.reset') }}" method="POST" onsubmit="return confirm('Möchten Sie alle Organisationen und Team-Zuweisungen wirklich löschen und neu starten?')">
+                                @csrf
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold py-1 px-3 rounded flex items-center gap-1">
+                                    <box-icon name='refresh' size="xs" color="white"></box-icon>
+                                    Neu starten
+                                </button>
+                            </form>
+                            @if($organizations->isEmpty())
+                                <form action="{{ route('raffleOrganizations.autoAssign') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-1 px-3 rounded flex items-center gap-1">
+                                        <box-icon name='magic-wand' size="xs" color="white"></box-icon>
+                                        Auto-Zuordnung
+                                    </button>
+                                </form>
+                            @endif
+                            <button onclick="document.getElementById('newOrgModal').classList.remove('hidden')" class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold py-1 px-3 rounded flex items-center gap-1">
+                                <box-icon name='plus' size="xs" color="white"></box-icon>
+                                Neu
+                            </button>
                         </div>
                     </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4 border">
+                        <p class="text-xs text-gray-700 mb-4">
+                            Teams in der gleichen Organisation (Block) lösen gegenseitig den Zeitabstands-Malus aus.
+                        </p>
+
+                        <div class="space-y-6">
+                            @foreach($organizations as $index => $org)
+                                <div class="bg-white border-2 border-blue-200 rounded-lg shadow-sm overflow-hidden mb-6">
+                                    <!-- Rubrik-Header -->
+                                    <div class="bg-blue-600 px-4 py-2 flex items-center justify-between text-white">
+                                        <div class="flex items-center gap-3">
+                                            <box-icon name='bookmark' size="sm" color="white"></box-icon>
+                                            <div>
+                                                <div class="text-[10px] uppercase tracking-wider opacity-80 font-bold">Rubrik / Haupt-Team</div>
+                                                <div class="font-bold text-lg leading-tight">
+                                                    @if($org->rubrikTeam)
+                                                        {{ $org->rubrikTeam->teamname }}
+                                                        <span class="text-sm font-normal opacity-75">({{ $org->name }})</span>
+                                                    @else
+                                                        {{ $org->name }}
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button onclick="editOrg({{ $org->id }}, '{{ $org->name }}')" class="bg-blue-500 hover:bg-blue-400 p-1 rounded transition" title="Name bearbeiten">
+                                                <box-icon name='edit-alt' size="xs" color="white"></box-icon>
+                                            </button>
+                                            <form action="{{ route('raffleOrganizations.destroy', $org->id) }}" method="POST" onsubmit="return confirm('Organisation löschen? Teams werden freigegeben.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-red-500 hover:bg-red-400 p-1 rounded transition" title="Löschen">
+                                                    <box-icon name='trash' size="xs" color="white"></box-icon>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Kriterien & Info -->
+                                    <div class="bg-blue-50 px-4 py-1 border-b flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-bold text-blue-800">Filter-Kriterien:</span>
+                                            @if($org->criteria)
+                                                <div class="flex gap-1">
+                                                    @foreach($org->criteria as $criterion)
+                                                        <span class="text-[9px] bg-white border border-blue-200 text-blue-600 px-1.5 py-0.5 rounded font-medium shadow-sm">{{ $criterion }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-[10px] italic text-gray-500">Keine (nur manuelle Zuweisung)</span>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Team-Liste -->
+                                    <table class="min-w-full text-xs">
+                                        <thead class="bg-gray-50 border-b">
+                                            <tr>
+                                                <th class="px-4 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase">ID</th>
+                                                <th class="px-4 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase">Teamname</th>
+                                                <th class="px-4 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase">Gruppe</th>
+                                                <th class="px-4 py-1.5 text-right text-[10px] font-bold text-gray-400 uppercase">Aktionen</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100">
+                                            @foreach($org->teams as $team)
+                                                <tr class="hover:bg-blue-50 transition-colors {{ $org->rubrik_team_id == $team->id ? 'bg-yellow-50/50' : '' }}">
+                                                    <td class="px-4 py-2 text-gray-400 font-mono">{{ $team->id }}</td>
+                                                    <td class="px-4 py-2">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="font-bold text-gray-900">{{ $team->teamname }}</span>
+                                                            @if($org->rubrik_team_id == $team->id)
+                                                                <span class="text-[8px] bg-yellow-400 text-yellow-900 px-1 rounded uppercase font-black">Rubrik</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="text-[10px] text-gray-500">{{ $team->verein ?: $team->ort }}</div>
+                                                    </td>
+                                                    <td class="px-4 py-2">
+                                                        <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">{{ optional($team->teamWertungsGruppe)->typ }}</span>
+                                                    </td>
+                                                    <td class="px-4 py-2 text-right">
+                                                        <div class="flex justify-end items-center gap-3">
+                                                            @if($org->rubrik_team_id != $team->id)
+                                                                <form action="{{ route('raffleOrganizations.setRubrik', $org->id) }}" method="POST" class="inline">
+                                                                    @csrf
+                                                                    <input type="hidden" name="rubrik_team_id" value="{{ $team->id }}">
+                                                                    <button type="submit" title="Als Rubrik-Team festlegen" class="text-gray-400 hover:text-yellow-600 transition">
+                                                                        <box-icon name='bookmark-plus' size="xs" color="currentColor"></box-icon>
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+                                                            <form action="{{ route('raffleOrganizations.assignTeam') }}" method="POST" class="inline">
+                                                                @csrf
+                                                                <input type="hidden" name="team_id" value="{{ $team->id }}">
+                                                                <input type="hidden" name="organization_id" value="">
+                                                                <button type="submit" title="Aus Organisation entfernen" class="text-gray-400 hover:text-red-500 transition">
+                                                                    <box-icon name='x-circle' size="xs" color="currentColor"></box-icon>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    @if($unassignedTeams->isNotEmpty())
+                                        <div class="p-2 bg-gray-50 border-t">
+                                            <form action="{{ route('raffleOrganizations.assignTeam') }}" method="POST" class="flex gap-2">
+                                                @csrf
+                                                <input type="hidden" name="organization_id" value="{{ $org->id }}">
+                                                <select name="team_id" required class="text-[10px] border-gray-300 rounded p-1 flex-grow">
+                                                    <option value="">+ Team hinzufügen...</option>
+                                                    @foreach($unassignedTeams as $ut)
+                                                        <option value="{{ $ut->id }}">{{ $ut->teamname }} ({{ $ut->verein ?: $ut->ort ?: 'ID: '.$ut->id }})</option>
+                                                    @endforeach
+                                                </select>
+                                                <button type="submit" class="bg-blue-500 text-white text-[10px] px-2 rounded">OK</button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+
+                            @if($unassignedTeams->isNotEmpty() && $organizations->isNotEmpty())
+                                <div class="mt-4">
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">Nicht zugeordnete Teams</h4>
+                                    <div class="bg-white border rounded p-2">
+                                        <div class="flex flex-wrap gap-2">
+                                            @foreach($unassignedTeams as $ut)
+                                                <div class="text-[10px] bg-gray-100 border rounded px-2 py-1 flex items-center gap-2">
+                                                    <span>{{ $ut->teamname }}</span>
+                                                    <span class="text-gray-400">ID: {{ $ut->id }}</span>
+                                                    <form action="{{ route('raffleOrganizations.createFromTeam') }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <input type="hidden" name="team_id" value="{{ $ut->id }}">
+                                                        <button type="submit" title="Neue Rubrik aus diesem Team erstellen" class="text-blue-400 hover:text-blue-600 transition flex items-center">
+                                                            <box-icon name='bookmark-plus' size="xs" color="currentColor"></box-icon>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($organizations->isEmpty() && $unassignedTeams->isEmpty())
+                                <div class="text-center py-8 text-gray-500 italic text-sm">
+                                    Keine Teams für diese Regatta gefunden.
+                                </div>
+                            @elseif($organizations->isEmpty())
+                                <div class="bg-blue-50 border border-blue-200 rounded p-4 text-center">
+                                    <p class="text-sm text-blue-800 mb-3">Bisher sind keine Organisationen definiert.</p>
+                                    <form action="{{ route('raffleOrganizations.autoAssign') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-xs">
+                                            Automatische Erstzuordnung starten
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Modals for CRUD -->
+                    <div id="newOrgModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div class="bg-white rounded-lg p-6 w-96">
+                            <h3 class="font-bold mb-4">Neue Organisation</h3>
+                            <form action="{{ route('raffleOrganizations.store') }}" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                                    <input type="text" name="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                </div>
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" onclick="document.getElementById('newOrgModal').classList.add('hidden')" class="bg-gray-200 px-4 py-2 rounded text-sm">Abbrechen</button>
+                                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Speichern</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="editOrgModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div class="bg-white rounded-lg p-6 w-96">
+                            <h3 class="font-bold mb-4">Organisation bearbeiten</h3>
+                            <form id="editOrgForm" action="" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                                    <input type="text" name="name" id="editOrgName" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                </div>
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" onclick="document.getElementById('editOrgModal').classList.add('hidden')" class="bg-gray-200 px-4 py-2 rounded text-sm">Abbrechen</button>
+                                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Speichern</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <script>
+                        function editOrg(id, name) {
+                            const modal = document.getElementById('editOrgModal');
+                            const form = document.getElementById('editOrgForm');
+                            const input = document.getElementById('editOrgName');
+
+                            form.action = `/Regatta/Rennplan-Logik/Organizations/${id}`;
+                            input.value = name;
+                            modal.classList.remove('hidden');
+                        }
+                    </script>
                 </div>
 
                 <!-- Rechte Seite: Generator -->
@@ -220,6 +353,13 @@
                             <div class="mt-4 space-y-8">
                                 @php
                                     $groupedPreview = collect($previewData)->groupBy('gruppe_name');
+                                    $teamToOrgTeams = [];
+                                    foreach($organizations as $org) {
+                                        $teamIds = $org->teams->pluck('id')->toArray();
+                                        foreach($teamIds as $tid) {
+                                            $teamToOrgTeams[$tid] = $org->teams;
+                                        }
+                                    }
                                 @endphp
 
                                 @foreach($groupedPreview as $gruppeName => $rows)
@@ -265,11 +405,6 @@
                                                             <td class="px-2 py-1 font-semibold">{{ $row['time'] }}</td>
                                                             <td class="px-2 py-1 text-gray-500">
                                                                 <div>{{ $row['pause'] ?? '-' }}</div>
-                                                                @if(isset($row['org_pause']) && $row['org_pause'] !== '-')
-                                                                    <div class="text-[10px] text-blue-500 font-medium cursor-help" title="Abstand zur letzten Aktivität derselben Organisation">
-                                                                        {{ $row['org_pause'] }}
-                                                                    </div>
-                                                                @endif
                                                             </td>
                                                             <td class="px-2 py-1">
                                                                 @php
@@ -303,10 +438,40 @@
                                                                             <span title="War bei der letzten Regatta in einem Finale ({{ $titel }}, Platz {{ $platz }})" class="cursor-help whitespace-nowrap">🏆 {{ $platz }}.</span>
                                                                         @endif
                                                                     </div>
-                                                                    @if(isset($row['org_pause']) && $row['org_pause'] !== '-')
-                                                                        <div class="text-[9px] text-blue-400 italic leading-tight cursor-help" title="Abstand zur letzten Aktivität derselben Organisation)">
-                                                                            ({{ $row['org_name'] ?? 'Verein/Ort' }}{{ !empty($row['org_team_name']) ? ', Team: '.$row['org_team_name'] : '' }})
-                                                                        </div>
+
+                                                                    @if(isset($teamToOrgTeams[$row['team_id']]))
+                                                                        @php
+                                                                            $teamId = $row['team_id'];
+                                                                            $orgTeams = $teamToOrgTeams[$teamId];
+                                                                            $currentTime = \Carbon\Carbon::createFromFormat('H:i', $row['time']);
+
+                                                                            $intervals = [];
+                                                                            foreach($orgTeams as $otherTeam) {
+                                                                                if ($otherTeam->id == $teamId) continue;
+
+                                                                                // Suche den zeitlich engsten Vorher-Start eines anderen Teams dieser Organisation
+                                                                                $lastOtherStart = collect($previewData)
+                                                                                    ->where('team_id', $otherTeam->id)
+                                                                                    ->map(fn($r) => \Carbon\Carbon::createFromFormat('H:i', $r['time']))
+                                                                                    ->filter(fn($time) => $time->lt($currentTime))
+                                                                                    ->sortByDesc(fn($time) => $time->timestamp)
+                                                                                    ->first();
+
+                                                                                if ($lastOtherStart) {
+                                                                                    $diff = $currentTime->diffInMinutes($lastOtherStart);
+                                                                                    $intervals[$otherTeam->id] = ['name' => $otherTeam->teamname, 'min_diff' => $diff];
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        @if(!empty($intervals))
+                                                                            <div class="flex flex-wrap gap-x-2 mt-1 border-t border-blue-50 pt-0.5">
+                                                                                @foreach($intervals as $iData)
+                                                                                    <span class="text-[8px] {{ $iData['min_diff'] < 30 ? 'text-red-500 font-bold' : 'text-blue-500' }}">
+                                                                                        {{ $iData['name'] }}: {{ $iData['min_diff'] }} Min
+                                                                                    </span>
+                                                                                @endforeach
+                                                                            </div>
+                                                                        @endif
                                                                     @endif
                                                                 </div>
                                                             </td>
@@ -433,10 +598,40 @@
                                                                             <span title="War bei der letzten Regatta in einem finale ({{ $titel }}, Platz {{ $platz }})" class="cursor-help whitespace-nowrap">🏆 {{ $platz }}.</span>
                                                                         @endif
                                                                     </div>
-                                                                    @if(isset($l['org_pause']) && $l['org_pause'] !== '-')
-                                                                        <div class="text-[9px] text-blue-400 italic leading-tight ml-5 cursor-help" title="Abstand zur letzten Aktivität derselben Organisation">
-                                                                            {{ $l['org_pause'] }} Min ({{ $l['org_name'] ?? 'Verein/Ort' }}{{ !empty($l['org_team_name']) ? ', Team: '.$l['org_team_name'] : '' }})
-                                                                        </div>
+
+                                                                    @if(isset($teamToOrgTeams[$l['team_id']]))
+                                                                        @php
+                                                                            $teamId = $l['team_id'];
+                                                                            $orgTeams = $teamToOrgTeams[$teamId];
+                                                                            $currentTime = \Carbon\Carbon::createFromFormat('H:i', $l['time']);
+
+                                                                            $intervals = [];
+                                                                            foreach($orgTeams as $otherTeam) {
+                                                                                if ($otherTeam->id == $teamId) continue;
+
+                                                                                // Suche den zeitlich engsten Vorher-Start eines anderen Teams dieser Organisation
+                                                                                $lastOtherStart = collect($previewData)
+                                                                                    ->where('team_id', $otherTeam->id)
+                                                                                    ->map(fn($r) => \Carbon\Carbon::createFromFormat('H:i', $r['time']))
+                                                                                    ->filter(fn($time) => $time->lt($currentTime))
+                                                                                    ->sortByDesc(fn($time) => $time->timestamp)
+                                                                                    ->first();
+
+                                                                                if ($lastOtherStart) {
+                                                                                    $diff = $currentTime->diffInMinutes($lastOtherStart);
+                                                                                    $intervals[$otherTeam->id] = ['name' => $otherTeam->teamname, 'min_diff' => $diff];
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        @if(!empty($intervals))
+                                                                            <div class="flex flex-wrap gap-x-2 ml-5 mt-0.5 border-t border-blue-50 pt-0.5">
+                                                                                @foreach($intervals as $iData)
+                                                                                    <span class="text-[8px] {{ $iData['min_diff'] < 30 ? 'text-red-500 font-bold' : 'text-blue-500' }}">
+                                                                                        {{ $iData['name'] }}: {{ $iData['min_diff'] }} Min
+                                                                                    </span>
+                                                                                @endforeach
+                                                                            </div>
+                                                                        @endif
                                                                     @endif
                                                                 </div>
                                                             @endforeach

@@ -44,7 +44,12 @@
                                 <tbody class="divide-y divide-gray-200">
                                     @foreach($teams as $team)
                                         <tr>
-                                            <td class="px-2 py-1">{{ $team->teamname }}</td>
+                                            <td class="px-2 py-1">
+                                                {{ $team->teamname }}
+                                                @if($team->teamlink > 0 && isset($finalTeamlinks[$team->teamlink]))
+                                                    <span title="War bei der letzten Regatta in einem Finale ({{ $finalTeamlinks[$team->teamlink]['tabelle'] }}, Platz {{ $finalTeamlinks[$team->teamlink]['platz'] }})" class="cursor-help">🏆 {{ $finalTeamlinks[$team->teamlink]['platz'] }}.</span>
+                                                @endif
+                                            </td>
                                             <td class="px-2 py-1 text-gray-500">{{ optional($team->teamWertungsGruppe)->typ }}</td>
                                             <td class="px-2 py-1 text-gray-500">{{ $team->plz }} {{ $team->ort }}</td>
                                             <td class="px-2 py-1 text-gray-500">{{ $team->verein }}</td>
@@ -149,6 +154,15 @@
                                 @endphp
 
                                 @foreach($groupedPreview as $gruppeName => $rows)
+                                    @if($gruppeName === 'Unbekannt' || empty($gruppeName))
+                                        @php
+                                            // Falls es nur die Siegerehrung in dieser "Gruppe" gibt, überspringen wir sie in der gruppierten Ansicht
+                                            $hasRealRaces = $rows->contains(fn($r) => empty($r['is_award_ceremony']));
+                                        @endphp
+                                        @if(!$hasRealRaces)
+                                            @continue
+                                        @endif
+                                    @endif
                                     @php
                                         // Anzahl der einzigartigen Teams in dieser Gruppe zählen (nur für Vorläufe, da Finals Platzhalter haben)
                                         $teamCountInGroup = $rows->where('is_final', false)->pluck('team_id')->unique()->count();
@@ -167,7 +181,7 @@
                                                 <thead class="bg-gray-50">
                                                     <tr>
                                                         <th class="px-2 py-1 text-left">Zeit</th>
-                                                        <th class="px-2 py-1 text-left">Abstand</th>
+                                                        <th class="px-2 py-1 text-left">Pause <span class="text-[9px] font-normal text-gray-400">(Min)</span></th>
                                                         <th class="px-2 py-1 text-left">Konflikte</th>
                                                         <th class="px-2 py-1 text-left">Vorlauf / Finale</th>
                                                         <th class="px-2 py-1 text-left">Rennen</th>
@@ -177,9 +191,17 @@
                                                 </thead>
                                                 <tbody class="divide-y divide-green-200 bg-white">
                                                     @foreach($rows as $row)
+                                                        @if(!empty($row['is_award_ceremony'])) @continue @endif
                                                          <tr>
                                                             <td class="px-2 py-1 font-semibold">{{ $row['time'] }}</td>
-                                                            <td class="px-2 py-1 text-gray-500">{{ $row['pause'] ?? '-' }}</td>
+                                                            <td class="px-2 py-1 text-gray-500">
+                                                                <div>{{ $row['pause'] ?? '-' }}</div>
+                                                                @if(isset($row['org_pause']) && $row['org_pause'] !== '-')
+                                                                    <div class="text-[10px] text-blue-500 font-medium cursor-help" title="Abstand zur letzten Aktivität derselben Organisation">
+                                                                        {{ $row['org_pause'] }}
+                                                                    </div>
+                                                                @endif
+                                                            </td>
                                                             <td class="px-2 py-1">
                                                                 @php
                                                                     $conflicts = $row['conflicts'] ?? 0;
@@ -199,7 +221,26 @@
                                                             </td>
                                                             <td class="px-2 py-1">@if(!empty($row['is_award_ceremony'])) - @else Lauf {{ $row['race_number'] ?? '?' }} @endif</td>
                                                             <td class="px-2 py-1">@if(isset($row['lane'])) Bahn {{ $row['lane'] }} @else - @endif</td>
-                                                            <td class="px-2 py-1">{{ $row['team_name'] }}</td>
+                                                            <td class="px-2 py-1">
+                                                                <div class="flex flex-col gap-0.5">
+                                                                    <div class="flex items-center gap-2">
+                                                                        <span class="font-medium">{{ $row['team_name'] }}</span>
+                                                                        @if($row['has_pokal'] ?? false)
+                                                                            @php
+                                                                                $pokalData = $row['last_final_platz'] ?? [];
+                                                                                $platz = is_array($pokalData) ? ($pokalData['platz'] ?? '?') : $pokalData;
+                                                                                $titel = is_array($pokalData) ? ($pokalData['tabelle'] ?? 'Finale') : 'Finale';
+                                                                            @endphp
+                                                                            <span title="War bei der letzten Regatta in einem Finale ({{ $titel }}, Platz {{ $platz }})" class="cursor-help whitespace-nowrap">🏆 {{ $platz }}.</span>
+                                                                        @endif
+                                                                    </div>
+                                                                    @if(isset($row['org_pause']) && $row['org_pause'] !== '-')
+                                                                        <div class="text-[9px] text-blue-400 italic leading-tight cursor-help" title="Abstand zur letzten Aktivität derselben Organisation">
+                                                                            ({{ $row['org_name'] ?? 'Verein/Ort' }})
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            </td>
                                                         </tr>
                                                    @endforeach
                                                 </tbody>
@@ -310,7 +351,25 @@
                                                     <td class="px-2 py-2">
                                                         <div class="grid grid-cols-1 gap-1">
                                                             @foreach($lanes->sortBy('lane') as $l)
-                                                                <div><span class="text-gray-400">@if(isset($l['lane'])) B{{ $l['lane'] }}: @else - @endif</span> {{ $l['team_name'] }}</div>
+                                                                <div class="flex flex-col gap-0.5 border-b border-gray-100 last:border-0 pb-0.5 mb-0.5 last:mb-0">
+                                                                    <div class="flex items-center gap-2">
+                                                                        <span class="text-gray-400">@if(isset($l['lane'])) B{{ $l['lane'] }}: @else - @endif</span>
+                                                                        <span class="font-medium">{{ $l['team_name'] }}</span>
+                                                                        @if($l['has_pokal'] ?? false)
+                                                                            @php
+                                                                                $pokalData = $l['last_final_platz'] ?? [];
+                                                                                $platz = is_array($pokalData) ? ($pokalData['platz'] ?? '?') : $pokalData;
+                                                                                $titel = is_array($pokalData) ? ($pokalData['tabelle'] ?? 'Finale') : 'Finale';
+                                                                            @endphp
+                                                                            <span title="War bei der letzten Regatta in einem finale ({{ $titel }}, Platz {{ $platz }})" class="cursor-help whitespace-nowrap">🏆 {{ $platz }}.</span>
+                                                                        @endif
+                                                                    </div>
+                                                                    @if(isset($l['org_pause']) && $l['org_pause'] !== '-')
+                                                                        <div class="text-[9px] text-blue-400 italic leading-tight ml-5 cursor-help" title="Abstand zur letzten Aktivität derselben Organisation">
+                                                                            Org: {{ $l['org_pause'] }} Min ({{ $l['org_name'] ?? 'Verein/Ort' }})
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
                                                             @endforeach
                                                         </div>
                                                     </td>

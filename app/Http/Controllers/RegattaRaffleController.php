@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Event;
 use App\Models\RaceType;
 use App\Models\RegattaTeam;
+use App\Models\Tabledata;
+use App\Models\Tabele;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class RegattaRaffleController extends Controller
 {
@@ -53,7 +57,8 @@ class RegattaRaffleController extends Controller
             'maxFinalsTotal' => $maxFinalsTotal,
             'previewData' => $this->hydratePreview(Session::get('rafflePreview')),
             'teamOpponents' => Session::get('raffleOpponents'),
-            'maxHeatEndTime' => Session::get('raffleMaxHeatEndTime')
+            'maxHeatEndTime' => Session::get('raffleMaxHeatEndTime'),
+            'finalTeamlinks' => $this->getFinalTeamlinks($regattaId)
         ]);
     }
 
@@ -63,13 +68,20 @@ class RegattaRaffleController extends Controller
 
         $gruppeNames = Session::get('raffleGruppeNames', []);
         $teamNames = Session::get('raffleTeamNames', []);
+        $finalTeamlinks = $this->getFinalTeamlinks(Session::get('regattaSelectId'));
 
         foreach ($preview as &$row) {
             $row['gruppe_name'] = $gruppeNames[$row['gruppe_id']] ?? 'Unbekannt';
             if (isset($row['is_final']) && $row['is_final']) {
                 $row['team_name'] = $row['placeholder_name'] ?? 'Platzhalter';
+                $row['has_pokal'] = false;
+                $row['last_final_platz'] = null;
             } else {
-                $row['team_name'] = $teamNames[$row['team_id'] ?? null] ?? 'Unbekannt';
+                $teamInfo = $teamNames[$row['team_id'] ?? null] ?? null;
+                $row['team_name'] = is_array($teamInfo) ? ($teamInfo['name'] ?? 'Unbekannt') : ($teamInfo ?? 'Unbekannt');
+                $teamlink = is_array($teamInfo) ? ($teamInfo['teamlink'] ?? 0) : 0;
+                $row['has_pokal'] = ($teamlink > 0 && isset($finalTeamlinks[$teamlink]));
+                $row['last_final_platz'] = $row['has_pokal'] ? $finalTeamlinks[$teamlink] : null;
             }
         }
 
@@ -111,6 +123,8 @@ class RegattaRaffleController extends Controller
         $raceNumber = 1;
         $opponentHistory = []; // Trackt, gegen wen ein Team bereits gefahren ist: [team_id => [opponent_id => count]]
         $lastStartTimes = []; // Trackt die letzte Startzeit pro Team: [team_id => Carbon]
+        $lastOrgStartTimes = []; // Trackt die letzte Startzeit pro Organisation (Verein/PLZ/Ort): [org_key => Carbon]
+        $lastOrgTeamId = []; // Trackt die letzte Team-ID pro Organisation: [org_key => team_id]
 
         // Wir berechnen die maximale Endzeit der Vorläufe pro Gruppe, um danach den Abstand zum ersten Finale berechnen zu können
         $maxHeatEndTimePerGroup = [];
@@ -129,7 +143,10 @@ class RegattaRaffleController extends Controller
             $gruppeNames[$gruppeId] = $raceType->typ ?? 'Unbekannt';
 
             foreach ($gruppeTeams as $t) {
-                $teamNames[$t->id] = $t->teamname;
+                $teamNames[$t->id] = [
+                    'name' => $t->teamname,
+                    'teamlink' => $t->teamlink
+                ];
             }
 
             $totalTeams = $gruppeTeams->count();
@@ -224,11 +241,26 @@ class RegattaRaffleController extends Controller
                         $pauseInMinutes = $currentGlobalTime->diffInMinutes($lastStartTimes[$teamId]);
                     }
 
+                    // Organisations-Pause berücksichtigen (Verein/PLZ/Ort)
+                    $teamObj = $teamsByGroup[$gruppeId]->firstWhere('id', $teamId);
+                    $orgKey = ($teamObj->verein ?? '') . '|' . ($teamObj->plz ?? '') . '|' . ($teamObj->ort ?? '');
+                    $orgPauseInMinutes = 9999;
+                    if (isset($lastOrgStartTimes[$orgKey])) {
+                        $orgPauseInMinutes = $currentGlobalTime->diffInMinutes($lastOrgStartTimes[$orgKey]);
+                    }
+
                     // Score-Formel:
                     // ConflictScore ist sehr hoch gewichtet (1000 pro Konflikt im aktuellen Heat)
                     // HistoryConflicts (10 pro Konflikt)
                     // Pause (Inverser Wert, damit längere Pause den Score senkt)
-                    $score = $conflictScore + ($totalHistoryConflicts * 10) - ($pauseInMinutes);
+                    // Organisations-Pause (Zusätzlicher Malus wenn die Organisation zu kurz hintereinander startet)
+                    // Nur wenn es ein anderes Team derselben Organisation ist
+                    $orgMalus = 0;
+                    if (isset($lastOrgTeamId[$orgKey]) && $lastOrgTeamId[$orgKey] != $teamId) {
+                        $orgMalus = ($orgPauseInMinutes < $minPause) ? (1000 * ($minPause - $orgPauseInMinutes)) : 0;
+                    }
+
+                    $score = $conflictScore + ($totalHistoryConflicts * 10) - ($pauseInMinutes) + $orgMalus;
 
                     if ($score < $minScore) {
                         $minScore = $score;
@@ -284,13 +316,25 @@ class RegattaRaffleController extends Controller
                 $pause = '-';
                 if (isset($lastStartTimes[$team->id])) {
                     $diff = $lastStartTimes[$team->id]->diffInMinutes($raceTime);
-                    $pause = $diff . ' Min';
+                    $pause = $diff;
                 }
                 $lastStartTimes[$team->id] = $raceTime;
+
+                // Organisations-Zeit aktualisieren und Abstand tracken
+                $orgKey = ($team->verein ?? '') . '|' . ($team->plz ?? '') . '|' . ($team->ort ?? '');
+                $orgPause = '-';
+                if (isset($lastOrgStartTimes[$orgKey]) && isset($lastOrgTeamId[$orgKey]) && $lastOrgTeamId[$orgKey] != $team->id) {
+                    $orgDiff = $lastOrgStartTimes[$orgKey]->diffInMinutes($raceTime);
+                    $orgPause = $orgDiff;
+                }
+                $lastOrgStartTimes[$orgKey] = $raceTime;
+                $lastOrgTeamId[$orgKey] = $team->id;
 
                 $preview[] = [
                     'time' => $raceTime->format('H:i'),
                     'pause' => $pause,
+                    'org_pause' => $orgPause,
+                    'org_name' => str_replace('|', ' ', $orgKey),
                     'conflicts' => $currentRaceConflicts[$team->id] ?? 0,
                     'race_number' => $raceNumber,
                     'lane' => $index + 1,
@@ -360,7 +404,7 @@ class RegattaRaffleController extends Controller
                 $finalPause = '-';
                 if (isset($maxHeatEndTimePerGroup[$gruppeId])) {
                     $diff = $currentGlobalTime->diffInMinutes($maxHeatEndTimePerGroup[$gruppeId]);
-                    $finalPause = $diff . ' Min (Abst.)';
+                    $finalPause = $diff . ' (Abst.)';
                 }
 
                 foreach ($laneAssignment as $lIdx => $laneNumber) {
@@ -424,11 +468,13 @@ class RegattaRaffleController extends Controller
             $opponentsList = [];
             foreach ($opponents as $oppId => $count) {
                 if (isset($teamNames[$oppId])) {
-                    $opponentsList[] = $teamNames[$oppId] . ($count > 1 ? " ({$count}x)" : "");
+                    $oppName = is_array($teamNames[$oppId]) ? ($teamNames[$oppId]['name'] ?? 'Unbekannt') : $teamNames[$oppId];
+                    $opponentsList[] = $oppName . ($count > 1 ? " ({$count}x)" : "");
                 }
             }
 
-            $teamName = $teamNames[$teamId] ?? "Unbekannt ($teamId)";
+            $teamInfo = $teamNames[$teamId] ?? null;
+            $teamName = is_array($teamInfo) ? ($teamInfo['name'] ?? "Unbekannt ($teamId)") : ($teamInfo ?? "Unbekannt ($teamId)");
             $gruppeId = RegattaTeam::where('id', $teamId)->value('gruppe_id');
             $gruppeName = $gruppeNames[$gruppeId] ?? 'Unbekannt';
 
@@ -604,17 +650,38 @@ class RegattaRaffleController extends Controller
 
         // Pausen neu berechnen (für Vorläufe: Abstand zum letzten Rennen des Teams; für Finals: s.o.)
         $lastStartTimes = [];
+        $lastOrgStartTimes = [];
+        $lastOrgTeamId = [];
+        $teamNames = Session::get('raffleTeamNames', []);
+
         foreach ($newPreview as &$lane) {
             if ($lane['team_id'] && !$lane['is_final']) {
                 $tId = $lane['team_id'];
                 $currentTime = \Carbon\Carbon::createFromFormat('H:i', $lane['time']);
+
+                // Team-Pause
                 if (isset($lastStartTimes[$tId])) {
                     $diff = $currentTime->diffInMinutes($lastStartTimes[$tId]);
-                    $lane['pause'] = $diff . " Min";
+                    $lane['pause'] = $diff;
                 } else {
                     $lane['pause'] = '-';
                 }
                 $lastStartTimes[$tId] = $currentTime;
+
+                // Organisations-Pause
+                $team = \App\Models\RegattaTeam::find($tId);
+                if ($team) {
+                    $orgKey = ($team->verein ?? '') . '|' . ($team->plz ?? '') . '|' . ($team->ort ?? '');
+                    if (isset($lastOrgStartTimes[$orgKey]) && isset($lastOrgTeamId[$orgKey]) && $lastOrgTeamId[$orgKey] != $tId) {
+                        $orgDiff = $currentTime->diffInMinutes($lastOrgStartTimes[$orgKey]);
+                        $lane['org_pause'] = $orgDiff;
+                    } else {
+                        $lane['org_pause'] = '-';
+                    }
+                    $lane['org_name'] = str_replace('|', ' ', $orgKey);
+                    $lastOrgStartTimes[$orgKey] = $currentTime;
+                    $lastOrgTeamId[$orgKey] = $tId;
+                }
             }
         }
 
@@ -755,5 +822,72 @@ class RegattaRaffleController extends Controller
         Session::forget(['rafflePreview', 'raffleParams']);
 
         return redirect()->route('regattaRaffle.index')->with('success', 'Rennplan erfolgreich gespeichert.');
+    }
+
+    /**
+     * Ermittelt die Teamlink-IDs und Platzierungen der Teams, die bei der letzten Regatta der gleichen Gruppe in einem Finale waren.
+     * Die Platzierung wird basierend auf Punkten oder Zeit berechnet.
+     */
+    private function getFinalTeamlinks($currentRegattaId)
+    {
+        if (!$currentRegattaId) return [];
+
+        $currentEvent = Event::find($currentRegattaId);
+        if (!$currentEvent || !$currentEvent->eventGroup_id) {
+            return [];
+        }
+
+        // Finde das letzte Event derselben Gruppe (zeitlich vor dem aktuellen)
+        $lastEvent = Event::where('eventGroup_id', $currentEvent->eventGroup_id)
+            ->where('id', '!=', $currentRegattaId)
+            ->where('datumvon', '<', $currentEvent->datumvon)
+            ->orderBy('datumvon', 'desc')
+            ->first();
+
+        if (!$lastEvent) {
+            return [];
+        }
+
+        // Finde alle Final-Tabellen dieses Events
+        $finalTables = Tabele::where('event_id', $lastEvent->id)
+            ->where('finale', '>', 0)
+            ->get();
+
+        $results = [];
+
+        foreach ($finalTables as $table) {
+            $data = Tabledata::join('regatta_teams', 'tabledatas.mannschaft_id', '=', 'regatta_teams.id')
+                ->where('tabledatas.tabele_id', $table->id)
+                ->where('regatta_teams.teamlink', '>', 0)
+                ->select('tabledatas.*', 'regatta_teams.teamlink')
+                ->get();
+
+            if ($table->wertungsart == 2) {
+                // Zeit-Wertung: Kleinste Zeit gewinnt
+                $sorted = $data->sort(function ($a, $b) {
+                    if ($a->zeit === $b->zeit) {
+                        return $a->hundert <=> $b->hundert;
+                    }
+                    return $a->zeit <=> $b->zeit;
+                });
+            } else {
+                // Punkt-Wertung (Standard): Höchste Punkte gewinnen
+                $sorted = $data->sortByDesc('punkte');
+            }
+
+            $rank = 1;
+            foreach ($sorted as $row) {
+                // Falls ein Teamlink in mehreren Finalen auftaucht (unwahrscheinlich), gewinnt die bessere Platzierung
+                if (!isset($results[$row->teamlink]) || $rank < $results[$row->teamlink]['platz']) {
+                    $results[$row->teamlink] = [
+                        'platz' => $rank,
+                        'tabelle' => $table->ueberschrift
+                    ];
+                }
+                $rank++;
+            }
+        }
+
+        return $results;
     }
 }

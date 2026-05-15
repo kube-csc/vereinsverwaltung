@@ -299,6 +299,15 @@
                         <form action="{{ route('regattaRaffle.generate') }}" method="POST" class="mt-4 space-y-4">
                             @csrf
                             <input type="hidden" name="mode" value="full">
+
+                            @if($draft && isset($draft->params['swapCount']))
+                                <div class="bg-blue-50 border border-blue-200 rounded p-2 flex items-center gap-2 mb-4">
+                                    <box-icon name='info-circle' size="xs" color="#1e40af"></box-icon>
+                                    <span class="text-xs text-blue-800">
+                                        Optimierung: <strong>{{ $draft->params['swapCount'] }}</strong> Team-Tausche wurden durchgeführt, um Pausen-Konflikte zu minimieren.
+                                    </span>
+                                </div>
+                            @endif
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Anzahl der Vorläufe</label>
                                 <input type="number" name="heats_count" value="{{ $draft ? ($draft->params['heats_count'] ?? 3) : 3 }}" min="1" max="10" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -321,8 +330,14 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Mindestpause (Min.)</label>
+                                <label class="block text-sm font-medium text-gray-700">Mindestpause Team (Min.)</label>
                                 <input type="number" name="min_pause" value="{{ $draft ? ($draft->params['min_pause'] ?? 20) : 20 }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <p class="text-[10px] text-gray-500 mt-0.5 italic">Mindestzeit eines Teams zwischen zwei Starts.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Mindestpause Organisation (Min.)</label>
+                                <input type="number" name="min_pause_org" value="{{ $draft ? ($draft->params['min_pause_org'] ?? 10) : 10 }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <p class="text-[10px] text-gray-500 mt-0.5 italic">Mindestzeit zwischen Teams der gleichen Organisation.</p>
                             </div>
                             <div class="border-t pt-4 mt-4">
                                 <label class="block text-sm font-bold text-blue-800">Final-Einstellungen</label>
@@ -433,7 +448,9 @@
                                                          <tr>
                                                             <td class="px-2 py-1 font-semibold">{{ substr($row['time'], 0, 5) }}</td>
                                                             <td class="px-2 py-1 text-gray-500">
-                                                                <div>{{ $row['pause_minutes'] ?? '-' }}</div>
+                                                                <div class="{{ ($row['pause_minutes'] ?? 0) < ($draft->params['min_pause'] ?? 20) ? 'text-red-600 font-bold' : '' }}">
+                                                                    {{ $row['pause_minutes'] ?? '-' }}
+                                                                </div>
                                                             </td>
                                                             <td class="px-2 py-1">
                                                                 @php
@@ -685,10 +702,14 @@
                                                     <td class="px-2 py-2">
                                                         <div class="grid grid-cols-1 gap-1">
                                                             @foreach($lanes->sortBy('lane') as $l)
+                                                                @php
+                                                                    $minPauseTeam = $draft->params['min_pause'] ?? 20;
+                                                                    $isBelowMinPause = isset($l['pause_minutes']) && $l['pause_minutes'] < $minPauseTeam;
+                                                                @endphp
                                                                 <div class="flex flex-col gap-0.5 border-b border-gray-100 last:border-0 pb-0.5 mb-0.5 last:mb-0">
                                                                     <div class="flex items-center gap-2">
                                                                         <span class="text-gray-400">@if(isset($l['lane'])) B{{ $l['lane'] }}: @else - @endif</span>
-                                                                        <span class="font-medium">{{ $l['team_name'] }}</span>
+                                                                        <span class="font-medium {{ $isBelowMinPause ? 'text-red-600 font-bold' : '' }}" @if($isBelowMinPause) title="Pause: {{ $l['pause_minutes'] }} Min (Mindestens: {{ $minPauseTeam }} Min)" @elseif(isset($l['pause_minutes'])) title="Pause: {{ $l['pause_minutes'] }} Min" @endif>{{ $l['team_name'] }}</span>
                                                                         @if($l['has_pokal'] ?? false)
                                                                             @php
                                                                                 $pokalData = $l['last_final_platz'] ?? [];

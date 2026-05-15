@@ -159,6 +159,7 @@ class RegattaRaffleController extends Controller
         $wertungsart = $request->input('wertungsart', 1); // 1 = Punkte
         $heatsCount = $request->input('heats_count', 3);
         $minPause = $request->input('min_pause', 20);
+        $minPauseOrg = $request->input('min_pause_org', 10);
         $pauseAfterHeats = $request->input('pause_after_heats', 30);
         $finalsStartTimeStr = $request->input('finals_start_time', '14:00');
         $awardCeremonyTimeStr = $request->input('award_ceremony_time', '18:00');
@@ -216,15 +217,45 @@ class RegattaRaffleController extends Controller
             $totalTeams = $gruppeTeams->count();
             if ($totalTeams === 0) continue;
 
-            $neededHeatsPerRound = ceil($totalTeams / $lanesCount);
+            $isSmall = ($totalTeams <= $lanesCount);
+
+            // Der User möchte, dass Teams möglichst alle gegeneinander fahren.
+            // Wir berechnen die Bahnenbelegung so, dass wir die Meldezahl bestmöglich ausnutzen.
+            $effectiveLanes = $lanesCount;
+            if ($isSmall) {
+                // Wenn weniger Teams als Bahnen da sind, nehmen wir die Anzahl der Teams als Bahnenmaßstab
+                // damit ceil(totalTeams / totalTeams) = 1 Heat ergibt.
+                $effectiveLanes = max(1, $totalTeams);
+            }
+
+            $neededHeatsPerRound = ceil($totalTeams / $effectiveLanes);
             $groupsMeta[$gruppeId] = [
-                'lanes_count' => $lanesCount,
-                'heats_per_round' => $neededHeatsPerRound
+                'lanes_count' => ($totalTeams <= $lanesCount) ? $totalTeams : $lanesCount,
+                'heats_per_round' => $neededHeatsPerRound,
+                'is_small' => $isSmall,
+                'total_teams' => $totalTeams,
+                'orig_lanes' => $lanesCount
             ];
         }
 
         // Rundenweise abwechselnd sammeln
         for ($h = 1; $h <= $heatsCount; $h++) {
+            // Bestimme die Reihenfolge der Gruppen für diese Runde
+            // 1. Gruppen mit mehr Teams als Bahnen (is_small = false)
+            //    Innerhalb dieser: aufsteigend nach Teamanzahl
+            // 2. Gruppen mit Teams <= Bahnen (is_small = true)
+            $sortedGroupIds = array_keys($groupsMeta);
+            usort($sortedGroupIds, function($a, $b) use ($groupsMeta) {
+                $metaA = $groupsMeta[$a];
+                $metaB = $groupsMeta[$b];
+
+                if ($metaA['is_small'] !== $metaB['is_small']) {
+                    return $metaA['is_small'] ? 1 : -1;
+                }
+
+                return $metaA['total_teams'] <=> $metaB['total_teams'];
+            });
+
             // Wir suchen das Maximum an Läufen in dieser Runde über alle Gruppen
             $maxHeatsInRound = 0;
             foreach ($groupsMeta as $meta) {
@@ -232,12 +263,14 @@ class RegattaRaffleController extends Controller
             }
 
             for ($i = 0; $i < $maxHeatsInRound; $i++) {
-                foreach ($groupsMeta as $gruppeId => $meta) {
+                foreach ($sortedGroupIds as $gruppeId) {
+                    $meta = $groupsMeta[$gruppeId];
                     // Nur hinzufügen, wenn diese Gruppe in dieser Runde noch einen Lauf braucht
                     if ($i < $meta['heats_per_round']) {
                         $allHeats[] = [
                             'gruppe_id' => $gruppeId,
-                            'heat_index' => $h,
+                            'heat_index' => $h, // Korrektur: h ist die Runde (1 bis heatsCount)
+                            'round_heat_index' => $i + 1, // Index des Heats innerhalb dieser Runde
                             'lanes_count' => $meta['lanes_count'],
                             'type' => 'heat'
                         ];
@@ -256,43 +289,169 @@ class RegattaRaffleController extends Controller
         }
 
         // Vorläufe chronologisch planen und Teams zuweisen
-        foreach ($allHeats as &$heatData) {
+        $heatIndexInAllHeats = 0;
+        while ($heatIndexInAllHeats < count($allHeats)) {
+            $heatData = &$allHeats[$heatIndexInAllHeats];
             $gruppeId = $heatData['gruppe_id'];
             $hIndex = $heatData['heat_index'];
+            $rHeatIndex = $heatData['round_heat_index'];
             $lanesCount = $heatData['lanes_count'];
 
+            // Sonderfall: Wenn die Gruppe <= Bahnen hat, sollen alle in einem Lauf starten.
+            $raceType = RaceType::find($gruppeId);
+            $origLanesCount = $raceType->bahnen ?? 4;
+            $gruppeTeamsTotal = RegattaTeam::where('regatta_id', $regattaId)->where('gruppe_id', $gruppeId)->where('status', 'Neuanmeldung')->count();
+            $isSmallGroup = ($gruppeTeamsTotal <= $origLanesCount);
+
             $availableTeamIds = $teamsRemainingPerHeat[$gruppeId][$hIndex];
+
+            // Prüfen ob Pause für Teams in diesem Heat ausreicht
+            $hasPauseConflict = false;
+            foreach ($availableTeamIds as $tid) {
+                if (isset($lastStartTimes[$tid]) && $currentGlobalTime->diffInMinutes($lastStartTimes[$tid]) < $minPause) {
+                    $hasPauseConflict = true;
+                    break;
+                }
+                $orgId = $orgAssignments[$tid] ?? null;
+                if ($orgId && isset($lastOrgStartTime[$orgId])) {
+                    $diff = $currentGlobalTime->diffInMinutes($lastOrgStartTime[$orgId]);
+                    if ($lastOrgTeamId[$orgId] != $tid && $diff < $minPauseOrg) {
+                        $hasPauseConflict = true;
+                        break;
+                    }
+                }
+            }
+
+            // Wenn es eine kleine Gruppe ist und ein Pausenkonflikt besteht,
+            // versuchen wir diesen Heat zu überspringen (als Puffer nutzen)
+            if ($isSmallGroup && $hasPauseConflict) {
+                // Suchen nach einem späteren Heat in allHeats, der KEIN Pausenkonflikt hat
+                $foundAlternative = false;
+                for ($nextIdx = $heatIndexInAllHeats + 1; $nextIdx < count($allHeats); $nextIdx++) {
+                    $nextHeat = $allHeats[$nextIdx];
+                    if (isset($nextHeat['teams'])) continue; // Schon geplant
+
+                    $nextGruppeId = $nextHeat['gruppe_id'];
+                    $nextHIndex = $nextHeat['heat_index'];
+                    $nextAvailableTeams = $teamsRemainingPerHeat[$nextGruppeId][$nextHIndex];
+
+                    $nextHasPauseConflict = false;
+                    foreach ($nextAvailableTeams as $ntid) {
+                        if (isset($lastStartTimes[$ntid]) && $currentGlobalTime->diffInMinutes($lastStartTimes[$ntid]) < $minPause) {
+                            $nextHasPauseConflict = true;
+                            break;
+                        }
+                        $norgId = $orgAssignments[$ntid] ?? null;
+                        if ($norgId && isset($lastOrgStartTime[$norgId])) {
+                            $ndiff = $currentGlobalTime->diffInMinutes($lastOrgStartTime[$norgId]);
+                            if ($lastOrgTeamId[$norgId] != $ntid && $ndiff < $minPauseOrg) {
+                                $nextHasPauseConflict = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!$nextHasPauseConflict) {
+                        // Tausche aktuellen Heat mit alternativem Heat
+                        $temp = $allHeats[$heatIndexInAllHeats];
+                        $allHeats[$heatIndexInAllHeats] = $allHeats[$nextIdx];
+                        $allHeats[$nextIdx] = $temp;
+                        $foundAlternative = true;
+                        break;
+                    }
+                }
+
+                if ($foundAlternative) {
+                    // Wir haben getauscht, also müssen wir die Daten für den neuen Heat an dieser Position neu laden
+                    $heatData = &$allHeats[$heatIndexInAllHeats];
+                    $gruppeId = $heatData['gruppe_id'];
+                    $hIndex = $heatData['heat_index'];
+                    $rHeatIndex = $heatData['round_heat_index'];
+                    $lanesCount = $heatData['lanes_count'];
+                    $availableTeamIds = $teamsRemainingPerHeat[$gruppeId][$hIndex];
+                }
+            }
+
             $selectedTeams = [];
 
             // Bestimme die Anzahl der Teams für diesen Heat
             // Wir müssen die verbleibenden Teams gleichmäßig auf die verbleibenden Heats dieser Runde verteilen
-            $remainingHeatsInRound = 0;
-            foreach($allHeats as $futureHeat) {
-                if ($futureHeat['gruppe_id'] == $gruppeId && $futureHeat['heat_index'] == $hIndex && !isset($futureHeat['teams'])) {
-                    $remainingHeatsInRound++;
+            $heatsRemainingInThisRound = 0;
+            foreach($allHeats as $idx => $fHeat) {
+                if ($idx >= $heatIndexInAllHeats && $fHeat['gruppe_id'] == $gruppeId && $fHeat['heat_index'] == $hIndex && !isset($fHeat['teams'])) {
+                    $heatsRemainingInThisRound++;
                 }
             }
 
-            // Wenn dies der aktuelle Heat ist (den wir gerade bearbeiten), ist er Teil der Zählung
-            $numTeamsToPick = ceil(count($availableTeamIds) / $remainingHeatsInRound);
+            $numTeamsToPick = ceil(count($availableTeamIds) / max(1, $heatsRemainingInThisRound));
+
+            if ($gruppeTeamsTotal <= $origLanesCount) {
+                $numTeamsToPick = count($availableTeamIds);
+            }
+
             $numTeamsToPick = min($numTeamsToPick, $lanesCount);
+
+            // OPTIMIERUNG: Wenn wir hier Teams haben, die die Mindestpause unterschreiten würden,
+            // versuchen wir sie in einen späteren Heat derselben Runde zu schieben, falls möglich.
+            $tooEarlyTeams = [];
+            $safeTeams = [];
+
+            foreach ($availableTeamIds as $tid) {
+                $isTooEarlyTeam = isset($lastStartTimes[$tid]) && $currentGlobalTime->diffInMinutes($lastStartTimes[$tid]) < $minPause;
+
+                $orgId = $orgAssignments[$tid] ?? null;
+                $isTooEarlyOrg = false;
+                if ($orgId && isset($lastOrgStartTime[$orgId])) {
+                    $diff = $currentGlobalTime->diffInMinutes($lastOrgStartTime[$orgId]);
+                    if ($lastOrgTeamId[$orgId] != $tid && $diff < $minPauseOrg) {
+                        $isTooEarlyOrg = true;
+                    }
+                }
+
+                if ($isTooEarlyTeam || $isTooEarlyOrg) {
+                    $tooEarlyTeams[] = $tid;
+                } else {
+                    $safeTeams[] = $tid;
+                }
+            }
+
+            // Wenn wir genug "sichere" Teams haben, nehmen wir bevorzugt diese.
+            // Aber Vorsicht: Wir dürfen nicht zu viele Teams aufschieben, sonst fehlen sie später.
+            // Nur wenn es noch zukünftige Heats in dieser Runde gibt.
+            if (count($tooEarlyTeams) > 0 && $heatsRemainingInThisRound > 1) {
+                // Wir prüfen wie viele Teams wir maximal aufschieben können
+                $maxToDeffer = count($availableTeamIds) - $numTeamsToPick;
+                $canDeffer = min(count($tooEarlyTeams), $maxToDeffer);
+
+                if ($canDeffer > 0) {
+                    // Wir nehmen die ersten $canDeffer Teams aus tooEarlyTeams und schieben sie ans Ende von availableTeamIds
+                    $toDeffer = array_splice($tooEarlyTeams, 0, $canDeffer);
+
+                    // Sicherstellen, dass safeTeams und tooEarlyTeams keine Duplikate enthalten
+                    $availableTeamIds = array_values(array_unique(array_merge($safeTeams, $tooEarlyTeams, $toDeffer)));
+                }
+            }
+
+            // Sicherstellen, dass wir nicht mehr Teams wählen, als noch verfügbar sind
+            $numTeamsToPick = min($numTeamsToPick, count($availableTeamIds));
 
             for ($p = 0; $p < $numTeamsToPick; $p++) {
                 $bestTeamId = null;
                 $minScore = PHP_INT_MAX;
 
-                foreach ($availableTeamIds as $teamId) {
-                    // Score berechnen:
-                    // 1. Durchmischung (Vorrang): Wie oft schon gegen Teams im aktuellen Lauf gefahren?
-                    // 2. Durchmischung: Wie oft insgesamt gegen Gegner gefahren? (Sollte eigentlich über alle Heats gleich sein, aber hier relevant)
-                    // 3. Pause: Zeit seit letztem Start.
+                // Wir versuchen hier, das beste Team für diesen Slot zu finden.
+                // Da wir später noch eine globale Optimierung (Swap-Loop) machen,
+                // reicht hier ein solides Initial-Ranking.
+                // WICHTIG: Nur Teams wählen, die noch nicht in selectedTeams sind!
+                $alreadySelectedIds = collect($selectedTeams)->pluck('id')->toArray();
+                $candidatesForThisSlot = array_values(array_diff($availableTeamIds, $alreadySelectedIds));
 
+                foreach ($candidatesForThisSlot as $teamId) {
                     $conflictScore = 0;
                     foreach ($selectedTeams as $selTeam) {
                         $conflictScore += ($opponentHistory[$teamId][$selTeam->id] ?? 0) * 1000;
                     }
 
-                    // Historische Konflikte (gegen Teams, die nicht im aktuellen Lauf sind)
                     $totalHistoryConflicts = 0;
                     if (isset($opponentHistory[$teamId])) {
                         foreach($opponentHistory[$teamId] as $oppId => $count) {
@@ -302,31 +461,22 @@ class RegattaRaffleController extends Controller
 
                     $pauseInMinutes = 9999;
                     if (isset($lastStartTimes[$teamId])) {
-                        // WICHTIG: diffInMinutes() gibt standardmäßig den absoluten Wert zurück.
-                        // Da wir hier rückwärts blicken ($currentGlobalTime ist jetzt, $lastStartTimes ist früher),
-                        // sollte es positiv sein. Wir erzwingen aber keine Richtung, sondern verlassen uns
-                        // auf die sequentielle Abarbeitung.
                         $pauseInMinutes = $currentGlobalTime->diffInMinutes($lastStartTimes[$teamId]);
-                    }
-
-                    // Organisations-Pause berücksichtigen (Pivot-Zuordnung)
-                    $orgId = $orgAssignments[$teamId] ?? null;
-                    $orgMalus = 0;
-
-                    if ($orgId && isset($lastOrgStartTime[$orgId])) {
-                        // Berechnung des Abstands zum letzten Start EINES ANDEREN Teams dieser Organisation
-                        $diff = $currentGlobalTime->diffInMinutes($lastOrgStartTime[$orgId]);
-
-                        // Malus berechnen, wenn es ein anderes Team dieser Organisation ist
-                        // Wir prüfen hier wieder auf $lastOrgTeamId != $teamId, weil der User möchte,
-                        // dass derselbe Teilnehmer (Team) nicht betrachtet wird.
-                        // Aber die anderen, die in einer Auswertungsgruppe zusammengefasst sind.
-                        if ($lastOrgTeamId[$orgId] != $teamId && $diff < $minPause) {
-                            $orgMalus = 1000 * ($minPause - $diff);
+                        if ($pauseInMinutes < $minPause) {
+                            $conflictScore += ($minPause - $pauseInMinutes) * 10000; // Massiv erhöht für Vor-Selektion
                         }
                     }
 
-                    $score = $conflictScore + ($totalHistoryConflicts * 10) - ($pauseInMinutes) + $orgMalus;
+                    $orgId = $orgAssignments[$teamId] ?? null;
+                    $orgMalus = 0;
+                    if ($orgId && isset($lastOrgStartTime[$orgId])) {
+                        $diff = $currentGlobalTime->diffInMinutes($lastOrgStartTime[$orgId]);
+                        if ($lastOrgTeamId[$orgId] != $teamId && $diff < $minPauseOrg) {
+                            $orgMalus = 50000 * ($minPauseOrg - $diff); // Massiv erhöht für Vor-Selektion
+                        }
+                    }
+
+                    $score = $conflictScore + ($totalHistoryConflicts * 10) - ($pauseInMinutes * 2) + $orgMalus;
 
                     if ($score < $minScore) {
                         $minScore = $score;
@@ -337,7 +487,11 @@ class RegattaRaffleController extends Controller
                 if ($bestTeamId) {
                     $teamObj = $teamsByGroup[$gruppeId]->firstWhere('id', $bestTeamId);
                     $selectedTeams[] = $teamObj;
-                    $availableTeamIds = array_diff($availableTeamIds, [$bestTeamId]);
+                    $availableTeamIds = array_values(array_diff($availableTeamIds, [$bestTeamId]));
+                } else {
+                    // Fallback: Falls kein bestTeamId gefunden wurde (sollte nicht passieren),
+                    // brechen wir das Picking für diesen Heat ab.
+                    break;
                 }
             }
 
@@ -425,13 +579,60 @@ class RegattaRaffleController extends Controller
                     'lane' => $index + 1,
                     'team_id' => $team->id,
                     'gruppe_id' => $heatData['gruppe_id'],
-                    'heat_index' => $heatData['heat_index'],
+                    'heat_index' => $heatData['heat_index'], // Dies ist nun die Runde (1 bis heatsCount)
+                    'round_heat_index' => $heatData['round_heat_index'],
                     'is_final' => false
                 ];
             }
             $raceNumber++;
             $currentGlobalTime->addMinutes($interval);
+            $heatIndexInAllHeats++;
         }
+
+        // --- NACHBESSERUNG KONFLIKTE (Opponent History) ---
+        // Wenn wir Teams getauscht haben, müssen wir die opponentHistory und conflicts in $preview neu berechnen
+        // da die initiale Berechnung während der sequentiellen Generierung stattfand.
+        $opponentHistory = [];
+        $heatsGrouped = collect($preview)->where('is_final', false)->where('race_number', '>', 0)->groupBy('race_number');
+        foreach ($heatsGrouped as $rNum => $raceItems) {
+            $teamIds = $raceItems->pluck('team_id')->filter()->toArray();
+            foreach ($teamIds as $tA) {
+                foreach ($teamIds as $tB) {
+                    if ($tA != $tB) {
+                        $opponentHistory[$tA][$tB] = ($opponentHistory[$tA][$tB] ?? 0) + 1;
+                    }
+                }
+            }
+        }
+
+        foreach ($preview as &$pItem) {
+            if ($pItem['is_final'] || $pItem['race_number'] == 0 || !$pItem['team_id']) continue;
+            $tA = $pItem['team_id'];
+            $currentRaceTeams = collect($preview)->where('race_number', $pItem['race_number'])->pluck('team_id')->toArray();
+            $conflicts = 0;
+            foreach ($currentRaceTeams as $tB) {
+                if ($tB && $tA != $tB) {
+                    // Konflikt = wie oft haben sie INGESAMT gegeneinander gespielt (bis zu diesem Punkt im NEUEN Plan)
+                    // Eigentlich wollen wir hier die Wiederholungen sehen.
+                    // Wir zählen einfach die Historie bis zu diesem Rennen neu.
+                }
+            }
+        }
+        // Vereinfacht: Wir aktualisieren nur die conflicts Anzeige basierend auf der finalen History
+        foreach ($preview as &$pItem) {
+            if ($pItem['is_final'] || $pItem['race_number'] == 0 || !$pItem['team_id']) continue;
+            $tA = $pItem['team_id'];
+            $currentRaceTeams = collect($preview)->where('race_number', $pItem['race_number'])->pluck('team_id')->toArray();
+            $conflicts = 0;
+            foreach ($currentRaceTeams as $tB) {
+                if ($tB && $tA != $tB) {
+                    // Wir zählen wie oft sie im gesamten Vorlauf-Plan gegeneinander antreten
+                    $conflicts += ($opponentHistory[$tA][$tB] ?? 1) - 1;
+                }
+            }
+            $pItem['conflicts'] = $conflicts;
+        }
+        // --- ENDE NACHBESSERUNG KONFLIKTE ---
 
         // Finale generieren
         $finalsStartTime = \Carbon\Carbon::parse($finalsStartTimeStr);
@@ -525,6 +726,167 @@ class RegattaRaffleController extends Controller
 
         $maxRaceTime = $currentGlobalTime->copy()->subMinutes($interval);
 
+        // --- GLOBALE OPTIMIERUNG (Swap-Loop) ---
+        // Wenn Teams unter der Mindestpause sind, versuchen wir sie mit Teams aus späteren Heats
+        // der gleichen Gruppe zu tauschen, die eine hohe Pause haben.
+        $swapCount = 0;
+        for ($iteration = 1; $iteration <= 20; $iteration++) {
+            $hasConflict = false;
+
+            // Wir sortieren die Vorläufe chronologisch für die Analyse
+            $heats = collect($preview)->where('is_final', false)->where('race_number', '>', 0)->sortBy('race_number');
+
+            foreach ($heats as $index => $item) {
+                if (!$item['team_id']) continue;
+
+                $teamId = $item['team_id'];
+                $tid = $teamId;
+                $currentRaceTime = \Carbon\Carbon::parse($item['time']);
+
+                // Finde vorherigen Start des Teams
+                $prevStart = collect($preview)
+                    ->where('team_id', $teamId)
+                    ->filter(fn($i) => \Carbon\Carbon::parse($i['time'])->lt($currentRaceTime))
+                    ->sortByDesc(fn($i) => \Carbon\Carbon::parse($i['time'])->timestamp)
+                    ->first();
+
+                $isTooEarlyTeam = $prevStart && $currentRaceTime->diffInMinutes(\Carbon\Carbon::parse($prevStart['time'])) < $minPause;
+
+                // Org Konflikt
+                $orgId = $orgAssignments[$teamId] ?? null;
+                $isTooEarlyOrg = false;
+                if ($orgId) {
+                    $prevOrgStart = collect($preview)
+                        ->where('is_final', false)
+                        ->where('race_number', '>', 0)
+                        ->filter(function($i) use ($orgAssignments, $orgId, $currentRaceTime, $tid) {
+                            return ($orgAssignments[$i['team_id']] ?? null) == $orgId
+                                && $i['team_id'] != $tid
+                                && \Carbon\Carbon::parse($i['time'])->lt($currentRaceTime);
+                        })
+                        ->sortByDesc(fn($i) => \Carbon\Carbon::parse($i['time'])->timestamp)
+                        ->first();
+
+                    if ($prevOrgStart) {
+                        if ($currentRaceTime->diffInMinutes(\Carbon\Carbon::parse($prevOrgStart['time'])) < $minPauseOrg) {
+                            $isTooEarlyOrg = true;
+                        }
+                    }
+                }
+
+                if ($isTooEarlyTeam || $isTooEarlyOrg) {
+                    $hasConflict = true;
+
+                    // Suche Tauschpartner in späteren Heats der gleichen Gruppe
+                    $currentGruppeId = $item['gruppe_id'];
+                    $currentRaceNumber = $item['race_number'];
+
+                    $candidates = collect($preview)
+                        ->where('is_final', false)
+                        ->where('gruppe_id', $currentGruppeId)
+                        ->where('race_number', '>', $currentRaceNumber);
+
+                    $bestSwapItem = null;
+                    $maxSwapPause = -1;
+
+                    foreach ($candidates as $cand) {
+                        if (!$cand['team_id']) continue;
+
+                        // Berechne Pause des Kandidaten an seiner jetzigen Stelle
+                        $candTime = \Carbon\Carbon::parse($cand['time']);
+                        $candPrevStart = collect($preview)
+                            ->where('team_id', $cand['team_id'])
+                            ->filter(fn($i) => \Carbon\Carbon::parse($i['time'])->lt($candTime))
+                            ->sortByDesc(fn($i) => \Carbon\Carbon::parse($i['time'])->timestamp)
+                            ->first();
+
+                        $candPause = $candPrevStart ? $candTime->diffInMinutes(\Carbon\Carbon::parse($candPrevStart['time'])) : 9999;
+
+                        // Wir suchen den mit der höchsten Pause
+                        if ($candPause > $maxSwapPause) {
+                            // Zusätzliche Prüfung: Wäre der Tausch für beide "sicher"?
+                            // Ein Team darf nicht in ein Rennen getauscht werden, in dem es schon ist.
+                            $raceOfTarget = collect($preview)->where('race_number', $item['race_number'])->pluck('team_id')->toArray();
+                            $raceOfCand = collect($preview)->where('race_number', $cand['race_number'])->pluck('team_id')->toArray();
+
+                            if (in_array($cand['team_id'], $raceOfTarget) || in_array($item['team_id'], $raceOfCand)) {
+                                continue;
+                            }
+
+                            $maxSwapPause = $candPause;
+                            $bestSwapItem = $cand;
+                        }
+                    }
+
+                    if ($bestSwapItem) {
+                        // Tausche team_id in $preview
+                        $idxA = null;
+                        $idxB = null;
+                        foreach ($preview as $k => $v) {
+                            if ($v['race_number'] == $item['race_number'] && $v['lane'] == $item['lane']) $idxA = $k;
+                            if ($v['race_number'] == $bestSwapItem['race_number'] && $v['lane'] == $bestSwapItem['lane']) $idxB = $k;
+                        }
+
+                        if ($idxA !== null && $idxB !== null) {
+                            $teamIdA = $preview[$idxA]['team_id'];
+                            $teamIdB = $preview[$idxB]['team_id'];
+
+                            // Sicherheits-Check: Tauschpartner müssen existieren und verschieden sein
+                            if ($teamIdA && $teamIdB && $teamIdA != $teamIdB) {
+                                $preview[$idxA]['team_id'] = $teamIdB;
+                                $preview[$idxB]['team_id'] = $teamIdA;
+                                $swapCount++;
+                                break 2;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!$hasConflict) break; // Fertig!
+
+            // Pausen neu berechnen für die nächste Runde der Analyse
+            $lastStartsLocal = [];
+            $lastOrgStartsLocal = [];
+            $lastOrgTeamLocal = [];
+
+            // Erst sortieren
+            usort($preview, function($a, $b) {
+                if ($a['time'] != $b['time']) return strcmp($a['time'], $b['time']);
+                if ($a['race_number'] != $b['race_number']) return $a['race_number'] - $b['race_number'];
+                return $a['lane'] - $b['lane'];
+            });
+
+            foreach ($preview as &$pItem) {
+                if (!$pItem['team_id']) continue;
+                $tId = $pItem['team_id'];
+                $currT = \Carbon\Carbon::parse($pItem['time']);
+
+                if (isset($lastStartsLocal[$tId])) {
+                    $diff = $currT->diffInMinutes($lastStartsLocal[$tId]);
+                    $pItem['pause'] = $diff;
+                    $pItem['pause_minutes'] = (int)$diff;
+                } else {
+                    $pItem['pause'] = '-';
+                    $pItem['pause_minutes'] = null;
+                }
+                $lastStartsLocal[$tId] = $currT;
+
+                // Org Pause
+                $oId = $orgAssignments[$tId] ?? null;
+                if ($oId) {
+                    if (isset($lastOrgStartsLocal[$oId]) && $lastOrgTeamLocal[$oId] != $tId) {
+                        $pItem['org_pause'] = $currT->diffInMinutes($lastOrgStartsLocal[$oId]);
+                    } else {
+                        $pItem['org_pause'] = '-';
+                    }
+                    $lastOrgStartsLocal[$oId] = $currT;
+                    $lastOrgTeamLocal[$oId] = $tId;
+                }
+            }
+        }
+        // --- ENDE GLOBALE OPTIMIERUNG ---
+
         // Siegerehrung hinzufügen
         if ($awardCeremonyTimeStr) {
             $awardCeremonyTime = \Carbon\Carbon::parse($awardCeremonyTimeStr);
@@ -581,12 +943,14 @@ class RegattaRaffleController extends Controller
             'wertungsart' => $wertungsart,
             'heats_count' => $heatsCount,
             'min_pause' => $minPause,
+            'min_pause_org' => $minPauseOrg,
             'pause_after_heats' => $pauseAfterHeats,
             'finals_start_time' => $finalsStartTimeStr,
             'finals_count' => $finalsCount,
             'award_ceremony_time' => $awardCeremonyTimeStr,
             'min_time_before_ceremony' => $minTimeBeforeCeremony,
             'finale_publish_time' => $finalePublishTimeStr,
+            'swapCount' => $swapCount,
             'teamOpponents' => $teamOpponents,
             'maxHeatEndTime' => $maxHeatEndTime->format('H:i'),
             'gruppeNames' => $gruppeNames,
@@ -633,6 +997,7 @@ class RegattaRaffleController extends Controller
                     'placeholder_name' => $item['placeholder_name'] ?? null,
                     'heat_index' => $item['heat_index'] ?? null,
                     'pause_minutes' => $item['pause_minutes'] ?? null,
+                    'conflicts' => $item['conflicts'] ?? 0,
                     'org_intervals' => $item['org_intervals'] ?? null,
                 ]);
             }
@@ -709,6 +1074,8 @@ class RegattaRaffleController extends Controller
         $request->merge([
             'start_time' => $draft->start_time,
             'interval' => $draft->interval,
+            'min_pause' => $draft->min_pause,
+            'min_pause_org' => $draft->params['min_pause_org'] ?? 10,
             'finals_start_time' => $draft->final_start_time,
             'pause_after_heats' => $draft->final_pause,
             'award_ceremony_time' => $draft->award_ceremony_time,
@@ -752,6 +1119,8 @@ class RegattaRaffleController extends Controller
 
         $startTime = $request->input('start_time');
         $interval = $request->input('interval', 10);
+        $minPause = $request->input('min_pause', 20);
+        $minPauseOrg = $request->input('min_pause_org', 10);
         $finalsStartTimeStr = $request->input('finals_start_time');
         $pauseAfterHeats = $request->input('pause_after_heats', 30);
         $awardCeremonyTimeStr = $request->input('award_ceremony_time');
@@ -819,7 +1188,32 @@ class RegattaRaffleController extends Controller
                         $lastStartTimes[$lane->team_id] = $currentGlobalTime->copy();
                     }
                 }
+
+                // Konflikte berechnen
+                $conflictCount = 0;
+                if (!$isFinal && $lane->team_id) {
+                    foreach ($lanes as $otherLane) {
+                        if ($otherLane->id !== $lane->id && $otherLane->team_id) {
+                            if (isset($opponentHistory[$lane->team_id][$otherLane->team_id])) {
+                                $conflictCount += $opponentHistory[$lane->team_id][$otherLane->team_id];
+                            }
+                        }
+                    }
+                    $lane->conflicts = $conflictCount;
+                }
+
                 $lane->save();
+            }
+
+            // Historie nach jedem Lauf aktualisieren
+            if (!$isFinal) {
+                foreach ($lanes as $laneA) {
+                    foreach ($lanes as $laneB) {
+                        if ($laneA->id !== $laneB->id && $laneA->team_id && $laneB->team_id) {
+                            $opponentHistory[$laneA->team_id][$laneB->team_id] = ($opponentHistory[$laneA->team_id][$laneB->team_id] ?? 0) + 1;
+                        }
+                    }
+                }
             }
 
             if (!$isFinal) {

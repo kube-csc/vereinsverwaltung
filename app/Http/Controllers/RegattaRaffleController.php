@@ -580,6 +580,7 @@ class RegattaRaffleController extends Controller
                     'team_id' => $team->id,
                     'gruppe_id' => $heatData['gruppe_id'],
                     'heat_index' => $heatData['heat_index'], // Dies ist nun die Runde (1 bis heatsCount)
+                    'heat_level' => 'Vorlauf ' . $heatData['heat_index'],
                     'round_heat_index' => $heatData['round_heat_index'],
                     'is_final' => false
                 ];
@@ -710,7 +711,8 @@ class RegattaRaffleController extends Controller
                         'placeholder_name' => "Platz $platzImRanking der Tabelle $gruppeName",
                         'gruppe_id' => $gruppeId,
                         'is_final' => true,
-                        'final_type' => $typeName
+                        'final_type' => $typeName,
+                        'heat_level' => $typeName
                     ];
                 }
                 $raceNumber++;
@@ -724,13 +726,33 @@ class RegattaRaffleController extends Controller
             ['lane', 'asc']
         ])->values()->all();
 
+        // Zähle Heats pro Team für Level-Bestimmung
+        $teamHeatCounts = [];
+        foreach ($preview as $item) {
+            if (!$item['is_final'] && $item['team_id']) {
+                $teamHeatCounts[$item['team_id']] = ($teamHeatCounts[$item['team_id']] ?? 0) + 1;
+            }
+        }
+
+        // Level (Laufanzahl) zu Items hinzufügen
+        foreach ($preview as &$item) {
+            if ($item['team_id']) {
+                $item['level'] = $teamHeatCounts[$item['team_id']] ?? 0;
+            } else {
+                $item['level'] = 0;
+            }
+        }
+
         $maxRaceTime = $currentGlobalTime->copy()->subMinutes($interval);
 
         // --- GLOBALE OPTIMIERUNG (Swap-Loop) ---
         // Wenn Teams unter der Mindestpause sind, versuchen wir sie mit Teams aus späteren Heats
-        // der gleichen Gruppe zu tauschen, die eine hohe Pause haben.
+        // der gleichen Gruppe UND des gleichen Levels zu tauschen.
         $swapCount = 0;
-        for ($iteration = 1; $iteration <= 20; $iteration++) {
+        $swapAttempts = 0;
+        $swapLogs = [];
+        $noSwapFoundLogs = [];
+        for ($iteration = 1; $iteration <= 50; $iteration++) {
             $hasConflict = false;
 
             // Wir sortieren die Vorläufe chronologisch für die Analyse
@@ -746,8 +768,8 @@ class RegattaRaffleController extends Controller
                 // Finde vorherigen Start des Teams
                 $prevStart = collect($preview)
                     ->where('team_id', $teamId)
-                    ->filter(fn($i) => \Carbon\Carbon::parse($i['time'])->lt($currentRaceTime))
-                    ->sortByDesc(fn($i) => \Carbon\Carbon::parse($i['time'])->timestamp)
+                    ->filter(fn($i) => $i['race_number'] < $item['race_number'])
+                    ->sortByDesc('race_number')
                     ->first();
 
                 $isTooEarlyTeam = $prevStart && $currentRaceTime->diffInMinutes(\Carbon\Carbon::parse($prevStart['time'])) < $minPause;
@@ -759,12 +781,12 @@ class RegattaRaffleController extends Controller
                     $prevOrgStart = collect($preview)
                         ->where('is_final', false)
                         ->where('race_number', '>', 0)
-                        ->filter(function($i) use ($orgAssignments, $orgId, $currentRaceTime, $tid) {
+                        ->filter(function($i) use ($orgAssignments, $orgId, $item, $tid) {
                             return ($orgAssignments[$i['team_id']] ?? null) == $orgId
                                 && $i['team_id'] != $tid
-                                && \Carbon\Carbon::parse($i['time'])->lt($currentRaceTime);
+                                && $i['race_number'] < $item['race_number'];
                         })
-                        ->sortByDesc(fn($i) => \Carbon\Carbon::parse($i['time'])->timestamp)
+                        ->sortByDesc('race_number')
                         ->first();
 
                     if ($prevOrgStart) {
@@ -776,14 +798,18 @@ class RegattaRaffleController extends Controller
 
                 if ($isTooEarlyTeam || $isTooEarlyOrg) {
                     $hasConflict = true;
+                    $swapAttempts++;
 
-                    // Suche Tauschpartner in späteren Heats der gleichen Gruppe
+                    // Suche Tauschpartner in späteren Heats der gleichen Gruppe und gleichen Levels
                     $currentGruppeId = $item['gruppe_id'];
                     $currentRaceNumber = $item['race_number'];
+                    $currentLevel = $item['level'] ?? 0;
 
                     $candidates = collect($preview)
                         ->where('is_final', false)
                         ->where('gruppe_id', $currentGruppeId)
+                        ->where('level', $currentLevel)
+                        ->where('heat_level', $item['heat_level']) // Nur gleiches Heat-Level (z.B. Vorlauf 1)
                         ->where('race_number', '>', $currentRaceNumber);
 
                     $bestSwapItem = null;
@@ -796,8 +822,8 @@ class RegattaRaffleController extends Controller
                         $candTime = \Carbon\Carbon::parse($cand['time']);
                         $candPrevStart = collect($preview)
                             ->where('team_id', $cand['team_id'])
-                            ->filter(fn($i) => \Carbon\Carbon::parse($i['time'])->lt($candTime))
-                            ->sortByDesc(fn($i) => \Carbon\Carbon::parse($i['time'])->timestamp)
+                            ->filter(fn($i) => $i['race_number'] < $cand['race_number'])
+                            ->sortByDesc('race_number')
                             ->first();
 
                         $candPause = $candPrevStart ? $candTime->diffInMinutes(\Carbon\Carbon::parse($candPrevStart['time'])) : 9999;
@@ -810,6 +836,20 @@ class RegattaRaffleController extends Controller
                             $raceOfCand = collect($preview)->where('race_number', $cand['race_number'])->pluck('team_id')->toArray();
 
                             if (in_array($cand['team_id'], $raceOfTarget) || in_array($item['team_id'], $raceOfCand)) {
+                                continue;
+                            }
+
+                            // Prüfung: Würde der Tausch beim Kandidaten einen Konflikt verursachen?
+                            // (Einfache Prüfung der Pause des Kandidaten am neuen Platz)
+                            $newTimeForCand = \Carbon\Carbon::parse($item['time']);
+                            $candPrevStartNew = collect($preview)
+                                ->where('team_id', $cand['team_id'])
+                                ->filter(fn($i) => $i['race_number'] < $item['race_number'])
+                                ->sortByDesc('race_number')
+                                ->first();
+                            $newPauseForCand = $candPrevStartNew ? $newTimeForCand->diffInMinutes(\Carbon\Carbon::parse($candPrevStartNew['time'])) : 9999;
+
+                            if ($newPauseForCand < $minPause) {
                                 continue;
                             }
 
@@ -833,12 +873,152 @@ class RegattaRaffleController extends Controller
 
                             // Sicherheits-Check: Tauschpartner müssen existieren und verschieden sein
                             if ($teamIdA && $teamIdB && $teamIdA != $teamIdB) {
+                                $teamNameA = is_array($teamNames[$teamIdA]) ? ($teamNames[$teamIdA]['name'] ?? $teamIdA) : $teamNames[$teamIdA];
+                                $teamNameB = is_array($teamNames[$teamIdB]) ? ($teamNames[$teamIdB]['name'] ?? $teamIdB) : $teamNames[$teamIdB];
+
+                                // --- Pausen VOR dem Tausch ermitteln ---
+                                // Team A (in Lauf A)
+                                $prevStartA_old = collect($preview)
+                                    ->where('team_id', $teamIdA)
+                                    ->filter(fn($i) => $i['race_number'] < $preview[$idxA]['race_number'])
+                                    ->sortByDesc('race_number')
+                                    ->first();
+                                $pauseA_old = $prevStartA_old ? $currentRaceTime->diffInMinutes(\Carbon\Carbon::parse($prevStartA_old['time'])) : '-';
+                                $org_pauseA_old = '-';
+                                if (isset($orgAssignments[$teamIdA])) {
+                                    $oIdA = $orgAssignments[$teamIdA];
+                                    $pOrgStartA_old = collect($preview)
+                                        ->where('is_final', false)
+                                        ->where('race_number', '>', 0)
+                                        ->filter(function($i) use ($orgAssignments, $oIdA, $preview, $idxA, $teamIdA) {
+                                            return ($orgAssignments[$i['team_id']] ?? null) == $oIdA
+                                                && $i['team_id'] != $teamIdA
+                                                && $i['race_number'] < $preview[$idxA]['race_number'];
+                                        })
+                                        ->sortByDesc('race_number')
+                                        ->first();
+                                    $org_pauseA_old = $pOrgStartA_old ? $currentRaceTime->diffInMinutes(\Carbon\Carbon::parse($pOrgStartA_old['time'])) : '-';
+                                }
+
+                                // Team B (in Lauf B)
+                                $candTime = \Carbon\Carbon::parse($bestSwapItem['time']);
+                                $prevStartB_old = collect($preview)
+                                    ->where('team_id', $teamIdB)
+                                    ->filter(fn($i) => $i['race_number'] < $preview[$idxB]['race_number'])
+                                    ->sortByDesc('race_number')
+                                    ->first();
+                                $pauseB_old = $prevStartB_old ? $candTime->diffInMinutes(\Carbon\Carbon::parse($prevStartB_old['time'])) : '-';
+
+                                $org_pauseB_old = '-';
+                                if (isset($orgAssignments[$teamIdB])) {
+                                    $oIdB = $orgAssignments[$teamIdB];
+                                    $pOrgStartB_old = collect($preview)
+                                        ->where('is_final', false)
+                                        ->where('race_number', '>', 0)
+                                        ->filter(function($i) use ($orgAssignments, $oIdB, $preview, $idxB, $teamIdB) {
+                                            return ($orgAssignments[$i['team_id']] ?? null) == $oIdB
+                                                && $i['team_id'] != $teamIdB
+                                                && $i['race_number'] < $preview[$idxB]['race_number'];
+                                        })
+                                        ->sortByDesc('race_number')
+                                        ->first();
+                                    $org_pauseB_old = $pOrgStartB_old ? $candTime->diffInMinutes(\Carbon\Carbon::parse($pOrgStartB_old['time'])) : '-';
+                                }
+
+                                // --- Tausche team_id in $preview ---
                                 $preview[$idxA]['team_id'] = $teamIdB;
                                 $preview[$idxB]['team_id'] = $teamIdA;
+
+                                // --- Pausen NACH dem Tausch berechnen ---
+                                $newTimeA = \Carbon\Carbon::parse($preview[$idxA]['time']);
+                                $newTimeB = \Carbon\Carbon::parse($preview[$idxB]['time']);
+
+                                // Team A (jetzt in Lauf B)
+                                $prevStartA_new = collect($preview)
+                                    ->where('team_id', $teamIdA)
+                                    ->filter(fn($i) => $i['race_number'] < $preview[$idxB]['race_number'])
+                                    ->sortByDesc('race_number')
+                                    ->first();
+                                $pauseA_new = $prevStartA_new ? $newTimeB->diffInMinutes(\Carbon\Carbon::parse($prevStartA_new['time'])) : '-';
+
+                                // Team B (jetzt in Lauf A)
+                                $prevStartB_new = collect($preview)
+                                    ->where('team_id', $teamIdB)
+                                    ->filter(fn($i) => $i['race_number'] < $preview[$idxA]['race_number'])
+                                    ->sortByDesc('race_number')
+                                    ->first();
+                                $pauseB_new = $prevStartB_new ? $newTimeA->diffInMinutes(\Carbon\Carbon::parse($prevStartB_new['time'])) : '-';
+
+                                // Org Pausen nach dem Tausch
+                                $org_pauseA_new = '-';
+                                if (isset($orgAssignments[$teamIdA])) {
+                                    $oIdA = $orgAssignments[$teamIdA];
+                                    $pOrgStartA = collect($preview)
+                                        ->where('is_final', false)
+                                        ->where('race_number', '>', 0)
+                                        ->filter(function($i) use ($orgAssignments, $oIdA, $preview, $idxB, $teamIdA) {
+                                            return ($orgAssignments[$i['team_id']] ?? null) == $oIdA
+                                                && $i['team_id'] != $teamIdA
+                                                && $i['race_number'] < $preview[$idxB]['race_number'];
+                                        })
+                                        ->sortByDesc('race_number')
+                                        ->first();
+                                    $org_pauseA_new = $pOrgStartA ? $newTimeB->diffInMinutes(\Carbon\Carbon::parse($pOrgStartA['time'])) : '-';
+                                }
+
+                                $org_pauseB_new = '-';
+                                if (isset($orgAssignments[$teamIdB])) {
+                                    $oIdB = $orgAssignments[$teamIdB];
+                                    $pOrgStartB = collect($preview)
+                                        ->where('is_final', false)
+                                        ->where('race_number', '>', 0)
+                                        ->filter(function($i) use ($orgAssignments, $oIdB, $preview, $idxA, $teamIdB) {
+                                            return ($orgAssignments[$i['team_id']] ?? null) == $oIdB
+                                                && $i['team_id'] != $teamIdB
+                                                && $i['race_number'] < $preview[$idxA]['race_number'];
+                                        })
+                                        ->sortByDesc('race_number')
+                                        ->first();
+                                    $org_pauseB_new = $pOrgStartB ? $newTimeA->diffInMinutes(\Carbon\Carbon::parse($pOrgStartB['time'])) : '-';
+                                }
+
+                                $swapLogs[] = [
+                                    'type' => 'Pause',
+                                    'raceA' => $item['race_number'],
+                                    'raceB' => $bestSwapItem['race_number'],
+                                    'heat_levelA' => $item['heat_level'] ?? '-',
+                                    'heat_levelB' => $bestSwapItem['heat_level'] ?? '-',
+                                    'teamA' => $teamNameA,
+                                    'teamB' => $teamNameB,
+                                    'pauseA_old' => $pauseA_old,
+                                    'pauseA_new' => $pauseA_new,
+                                    'pauseB_old' => $pauseB_old,
+                                    'pauseB_new' => $pauseB_new,
+                                    'org_pauseA_old' => $org_pauseA_old,
+                                    'org_pauseA_new' => $org_pauseA_new,
+                                    'org_pauseB_old' => $org_pauseB_old,
+                                    'org_pauseB_new' => $org_pauseB_new,
+                                    'reason' => ($isTooEarlyTeam ? 'Team-Pause' : 'Org-Pause') . ' unterschritten',
+                                    'level' => $currentLevel
+                                ];
+
                                 $swapCount++;
                                 break 2;
                             }
                         }
+                    } else {
+                        // Kein Tauschpartner gefunden
+                        $teamName = is_array($teamNames[$teamId]) ? ($teamNames[$teamId]['name'] ?? $teamId) : $teamNames[$teamId];
+                        $noSwapFoundLogs[] = [
+                            'race' => $item['race_number'],
+                            'heat_level' => $item['heat_level'] ?? '-',
+                            'team' => $teamName,
+                            'level' => $currentLevel,
+                            'reason' => $isTooEarlyTeam ? 'Team-Pause' : 'Org-Pause',
+                            'pause' => $prevStart ? $currentRaceTime->diffInMinutes(\Carbon\Carbon::parse($prevStart['time'])) : '-',
+                            'org_pause' => $prevOrgStart ? $currentRaceTime->diffInMinutes(\Carbon\Carbon::parse($prevOrgStart['time'])) : '-',
+                            'min_needed' => $isTooEarlyTeam ? $minPause : $minPauseOrg
+                        ];
                     }
                 }
             }
@@ -951,6 +1131,9 @@ class RegattaRaffleController extends Controller
             'min_time_before_ceremony' => $minTimeBeforeCeremony,
             'finale_publish_time' => $finalePublishTimeStr,
             'swapCount' => $swapCount,
+            'swapAttempts' => $swapAttempts,
+            'swapLogs' => collect($swapLogs)->unique()->toArray(),
+            'noSwapFoundLogs' => collect($noSwapFoundLogs)->unique()->toArray(),
             'teamOpponents' => $teamOpponents,
             'maxHeatEndTime' => $maxHeatEndTime->format('H:i'),
             'gruppeNames' => $gruppeNames,

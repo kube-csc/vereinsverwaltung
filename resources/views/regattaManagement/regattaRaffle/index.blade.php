@@ -301,11 +301,71 @@
                             <input type="hidden" name="mode" value="full">
 
                             @if($draft && isset($draft->params['swapCount']))
-                                <div class="bg-blue-50 border border-blue-200 rounded p-2 flex items-center gap-2 mb-4">
-                                    <box-icon name='info-circle' size="xs" color="#1e40af"></box-icon>
-                                    <span class="text-xs text-blue-800">
-                                        Optimierung: <strong>{{ $draft->params['swapCount'] }}</strong> Team-Tausche wurden durchgeführt, um Pausen-Konflikte zu minimieren.
-                                    </span>
+                                <div class="bg-blue-50 border border-blue-200 rounded p-3 mb-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <box-icon name='info-circle' size="xs" color="#1e40af"></box-icon>
+                                        <span class="text-sm font-bold text-blue-800">
+                                            Optimierung: {{ $draft->params['swapCount'] }} Team-Tausche durchgeführt ({{ $draft->params['swapAttempts'] ?? 0 }} Versuche).
+                                        </span>
+                                    </div>
+                                    @if(!empty($draft->params['swapLogs']))
+                                        <details class="text-xs text-blue-700">
+                                            <summary class="cursor-pointer hover:underline">Details der Tausche anzeigen</summary>
+                                            <div class="mt-2 space-y-1 max-h-40 overflow-y-auto">
+                                                @foreach($draft->params['swapLogs'] as $log)
+                                                    @if(is_array($log))
+                                                        <div class="border-b border-blue-100 pb-1">
+                                                            <span class="font-bold">[{{ $log['type'] ?? 'Tausch' }}]</span>
+                                                            Lauf {{ $log['raceA'] ?? '?' }} ({{ $log['heat_levelA'] ?? '-' }}) ↔ {{ $log['raceB'] ?? '?' }} ({{ $log['heat_levelB'] ?? '-' }}):
+                                                            <span class="italic text-green-700 font-bold">Tausch vorgenommen:</span>
+                                                            <span class="italic">{{ $log['teamA'] ?? 'Unbekannt' }}</span> (P: {{ $log['pauseA_old'] ?? '-' }} → {{ $log['pauseA_new'] ?? '-' }} Min, Org: {{ $log['org_pauseA_old'] ?? '-' }} → {{ $log['org_pauseA_new'] ?? '-' }} Min)
+                                                            ↔
+                                                            <span class="italic">{{ $log['teamB'] ?? 'Unbekannt' }}</span> (P: {{ $log['pauseB_old'] ?? '-' }} → {{ $log['pauseB_new'] ?? '-' }} Min, Org: {{ $log['org_pauseB_old'] ?? '-' }} → {{ $log['org_pauseB_new'] ?? '-' }} Min)
+                                                            <br>
+                                                            <span class="text-[10px] text-blue-500">Grund: {{ $log['reason'] ?? 'Unbekannt' }} (Lv: {{ $log['level'] ?? '-' }})</span>
+                                                        </div>
+                                                    @else
+                                                        <div class="border-b border-blue-100 pb-1 italic text-blue-400">
+                                                            {{ $log }}
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </details>
+                                    @endif
+                                    @if(!empty($draft->params['noSwapFoundLogs']))
+                                        <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded">
+                                            <div class="flex items-center gap-2 mb-2 text-red-800">
+                                                <box-icon name='error' size="xs" color="#991b1b"></box-icon>
+                                                <span class="text-sm font-bold">Achtung: Unlösbare Pausenkonflikte gefunden!</span>
+                                            </div>
+                                            <p class="text-xs text-red-700 mb-2">
+                                                Für folgende Teams konnte trotz Optimierung kein besserer Startplatz (Tauschpartner) gefunden werden, um die Mindestpause einzuhalten:
+                                            </p>
+                                            <div class="max-h-40 overflow-y-auto space-y-1">
+                                                @foreach($draft->params['noSwapFoundLogs'] as $log)
+                                                    @if(is_array($log))
+                                                        <div class="text-[10px] bg-white border border-red-100 p-1.5 rounded flex justify-between items-center">
+                                                            <div>
+                                                                <span class="font-bold">Lauf {{ $log['race'] ?? '?' }} ({{ $log['heat_level'] ?? '-' }}):</span>
+                                                                <span class="italic">{{ $log['team'] ?? 'Unbekannt' }}</span>
+                                                                <span class="text-gray-500">({{ $log['level'] ?? '-' }})</span>
+                                                            </div>
+                                                            <div class="text-red-600 font-bold text-right">
+                                                                {{ $log['reason'] ?? 'Konflikt' }}:
+                                                                P: {{ $log['pause'] ?? '-' }} Min / Org: {{ $log['org_pause'] ?? '-' }} Min
+                                                                <span class="text-gray-400 font-normal">(Soll: >{{ $log['min_needed'] ?? '?' }} Min)</span>
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <div class="text-[10px] bg-white border border-red-100 p-1.5 rounded">
+                                                            {{ $log }}
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             @endif
                             <div>
@@ -558,6 +618,7 @@
                                         <thead class="bg-gray-100">
                                             <tr>
                                                 <th class="px-2 py-1 text-left" style="width: 80px;">Zeit</th>
+                                                <th class="px-2 py-1 text-center" style="width: 40px;">Lv</th>
                                                 <th class="px-2 py-1 text-center" style="width: 60px;">Sort.</th>
                                                 <th class="px-2 py-1 text-left">Rennen</th>
                                                 <th class="px-2 py-1 text-left">Gruppe</th>
@@ -640,7 +701,7 @@
 
                                                 @if(!$pauseShown && $maxHeatEnd && $raceTime > $maxHeatEnd && ($firstLane['is_final'] ?? false))
                                                     <tr class="bg-yellow-100">
-                                                        <td colspan="6" class="px-4 py-2 text-center font-bold text-yellow-800">
+                                                        <td colspan="7" class="px-4 py-2 text-center font-bold text-yellow-800">
                                                             --- PAUSENBLOCK NACH DEN VORLÄUFEN ---
                                                         </td>
                                                     </tr>
@@ -650,6 +711,7 @@
                                                 @if(isset($firstLane['is_award_ceremony']) && $firstLane['is_award_ceremony'])
                                                     <tr id="race-0" class="bg-purple-100 border-y-2 border-purple-200">
                                                         <td class="px-2 py-4 font-bold text-purple-900">{{ $raceTime }}</td>
+                                                        <td class="px-2 py-4 text-center text-purple-800 font-bold">-</td>
                                                         <td class="px-2 py-4 text-center">
                                                             <div class="flex justify-center items-center h-full">
                                                                 <box-icon name='trophy' type='solid' color='#581c87'></box-icon>
@@ -664,6 +726,7 @@
 
                                                 <tr id="race-{{ $raceNumber }}" class="{{ $firstLane['is_final'] ? 'bg-blue-50' : '' }}">
                                                     <td class="px-2 py-2 font-bold">{{ $raceTime }}</td>
+                                                    <td class="px-2 py-2 text-center text-gray-600 font-bold">{{ $firstLane['level'] ?? '-' }}</td>
                                                     <td class="px-2 py-2 text-center">
                                                         <div class="flex flex-col items-center gap-1">
                                                             @if(!$loop->first)

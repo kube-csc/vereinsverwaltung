@@ -442,9 +442,17 @@ class RegattaRaffleController extends Controller
                 // Wir versuchen hier, das beste Team für diesen Slot zu finden.
                 // Da wir später noch eine globale Optimierung (Swap-Loop) machen,
                 // reicht hier ein solides Initial-Ranking.
-                // WICHTIG: Nur Teams wählen, die noch nicht in selectedTeams sind!
-                $alreadySelectedIds = collect($selectedTeams)->pluck('id')->toArray();
-                $candidatesForThisSlot = array_values(array_diff($availableTeamIds, $alreadySelectedIds));
+                // WICHTIG: Nur Teams wählen, die noch nicht in selectedTeams sind
+                // UND auch noch nicht in diesem Lauf (race_number) im $preview vorkommen!
+                $alreadySelectedIdsInHeat = collect($selectedTeams)->pluck('id')->toArray();
+                $alreadyInPreviewForThisRace = collect($preview)
+                    ->where('race_number', $raceNumber)
+                    ->pluck('team_id')
+                    ->filter()
+                    ->toArray();
+
+                $excludedIds = array_unique(array_merge($alreadySelectedIdsInHeat, $alreadyInPreviewForThisRace));
+                $candidatesForThisSlot = array_values(array_diff($availableTeamIds, $excludedIds));
 
                 foreach ($candidatesForThisSlot as $teamId) {
                     $conflictScore = 0;
@@ -488,6 +496,11 @@ class RegattaRaffleController extends Controller
                     $teamObj = $teamsByGroup[$gruppeId]->firstWhere('id', $bestTeamId);
                     $selectedTeams[] = $teamObj;
                     $availableTeamIds = array_values(array_diff($availableTeamIds, [$bestTeamId]));
+
+                    // WICHTIG: Team auch aus den anderen Kategorien (tooEarlyTeams, safeTeams) entfernen,
+                    // falls es dort noch existiert, um Doppel-Zuweisung durch fehlerhafte availableTeamIds-Updates zu vermeiden.
+                    $safeTeams = array_values(array_diff($safeTeams, [$bestTeamId]));
+                    $tooEarlyTeams = array_values(array_diff($tooEarlyTeams, [$bestTeamId]));
                 } else {
                     // Fallback: Falls kein bestTeamId gefunden wurde (sollte nicht passieren),
                     // brechen wir das Picking für diesen Heat ab.
@@ -656,6 +669,8 @@ class RegattaRaffleController extends Controller
             $actualFinalsCount = min($finalsCount, $maxSaneFinals);
 
             for ($f = 0; $f < $actualFinalsCount; $f++) {
+                // $f=0 ist das sportlich schwächste Finale (z.B. C-Finale), $f=max ist das A-Finale
+                // Da wir sie später nach Leistungsstärke aufsteigend planen wollen:
                 $finalLetter = chr(65 + ($actualFinalsCount - 1 - $f));
                 $finalTypeName = $finalLetter . '-Finale';
 
@@ -667,25 +682,78 @@ class RegattaRaffleController extends Controller
                     'gruppe_id' => $gruppeId,
                     'lanes_count' => $lanesCount,
                     'total_teams' => $totalTeamsInGroup,
-                    'f_index' => $f, // Index von hinten (0=A, 1=B...)
-                    'final_type' => $finalTypeName
+                    'f_index' => $f, // Index 0 ist das schwächste geplante Finale der Gruppe
+                    'final_type' => $finalTypeName,
+                    'actual_finals_count' => $actualFinalsCount
                 ];
             }
         }
 
-        // Sortiere Finals-Typen alphabetisch (A-Finale kommt zum Schluss, also Z-A sortieren für C, B, A)
+        // Sortiere Finals-Typen alphabetisch aufsteigend von schwach nach stark
+        // Falls wir E, D, C, B, A haben:
+        // ksort sortiert A, B, C, D, E.
+        // krsort sortiert E, D, C, B, A.
+        // Der User möchte: "Die Reihenfolge erfolgt aufsteigend nach Leistungsstärke (z. B. erst alle E-Finals aller Gruppen, dann alle D-Finals, C-Finals, B-Finals)."
+        // Also krsort.
         krsort($finalsByType);
 
         foreach ($finalsByType as $typeName => $finals) {
+            // Innerhalb eines Typs (z.B. alle B-Finals) sortieren wir die Gruppen
+            // nach Meldezahl (kleinere Gruppen zuerst), um eine Steigerung zu haben
+            usort($finals, function($a, $b) {
+                return $a['total_teams'] <=> $b['total_teams'];
+            });
+
             foreach ($finals as $fData) {
                 $gruppeId = $fData['gruppe_id'];
                 $lanesCount = $fData['lanes_count'];
                 $totalTeamsInGroup = $fData['total_teams'];
                 $f = $fData['f_index'];
+                $actualFinalsCount = $fData['actual_finals_count'];
                 $gruppeName = $gruppeNames[$gruppeId] ?? 'Unbekannt';
 
-                $startPlatz = ($f * $lanesCount) + 1;
-                $laneAssignment = $this->calculateSeededLanes($lanesCount);
+                $startPlatz = ($actualFinalsCount - 1 - $f) * $lanesCount + 1;
+                // $startPlatz: Bei A-Finale (f=max) soll es 1 sein.
+                // $actualFinalsCount ist die Anzahl der Finals für DIESE Gruppe.
+                // Wenn wir 3 Finals haben (C, B, A):
+                // f=0 (C-Finale): (3-1-0)*4 + 1 = 9 -> Plätze 9-12
+                // f=1 (B-Finale): (3-1-1)*4 + 1 = 5 -> Plätze 5-8
+                // f=2 (A-Finale): (3-1-2)*4 + 1 = 1 -> Plätze 1-4
+                // Das ist korrekt für die sportliche Zuordnung.
+                // Das stärkste Team (Platz 1) soll zuletzt im Finale gesetzt werden (auf die Mittelbahn).
+                // Da calculateSeededLanes die Bahnen von "stark" nach "schwach" ausgibt,
+                // müssen wir die Platzierungen so zuordnen, dass die niedrigen Platzierungen (starke Teams)
+                // auf die vorderen (besonderen) Bahnen laut Seeding kommen.
+
+                // Korrektur: Der User wünscht, dass die "starken Teams später gesetzt werden".
+                // In einem Finale (z.B. A-Finale) ist die Setzung der Teams auf die Bahnen bereits das "Rennen".
+                // Wenn er meint, dass die Platzierungen 1, 2, 3 später (auf die besseren Bahnen) kommen sollen:
+                // calculateSeededLanes gibt z.B. [3, 2, 4, 1] zurück.
+                // Wir wollen: Bahn 3 -> Platz 1, Bahn 2 -> Platz 2, Bahn 4 -> Platz 3, Bahn 1 -> Platz 4.
+                // Aktuell: $platzImRanking = $startPlatz + $lIdx; wobei $lIdx 0, 1, 2, 3 ist.
+                // Das bedeutet:
+                // $lIdx=0 (Bahn 3) -> Platz 1
+                // $lIdx=1 (Bahn 2) -> Platz 2
+                // ...
+                // Das ist sportlich korrekt (Seeding).
+
+                // Aber der User sagt: "Die setzung der temas für die Finale ist falscherum die Startsen sollen im Spätern verlauf gesetzt werden."
+                // Wenn "Startsen" die starken Teams sind (Platz 1, 2...), und er möchte, dass diese in der Liste/Anzeige
+                // oder in der Logik "später" kommen (z.B. höhere Bahnnummern oder einfach umgekehrte Reihenfolge im Loop),
+                // dann müssen wir $laneAssignment umkehren, damit die schwächeren Teams zuerst (auf die äußeren Bahnen)
+                // und die starken Teams zuletzt (auf die Mittelbahnen) im Loop verarbeitet werden.
+
+                // Bahnverteilung in Finals: Immer bei Bahn 1 anfangen (User-Wunsch).
+                // Wir belegen die Bahnen 1, 2, 3... bis zur Anzahl der Teams in diesem Finale.
+                // Um die Anforderung "stärkste Teams zuletzt setzen" zu erfüllen,
+                // durchlaufen wir die Plätze von schwach nach stark.
+                $teamsInThisFinal = min($lanesCount, $totalTeamsInGroup - $startPlatz + 1);
+                $laneAssignment = [];
+                for ($i = 1; $i <= $teamsInThisFinal; $i++) {
+                    $laneAssignment[] = $i;
+                }
+                // Wir drehen es um, damit wir mit der höchsten Bahn (schwächstes Team) anfangen
+                $laneAssignment = array_reverse($laneAssignment);
 
                 // Berechne Abstand zum letzten Vorlauf dieser Gruppe
                 $finalPause = '-';
@@ -697,8 +765,23 @@ class RegattaRaffleController extends Controller
                 }
 
                 foreach ($laneAssignment as $lIdx => $laneNumber) {
-                    $platzImRanking = $startPlatz + $lIdx;
+                    // Da wir $laneAssignment umgedreht haben (z.B. [4, 3, 2, 1]),
+                    // entspricht $lIdx 0 der Bahn 4 (schwächstes Team).
+                    // Der Platz im Ranking für das schwächste Team ist: $startPlatz + $teamsInThisFinal - 1
+                    $reverseIdx = ($teamsInThisFinal - 1) - $lIdx;
+                    $platzImRanking = $startPlatz + $reverseIdx;
+
                     if ($platzImRanking > $totalTeamsInGroup) continue;
+
+                    // Sicherheitscheck: Verhindere doppelte Bahnen im gleichen Rennen
+                    $alreadyAssigned = false;
+                    foreach ($preview as $p) {
+                        if ($p['race_number'] === $raceNumber && $p['lane'] === $laneNumber) {
+                            $alreadyAssigned = true;
+                            break;
+                        }
+                    }
+                    if ($alreadyAssigned) continue;
 
                     $preview[] = [
                         'time' => $currentGlobalTime->format('H:i'),
@@ -832,10 +915,19 @@ class RegattaRaffleController extends Controller
                         if ($candPause > $maxSwapPause) {
                             // Zusätzliche Prüfung: Wäre der Tausch für beide "sicher"?
                             // Ein Team darf nicht in ein Rennen getauscht werden, in dem es schon ist.
-                            $raceOfTarget = collect($preview)->where('race_number', $item['race_number'])->pluck('team_id')->toArray();
-                            $raceOfCand = collect($preview)->where('race_number', $cand['race_number'])->pluck('team_id')->toArray();
+                            $raceOfTarget = collect($preview)->where('race_number', $item['race_number'])->pluck('team_id')->filter()->toArray();
+                            $raceOfCand = collect($preview)->where('race_number', $cand['race_number'])->pluck('team_id')->filter()->toArray();
 
                             if (in_array($cand['team_id'], $raceOfTarget) || in_array($item['team_id'], $raceOfCand)) {
+                                continue;
+                            }
+
+                            // SICHERHEITSCHECK: Verhindere Doppelbelegung (Team darf nicht zweimal im gleichen Rennen sein)
+                            // Das Team, das von cand kommt, darf nicht bereits in item's Rennen sein (außer an der Stelle, die getauscht wird)
+                            // Und das Team, das von item kommt, darf nicht bereits in cand's Rennen sein.
+                            // Da wir oben bereits $raceOfTarget und $raceOfCand geplückt haben, prüfen wir hier gegen diese Listen.
+                            if (in_array($cand['team_id'], array_diff($raceOfTarget, [$item['team_id']])) ||
+                                in_array($item['team_id'], array_diff($raceOfCand, [$cand['team_id']]))) {
                                 continue;
                             }
 
@@ -850,6 +942,29 @@ class RegattaRaffleController extends Controller
                             $newPauseForCand = $candPrevStartNew ? $newTimeForCand->diffInMinutes(\Carbon\Carbon::parse($candPrevStartNew['time'])) : 9999;
 
                             if ($newPauseForCand < $minPause) {
+                                continue;
+                            }
+
+                            // Prüfung: Würde der Tausch für Team A (das aktuelle Team) einen neuen Konflikt verursachen?
+                            // Team A zieht von Lauf A (item) nach Lauf B (cand)
+                            $newTimeForA = \Carbon\Carbon::parse($cand['time']);
+                            $prevStartANew = collect($preview)
+                                ->where('team_id', $item['team_id'])
+                                ->filter(fn($i) => $i['race_number'] < $cand['race_number'])
+                                ->sortByDesc('race_number')
+                                ->first();
+                            $newPauseForA = $prevStartANew ? $newTimeForA->diffInMinutes(\Carbon\Carbon::parse($prevStartANew['time'])) : 9999;
+
+                            if ($newPauseForA < $minPause) {
+                                continue;
+                            }
+
+                            // SICHERHEITS-CHECK: Ist das aktuelle Team (teamId) bereits im Ziel-Lauf (Lauf B) vorhanden?
+                            // Oder ist der Tauschpartner (cand['team_id']) bereits im Quell-Lauf (Lauf A) vorhanden?
+                            $teamsInRaceA = collect($preview)->where('race_number', $item['race_number'])->pluck('team_id')->toArray();
+                            $teamsInRaceB = collect($preview)->where('race_number', $cand['race_number'])->pluck('team_id')->toArray();
+
+                            if (in_array($teamId, $teamsInRaceB) || (isset($cand['team_id']) && in_array($cand['team_id'], $teamsInRaceA))) {
                                 continue;
                             }
 
@@ -1066,6 +1181,45 @@ class RegattaRaffleController extends Controller
             }
         }
         // --- ENDE GLOBALE OPTIMIERUNG ---
+
+            // --- FINALE VALIDIERUNG: KEINE DOPPELBELEGUNGEN ---
+            $validationRaces = collect($preview)->where('race_number', '>', 0)->groupBy('race_number');
+            foreach ($validationRaces as $rNum => $rItems) {
+                $tIds = $rItems->pluck('team_id')->filter()->toArray();
+                if (count($tIds) !== count(array_unique($tIds))) {
+                    $duplicates = array_count_values($tIds);
+                    foreach ($duplicates as $dTid => $count) {
+                        if ($count > 1) {
+                            $dName = is_array($teamNames[$dTid] ?? $dTid) ? (($teamNames[$dTid]['name'] ?? $dTid)) : ($teamNames[$dTid] ?? $dTid);
+                            $noSwapFoundLogs[] = [
+                                'type' => 'Validierung',
+                                'raceA' => $rNum,
+                                'teamA' => $dName,
+                                'reason' => 'KRITISCHER FEHLER: Team ' . $count . 'x in Lauf ' . $rNum . ' (Initial oder Optimierung)',
+                                'level' => 0,
+                                'pauseA_old' => '-',
+                                'pauseA_new' => '-',
+                                'org_pauseA_old' => '-',
+                                'org_pauseA_new' => '-'
+                            ];
+
+                            // REPARATUR: Wenn Team doppelt im gleichen Lauf, entferne das Duplikat
+                            $foundFirst = false;
+                            foreach ($preview as $idx => $item) {
+                                if ($item['race_number'] == $rNum && $item['team_id'] == $dTid) {
+                                    if (!$foundFirst) {
+                                        $foundFirst = true;
+                                    } else {
+                                        $preview[$idx]['team_id'] = null;
+                                        $preview[$idx]['conflicts'] = 0;
+                                        $preview[$idx]['pause'] = '-';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
         // Siegerehrung hinzufügen
         if ($awardCeremonyTimeStr) {
@@ -1601,53 +1755,89 @@ class RegattaRaffleController extends Controller
             $oldTabeleIds = Tabele::where('event_id', $regattaId)->pluck('id');
             // Cascade delete sollte Bahnen und Rennen mitlöschen, falls definiert,
             // ansonsten manuell löschen um sicher zu gehen.
+            // Lanes haben SoftDeletes, wir löschen sie permanent für sauberen Stand
+            Lane::where('regatta_id', $regattaId)->delete();
+            Tabledata::whereIn('tabele_id', $oldTabeleIds)->delete();
             Race::where('event_id', $regattaId)->delete();
             Tabele::where('event_id', $regattaId)->delete();
-            // Lanes haben SoftDeletes, wir löschen sie permanent für sauberen Stand
-            Lane::where('regatta_id', $regattaId)->forceDelete();
 
-            // Gruppenweise Tabellen und Rennen erstellen
-            $groupedByRace = collect($preview)->groupBy('race_number');
+            $event = \App\Models\Event::find($regattaId);
+            $rennDatum = $event->datumvon;
 
-            // Wir erstellen pro Renngruppe (z.B. Mixed) und pro Vorlauf eine Tabelle, falls noch nicht da
+            // Erste Startzeit ermitteln (für veroeffentlichungUhrzeit bei Nicht-Finals)
+            $firstRaceTime = collect($preview)->sortBy('race_number')->first()['time'] ?? '00:00';
+
+            // Tabellen erstellen: Gruppiert nach Gruppe (für Vorläufe) und Gruppe + Final-Typ (für Endläufe)
+            $groupedForTables = collect($preview)->where('gruppe_id', '!=', 0)->groupBy(function ($item) {
+                if ($item['is_final']) {
+                    return $item['gruppe_id'] . '_final_' . $item['final_type'];
+                }
+                return $item['gruppe_id'] . '_vorlauf';
+            });
+
             $tabeleIds = [];
+            foreach ($groupedForTables as $key => $laneData) {
+                $firstLane = $laneData->first();
+                $gruppeId = $firstLane['gruppe_id'];
+                $heatIndex = $firstLane['heat_index'] ?? 1;
+                $finale = $firstLane['is_final'];
+
+                $tabele = new \App\Models\Tabele();
+                $tabele->event_id = $regattaId;
+                $tabele->gruppe_id = $gruppeId;
+                $tabele->tabelleDatumVon = $rennDatum;
+
+                if ($firstLane['is_final']) {
+                    $tabele->ueberschrift = $firstLane['final_type'] . ' ' . $firstLane['gruppe_name'];
+                    $tabele->finale = ($firstLane['final_type'] === 'A-Finale') ? 1 : 0;
+                    $tabele->tabelleLevelVon = $params['heats_count']+1 ?? 2;
+                    $tabele->tabelleLevelBis = $params['heats_count']+1 ?? 2;
+                    $tabele->wertungsart = $params['wertungsart'] ?? 1;
+                    $tabele->tabelleVisible = 0;
+                    $tabele->finaleAnzeigen = $params['finale_publish_time'].':00' ?? '00:00:00';
+                } else {
+                    $tabele->ueberschrift = 'Vorlauf ' . $firstLane['gruppe_name'];
+                    $tabele->finale = 0;
+                    $tabele->tabelleLevelVon = 1;
+                    $tabele->tabelleLevelBis = $params['heats_count'] ?? 1;
+                    $tabele->wertungsart = 2;
+                    $tabele->tabelleVisible = 1;
+                    $tabele->finaleAnzeigen = $firstRaceTime;
+                }
+
+                $tabele->wertungsart = $params['wertungsart'] ?? 1;
+                $tabele->autor_id = $userId;
+                $tabele->bearbeiter_id = $userId;
+                $tabele->save();
+
+                $tabeleIds[$key] = $tabele->id;
+            }
+
+            // Rennen erstellen: Gruppiert nach race_number
+            $groupedByRace = collect($preview)->where('gruppe_id', '!=', 0)->groupBy('race_number');
 
             foreach ($groupedByRace as $raceNum => $laneData) {
                 $firstLane = $laneData->first();
                 $gruppeId = $firstLane['gruppe_id'];
-                $heatIndex = $firstLane['heat_index'] ?? 1;
-                $key = $gruppeId . '_' . $heatIndex;
-
-                if (!isset($tabeleIds[$key])) {
-                    $tabele = new \App\Models\Tabele();
-                    $tabele->event_id = $regattaId;
-                    $tabele->gruppe_id = $gruppeId;
-                    $tabele->tabelleDatumVon = now();
-
-                    if ($firstLane['is_final']) {
-                        $tabele->ueberschrift = $firstLane['final_type'] . ' ' . $firstLane['gruppe_name'];
-                        $tabele->finale = 1;
-                    } else {
-                        $tabele->ueberschrift = $heatIndex . '. Vorlauf ' . $firstLane['gruppe_name'];
-                        $tabele->finale = 0;
-                    }
-
-                    $tabele->tabelleLevelVon = 0;
-                    $tabele->tabelleLevelBis = 0;
-                    $tabele->wertungsart = $params['wertungsart'] ?? 1;
-                    $tabele->autor_id = $userId;
-                    $tabele->bearbeiter_id = $userId;
-                    $tabele->save();
-
-                    $tabeleIds[$key] = $tabele->id;
-                }
+                $tableKey = $firstLane['is_final']
+                    ? $gruppeId . '_final_' . $firstLane['final_type']
+                    : $gruppeId . '_vorlauf';
 
                 $race = new \App\Models\Race();
                 $race->event_id = $regattaId;
-                $race->tabele_id = $tabeleIds[$key];
+                $race->tabele_id = $tabeleIds[$tableKey] ?? null;
                 $race->gruppe_id = $gruppeId;
-                $race->rennDatum = now();
+                $race->rennDatum = $rennDatum;
                 $race->rennUhrzeit = $firstLane['time'];
+
+                // Veröffentlichungsuhrzeit: Bei Finals 'finale_publish_time', sonst die erste Startzeit der Regatta
+                if ($firstLane['is_final']) {
+                    $race->veroeffentlichungUhrzeit = $params['finale_publish_time'] ?? '00:00';
+                } else {
+                    $race->veroeffentlichungUhrzeit = $firstRaceTime;
+                }
+
+                $race->level = $firstLane['heat_index'] ?? 1;
 
                 if ($firstLane['is_final']) {
                     $race->rennBezeichnung = $firstLane['final_type'];
@@ -1664,7 +1854,7 @@ class RegattaRaffleController extends Controller
                     $laneModel = new \App\Models\Lane();
                     $laneModel->regatta_id = $regattaId;
                     $laneModel->rennen_id = $race->id;
-                    $laneModel->tabele_id = $tabeleIds[$key];
+                    $laneModel->tabele_id = $tabeleIds[$tableKey] ?? null;
                     $laneModel->mannschaft_id = $lane['team_id'] ?? null;
                     $laneModel->bahn = $lane['lane'];
                     $laneModel->zeit = '00:00:00';

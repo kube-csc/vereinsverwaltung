@@ -32,6 +32,8 @@ use App\Http\Controllers\RegattaTeamController;
 use App\Http\Controllers\FaqController ;
 use App\Http\Controllers\RegattaSettingsController;
 use App\Http\Controllers\RegattaTeamManagerController;
+use App\Http\Controllers\RegattaRaffleController;
+use App\Http\Controllers\RegattaRaffleOrganizationController;
 use App\Http\Controllers\TrainerAdminController;
 use App\Http\Controllers\TrainertypAdminController;
 
@@ -309,6 +311,28 @@ Route::get('/RegattateamManager',                     [RegattaTeamManagerControl
 Route::get('/RegattateamManager/edit/{id}',           [RegattaTeamManagerController::class, 'edit'])   ->name('regattaTeamManager.edit');
 Route::post('/RegattateamManager/update/{id}',         [RegattaTeamManagerController::class, 'update']) ->name('regattaTeamManager.update');
 Route::post('/RegattateamManager/sync/{id}',           [RegattaTeamManagerController::class, 'sync'])   ->name('regattaTeamManager.sync');
+
+// Regatta Rennplan-Logik (Spezifikation)
+Route::get('/Regatta/Rennplan-Logik',                 [RegattaRaffleController::class, 'index'])        ->name('regattaRaffle.index');
+Route::post('/Regatta/Rennplan-Logik/generate',        [RegattaRaffleController::class, 'generatePreview'])->name('regattaRaffle.generate');
+Route::post('/Regatta/Rennplan-Logik/store',           [RegattaRaffleController::class, 'store'])->name('regattaRaffle.store');
+Route::post('/Regatta/Rennplan-Logik/save-version',    [RegattaRaffleController::class, 'saveVersion'])->name('regattaRaffle.saveVersion');
+Route::get('/Regatta/Rennplan-Logik/load-version/{id}', [RegattaRaffleController::class, 'loadVersion'])->name('regattaRaffle.loadVersion');
+Route::post('/Regatta/Rennplan-Logik/clear-draft',     [RegattaRaffleController::class, 'clearDraft'])->name('regattaRaffle.clearDraft');
+Route::post('/Regatta/Rennplan-Logik/move',            [RegattaRaffleController::class, 'moveRace'])->name('regattaRaffle.move');
+Route::post('/Regatta/Rennplan-Logik/recalculate',     [RegattaRaffleController::class, 'recalculateTimes'])->name('regattaRaffle.recalculate');
+
+// Raffle Organization Management
+Route::prefix('Regatta/Rennplan-Logik/Organizations')->name('raffleOrganizations.')->group(function () {
+    Route::post('/auto-assign', [RegattaRaffleOrganizationController::class, 'autoAssign'])->name('autoAssign');
+    Route::post('/', [RegattaRaffleOrganizationController::class, 'store'])->name('store');
+    Route::post('/from-team', [RegattaRaffleOrganizationController::class, 'createFromTeam'])->name('createFromTeam');
+    Route::post('/{id}', [RegattaRaffleOrganizationController::class, 'update'])->whereNumber('id')->name('update');
+    Route::post('/{id}/rubrik', [RegattaRaffleOrganizationController::class, 'setRubrik'])->whereNumber('id')->name('setRubrik');
+    Route::delete('/{id}', [RegattaRaffleOrganizationController::class, 'destroy'])->whereNumber('id')->name('destroy');
+    Route::post('/assign-team', [RegattaRaffleOrganizationController::class, 'assignTeam'])->name('assignTeam');
+    Route::post('/reset', [RegattaRaffleOrganizationController::class, 'reset'])->name('reset');
+});
 
 Route::get('/Regatta/Einstellungen', [RegattaSettingsController::class, 'edit'])->name('regattaSettings.edit');
 Route::post('/Regatta/Einstellungen', [RegattaSettingsController::class, 'update'])->name('regattaSettings.update');

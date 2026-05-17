@@ -251,15 +251,81 @@
                     </div>
 
                     <script>
-                        function editOrg(id, name) {
-                            const modal = document.getElementById('editOrgModal');
-                            const form = document.getElementById('editOrgForm');
-                            const input = document.getElementById('editOrgName');
+                        (function () {
+                            var pointsystemsBySystem = @json($pointsystemsBySystem ?? []);
 
-                            form.action = `/Regatta/Rennplan-Logik/Organizations/${id}`;
-                            input.value = name;
-                            modal.classList.remove('hidden');
-                        }
+                            function renderPreview() {
+                                var previewEl = document.getElementById('tabelleSystemPreview');
+                                var systemEl = document.getElementById('tabelleSystem');
+                                if (!previewEl || !systemEl) return;
+
+                                var systemId = String(systemEl.value || '');
+                                var rows = pointsystemsBySystem[systemId] || [];
+
+                                if (!systemId || rows.length === 0) {
+                                    previewEl.innerHTML = '<span class="text-gray-500">Keine Vorschau verfügbar.</span>';
+                                    return;
+                                }
+
+                                var html = '<div class="font-semibold mb-1 uppercase text-[10px] text-gray-400">Punktevergabe</div>';
+                                html += '<table class="min-w-full text-[10px]">';
+                                html += '<thead><tr class="border-b"><th class="text-left pr-4">Platz</th><th class="text-left">Punkte</th></tr></thead>';
+                                html += '<tbody class="divide-y">';
+                                for (var i = 0; i < rows.length; i++) {
+                                    html += '<tr><td class="pr-4 py-0.5">' + rows[i].platz + '</td><td class="py-0.5">' + rows[i].punkte + '</td></tr>';
+                                }
+                                html += '</tbody></table>';
+
+                                previewEl.innerHTML = html;
+                            }
+
+                            function syncTabelleSystemVisibility() {
+                                var wertungsartEl = document.getElementById('wertungsart');
+                                var wrapper = document.getElementById('tabelleSystemWrapper');
+                                var systemEl = document.getElementById('tabelleSystem');
+                                var previewEl = document.getElementById('tabelleSystemPreview');
+
+                                if (!wertungsartEl || !wrapper || !systemEl) return;
+
+                                var isPunkte = String(wertungsartEl.value) === '1';
+
+                                wrapper.style.display = isPunkte ? '' : 'none';
+                                systemEl.disabled = !isPunkte;
+                                systemEl.required = isPunkte;
+
+                                if (previewEl) {
+                                    previewEl.style.display = isPunkte ? '' : 'none';
+                                }
+
+                                if (isPunkte) {
+                                    renderPreview();
+                                }
+                            }
+
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var wertungsartEl = document.getElementById('wertungsart');
+                                if (wertungsartEl) {
+                                    wertungsartEl.addEventListener('change', syncTabelleSystemVisibility);
+                                }
+
+                                var systemEl = document.getElementById('tabelleSystem');
+                                if (systemEl) {
+                                    systemEl.addEventListener('change', renderPreview);
+                                }
+
+                                syncTabelleSystemVisibility();
+                            });
+
+                            window.editOrg = function(id, name) {
+                                const modal = document.getElementById('editOrgModal');
+                                const form = document.getElementById('editOrgForm');
+                                const input = document.getElementById('editOrgName');
+
+                                form.action = `/Regatta/Rennplan-Logik/Organizations/${id}`;
+                                input.value = name;
+                                modal.classList.remove('hidden');
+                            };
+                        })();
                     </script>
                 </div>
 
@@ -384,10 +450,31 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Wertungsmodus</label>
-                                <select name="wertungsart" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <select name="wertungsart" id="wertungsart" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                     <option value="1" {{ ($draft && ($draft->params['wertungsart'] ?? 1) == 1) ? 'selected' : '' }}>Punktwertung</option>
                                     <option value="2" {{ ($draft && ($draft->params['wertungsart'] ?? 1) == 2) ? 'selected' : '' }}>Zeitwertung</option>
                                 </select>
+                            </div>
+
+                            <div id="tabelleSystemWrapper" class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700">Tabellen Punkte System</label>
+                                @php
+                                    $defaultSystemId = $draft ? ($draft->params['tabelleSystem'] ?? ($pointsystemIds->first() ?? 1)) : ($pointsystemIds->first() ?? 1);
+                                @endphp
+                                <select name="tabelleSystem" id="tabelleSystem" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    @forelse($pointsystemIds as $systemId)
+                                        <option value="{{ $systemId }}" {{ (string)$defaultSystemId === (string)$systemId ? 'selected' : '' }}>
+                                            System {{ $systemId }}
+                                        </option>
+                                    @empty
+                                        <option value="" selected>Kein Punktesystem vorhanden</option>
+                                    @endforelse
+                                </select>
+                                <div id="tabelleSystemPreview" class="mt-2 text-xs text-gray-600 bg-gray-50 p-2 rounded border"></div>
+                            </div>
+                            <div class="flex items-center mt-2">
+                                <input type="checkbox" name="buchholzwertung" id="buchholzwertung" value="1" {{ ($draft && ($draft->params['buchholzwertung'] ?? 0) == 1) ? 'checked' : '' }} class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="buchholzwertung" class="ml-2 block text-sm text-gray-700">Buchholzwertung für Vorläufe aktivieren</label>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Mindestpause Team (Min.)</label>

@@ -79,6 +79,26 @@ class RegattaRaffleController extends Controller
             $previewData = $this->hydratePreview($draft->items()->orderBy('race_number')->orderBy('lane')->get()->toArray(), $draft);
         }
 
+        $pointsystemIds = \App\Models\Pointsystem::query()
+            ->select('system_id')
+            ->distinct()
+            ->orderBy('system_id')
+            ->pluck('system_id');
+
+        $pointsystemsBySystem = \App\Models\Pointsystem::query()
+            ->orderBy('system_id')
+            ->orderBy('platz')
+            ->get()
+            ->groupBy('system_id')
+            ->map(function ($rows) {
+                return $rows->map(function ($row) {
+                    return [
+                        'platz' => (int)$row->platz,
+                        'punkte' => (int)$row->punkte,
+                    ];
+                })->values();
+            });
+
         return view('regattaManagement.regattaRaffle.index', [
             'regattaId' => $regattaId,
             'teams' => $teams,
@@ -91,7 +111,9 @@ class RegattaRaffleController extends Controller
             'maxHeatEndTime' => $draft ? ($draft->params['maxHeatEndTime'] ?? null) : null,
             'finalTeamlinks' => $this->getFinalTeamlinks($regattaId),
             'plans' => $plans,
-            'draft' => $draft
+            'draft' => $draft,
+            'pointsystemIds' => $pointsystemIds,
+            'pointsystemsBySystem' => $pointsystemsBySystem,
         ]);
     }
 
@@ -167,6 +189,14 @@ class RegattaRaffleController extends Controller
         $finalePublishTimeStr = $request->input('finale_publish_time'); // Manuelle Eingabe falls vorhanden
 
         $finalsCount = $request->input('finals_count', 1);
+        $buchholzwertung = $request->input('buchholzwertung', 0);
+        $tabelleSystem = $request->input('tabelleSystem');
+
+        // Bei Zeitwertung (2) immer Buchholzwertung deaktivieren (Rennen mit Einzelwertung/Zeitwertung)
+        if ($wertungsart == 2) {
+            $buchholzwertung = 0;
+            $tabelleSystem = null; // Kein Punktesystem bei Zeitwertung
+        }
 
         $teamsByGroup = RegattaTeam::where('regatta_id', $regattaId)
             ->where('status', 'Neuanmeldung')
@@ -1275,6 +1305,7 @@ class RegattaRaffleController extends Controller
             'start_time' => $startTime,
             'interval' => $interval,
             'wertungsart' => $wertungsart,
+            'buchholzwertung' => $buchholzwertung,
             'heats_count' => $heatsCount,
             'min_pause' => $minPause,
             'min_pause_org' => $minPauseOrg,
@@ -1284,6 +1315,7 @@ class RegattaRaffleController extends Controller
             'award_ceremony_time' => $awardCeremonyTimeStr,
             'min_time_before_ceremony' => $minTimeBeforeCeremony,
             'finale_publish_time' => $finalePublishTimeStr,
+            'tabelleSystem' => $tabelleSystem,
             'swapCount' => $swapCount,
             'swapAttempts' => $swapAttempts,
             'swapLogs' => collect($swapLogs)->unique()->toArray(),
@@ -1793,19 +1825,22 @@ class RegattaRaffleController extends Controller
                     $tabele->tabelleLevelVon = $params['heats_count']+1 ?? 2;
                     $tabele->tabelleLevelBis = $params['heats_count']+1 ?? 2;
                     $tabele->wertungsart = $params['wertungsart'] ?? 1;
+                    $tabele->system_id = $params['tabelleSystem'] ?? null;
+                    $tabele->buchholzwertungaktiv = 0; // Finals nie mit Buchholz
                     $tabele->tabelleVisible = 0;
-                    $tabele->finaleAnzeigen = $params['finale_publish_time'].':00' ?? '00:00:00';
+                    $tabele->finaleAnzeigen = (!empty($params['finale_publish_time']) ? $params['finale_publish_time'] : '00:00') . ':00';
                 } else {
                     $tabele->ueberschrift = 'Vorlauf ' . $firstLane['gruppe_name'];
                     $tabele->finale = 0;
                     $tabele->tabelleLevelVon = 1;
                     $tabele->tabelleLevelBis = $params['heats_count'] ?? 1;
-                    $tabele->wertungsart = 2;
+                    $tabele->wertungsart = $params['wertungsart'] ?? 1;
+                    $tabele->buchholzwertungaktiv = $params['buchholzwertung'] ?? 0;
+                    $tabele->system_id = $params['tabelleSystem'] ?? null;
                     $tabele->tabelleVisible = 1;
-                    $tabele->finaleAnzeigen = $firstRaceTime;
+                    $tabele->finaleAnzeigen = $firstRaceTime . ':00';
                 }
 
-                $tabele->wertungsart = $params['wertungsart'] ?? 1;
                 $tabele->autor_id = $userId;
                 $tabele->bearbeiter_id = $userId;
                 $tabele->save();

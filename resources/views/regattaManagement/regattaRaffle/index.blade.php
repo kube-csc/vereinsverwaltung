@@ -450,7 +450,7 @@
                             </div>
 
                             <div class="bg-gray-50 border border-gray-200 rounded p-3 mt-4">
-                                <label class="block text-sm font-bold text-gray-800 mb-2">Zusätzliche Pause einplanen</label>
+                                <label class="block text-sm font-bold text-gray-800 mb-2">Zusätzliche Mittagspause einplanen</label>
                                 <div class="space-y-3">
                                     <div class="flex items-center gap-4">
                                         <label class="flex items-center text-xs">
@@ -466,8 +466,8 @@
 
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-[10px] font-medium text-gray-700">Ab Uhrzeit / Nach Vorlauf Nr.</label>
-                                            <input type="text" name="pause_trigger" value="{{ $draft ? ($draft->params['pause_trigger'] ?? '') : '' }}" placeholder="z.B. 12:00 oder 1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-xs">
+                                            <label class="block text-[10px] font-medium text-gray-700">Ab Uhrzeit / Nach Rennen (Kommasepariert)</label>
+                                            <input type="text" name="pause_trigger" value="{{ $draft ? ($draft->params['pause_trigger'] ?? '') : '' }}" placeholder="z.B. 12:00 oder 14,20" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-xs">
                                         </div>
                                         <div>
                                             <label class="block text-[10px] font-medium text-gray-700">Pausenlänge (Min.)</label>
@@ -744,75 +744,43 @@
                                         </thead>
                                         <tbody class="divide-y divide-gray-200">
                                             @php
-                                                $chronologicalRaces = collect($previewData)->groupBy('race_number')->sortBy(function($lanes, $raceNumber) {
+                                                $chronologicalRaces = collect($previewData)->groupBy(function($item) {
+                                                    // Wenn race_number > 0 ist, gruppieren wir nach race_number
+                                                    // Wenn race_number 0 ist, gruppieren wir nach Zeit und Typ, um Mittagspausen/Siegerehrungen getrennt zu halten
+                                                    if ((int)$item['race_number'] > 0) return $item['race_number'];
+
+                                                    $type = !empty($item['is_award_ceremony']) ? 'award' : 'pause';
+                                                    return '0-' . $type . '-' . $item['time'];
+                                                })->sortBy(function($lanes) {
                                                     $firstLane = $lanes->first();
                                                     $timeStr = $firstLane['time'] ?? '00:00';
                                                     $parts = explode(':', $timeStr);
                                                     $minutes = ((int)($parts[0] ?? 0) * 60) + (int)($parts[1] ?? 0);
 
-                                                    // Wir nutzen race_number als primäres Sortierkriterium (außer für 0)
-                                                    // Aber wenn race_number 0 ist (Siegerehrung), soll es sich nach der Zeit einordnen.
-                                                    // Da normale Rennen race_number 1, 2, 3... haben,
-                                                    // können wir für die Sortierung einen Wert berechnen:
-                                                    // (race_number * 10000) + minutes
-                                                    // Für race_number 0 (Siegerehrung) nutzen wir einen speziellen Wert, der es zeitlich einordnet.
-
-                                                    if ((int)$raceNumber === 0) {
-                                                        // Suche das Rennen, das zeitlich am nächsten davor liegt
-                                                        // Oder einfacher: Nutze nur die Zeit für die Gesamtsortierung,
-                                                        // wenn race_number nicht zuverlässig ist.
-                                                        // Aber der User wollte race_number Sortierung für Verschiebungen.
-
-                                                        // Wenn wir Siegerehrung (0) haben, geben wir ihr eine "virtuelle" race_number basierend auf der Zeit.
-                                                        return $minutes; // Sortierung rein nach Minuten für Siegerehrung? Nein, das mischt sie an den Anfang.
-                                                    }
-
-                                                    // Normales Rennen: race_number hat Vorrang
-                                                    // Da race_numbers meistens chronologisch sind,
-                                                    // ist (int)$raceNumber oft identisch mit der zeitlichen Sortierung.
-                                                    return (int)$raceNumber * 10000;
-                                                });
-
-                                                // Zweiter Versuch: Wir sortieren ALLES nach race_number,
-                                                // aber wenn race_number 0 ist, berechnen wir eine passende Position.
-                                                // Einfacher: Wir sortieren nach Zeit, aber innerhalb gleicher Zeiten nach race_number?
-                                                // Nein, Verschiebungen ändern race_number, nicht unbedingt die Zeit sofort.
-
-                                                // BESSER: Wir sortieren nach race_number, aber behandeln 0 als "Sonderfall".
-                                                // Wenn race_number 0 ist, weisen wir ihm einen Sortierwert zu, der zwischen den passenden race_numbers liegt.
-
-                                                $chronologicalRaces = collect($previewData)->groupBy('race_number')->sortBy(function($lanes, $raceNumber) use ($previewData) {
-                                                    $firstLane = $lanes->first();
-                                                    if ((int)$raceNumber > 0) {
-                                                        return (int)$raceNumber;
-                                                    }
-
-                                                    // Es ist eine Siegerehrung (race_number 0)
-                                                    $ceremonyTime = substr($firstLane['time'] ?? '00:00', 0, 5);
-
-                                                    // Finde die race_number des Rennens, das unmittelbar vor dieser Zeit liegt
-                                                    $lastRaceBefore = collect($previewData)
-                                                        ->where('race_number', '>', 0)
-                                                        ->filter(fn($item) => substr($item['time'] ?? '00:00', 0, 5) <= $ceremonyTime)
-                                                        ->sortByDesc('race_number')
-                                                        ->first();
-
-                                                    if ($lastRaceBefore) {
-                                                        return (int)$lastRaceBefore['race_number'] + 0.5;
-                                                    }
-
-                                                    return 0; // Bleibt am Anfang wenn nichts davor ist
+                                                    // Primäres Sortierkriterium ist die Zeit
+                                                    return $minutes;
                                                 });
 
                                                 $pauseShown = false;
                                                 $maxHeatEnd = $maxHeatEndTime ?? null;
+                                                $lastRaceId = $chronologicalRaces->keys()->last();
                                             @endphp
 
-                                            @foreach($chronologicalRaces as $raceId => $lanes)
+                                            @foreach($chronologicalRaces as $raceKey => $subLanes)
                                                 @php
-                                                    $firstLane = $lanes->first();
+                                                    $firstLane = $subLanes->first();
                                                     $raceTime = substr($firstLane['time'] ?? '00:00', 0, 5);
                                                     $raceNumber = $firstLane['race_number'] ?? null;
+
+                                                    $isAwardCeremony = false;
+                                                    $isExtraPause = false;
+
+                                                    // In hydratePreview werden Mittagspausen (is_extra_pause) und Siegerehrung (is_award_ceremony) markiert.
+                                                    if (!empty($firstLane['is_extra_pause'])) {
+                                                        $isExtraPause = true;
+                                                    } elseif (!empty($firstLane['is_award_ceremony'])) {
+                                                        $isAwardCeremony = true;
+                                                    }
                                                 @endphp
 
                                                 @if(!$pauseShown && $maxHeatEnd && $raceTime > $maxHeatEnd && ($firstLane['is_final'] ?? false))
@@ -824,38 +792,55 @@
                                                     @php $pauseShown = true; @endphp
                                                 @endif
 
-                                                @if(isset($firstLane['is_extra_pause']) && $firstLane['is_extra_pause'])
-                                                    <tr class="bg-gray-100 border-y-2 border-gray-200">
+                                                @if($isExtraPause)
+                                                    <tr id="race-{{ $raceNumber }}-pause" class="bg-gray-100 border-y-2 border-gray-200">
                                                         <td class="px-2 py-4 font-bold text-gray-900">{{ $raceTime }}</td>
                                                         <td class="px-2 py-4 text-center text-gray-800 font-bold">-</td>
                                                         <td class="px-2 py-4 text-center">
-                                                            <div class="flex justify-center items-center h-full">
-                                                                <box-icon name='coffee-togo' type='solid' color='#4b5563'></box-icon>
+                                                            <div class="flex flex-col items-center gap-1">
+                                                                @if(!$loop->first)
+                                                                    <form action="{{ route('regattaRaffle.move') }}" method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden" name="regatta_id" value="{{ $regattaId }}">
+                                                                        <input type="hidden" name="race_number" value="{{ $raceNumber }}">
+                                                                        <input type="hidden" name="direction" value="up">
+                                                                        <button type="submit" class="text-blue-600 hover:text-blue-800" title="Nach oben verschieben">
+                                                                            <box-icon name='chevron-up' size="xs"></box-icon>
+                                                                        </button>
+                                                                    </form>
+                                                                @endif
+                                                                <box-icon name='coffee-togo' type='solid' color='#4b5563' size="md"></box-icon>
+                                                                @if(!$loop->last)
+                                                                    <form action="{{ route('regattaRaffle.move') }}" method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden" name="regatta_id" value="{{ $regattaId }}">
+                                                                        <input type="hidden" name="race_number" value="{{ $raceNumber }}">
+                                                                        <input type="hidden" name="direction" value="down">
+                                                                        <button type="submit" class="text-blue-600 hover:text-blue-800" title="Nach unten verschieben">
+                                                                            <box-icon name='chevron-down' size="xs"></box-icon>
+                                                                        </button>
+                                                                    </form>
+                                                                @endif
                                                             </div>
                                                         </td>
-                                                        <td colspan="4" class="px-4 py-4 text-center font-bold text-gray-700 uppercase tracking-widest">
-                                                            Zusätzliche Pause ({{ $firstLane['pause_duration'] ?? '?' }} Min)
+                                                        <td colspan="4" class="px-4 py-4 text-center font-bold text-gray-700 uppercase tracking-widest text-lg">
+                                                            {{ $firstLane['placeholder_name'] ?? 'Mittagspause' }}
                                                         </td>
                                                     </tr>
-                                                    @continue
-                                                @endif
-
-                                                @if(isset($firstLane['is_award_ceremony']) && $firstLane['is_award_ceremony'])
-                                                    <tr id="race-0" class="bg-purple-100 border-y-2 border-purple-200">
+                                                @elseif($isAwardCeremony)
+                                                    <tr id="race-0-award" class="bg-purple-100 border-y-2 border-purple-200">
                                                         <td class="px-2 py-4 font-bold text-purple-900">{{ $raceTime }}</td>
                                                         <td class="px-2 py-4 text-center text-purple-800 font-bold">-</td>
                                                         <td class="px-2 py-4 text-center">
                                                             <div class="flex justify-center items-center h-full">
-                                                                <box-icon name='trophy' type='solid' color='#581c87'></box-icon>
+                                                                <box-icon name='trophy' type='solid' color='#581c87' size="md"></box-icon>
                                                             </div>
                                                         </td>
                                                         <td colspan="4" class="px-4 py-4 text-center font-bold text-purple-900 uppercase tracking-widest text-lg">
-                                                            Siegerehrung
+                                                            {{ $firstLane['placeholder_name'] ?? 'Siegerehrung' }}
                                                         </td>
                                                     </tr>
-                                                    @continue
-                                                @endif
-
+                                                @else
                                                 <tr id="race-{{ $raceNumber }}" class="{{ $firstLane['is_final'] ? 'bg-blue-50' : '' }}">
                                                     <td class="px-2 py-2 font-bold">{{ $raceTime }}</td>
                                                     <td class="px-2 py-2 text-center text-gray-600 font-bold">{{ $firstLane['level'] ?? '-' }}</td>
@@ -896,7 +881,7 @@
                                                     </td>
                                                     <td class="px-2 py-2">
                                                         <div class="grid grid-cols-1 gap-1">
-                                                            @foreach($lanes->sortBy('lane') as $l)
+                                                            @foreach($subLanes->sortBy('lane') as $l)
                                                                 @php
                                                                     $minPauseTeam = $draft->params['min_pause'] ?? 20;
                                                                     $isBelowMinPause = isset($l['pause_minutes']) && $l['pause_minutes'] < $minPauseTeam;
@@ -954,6 +939,7 @@
                                                         </div>
                                                     </td>
                                                 </tr>
+                                                @endif
                                             @endforeach
                                         </tbody>
                                     </table>

@@ -183,6 +183,13 @@ class RegattaRaffleController extends Controller
         $minPause = $request->input('min_pause', 20);
         $minPauseOrg = $request->input('min_pause_org', 10);
         $pauseAfterHeats = $request->input('pause_after_heats', 30);
+
+        // Zusätzliche Pausenoptionen
+        $pauseType = $request->input('pause_type', 'none');
+        $pauseTrigger = $request->input('pause_trigger');
+        $pauseDuration = (int)$request->input('pause_duration', 30);
+        $extraPauseApplied = false;
+
         $finalsStartTimeStr = $request->input('finals_start_time', '14:00');
         $awardCeremonyTimeStr = $request->input('award_ceremony_time', '18:00');
         $minTimeBeforeCeremony = $request->input('min_time_before_ceremony', 30);
@@ -630,6 +637,50 @@ class RegattaRaffleController extends Controller
             }
             $raceNumber++;
             $currentGlobalTime->addMinutes($interval);
+
+            // Zusätzliche Pause anwenden, falls konfiguriert
+            if (!$extraPauseApplied && $pauseType !== 'none') {
+                if ($pauseType === 'time' && !empty($pauseTrigger)) {
+                    $triggerString = $pauseTrigger;
+                    if (is_numeric($triggerString) && strlen($triggerString) <= 2) {
+                        $triggerString .= ':00';
+                    }
+                    try {
+                        $triggerTime = \Carbon\Carbon::parse($triggerString);
+                        if ($currentGlobalTime->format('H:i') >= $triggerTime->format('H:i')) {
+                            $currentGlobalTime->addMinutes($pauseDuration);
+                            $extraPauseApplied = true;
+                            $preview[] = [
+                                'time' => $currentGlobalTime->copy()->subMinutes($pauseDuration)->format('H:i'),
+                                'is_extra_pause' => true,
+                                'pause_duration' => $pauseDuration,
+                                'is_final' => false,
+                                'race_number' => 0,
+                                'gruppe_id' => 0,
+                                'gruppe_name' => 'Pause'
+                            ];
+                        }
+                    } catch (\Exception $e) {
+                        // Ignorieren bei Fehlformatierung
+                    }
+                } elseif ($pauseType === 'heat' && !empty($pauseTrigger)) {
+                    if ($h == (int)$pauseTrigger && $i == $maxHeatsInRound - 1) {
+                        // Nach dem letzten Heat der angegebenen Runde
+                        $currentGlobalTime->addMinutes($pauseDuration);
+                        $extraPauseApplied = true;
+                        $preview[] = [
+                            'time' => $currentGlobalTime->copy()->subMinutes($pauseDuration)->format('H:i'),
+                            'is_extra_pause' => true,
+                            'pause_duration' => $pauseDuration,
+                            'is_final' => false,
+                            'race_number' => 0,
+                            'gruppe_id' => 0,
+                            'gruppe_name' => 'Pause'
+                        ];
+                    }
+                }
+            }
+
             $heatIndexInAllHeats++;
         }
 
@@ -842,14 +893,14 @@ class RegattaRaffleController extends Controller
         // Zähle Heats pro Team für Level-Bestimmung
         $teamHeatCounts = [];
         foreach ($preview as $item) {
-            if (!$item['is_final'] && $item['team_id']) {
+            if (!$item['is_final'] && isset($item['team_id']) && $item['team_id']) {
                 $teamHeatCounts[$item['team_id']] = ($teamHeatCounts[$item['team_id']] ?? 0) + 1;
             }
         }
 
         // Level (Laufanzahl) zu Items hinzufügen
         foreach ($preview as &$item) {
-            if ($item['team_id']) {
+            if (isset($item['team_id']) && $item['team_id']) {
                 $item['level'] = $teamHeatCounts[$item['team_id']] ?? 0;
             } else {
                 $item['level'] = 0;
@@ -872,7 +923,7 @@ class RegattaRaffleController extends Controller
             $heats = collect($preview)->where('is_final', false)->where('race_number', '>', 0)->sortBy('race_number');
 
             foreach ($heats as $index => $item) {
-                if (!$item['team_id']) continue;
+                if (!isset($item['team_id']) || !$item['team_id']) continue;
 
                 $teamId = $item['team_id'];
                 $tid = $teamId;
@@ -929,7 +980,7 @@ class RegattaRaffleController extends Controller
                     $maxSwapPause = -1;
 
                     foreach ($candidates as $cand) {
-                        if (!$cand['team_id']) continue;
+                        if (!isset($cand['team_id']) || !$cand['team_id']) continue;
 
                         // Berechne Pause des Kandidaten an seiner jetzigen Stelle
                         $candTime = \Carbon\Carbon::parse($cand['time']);
@@ -1183,7 +1234,7 @@ class RegattaRaffleController extends Controller
             });
 
             foreach ($preview as &$pItem) {
-                if (!$pItem['team_id']) continue;
+                if (!isset($pItem['team_id']) || !$pItem['team_id']) continue;
                 $tId = $pItem['team_id'];
                 $currT = \Carbon\Carbon::parse($pItem['time']);
 
@@ -1215,7 +1266,9 @@ class RegattaRaffleController extends Controller
             // --- FINALE VALIDIERUNG: KEINE DOPPELBELEGUNGEN ---
             $validationRaces = collect($preview)->where('race_number', '>', 0)->groupBy('race_number');
             foreach ($validationRaces as $rNum => $rItems) {
-                $tIds = $rItems->pluck('team_id')->filter()->toArray();
+                $tIds = $rItems->pluck('team_id')->filter(function($id) {
+                    return !is_null($id);
+                })->toArray();
                 if (count($tIds) !== count(array_unique($tIds))) {
                     $duplicates = array_count_values($tIds);
                     foreach ($duplicates as $dTid => $count) {
@@ -1236,7 +1289,7 @@ class RegattaRaffleController extends Controller
                             // REPARATUR: Wenn Team doppelt im gleichen Lauf, entferne das Duplikat
                             $foundFirst = false;
                             foreach ($preview as $idx => $item) {
-                                if ($item['race_number'] == $rNum && $item['team_id'] == $dTid) {
+                                if (isset($item['race_number']) && $item['race_number'] == $rNum && isset($item['team_id']) && $item['team_id'] == $dTid) {
                                     if (!$foundFirst) {
                                         $foundFirst = true;
                                     } else {
@@ -1316,6 +1369,9 @@ class RegattaRaffleController extends Controller
             'min_time_before_ceremony' => $minTimeBeforeCeremony,
             'finale_publish_time' => $finalePublishTimeStr,
             'tabelleSystem' => $tabelleSystem,
+            'pause_type' => $pauseType,
+            'pause_trigger' => $pauseTrigger,
+            'pause_duration' => $pauseDuration,
             'swapCount' => $swapCount,
             'swapAttempts' => $swapAttempts,
             'swapLogs' => collect($swapLogs)->unique()->toArray(),
@@ -1492,6 +1548,13 @@ class RegattaRaffleController extends Controller
         $minPauseOrg = $request->input('min_pause_org', 10);
         $finalsStartTimeStr = $request->input('finals_start_time');
         $pauseAfterHeats = $request->input('pause_after_heats', 30);
+
+        // Zusätzliche Pausenoptionen aus Draft laden oder Request
+        $pauseType = $request->input('pause_type', $draft->params['pause_type'] ?? 'none');
+        $pauseTrigger = $request->input('pause_trigger', $draft->params['pause_trigger'] ?? '');
+        $pauseDuration = (int)$request->input('pause_duration', $draft->params['pause_duration'] ?? 30);
+        $extraPauseApplied = false;
+
         $awardCeremonyTimeStr = $request->input('award_ceremony_time');
         $minTimeBeforeCeremony = $request->input('min_time_before_ceremony', 30);
         $finalePublishTimeStr = $request->input('finale_publish_time');
@@ -1533,12 +1596,21 @@ class RegattaRaffleController extends Controller
             }
 
             $timeStr = $currentGlobalTime->format('H:i');
+
+            // Sonderfall: Pause-Item (race_number 0 und gruppe_id 0)
+            if ($rn == 0 && count($lanes) == 1 && ($lanes[0]->gruppe_name ?? '') === 'Pause') {
+                $lanes[0]->time = $timeStr;
+                $lanes[0]->save();
+                $currentGlobalTime->addMinutes($lanes[0]->pause_duration ?? $pauseDuration);
+                continue;
+            }
+
             foreach ($lanes as $lane) {
                 $lane->time = $timeStr;
 
                 if ($isFinal) {
                     // Finale: Abstand zum letzten Vorlauf der Gruppe
-                    if (isset($maxHeatEndTimePerGroup[$lane->gruppe_id])) {
+                    if (isset($lane->gruppe_id) && isset($maxHeatEndTimePerGroup[$lane->gruppe_id])) {
                         $diff = $currentGlobalTime->diffInMinutes($maxHeatEndTimePerGroup[$lane->gruppe_id]);
                         $lane->pause_minutes = (int)$diff;
                     } else {
@@ -1546,23 +1618,23 @@ class RegattaRaffleController extends Controller
                     }
                 } else {
                     // Vorläufe: Abstand zum letzten Start des Teams
-                    if ($lane->team_id && isset($lastStartTimes[$lane->team_id])) {
+                    if (isset($lane->team_id) && $lane->team_id && isset($lastStartTimes[$lane->team_id])) {
                         $diff = $currentGlobalTime->diffInMinutes($lastStartTimes[$lane->team_id]);
                         $lane->pause_minutes = (int)$diff;
                     } else {
                         $lane->pause_minutes = null;
                     }
 
-                    if ($lane->team_id) {
+                    if (isset($lane->team_id) && $lane->team_id) {
                         $lastStartTimes[$lane->team_id] = $currentGlobalTime->copy();
                     }
                 }
 
                 // Konflikte berechnen
                 $conflictCount = 0;
-                if (!$isFinal && $lane->team_id) {
+                if (!$isFinal && isset($lane->team_id) && $lane->team_id) {
                     foreach ($lanes as $otherLane) {
-                        if ($otherLane->id !== $lane->id && $otherLane->team_id) {
+                        if ($otherLane->id !== $lane->id && isset($otherLane->team_id) && $otherLane->team_id) {
                             if (isset($opponentHistory[$lane->team_id][$otherLane->team_id])) {
                                 $conflictCount += $opponentHistory[$lane->team_id][$otherLane->team_id];
                             }
@@ -1578,7 +1650,7 @@ class RegattaRaffleController extends Controller
             if (!$isFinal) {
                 foreach ($lanes as $laneA) {
                     foreach ($lanes as $laneB) {
-                        if ($laneA->id !== $laneB->id && $laneA->team_id && $laneB->team_id) {
+                        if ($laneA->id !== $laneB->id && isset($laneA->team_id) && $laneA->team_id && isset($laneB->team_id) && $laneB->team_id) {
                             $opponentHistory[$laneA->team_id][$laneB->team_id] = ($opponentHistory[$laneA->team_id][$laneB->team_id] ?? 0) + 1;
                         }
                     }
@@ -1588,7 +1660,35 @@ class RegattaRaffleController extends Controller
             if (!$isFinal) {
                 $maxHeatEndTime = $currentGlobalTime->copy();
                 foreach ($lanes as $lane) {
-                    $maxHeatEndTimePerGroup[$lane->gruppe_id] = $currentGlobalTime->copy();
+                    if (isset($lane->gruppe_id)) {
+                        $maxHeatEndTimePerGroup[$lane->gruppe_id] = $currentGlobalTime->copy();
+                    }
+                }
+
+                // Automatische Pausenanwendung bei der Neuberechnung
+                if (!$extraPauseApplied && $pauseType !== 'none') {
+                    if ($pauseType === 'time' && !empty($pauseTrigger)) {
+                        $triggerString = $pauseTrigger;
+                        if (is_numeric($triggerString) && strlen($triggerString) <= 2) {
+                            $triggerString .= ':00';
+                        }
+                        try {
+                            $triggerTime = \Carbon\Carbon::parse($triggerString);
+                            if ($currentGlobalTime->format('H:i') >= $triggerTime->format('H:i')) {
+                                $currentGlobalTime->addMinutes($pauseDuration);
+                                $extraPauseApplied = true;
+                            }
+                        } catch (\Exception $e) {
+                            // Ignorieren bei Fehlformatierung
+                        }
+                    } elseif ($pauseType === 'heat' && !empty($pauseTrigger)) {
+                        // Bei Neuberechnung ist es schwerer den "letzten Heat der Runde" zu finden
+                        // Wir könnten schauen ob der nächste Heat ein höheres Level hat.
+                        // Aber da wir die Pause als Item in der DB haben (falls sie existiert),
+                        // wird sie oben schon behandelt. Diese Logik hier ist für den Fall,
+                        // dass die Pause NOCH NICHT als Item existiert aber die Parameter gesetzt sind.
+                        // Da recalculateTimes meist auf existierenden Items arbeitet, ist das primär für die Konsistenz.
+                    }
                 }
             }
             $currentGlobalTime->addMinutes($interval);

@@ -448,6 +448,35 @@
                                     <input type="number" name="interval" value="{{ $draft ? ($draft->params['interval'] ?? 10) : 10 }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 </div>
                             </div>
+
+                            <div class="bg-gray-50 border border-gray-200 rounded p-3 mt-4">
+                                <label class="block text-sm font-bold text-gray-800 mb-2">Zusätzliche Pause einplanen</label>
+                                <div class="space-y-3">
+                                    <div class="flex items-center gap-4">
+                                        <label class="flex items-center text-xs">
+                                            <input type="radio" name="pause_type" value="none" {{ ($draft && ($draft->params['pause_type'] ?? 'none') == 'none') ? 'checked' : '' }} {{ !$draft ? 'checked' : '' }} class="mr-1"> Keine
+                                        </label>
+                                        <label class="flex items-center text-xs">
+                                            <input type="radio" name="pause_type" value="time" {{ ($draft && ($draft->params['pause_type'] ?? 'none') == 'time') ? 'checked' : '' }} class="mr-1"> Ab Zeit
+                                        </label>
+                                        <label class="flex items-center text-xs">
+                                            <input type="radio" name="pause_type" value="heat" {{ ($draft && ($draft->params['pause_type'] ?? 'none') == 'heat') ? 'checked' : '' }} class="mr-1"> Nach Vorlauf
+                                        </label>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-gray-700">Ab Uhrzeit / Nach Vorlauf Nr.</label>
+                                            <input type="text" name="pause_trigger" value="{{ $draft ? ($draft->params['pause_trigger'] ?? '') : '' }}" placeholder="z.B. 12:00 oder 1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-xs">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-gray-700">Pausenlänge (Min.)</label>
+                                            <input type="number" name="pause_duration" value="{{ $draft ? ($draft->params['pause_duration'] ?? 30) : 30 }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-xs">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Wertungsmodus</label>
                                 <select name="wertungsart" id="wertungsart" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -793,6 +822,22 @@
                                                         </td>
                                                     </tr>
                                                     @php $pauseShown = true; @endphp
+                                                @endif
+
+                                                @if(isset($firstLane['is_extra_pause']) && $firstLane['is_extra_pause'])
+                                                    <tr class="bg-gray-100 border-y-2 border-gray-200">
+                                                        <td class="px-2 py-4 font-bold text-gray-900">{{ $raceTime }}</td>
+                                                        <td class="px-2 py-4 text-center text-gray-800 font-bold">-</td>
+                                                        <td class="px-2 py-4 text-center">
+                                                            <div class="flex justify-center items-center h-full">
+                                                                <box-icon name='coffee-togo' type='solid' color='#4b5563'></box-icon>
+                                                            </div>
+                                                        </td>
+                                                        <td colspan="4" class="px-4 py-4 text-center font-bold text-gray-700 uppercase tracking-widest">
+                                                            Zusätzliche Pause ({{ $firstLane['pause_duration'] ?? '?' }} Min)
+                                                        </td>
+                                                    </tr>
+                                                    @continue
                                                 @endif
 
                                                 @if(isset($firstLane['is_award_ceremony']) && $firstLane['is_award_ceremony'])

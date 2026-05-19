@@ -569,7 +569,16 @@
                             </h3>
                             <div class="mt-4 space-y-8">
                                 @php
-                                    $groupedPreview = collect($previewData)->groupBy('gruppe_name');
+                                    // In der gruppierten Vorschau nur echte Wertungsgruppen zeigen, keine Pausenblöcke.
+                                    $groupedPreview = collect($previewData)
+                                        ->reject(function ($item) {
+                                            $gruppeName = $item['gruppe_name'] ?? '';
+                                            return !empty($item['is_extra_pause'])
+                                                || $gruppeName === '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---'
+                                                || $gruppeName === 'Mittagspause'
+                                                || $gruppeName === 'Pause';
+                                        })
+                                        ->groupBy('gruppe_name');
                                     $teamToOrgTeams = [];
                                     foreach($organizations as $org) {
                                         $teamIds = $org->teams->pluck('id')->toArray();
@@ -793,7 +802,7 @@
                                                 @endif
 
                                                 @if($isExtraPause)
-                                                    <tr id="race-{{ $raceNumber }}-pause" class="bg-gray-100 border-y-2 border-gray-200">
+                                                    <tr id="pause-{{ str_replace(':', '', $raceTime) }}" class="bg-gray-100 border-y-2 border-gray-200">
                                                         <td class="px-2 py-4 font-bold text-gray-900">{{ $raceTime }}</td>
                                                         <td class="px-2 py-4 text-center text-gray-800 font-bold">-</td>
                                                         <td class="px-2 py-4 text-center">
@@ -803,6 +812,8 @@
                                                                         @csrf
                                                                         <input type="hidden" name="regatta_id" value="{{ $regattaId }}">
                                                                         <input type="hidden" name="race_number" value="{{ $raceNumber }}">
+                                                                        <input type="hidden" name="move_type" value="pause">
+                                                                        <input type="hidden" name="race_time" value="{{ $raceTime }}">
                                                                         <input type="hidden" name="direction" value="up">
                                                                         <button type="submit" class="text-blue-600 hover:text-blue-800" title="Nach oben verschieben">
                                                                             <box-icon name='chevron-up' size="xs"></box-icon>
@@ -815,6 +826,8 @@
                                                                         @csrf
                                                                         <input type="hidden" name="regatta_id" value="{{ $regattaId }}">
                                                                         <input type="hidden" name="race_number" value="{{ $raceNumber }}">
+                                                                        <input type="hidden" name="move_type" value="pause">
+                                                                        <input type="hidden" name="race_time" value="{{ $raceTime }}">
                                                                         <input type="hidden" name="direction" value="down">
                                                                         <button type="submit" class="text-blue-600 hover:text-blue-800" title="Nach unten verschieben">
                                                                             <box-icon name='chevron-down' size="xs"></box-icon>
@@ -961,12 +974,17 @@
                                                 </span>
                                             </div>
                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                                                @foreach($teams as $teamName => $opponents)
+                                                @foreach($teams as $teamName => $teamData)
                                                     <div class="bg-white p-3 rounded shadow-sm border text-xs">
-                                                        <div class="font-bold text-blue-900 border-b pb-1 mb-2">{{ $teamName }}</div>
+                                                        <div class="font-bold text-blue-900 border-b pb-1 mb-2">
+                                                            {{ $teamName }}
+                                                            @if(isset($teamData['race_count']) && $teamData['race_count'] > 0)
+                                                                <span class="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded ml-2">{{ $teamData['race_count'] }}x</span>
+                                                            @endif
+                                                        </div>
                                                         <div class="text-gray-600">
-                                                            @if(is_countable($opponents) && count($opponents) > 0)
-                                                                {{ implode(', ', $opponents) }}
+                                                            @if(is_countable($teamData['opponents'] ?? $teamData) && count($teamData['opponents'] ?? $teamData) > 0)
+                                                                {{ implode(', ', $teamData['opponents'] ?? $teamData) }}
                                                             @else
                                                                 <span class="italic">Keine Gegner (Einzellauf?)</span>
                                                             @endif

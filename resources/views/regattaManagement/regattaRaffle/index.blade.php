@@ -771,6 +771,8 @@
                                                 });
 
                                                 $pauseShown = false;
+                                                $lastHeatIndexForDisplay = null;
+                                                $lastLevelForDisplay = null;
                                                 $maxHeatEnd = $maxHeatEndTime ?? null;
                                                 $lastRaceId = $chronologicalRaces->keys()->last();
                                             @endphp
@@ -793,12 +795,26 @@
                                                 @endphp
 
                                                 @if(!$pauseShown && $maxHeatEnd && $raceTime > $maxHeatEnd && ($firstLane['is_final'] ?? false))
-                                                    <tr class="bg-yellow-100">
-                                                        <td colspan="7" class="px-4 py-2 text-center font-bold text-yellow-800">
+                                                    <tr class="bg-yellow-100 border-y-2 border-yellow-200">
+                                                        <td class="px-2 py-4 font-bold text-yellow-900">{{ substr($maxHeatEnd, 0, 5) }}</td>
+                                                        <td class="px-2 py-4 text-center text-yellow-900 font-bold">-</td>
+                                                        <td class="px-2 py-4 text-center text-yellow-900 font-bold">-</td>
+                                                        <td colspan="4" class="px-4 py-4 text-center font-bold text-yellow-800 uppercase tracking-widest text-lg">
                                                             --- PAUSENBLOCK NACH DEN VORLÄUFEN ---
                                                         </td>
                                                     </tr>
                                                     @php $pauseShown = true; @endphp
+                                                @endif
+
+                                                @if(!$isExtraPause && !$isAwardCeremony)
+                                                    @php
+                                                        if (!empty($firstLane['heat_index'])) {
+                                                            $lastHeatIndexForDisplay = $firstLane['heat_index'];
+                                                        }
+                                                        if (!empty($firstLane['level'])) {
+                                                            $lastLevelForDisplay = $firstLane['level'];
+                                                        }
+                                                    @endphp
                                                 @endif
 
                                                 @if($isExtraPause)
@@ -856,7 +872,7 @@
                                                 @else
                                                 <tr id="race-{{ $raceNumber }}" class="{{ $firstLane['is_final'] ? 'bg-blue-50' : '' }}">
                                                     <td class="px-2 py-2 font-bold">{{ $raceTime }}</td>
-                                                    <td class="px-2 py-2 text-center text-gray-600 font-bold">{{ $firstLane['level'] ?? '-' }}</td>
+                                                    <td class="px-2 py-2 text-center text-gray-600 font-bold">{{ $firstLane['heat_index'] ?? '-' }}</td>
                                                     <td class="px-2 py-2 text-center">
                                                         <div class="flex flex-col items-center gap-1">
                                                             @if(!$loop->first)

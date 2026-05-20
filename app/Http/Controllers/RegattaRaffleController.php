@@ -145,23 +145,22 @@ class RegattaRaffleController extends Controller
         foreach ($preview as &$row) {
             // Markiere Siegerehrung/Mittagspause basierend auf race_number und gruppe_id
             if ((isset($row['race_number']) && $row['race_number'] == 0) && (isset($row['gruppe_id']) && $row['gruppe_id'] == 0)) {
-                $gName = $row['gruppe_name'] ?? '';
-                // Robuste Erkennung: Entweder Name ODER explizites Flag
-                // Wir prüfen zusätzlich die Zeit: Siegerehrung kann nicht vor 13:00 Uhr sein,
-                // wenn danach noch Rennen kommen (Mittagspause).
-                $isAwardFlag = !empty($row['is_award_ceremony']);
-                $isPauseFlag = !empty($row['is_extra_pause']);
+                $isAwardFlag = !empty($row['is_award_ceremony']) || $this->isAwardCeremonyPlanItem($row);
+                $isPauseFlag = !empty($row['is_extra_pause']) || $this->isPausePlanItem($row);
 
-                if ($gName === 'Mittagspause' || $gName === 'Pause' || $gName === 'PAUSENBLOCK NACH DEN VORLÄUFEN' || $gName === '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---' || ($isPauseFlag && !$isAwardFlag)) {
+                if ($isPauseFlag && !$isAwardFlag) {
                     $row['is_extra_pause'] = true;
                     $row['is_award_ceremony'] = false;
-                    $row['gruppe_name'] = '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
-                } elseif ($gName === 'Siegerehrung' || $isAwardFlag) {
+                    $row['gruppe_name'] = (($row['placeholder_name'] ?? null) && str_contains(strtoupper((string)$row['placeholder_name']), 'MITTAGSPAUSE'))
+                        ? 'Mittagspause'
+                        : '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
+                } elseif ($isAwardFlag) {
                     $row['is_award_ceremony'] = true;
                     $row['is_extra_pause'] = false;
                     $row['gruppe_name'] = 'Siegerehrung';
+                    $row['heat_index'] = null;
                 } else {
-                    // Fallback basierend auf der Benennung
+                    // Fallback: unbekannte 0-Items behandeln wir defensiv als Pause.
                     $row['is_award_ceremony'] = false;
                     $row['is_extra_pause'] = true;
                     $row['gruppe_name'] = '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
@@ -169,14 +168,17 @@ class RegattaRaffleController extends Controller
                 // Wichtig: Wir behalten race_number 0 für die UI-Zuordnung
             } else {
                 // Wenn es kein 0-Item ist, aber vielleicht das Flag trägt (aus DB geladen)
-                if (!empty($row['is_extra_pause'])) {
+                if (!empty($row['is_extra_pause']) || $this->isPausePlanItem($row)) {
                     $row['is_award_ceremony'] = false;
-                    $row['gruppe_name'] = '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
+                    $row['gruppe_name'] = (($row['placeholder_name'] ?? null) && str_contains(strtoupper((string)$row['placeholder_name']), 'MITTAGSPAUSE'))
+                        ? 'Mittagspause'
+                        : '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
                     $row['race_number'] = 0;
-                } elseif (!empty($row['is_award_ceremony'])) {
+                } elseif (!empty($row['is_award_ceremony']) || $this->isAwardCeremonyPlanItem($row)) {
                     $row['is_extra_pause'] = false;
                     $row['gruppe_name'] = 'Siegerehrung';
                     $row['race_number'] = 0; // Sicherstellen, dass es als 0 behandelt wird
+                    $row['heat_index'] = null;
                 } else {
                     $row['is_award_ceremony'] = false;
                     $row['is_extra_pause'] = false;
@@ -197,6 +199,46 @@ class RegattaRaffleController extends Controller
         }
 
         return $preview;
+    }
+
+    private function getPlanItemValue($item, string $key)
+    {
+        if (is_array($item)) {
+            return $item[$key] ?? null;
+        }
+
+        return $item->{$key} ?? null;
+    }
+
+    private function buildPlanItemText($item): string
+    {
+        $gruppeName = strtoupper(trim((string)($this->getPlanItemValue($item, 'gruppe_name') ?? '')));
+        $placeholder = strtoupper(trim((string)($this->getPlanItemValue($item, 'placeholder_name') ?? '')));
+
+        return trim($gruppeName . ' ' . $placeholder);
+    }
+
+    private function isPausePlanItem($item): bool
+    {
+        $text = $this->buildPlanItemText($item);
+        $raceNumber = (int)($this->getPlanItemValue($item, 'race_number') ?? 0);
+        $gruppeId = (int)($this->getPlanItemValue($item, 'gruppe_id') ?? 0);
+
+        if (str_contains($text, 'SIEGEREHRUNG')) {
+            return false;
+        }
+
+        if (str_contains($text, 'MITTAGSPAUSE') || str_contains($text, 'PAUSENBLOCK NACH DEN VORL')) {
+            return true;
+        }
+
+        return $raceNumber === 0 && $gruppeId === 0;
+    }
+
+    private function isAwardCeremonyPlanItem($item): bool
+    {
+        $text = $this->buildPlanItemText($item);
+        return str_contains($text, 'SIEGEREHRUNG');
     }
 
     /**
@@ -689,6 +731,7 @@ class RegattaRaffleController extends Controller
                                 'is_final' => false,
                                 'race_number' => 0,
                                 'gruppe_id' => 0,
+                                'heat_index' => $h,
                                 'gruppe_name' => 'Mittagspause',
                                 'placeholder_name' => 'Mittagspause (' . $pauseDuration . ' Min)'
                             ];
@@ -722,6 +765,7 @@ class RegattaRaffleController extends Controller
                             'is_final' => false,
                             'race_number' => 0,
                             'gruppe_id' => 0,
+                            'heat_index' => $h,
                             'gruppe_name' => 'Mittagspause',
                             'placeholder_name' => 'Mittagspause (' . $pauseDuration . ' Min)'
                         ];
@@ -737,6 +781,7 @@ class RegattaRaffleController extends Controller
                             'is_final' => false,
                             'race_number' => 0,
                             'gruppe_id' => 0,
+                            'heat_index' => $h,
                             'gruppe_name' => 'Mittagspause',
                             'placeholder_name' => 'Mittagspause (' . $pauseDuration . ' Min)'
                         ];
@@ -1517,13 +1562,10 @@ class RegattaRaffleController extends Controller
                     'is_final' => false,
                     'final_type' => null,
                     'placeholder_name' => 'Siegerehrung',
-                    'gruppe_name' => 'Siegerehrung',
                     'heat_index' => null,
                     'pause_minutes' => null,
                     'conflicts' => 0,
                     'org_intervals' => null,
-                    'is_extra_pause' => false,
-                    'is_award_ceremony' => true,
                 ]);
             }
         });
@@ -1563,10 +1605,10 @@ class RegattaRaffleController extends Controller
 
             $blocks = [];
             foreach ($items as $item) {
-                if (!empty($item->is_extra_pause) && empty($item->is_award_ceremony)) {
+                if ($this->isPausePlanItem($item) && !$this->isAwardCeremonyPlanItem($item)) {
                     $type = 'pause';
                     $key = 'special-pause-' . substr((string)$item->time, 0, 5);
-                } elseif (!empty($item->is_award_ceremony)) {
+                } elseif ($this->isAwardCeremonyPlanItem($item)) {
                     $type = 'award';
                     $key = 'special-award-' . substr((string)$item->time, 0, 5);
                 } else {
@@ -1623,15 +1665,66 @@ class RegattaRaffleController extends Controller
 
             $currentTime = $blocks[$index]['time'];
             $swapTime = $blocks[$swapIndex]['time'];
+            $pauseDuration = (int)($draft->params['pause_duration'] ?? 30);
 
-            DB::transaction(function () use ($blocks, $index, $swapIndex, $currentTime, $swapTime) {
-                foreach ($blocks[$index]['items'] as $item) {
-                    $item->time = $swapTime;
-                    $item->save();
-                }
-                foreach ($blocks[$swapIndex]['items'] as $item) {
-                    $item->time = $currentTime;
-                    $item->save();
+            $interval = (int)($draft->interval ?? 10);
+
+            DB::transaction(function () use ($blocks, $index, $swapIndex, $currentTime, $swapTime, $pauseDuration, $direction, $interval) {
+                // Prüfe, ob der aktuelle Block eine Pause ist
+                $currentBlockIsPause = $blocks[$index]['type'] === 'pause';
+                $swapBlockIsPause = $blocks[$swapIndex]['type'] === 'pause';
+
+                if ($currentBlockIsPause) {
+                    if ($direction === 'down') {
+                        // Pause nach unten: Pause bekommt alte Pausenzeit + Intervall,
+                        // das getauschte Rennen übernimmt die alte Pausenzeit.
+                        foreach ($blocks[$index]['items'] as $item) {
+                            $newTime = \Carbon\Carbon::createFromFormat('H:i', $currentTime)
+                                ->addMinutes($interval);
+                            $item->time = $newTime->format('H:i');
+                            $item->save();
+                        }
+                        foreach ($blocks[$swapIndex]['items'] as $item) {
+                            $item->time = $currentTime;
+                            $item->save();
+                        }
+                    } else {
+                        // Pause nach oben: Pause übernimmt die Zeit des Rennens,
+                        // das getauschte Rennen bekommt die Pausenlänge auf die alte Rennzeit.
+                        foreach ($blocks[$index]['items'] as $item) {
+                            $item->time = $swapTime;
+                            $item->save();
+                        }
+                        foreach ($blocks[$swapIndex]['items'] as $item) {
+                            $newTime = \Carbon\Carbon::createFromFormat('H:i', $swapTime)
+                                ->addMinutes($pauseDuration);
+                            $item->time = $newTime->format('H:i');
+                            $item->save();
+                        }
+                    }
+                } elseif ($swapBlockIsPause) {
+                    // Swap-Block ist Pause: Swap-Block übernimmt currentTime,
+                    // Aktuelle Block (Rennen) bekommt currentTime + Pausenlänge
+                    foreach ($blocks[$index]['items'] as $item) {
+                        $newTime = \Carbon\Carbon::createFromFormat('H:i', $currentTime)
+                            ->addMinutes($pauseDuration);
+                        $item->time = $newTime->format('H:i');
+                        $item->save();
+                    }
+                    foreach ($blocks[$swapIndex]['items'] as $item) {
+                        $item->time = $currentTime;
+                        $item->save();
+                    }
+                } else {
+                    // Niemand ist Pause: einfacher Tausch
+                    foreach ($blocks[$index]['items'] as $item) {
+                        $item->time = $swapTime;
+                        $item->save();
+                    }
+                    foreach ($blocks[$swapIndex]['items'] as $item) {
+                        $item->time = $currentTime;
+                        $item->save();
+                    }
                 }
             });
 
@@ -1645,10 +1738,18 @@ class RegattaRaffleController extends Controller
             return redirect($url . '#pause-' . str_replace(':', '', $swapTime))->with('success', 'Mittagspause verschoben: Startzeiten getauscht, Team-Abstände und Konflikte neu berechnet.');
         }
 
-        // Wir ignorieren die Siegerehrung (0) beim Verschieben der Rennen,
-        // oder wir behandeln sie als normales Element in der Liste.
-        // Da die Siegerehrung oft am Ende steht, nehmen wir alle Keys.
-        $keys = $grouped->keys()->sort()->values()->toArray();
+        // Normales Verschieben betrifft nur echte Rennen (race_number > 0).
+        // Spezialblöcke mit race_number = 0 (Pause/Siegerehrung) bleiben unverändert.
+        if ($raceNumber <= 0) {
+            return back()->with('error', 'Spezialblöcke (race_number 0) können hier nicht als Rennen verschoben werden.');
+        }
+
+        $keys = collect($grouped->keys())
+            ->map(fn($k) => (int)$k)
+            ->filter(fn($k) => $k > 0)
+            ->sort()
+            ->values()
+            ->toArray();
         $index = array_search($raceNumber, $keys);
 
         if ($index === false) return back();
@@ -1669,36 +1770,19 @@ class RegattaRaffleController extends Controller
 
         $movingGroup = $grouped[$raceNumber] ?? collect();
         $swapGroup = $grouped[$swapRaceNumber] ?? collect();
-        $movingIsPause = !empty($movingGroup->first()->is_extra_pause);
-        $swapIsPause = !empty($swapGroup->first()->is_extra_pause);
+        $movingIsPause = $movingGroup->isNotEmpty() && $this->isPausePlanItem($movingGroup->first()) && !$this->isAwardCeremonyPlanItem($movingGroup->first());
+        $swapIsPause = $swapGroup->isNotEmpty() && $this->isPausePlanItem($swapGroup->first()) && !$this->isAwardCeremonyPlanItem($swapGroup->first());
         $isPauseSwap = $movingIsPause || $swapIsPause;
         $movingTime = $movingGroup->first()->time ?? null;
         $swapTime = $swapGroup->first()->time ?? null;
+        $pauseDuration = (int)($draft->params['pause_duration'] ?? 30);
 
-        DB::transaction(function() use ($keys, $grouped, $isPauseSwap, $movingGroup, $swapGroup, $movingTime, $swapTime) {
+        DB::transaction(function() use ($keys, $grouped, $isPauseSwap, $movingGroup, $swapGroup, $movingTime, $swapTime, $movingIsPause, $swapIsPause, $pauseDuration) {
             // Wir weisen neue fortlaufende Nummern zu
-            // Aber die Siegerehrung (0) soll 0 bleiben.
+            // Nur für echte Rennen > 0. race_number 0 bleibt unverändert.
 
             $newRaceNumber = 1;
             foreach ($keys as $oldRaceNumber) {
-                if ($oldRaceNumber == 0) {
-                    foreach ($grouped[$oldRaceNumber] as $item) {
-                        // Wir behalten race_number 0 für Siegerehrung,
-                        // aber Mittagspausen erhalten die neue fortlaufende Nummer,
-                        // damit sie verschiebbar sind.
-                        if (!empty($item->is_extra_pause)) {
-                            $item->race_number = $newRaceNumber;
-                        } else {
-                            $item->race_number = 0;
-                        }
-                        $item->save();
-                    }
-                    if (!empty($grouped[$oldRaceNumber][0]->is_extra_pause)) {
-                        $newRaceNumber++;
-                    }
-                    continue;
-                }
-
                 foreach ($grouped[$oldRaceNumber] as $item) {
                     $item->race_number = $newRaceNumber;
                     $item->save();
@@ -1706,20 +1790,40 @@ class RegattaRaffleController extends Controller
                 $newRaceNumber++;
             }
 
-            // Beim Verschieben einer Pause sollen die Uhrzeiten direkt mit dem Nachbar-Block getauscht werden.
+            // Beim Verschieben einer Pause: Pause übernimmt Zeit des Renns,
+            // Rennen bekommt: alte_rennzeit + Pausenlänge
             if ($isPauseSwap && $movingTime && $swapTime) {
-                foreach ($movingGroup as $item) {
-                    $item->time = $swapTime;
-                    $item->save();
-                }
-                foreach ($swapGroup as $item) {
-                    $item->time = $movingTime;
-                    $item->save();
+                if ($movingIsPause) {
+                    // Bewegte Group ist die Pause
+                    foreach ($movingGroup as $item) {
+                        $item->time = $swapTime;  // Pause übernimmt Zeit des Rennens
+                        $item->save();
+                    }
+                    foreach ($swapGroup as $item) {
+                        // Rennen bekommt alte_rennzeit + Pausenlänge
+                        $newTime = \Carbon\Carbon::createFromFormat('H:i', $swapTime)
+                            ->addMinutes($pauseDuration);
+                        $item->time = $newTime->format('H:i');
+                        $item->save();
+                    }
+                } else {
+                    // Bewegte Group ist ein Rennen, Swap-Group ist die Pause
+                    foreach ($movingGroup as $item) {
+                        // Rennen bekommt alte_rennzeit + Pausenlänge
+                        $newTime = \Carbon\Carbon::createFromFormat('H:i', $movingTime)
+                            ->addMinutes($pauseDuration);
+                        $item->time = $newTime->format('H:i');
+                        $item->save();
+                    }
+                    foreach ($swapGroup as $item) {
+                        $item->time = $movingTime;  // Pause übernimmt Zeit des Rennens
+                        $item->save();
+                    }
                 }
             }
         });
 
-        // Bei Pausen-Tausch bleibt die Zeit durch den direkten Time-Swap erhalten.
+        // Bei Pausen-Tausch: Neuberechnung notwendig, da sich die Zeiten der Rennen ändern können
         if (!$isPauseSwap) {
             // Automatische Neuberechnung der Zeiten
             $request->merge([
@@ -1734,20 +1838,30 @@ class RegattaRaffleController extends Controller
             ]);
             $this->recalculateTimes($request);
         } else {
-            $this->recalculateDerivedValuesFromCurrentTimes($draft);
+            // Pause-Tausch: Alle Zeiten ab der Pause neu berechnen
+            $request->merge([
+                'start_time' => $draft->start_time,
+                'interval' => $draft->interval,
+                'min_pause' => $draft->min_pause,
+                'min_pause_org' => $draft->params['min_pause_org'] ?? 10,
+                'finals_start_time' => $draft->final_start_time,
+                'pause_after_heats' => $draft->final_pause,
+                'award_ceremony_time' => $draft->award_ceremony_time,
+                'min_time_before_ceremony' => $draft->min_award_pause,
+            ]);
+            $this->recalculateTimes($request);
         }
 
         // Bestimme die neue race_number für die Weiterleitung (Sprungmarke)
-        // In der Transaktion oben werden die Nummern neu vergeben:
-        // 0 bleibt 0, alle anderen werden fortlaufend ab 1 vergeben.
+        // In der Transaktion oben werden nur Rennen > 0 neu vergeben.
         $finalRaceNumber = 0;
         $counter = 1;
         foreach ($keys as $k) {
             if ($k === $raceNumber) {
-                $finalRaceNumber = ($k == 0) ? 0 : $counter;
+                $finalRaceNumber = $counter;
                 break;
             }
-            if ($k != 0) $counter++;
+            $counter++;
         }
 
         // Wir hängen den Anker an die vorherige URL an.
@@ -1896,37 +2010,16 @@ class RegattaRaffleController extends Controller
         $pauseItems = collect();
         $ceremonyItems = collect();
         foreach ($items as $item) {
-            $gName = strtoupper(trim((string)($item->gruppe_name ?? '')));
-            $pName = strtoupper(trim((string)($item->placeholder_name ?? '')));
-            $text = $gName . ' ' . $pName;
-
-            $isPauseByText = str_contains($text, 'PAUSENBLOCK NACH DEN VORL') || str_contains($text, 'MITTAGSPAUSE') || $gName === 'PAUSE';
-            $isAwardByText = str_contains($text, 'SIEGEREHRUNG');
-            $isPauseByFlag = !empty($item->is_extra_pause) && empty($item->is_award_ceremony);
-            $isAwardByFlag = !empty($item->is_award_ceremony);
-
-            // Fallback: Ein Spezial-Item vor Finalstart ist eher Pause, sonst Siegerehrung.
-            $itemTime = \Carbon\Carbon::parse((string)($item->time ?? '00:00'));
-            $isBeforeFinals = $itemTime->lt($finalsStartTime);
-
-            $isPause = $isPauseByText || $isPauseByFlag || (!$isAwardByText && !$isAwardByFlag && $isBeforeFinals && ((int)($item->gruppe_id ?? 0) === 0));
-            $isAward = !$isPause && ($isAwardByText || $isAwardByFlag || ((int)($item->gruppe_id ?? 0) === 0 && !$isBeforeFinals));
+            $isPause = $this->isPausePlanItem($item) && !$this->isAwardCeremonyPlanItem($item);
+            $isAward = $this->isAwardCeremonyPlanItem($item);
 
             if ($isPause) {
-                $item->is_extra_pause = true;
-                $item->is_award_ceremony = false;
-                $item->gruppe_name = $pauseBlockLabel;
-                $item->placeholder_name = $pauseBlockLabel;
-                $item->save();
                 $pauseItems->push($item);
                 continue;
             }
 
             if ($isAward) {
-                $item->is_extra_pause = false;
-                $item->is_award_ceremony = true;
-                $item->gruppe_name = 'Siegerehrung';
-                $item->placeholder_name = 'Siegerehrung';
+                $item->heat_index = null;
                 $item->save();
                 $ceremonyItems->push($item);
             }
@@ -1981,10 +2074,8 @@ class RegattaRaffleController extends Controller
                     if ($currentGlobalTime->format('H:i') >= $triggerTime->format('H:i')) {
                         $pDuration = $pItem->pause_duration ?? $pauseDuration;
                         $pItem->time = $currentGlobalTime->format('H:i');
-                        $pItem->gruppe_name = $pauseBlockLabel;
-                        $pItem->placeholder_name = $pauseBlockLabel;
-                        $pItem->is_extra_pause = true; // Explizit setzen
-                        $pItem->is_award_ceremony = false;
+                        $pItem->placeholder_name = 'Mittagspause (' . $pDuration . ' Min)';
+                        $pItem->heat_index = $lanes[0]->heat_index ?? null;
                         $pItem->save();
 
                         $currentGlobalTime->addMinutes($pDuration);
@@ -2105,10 +2196,8 @@ class RegattaRaffleController extends Controller
                     if (($isTriggerHeatRound && $isLastHeatOfRound) || $isTriggerRaceNumber || ($isNextFinal && !$extraPauseApplied)) {
                         $pDuration = $pItem->pause_duration ?? $pauseDuration;
                         $pItem->time = $currentGlobalTime->copy()->addMinutes($interval)->format('H:i');
-                        $pItem->gruppe_name = $pauseBlockLabel;
-                        $pItem->placeholder_name = $pauseBlockLabel;
-                        $pItem->is_extra_pause = true; // Explizit setzen
-                        $pItem->is_award_ceremony = false;
+                        $pItem->placeholder_name = 'Mittagspause (' . $pDuration . ' Min)';
+                        $pItem->heat_index = $currentHeatRound ?: ($lanes[0]->heat_index ?? null);
                         $pItem->save();
 
                         // Wir müssen die Zeit für den nächsten Block erhöhen
@@ -2121,22 +2210,6 @@ class RegattaRaffleController extends Controller
         }
 
         $maxRaceTime = $currentGlobalTime->copy()->subMinutes($interval);
-
-        // Korrektur: Spezial-Items vor dem ersten Finale sind kein Siegerehrungsblock.
-        if ($firstFinalStartTime) {
-            foreach ($ceremonyItems as $idx => $cItem) {
-                $cTime = \Carbon\Carbon::parse((string)($cItem->time ?? '00:00'));
-                if ($cTime->lt($firstFinalStartTime)) {
-                    $cItem->is_extra_pause = true;
-                    $cItem->is_award_ceremony = false;
-                    $cItem->gruppe_name = $pauseBlockLabel;
-                    $cItem->placeholder_name = $pauseBlockLabel;
-                    $cItem->save();
-                    unset($ceremonyItems[$idx]);
-                }
-            }
-            $ceremonyItems = collect($ceremonyItems)->values();
-        }
 
         if ($ceremonyItems->count() > 0) {
             foreach ($ceremonyItems as $cItem) {
@@ -2152,34 +2225,21 @@ class RegattaRaffleController extends Controller
                 $ceremonyTime = $earliestCeremony;
             }
 
-            // Überprüfe, ob fal bereits eine Siegerehrung vorhanden ist
-            $existingCeremony = $items->where('is_award_ceremony', true)->first();
-            if (!$existingCeremony) {
-                // Erstelle eine neue Siegerehrung
-                $draft->items()->create([
-                    'race_number' => 0,
-                    'gruppe_id' => 0,
-                    'time' => $ceremonyTime->format('H:i'),
-                    'lane' => null,
-                    'team_id' => null,
-                    'is_final' => false,
-                    'final_type' => null,
-                    'placeholder_name' => 'Siegerehrung',
-                    'gruppe_name' => 'Siegerehrung',
-                    'heat_index' => null,
-                    'pause_minutes' => null,
-                    'conflicts' => 0,
-                    'org_intervals' => null,
-                    'is_extra_pause' => false,
-                    'is_award_ceremony' => true,
-                ]);
-            } else {
-                // Aktualisiere die bestehende Siegerehrung
-                $existingCeremony->update([
-                    'time' => $ceremonyTime->format('H:i'),
-                    'is_award_ceremony' => true,
-                ]);
-            }
+            // Nach dem Bereinigen immer frisch neu anlegen, damit keine gelöschten Models reused werden.
+            $draft->items()->create([
+                'race_number' => 0,
+                'gruppe_id' => 0,
+                'time' => $ceremonyTime->format('H:i'),
+                'lane' => null,
+                'team_id' => null,
+                'is_final' => false,
+                'final_type' => null,
+                'placeholder_name' => 'Siegerehrung',
+                'heat_index' => null,
+                'pause_minutes' => null,
+                'conflicts' => 0,
+                'org_intervals' => null,
+            ]);
         }
 
         // Berechne Veröffentlichungszeit für Finals (1 Stunde nach Siegerehrungszeit)

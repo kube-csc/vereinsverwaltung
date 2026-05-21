@@ -990,6 +990,8 @@ class RegattaRaffleController extends Controller
                         'lane' => $laneNumber,
                         'team_id' => null,
                         'placeholder_name' => "Platz $platzImRanking der Tabelle $gruppeName",
+                        'source_tabele_id' => null,
+                        'source_place' => $platzImRanking,
                         'gruppe_id' => $gruppeId,
                         'is_final' => true,
                         'final_type' => $typeName,
@@ -1545,6 +1547,8 @@ class RegattaRaffleController extends Controller
                     'is_final' => $item['is_final'] ?? false,
                     'final_type' => $item['final_type'] ?? null,
                     'placeholder_name' => $item['placeholder_name'] ?? null,
+                    'source_tabele_id' => $item['source_tabele_id'] ?? null,
+                    'source_place' => $item['source_place'] ?? null,
                     'heat_index' => $item['heat_index'] ?? null,
                     'pause_minutes' => $item['pause_minutes'] ?? null,
                     'conflicts' => $item['conflicts'] ?? 0,
@@ -1565,6 +1569,8 @@ class RegattaRaffleController extends Controller
                     'is_final' => false,
                     'final_type' => null,
                     'placeholder_name' => 'Siegerehrung',
+                    'source_tabele_id' => null,
+                    'source_place' => null,
                     'heat_index' => null,
                     'pause_minutes' => null,
                     'conflicts' => 0,
@@ -2414,7 +2420,7 @@ class RegattaRaffleController extends Controller
         $preview = $this->hydratePreview($items->toArray(), $draft);
         $params = $draft->params;
 
-        \DB::transaction(function () use ($regattaId, $preview, $params) {
+        \DB::transaction(function () use ($regattaId, $preview, $params, $draft) {
             $userId = auth()->id();
 
             // Bestehende Tabellen, Rennen und Bahnen für dieses Event löschen, falls vorhanden
@@ -2455,6 +2461,7 @@ class RegattaRaffleController extends Controller
             });
 
             $tabeleIds = [];
+            $sourceTableByGroup = [];
             foreach ($groupedForTables as $key => $laneData) {
                 $firstLane = $laneData->first();
                 $gruppeId = $firstLane['gruppe_id'];
@@ -2493,7 +2500,23 @@ class RegattaRaffleController extends Controller
                 $tabele->save();
 
                 $tabeleIds[$key] = $tabele->id;
+
+                // Finale referenzieren die spätere Vorlauf-Tabelle derselben Gruppe als Qualifikationsquelle.
+                if (!$firstLane['is_final']) {
+                    $sourceTableByGroup[$gruppeId] = $tabele->id;
+                }
             }
+
+            // Quelle für Final-Platzhalter in raffle_plan_items auflösen (source_tabele_id + source_place).
+            RafflePlanItem::where('raffle_plan_id', $draft->id)
+                ->where('is_final', true)
+                ->whereNull('team_id')
+                ->get()
+                ->each(function ($item) use ($sourceTableByGroup) {
+                    $gid = (int)($item->gruppe_id ?? 0);
+                    $item->source_tabele_id = $sourceTableByGroup[$gid] ?? null;
+                    $item->save();
+                });
 
             // Rennen erstellen: Gruppiert nach race_number
             $groupedByRace = collect($preview)->where('gruppe_id', '!=', 0)->groupBy('race_number');

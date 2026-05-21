@@ -838,6 +838,8 @@ class RegattaRaffleController extends Controller
         // --- ENDE NACHBESSERUNG KONFLIKTE ---
 
         $pauseBlockLabel = '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
+        $maxPrelimHeatIndex = collect($allHeats)->max('heat_index') ?? (int)$heatsCount;
+        $finalHeatIndex = (int)$maxPrelimHeatIndex + 1;
 
         // Finale generieren
         $finalsStartTime = \Carbon\Carbon::parse($finalsStartTimeStr);
@@ -991,6 +993,7 @@ class RegattaRaffleController extends Controller
                         'gruppe_id' => $gruppeId,
                         'is_final' => true,
                         'final_type' => $typeName,
+                        'heat_index' => $finalHeatIndex,
                         'heat_level' => $typeName
                     ];
                 }
@@ -2037,6 +2040,15 @@ class RegattaRaffleController extends Controller
         $lastStartTimes = []; // Trackt die letzte Startzeit pro Team
         $isFirstFinal = true;
         $firstFinalStartTime = null;
+        $maxPrelimHeatIndex = $raceGroups
+            ->filter(function ($lanes) {
+                return !($lanes[0]->is_final ?? false);
+            })
+            ->map(function ($lanes) {
+                return (int)($lanes[0]->heat_index ?? 0);
+            })
+            ->max() ?? 0;
+        $finalHeatIndex = (int)$maxPrelimHeatIndex + 1;
         // Bereits oben aus den Flags bestimmt
 
         // Wir brauchen Team-Namen für die Pausenberechnung bei Organisationen (optional, falls gewünscht)
@@ -2089,6 +2101,7 @@ class RegattaRaffleController extends Controller
                 $lane->time = $timeStr;
 
                 if ($isFinal) {
+                    $lane->heat_index = $finalHeatIndex;
                     // Finale: Abstand zum letzten Vorlauf der Gruppe
                     if (isset($lane->gruppe_id) && isset($maxHeatEndTimePerGroup[$lane->gruppe_id])) {
                         $diff = $currentGlobalTime->diffInMinutes($maxHeatEndTimePerGroup[$lane->gruppe_id]);
@@ -2420,8 +2433,18 @@ class RegattaRaffleController extends Controller
             $event = \App\Models\Event::find($regattaId);
             $rennDatum = $event->datumvon;
 
-            // Erste Startzeit ermitteln (für veroeffentlichungUhrzeit bei Nicht-Finals)
-            $firstRaceTime = collect($preview)->sortBy('race_number')->first()['time'] ?? '00:00';
+            // Erste echte Renn-Startzeit ermitteln (für veroeffentlichungUhrzeit bei Nicht-Finals).
+            // Spezialblöcke (Pause/Siegerehrung) dürfen hier nicht einfließen.
+            $firstRaceTime = collect($preview)
+                ->where('gruppe_id', '!=', 0)
+                ->filter(function ($item) {
+                    return empty($item['is_extra_pause']) && empty($item['is_award_ceremony']);
+                })
+                ->sortBy([
+                    ['time', 'asc'],
+                    ['race_number', 'asc'],
+                ])
+                ->first()['time'] ?? '00:00';
 
             // Tabellen erstellen: Gruppiert nach Gruppe (für Vorläufe) und Gruppe + Final-Typ (für Endläufe)
             $groupedForTables = collect($preview)->where('gruppe_id', '!=', 0)->groupBy(function ($item) {
@@ -2452,7 +2475,7 @@ class RegattaRaffleController extends Controller
                     $tabele->system_id = $params['tabelleSystem'] ?? null;
                     $tabele->buchholzwertungaktiv = 0; // Finals nie mit Buchholz
                     $tabele->tabelleVisible = 0;
-                    $tabele->finaleAnzeigen = (!empty($params['finale_publish_time']) ? $params['finale_publish_time'] : '00:00') . ':00';
+                    $tabele->finaleAnzeigen = (!empty($params['finale_publish_time']) ? $params['finale_publish_time'] : '00:00:00') ;
                 } else {
                     $tabele->ueberschrift = 'Vorlauf ' . $firstLane['gruppe_name'];
                     $tabele->finale = 0;
@@ -2462,7 +2485,7 @@ class RegattaRaffleController extends Controller
                     $tabele->buchholzwertungaktiv = $params['buchholzwertung'] ?? 0;
                     $tabele->system_id = $params['tabelleSystem'] ?? null;
                     $tabele->tabelleVisible = 1;
-                    $tabele->finaleAnzeigen = $firstRaceTime . ':00';
+                    $tabele->finaleAnzeigen = $firstRaceTime ;
                 }
 
                 $tabele->autor_id = $userId;
@@ -2474,6 +2497,7 @@ class RegattaRaffleController extends Controller
 
             // Rennen erstellen: Gruppiert nach race_number
             $groupedByRace = collect($preview)->where('gruppe_id', '!=', 0)->groupBy('race_number');
+            $raceSequentialNumber = 1;
 
             foreach ($groupedByRace as $raceNum => $laneData) {
                 $firstLane = $laneData->first();
@@ -2497,17 +2521,20 @@ class RegattaRaffleController extends Controller
                 }
 
                 $race->level = $firstLane['heat_index'] ?? 1;
+                $race->nummer = (string)$raceSequentialNumber;
 
                 if ($firstLane['is_final']) {
                     $race->rennBezeichnung = $firstLane['final_type'];
                 } else {
-                    $race->rennBezeichnung = 'Lauf ' . $raceNum;
+                    $race->rennBezeichnung = ($firstLane['heat_index'] ?? 1) . '. Vorlauf';
+                    $race->status = 1;
                 }
 
                 $race->bahnen = count($laneData);
                 $race->autor_id = $userId;
                 $race->bearbeiter_id = $userId;
                 $race->save();
+                $raceSequentialNumber++;
 
                 foreach ($laneData as $lane) {
                     $laneModel = new \App\Models\Lane();

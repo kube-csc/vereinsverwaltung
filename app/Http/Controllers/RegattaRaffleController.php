@@ -941,17 +941,15 @@ class RegattaRaffleController extends Controller
                 // dann müssen wir $laneAssignment umkehren, damit die schwächeren Teams zuerst (auf die äußeren Bahnen)
                 // und die starken Teams zuletzt (auf die Mittelbahnen) im Loop verarbeitet werden.
 
-                // Bahnverteilung in Finals: Immer bei Bahn 1 anfangen (User-Wunsch).
-                // Wir belegen die Bahnen 1, 2, 3... bis zur Anzahl der Teams in diesem Finale.
+                // Bahnverteilung in Finals: Immer bei Bahn 1 anfangen, nur so viele wie Teams.
                 // Um die Anforderung "stärkste Teams zuletzt setzen" zu erfüllen,
                 // durchlaufen wir die Plätze von schwach nach stark.
                 $teamsInThisFinal = min($lanesCount, $totalTeamsInGroup - $startPlatz + 1);
+
                 $laneAssignment = [];
-                for ($i = 1; $i <= $teamsInThisFinal; $i++) {
-                    $laneAssignment[] = $i;
+                for ($i = 0; $i < $teamsInThisFinal; $i++) {
+                    $laneAssignment[] = 1 + $i;
                 }
-                // Wir drehen es um, damit wir mit der höchsten Bahn (schwächstes Team) anfangen
-                $laneAssignment = array_reverse($laneAssignment);
 
                 // Berechne Abstand zum letzten Vorlauf dieser Gruppe
                 $finalPause = '-';
@@ -963,9 +961,9 @@ class RegattaRaffleController extends Controller
                 }
 
                 foreach ($laneAssignment as $lIdx => $laneNumber) {
-                    // Da wir $laneAssignment umgedreht haben (z.B. [4, 3, 2, 1]),
-                    // entspricht $lIdx 0 der Bahn 4 (schwächstes Team).
-                    // Der Platz im Ranking für das schwächste Team ist: $startPlatz + $teamsInThisFinal - 1
+                    // Wir iterieren von der schwächsten zur stärksten Platzierung.
+                    // Die schwächsten Teams bekommen die niedrigeren Bahnen (am Rand),
+                    // die stärksten Teams bekommen die höheren Bahnen (in der Mitte).
                     $reverseIdx = ($teamsInThisFinal - 1) - $lIdx;
                     $platzImRanking = $startPlatz + $reverseIdx;
 
@@ -2461,7 +2459,6 @@ class RegattaRaffleController extends Controller
             });
 
             $tabeleIds = [];
-            $sourceTableByGroup = [];
             foreach ($groupedForTables as $key => $laneData) {
                 $firstLane = $laneData->first();
                 $gruppeId = $firstLane['gruppe_id'];
@@ -2501,20 +2498,43 @@ class RegattaRaffleController extends Controller
 
                 $tabeleIds[$key] = $tabele->id;
 
-                // Finale referenzieren die spätere Vorlauf-Tabelle derselben Gruppe als Qualifikationsquelle.
-                if (!$firstLane['is_final']) {
-                    $sourceTableByGroup[$gruppeId] = $tabele->id;
+                // ...existing code...
+            }
+
+            // Vorlauf-Quellenmap deterministisch aus tatsächlich erzeugten Tabellen ableiten.
+            // Key-Format: "<gruppe_id>_vorlauf"
+            $sourceTableByGroup = [];
+            foreach ($tabeleIds as $tableKey => $tableId) {
+                if (str_ends_with((string)$tableKey, '_vorlauf')) {
+                    $gid = (int)explode('_', (string)$tableKey)[0];
+                    $sourceTableByGroup[$gid] = $tableId;
                 }
             }
 
             // Quelle für Final-Platzhalter in raffle_plan_items auflösen (source_tabele_id + source_place).
+            // Dabei werden EXPLIZIT die in diesem store()-Lauf neu erzeugten Vorlauf-Tabellen verwendet.
             RafflePlanItem::where('raffle_plan_id', $draft->id)
                 ->where('is_final', true)
-                ->whereNull('team_id')
                 ->get()
-                ->each(function ($item) use ($sourceTableByGroup) {
+                ->each(function ($item) use ($sourceTableByGroup, $regattaId) {
                     $gid = (int)($item->gruppe_id ?? 0);
-                    $item->source_tabele_id = $sourceTableByGroup[$gid] ?? null;
+                    $resolvedSourceTableId = $sourceTableByGroup[$gid] ?? null;
+
+                    if (!$resolvedSourceTableId) {
+                        $resolvedSourceTableId = Tabele::where('event_id', $regattaId)
+                            ->where('gruppe_id', $gid)
+                            ->where('finale', 0)
+                            ->orderByDesc('id')
+                            ->value('id');
+                    }
+
+                    $item->source_tabele_id = $resolvedSourceTableId;
+
+                    if (empty($item->source_place) && !empty($item->placeholder_name)
+                        && preg_match('/Platz\s+(\d+)/i', (string)$item->placeholder_name, $m)) {
+                        $item->source_place = (int)$m[1];
+                    }
+
                     $item->save();
                 });
 
@@ -2565,6 +2585,32 @@ class RegattaRaffleController extends Controller
                     $laneModel->rennen_id = $race->id;
                     $laneModel->tabele_id = $tabeleIds[$tableKey] ?? null;
                     $laneModel->mannschaft_id = $lane['team_id'] ?? null;
+
+                    if ($firstLane['is_final']) {
+                        $sourceTableId = $sourceTableByGroup[$gruppeId] ?? ($lane['source_tabele_id'] ?? null);
+
+                        if (!$sourceTableId) {
+                            $sourceTableId = Tabele::where('event_id', $regattaId)
+                                ->where('gruppe_id', $gruppeId)
+                                ->where('finale', 0)
+                                ->orderByDesc('id')
+                                ->value('id');
+                        }
+
+                        $sourcePlace = $lane['source_place'] ?? null;
+
+                        if ($sourcePlace === null && !empty($lane['placeholder_name'])
+                            && preg_match('/Platz\s+(\d+)/i', (string)$lane['placeholder_name'], $m)) {
+                            $sourcePlace = (int)$m[1];
+                        }
+
+                        $laneModel->tabelevor_id = $sourceTableId ?? 0;
+                        $laneModel->platzvor = $sourcePlace ?? 0;
+                    } else {
+                        $laneModel->tabelevor_id = 0;
+                        $laneModel->platzvor = 0;
+                    }
+
                     $laneModel->bahn = $lane['lane'];
                     $laneModel->zeit = '00:00:00';
                     $laneModel->hundert = 0;

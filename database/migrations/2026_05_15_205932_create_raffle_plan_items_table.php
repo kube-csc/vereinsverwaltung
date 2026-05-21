@@ -22,11 +22,15 @@ return new class extends Migration
             $table->boolean('is_final')->default(false);
             $table->string('final_type')->nullable();
             $table->string('placeholder_name')->nullable();
+            $table->unsignedBigInteger('source_tabele_id');
+            $table->integer('source_place')->nullable();
             $table->integer('heat_index')->nullable();
             $table->integer('pause_minutes')->nullable();
             $table->integer('conflicts')->default(0);
             $table->text('org_intervals')->nullable();
             $table->timestamps();
+
+            $table->index(['source_tabele_id', 'source_place'], 'rpi_source_table_place_idx');
 
             $table->foreign('raffle_plan_id')->references('id')->on('raffle_plans')->onDelete('cascade');
         });

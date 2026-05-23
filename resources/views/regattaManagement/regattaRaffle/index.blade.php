@@ -331,6 +331,20 @@
 
                 <!-- Rechte Seite: Generator -->
                 <div>
+                    @if(!empty($configWarnings) && count($configWarnings) > 0)
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                            <h3 class="font-bold text-yellow-800 flex items-center mb-2">
+                                <box-icon name='error' class="mr-2" color="#a16207"></box-icon>
+                                Hinweise zur Konfiguration
+                            </h3>
+                            <ul class="list-disc pl-5 text-sm text-yellow-900 space-y-1">
+                                @foreach($configWarnings as $warning)
+                                    <li>{{ $warning }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <!-- Versions-Verwaltung -->
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
                         <h3 class="font-bold text-blue-800 flex items-center mb-2">
@@ -527,6 +541,10 @@
                                         <input type="number" name="finals_count" value="{{ old('finals_count', $draft ? ($draft->params['finals_count'] ?? ($maxFinalsTotal ?? 1)) : ($maxFinalsTotal ?? 1)) }}" min="0" max="{{ $maxFinalsTotal ?? 10 }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                     </div>
                                     <div>
+                                        <label class="block text-sm font-medium text-gray-700">Anzahl Cups</label>
+                                        <input type="number" name="cups_count" value="{{ old('cups_count', $draft ? ($draft->params['cups_count'] ?? 1) : 1) }}" min="1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    </div>
+                                    <div>
                                         <label class="block text-sm font-medium text-gray-700">Startzeit Finals</label>
                                         <input type="time" name="finals_start_time" value="{{ $draft ? ($draft->params['finals_start_time'] ?? '14:00') : '14:00' }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                     </div>
@@ -537,8 +555,8 @@
                                 </div>
                                 <div class="mt-2">
                                     <label class="block text-sm font-medium text-gray-700">Veröffentlichung Finale (Uhrzeit)</label>
-                                    <input type="time" name="finale_publish_time" value="{{ $draft ? ($draft->params['finale_publish_time'] ?? '19:00') : '19:00' }}" class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm" readonly>
-                                    <p class="text-xs text-gray-500 mt-1 italic">Wird automatisch auf 1 Stunde nach der Siegerehrung gesetzt.</p>
+                                    <input type="time" name="finale_publish_time" value="{{ $draft ? ($draft->params['finale_publish_time'] ?? '19:00') : '19:00' }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    <p class="text-xs text-gray-500 mt-1 italic">Manuell änderbar. Wenn leer, wird automatisch 1 Stunde nach der Siegerehrung verwendet.</p>
                                 </div>
                                 <div class="mt-2">
                                     <label class="block text-sm font-medium text-gray-700">Mindestzeit bis zur Siegerehrung (Minuten)</label>

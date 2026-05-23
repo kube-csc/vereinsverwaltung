@@ -19,6 +19,26 @@ use Illuminate\Support\Facades\File;
 
 class RegattaRaffleController extends Controller
 {
+    private function resolveLaneCount(?RaceType $raceType, array &$configWarnings = []): int
+    {
+        $lanesCount = (int) ($raceType->bahnen ?? 0);
+
+        if ($lanesCount > 0) {
+            return $lanesCount;
+        }
+
+        $warningKey = 'race_type_' . ($raceType->id ?? 'unknown');
+        if (!isset($configWarnings[$warningKey])) {
+            $configWarnings[$warningKey] = sprintf(
+                'Bootsklasse "%s" (#%s) hat keine gültige Bahnenzahl hinterlegt. Für die Rennplanung wird automatisch der Fallback-Wert 4 verwendet.',
+                $raceType->typ ?? 'Unbekannt',
+                $raceType->id ?? '?'
+            );
+        }
+
+        return 4;
+    }
+
     /**
      * Zeigt die Spezifikation für die Rennplan-Erstellung (Logik-Anleitung) an.
      */
@@ -62,12 +82,10 @@ class RegattaRaffleController extends Controller
         // Maximale Anzahl an Finals berechnen (für die UI)
         $teamsByGroup = $teams->where('status', 'Neuanmeldung')->groupBy('gruppe_id');
         $maxFinalsTotal = 0;
+        $configWarnings = [];
         foreach ($teamsByGroup as $gruppeId => $gruppeTeams) {
             $raceType = $raceTypes->firstWhere('id', $gruppeId);
-            $lanesCount = (int) ($raceType->bahnen ?? 0);
-            if ($lanesCount <= 0) {
-                $lanesCount = 4;
-            }
+            $lanesCount = $this->resolveLaneCount($raceType, $configWarnings);
             $maxFinalsInGroup = ceil($gruppeTeams->count() / $lanesCount);
             if ($maxFinalsInGroup > $maxFinalsTotal) {
                 $maxFinalsTotal = $maxFinalsInGroup;
@@ -115,6 +133,7 @@ class RegattaRaffleController extends Controller
             'finalTeamlinks' => $this->getFinalTeamlinks($regattaId),
             'plans' => $plans,
             'draft' => $draft,
+            'configWarnings' => array_values($draft->params['configWarnings'] ?? $configWarnings),
             'pointsystemIds' => $pointsystemIds,
             'pointsystemsBySystem' => $pointsystemsBySystem,
         ]);
@@ -272,6 +291,7 @@ class RegattaRaffleController extends Controller
         $finalePublishTimeStr = trim((string) $request->input('finale_publish_time', '')); // Manuelle Eingabe falls vorhanden
 
         $finalsCount = $request->input('finals_count', 1);
+        $cupsCount = max(1, (int) $request->input('cups_count', 1));
         $buchholzwertung = $request->input('buchholzwertung', 0);
         $tabelleSystem = $request->input('tabelleSystem');
 
@@ -307,6 +327,7 @@ class RegattaRaffleController extends Controller
         // Wir berechnen die maximale Endzeit der Vorläufe pro Gruppe, um danach den Abstand zum ersten Finale berechnen zu können
         $maxHeatEndTimePerGroup = [];
         $maxHeatEndTime = $startTimeObj->copy();
+        $configWarnings = [];
 
         // Vorläufe sammeln (Rundenweise abwechselnd nach Gruppen)
         $allHeats = [];
@@ -317,7 +338,7 @@ class RegattaRaffleController extends Controller
         $groupsMeta = [];
         foreach ($teamsByGroup as $gruppeId => $gruppeTeams) {
             $raceType = RaceType::find($gruppeId);
-            $lanesCount = $raceType->bahnen ?? 4;
+            $lanesCount = $this->resolveLaneCount($raceType, $configWarnings);
             $gruppeNames[$gruppeId] = $raceType->typ ?? 'Unbekannt';
 
             foreach ($gruppeTeams as $t) {
@@ -411,8 +432,7 @@ class RegattaRaffleController extends Controller
             $lanesCount = $heatData['lanes_count'];
 
             // Sonderfall: Wenn die Gruppe <= Bahnen hat, sollen alle in einem Lauf starten.
-            $raceType = RaceType::find($gruppeId);
-            $origLanesCount = $raceType->bahnen ?? 4;
+            $origLanesCount = max(1, (int) ($groupsMeta[$gruppeId]['orig_lanes'] ?? $lanesCount));
             $gruppeTeamsTotal = RegattaTeam::where('regatta_id', $regattaId)->where('gruppe_id', $gruppeId)->where('status', 'Neuanmeldung')->count();
             $isSmallGroup = ($gruppeTeamsTotal <= $origLanesCount);
 
@@ -835,33 +855,54 @@ class RegattaRaffleController extends Controller
         $currentGlobalTime = $finalsStartTime->copy();
 
         // Finale sammeln (gruppiert nach Typ: A, B, C...)
+        // Mehr-Cup-Logik: Die gemeinsame Vorlauf-Gesamtwertung einer Gruppe wird in Cups aufgeteilt.
+        // Cup 1 = stärkster Cup, höherer Cup-Index = schwächerer Cup.
         $finalsByType = [];
         foreach ($teamsByGroup as $gruppeId => $gruppeTeams) {
             $raceType = RaceType::find($gruppeId);
-            $lanesCount = $raceType->bahnen ?? 4;
+            $lanesCount = $this->resolveLaneCount($raceType, $configWarnings);
             $totalTeamsInGroup = $gruppeTeams->count();
 
-            $maxSaneFinals = ceil($totalTeamsInGroup / $lanesCount);
-            $actualFinalsCount = min($finalsCount, $maxSaneFinals);
+            $actualCupsCount = min($cupsCount, max(1, $totalTeamsInGroup));
+            $baseCupSize = intdiv($totalTeamsInGroup, $actualCupsCount);
+            $cupRemainder = $totalTeamsInGroup % $actualCupsCount;
 
-            for ($f = 0; $f < $actualFinalsCount; $f++) {
-                // $f=0 ist das sportlich schwächste Finale (z.B. C-Finale), $f=max ist das A-Finale
-                // Da wir sie später nach Leistungsstärke aufsteigend planen wollen:
-                $finalLetter = chr(65 + ($actualFinalsCount - 1 - $f));
-                $finalTypeName = $finalLetter . '-Finale';
-
-                if (!isset($finalsByType[$finalTypeName])) {
-                    $finalsByType[$finalTypeName] = [];
+            $cupStartRank = 1;
+            for ($cupNumber = 1; $cupNumber <= $actualCupsCount; $cupNumber++) {
+                // Restplätze gehen an stärkere Cups zuerst (Cup 1, dann Cup 2, ...)
+                $cupSize = $baseCupSize + ($cupNumber <= $cupRemainder ? 1 : 0);
+                if ($cupSize <= 0) {
+                    continue;
                 }
 
-                $finalsByType[$finalTypeName][] = [
-                    'gruppe_id' => $gruppeId,
-                    'lanes_count' => $lanesCount,
-                    'total_teams' => $totalTeamsInGroup,
-                    'f_index' => $f, // Index 0 ist das schwächste geplante Finale der Gruppe
-                    'final_type' => $finalTypeName,
-                    'actual_finals_count' => $actualFinalsCount
-                ];
+                $maxSaneFinalsInCup = (int) ceil($cupSize / $lanesCount);
+                $actualFinalsCount = min($finalsCount, $maxSaneFinalsInCup);
+
+                for ($f = 0; $f < $actualFinalsCount; $f++) {
+                    // $f=0 ist das sportlich schwächste Finale der jeweiligen Cup-Wertung.
+                    $finalLetter = chr(65 + ($actualFinalsCount - 1 - $f));
+                    $baseFinalTypeName = $finalLetter . '-Finale';
+                    $finalTypeName = $baseFinalTypeName . ' Cup ' . $cupNumber;
+
+                    if (!isset($finalsByType[$baseFinalTypeName])) {
+                        $finalsByType[$baseFinalTypeName] = [];
+                    }
+
+                    $finalsByType[$baseFinalTypeName][] = [
+                        'gruppe_id' => $gruppeId,
+                        'lanes_count' => $lanesCount,
+                        'total_teams' => $totalTeamsInGroup,
+                        'f_index' => $f,
+                        'final_type' => $finalTypeName,
+                        'final_type_base' => $baseFinalTypeName,
+                        'actual_finals_count' => $actualFinalsCount,
+                        'cup_number' => $cupNumber,
+                        'cup_size' => $cupSize,
+                        'cup_start_rank' => $cupStartRank,
+                    ];
+                }
+
+                $cupStartRank += $cupSize;
             }
         }
 
@@ -874,10 +915,14 @@ class RegattaRaffleController extends Controller
         krsort($finalsByType);
 
         foreach ($finalsByType as $typeName => $finals) {
-            // Innerhalb eines Typs (z.B. alle B-Finals) sortieren wir die Gruppen
-            // nach Meldezahl (kleinere Gruppen zuerst), um eine Steigerung zu haben
+            // Innerhalb eines Typs (z.B. alle B-Finals): zuerst schwächster Cup, dann stärkere Cups.
             usort($finals, function($a, $b) {
-                return $a['total_teams'] <=> $b['total_teams'];
+                $cupSort = ($b['cup_number'] ?? 1) <=> ($a['cup_number'] ?? 1);
+                if ($cupSort !== 0) {
+                    return $cupSort;
+                }
+                // Stabile Zweitsortierung für identischen Cup (deterministisch)
+                return ($a['gruppe_id'] ?? 0) <=> ($b['gruppe_id'] ?? 0);
             });
 
             foreach ($finals as $fData) {
@@ -886,6 +931,8 @@ class RegattaRaffleController extends Controller
                 $totalTeamsInGroup = $fData['total_teams'];
                 $f = $fData['f_index'];
                 $actualFinalsCount = $fData['actual_finals_count'];
+                $cupStartRank = $fData['cup_start_rank'] ?? 1;
+                $cupSize = $fData['cup_size'] ?? $totalTeamsInGroup;
                 $gruppeName = $gruppeNames[$gruppeId] ?? 'Unbekannt';
 
                 $startPlatz = ($actualFinalsCount - 1 - $f) * $lanesCount + 1;
@@ -898,7 +945,7 @@ class RegattaRaffleController extends Controller
                 // Das ist korrekt für die sportliche Zuordnung.
                 // Finals werden nach Seeding gesetzt: starke Platzierungen in die Mitte,
                 // nach außen hin schwächer (Center-Out).
-                $teamsInThisFinal = min($lanesCount, $totalTeamsInGroup - $startPlatz + 1);
+                $teamsInThisFinal = min($lanesCount, $cupSize - $startPlatz + 1);
 
                 $laneAssignment = array_slice($this->calculateSeededLanes($lanesCount), 0, max(0, $teamsInThisFinal));
 
@@ -914,9 +961,10 @@ class RegattaRaffleController extends Controller
                 foreach ($laneAssignment as $lIdx => $laneNumber) {
                     // Niedrige Platzierung = starkes Team.
                     // $lIdx folgt der Seeding-Reihenfolge aus calculateSeededLanes().
-                    $platzImRanking = $startPlatz + $lIdx;
+                    $platzImCupRanking = $startPlatz + $lIdx;
+                    $platzImRanking = $cupStartRank + $platzImCupRanking - 1;
 
-                    if ($platzImRanking > $totalTeamsInGroup) continue;
+                    if ($platzImCupRanking > $cupSize || $platzImRanking > $totalTeamsInGroup) continue;
 
                     // Sicherheitscheck: Verhindere doppelte Bahnen im gleichen Rennen
                     $alreadyAssigned = false;
@@ -941,9 +989,9 @@ class RegattaRaffleController extends Controller
                         'source_place' => $platzImRanking,
                         'gruppe_id' => $gruppeId,
                         'is_final' => true,
-                        'final_type' => $typeName,
+                        'final_type' => $fData['final_type'],
                         'heat_index' => $finalHeatIndex,
-                        'heat_level' => $typeName
+                        'heat_level' => $fData['final_type']
                     ];
                 }
                 $raceNumber++;
@@ -1440,6 +1488,7 @@ class RegattaRaffleController extends Controller
             'pause_after_heats' => $pauseAfterHeats,
             'finals_start_time' => $finalsStartTimeStr,
             'finals_count' => $finalsCount,
+            'cups_count' => $cupsCount,
             'award_ceremony_time' => $awardCeremonyTimeStr,
             'min_time_before_ceremony' => $minTimeBeforeCeremony,
             'finale_publish_time' => $finalePublishTimeStr,
@@ -1447,6 +1496,7 @@ class RegattaRaffleController extends Controller
             'pause_type' => $pauseType,
             'pause_trigger' => $pauseTrigger,
             'pause_duration' => $pauseDuration,
+            'configWarnings' => array_values($configWarnings),
             'swapCount' => $swapCount,
             'swapAttempts' => $swapAttempts,
             'swapLogs' => collect($swapLogs)->unique()->toArray(),
@@ -1946,6 +1996,7 @@ class RegattaRaffleController extends Controller
         $minPauseOrg = $request->input('min_pause_org', 40);
         $finalsStartTimeStr = $request->input('finals_start_time');
         $pauseAfterHeats = $request->input('pause_after_heats', 30);
+        $cupsCount = max(1, (int) $request->input('cups_count', ($draft->params['cups_count'] ?? 1)));
 
         // Zusätzliche Pausenoptionen aus Draft laden oder Request
         $pauseType = $request->input('pause_type', $draft->params['pause_type'] ?? 'none');
@@ -2251,6 +2302,7 @@ class RegattaRaffleController extends Controller
         $params['interval'] = $interval;
         $params['finals_start_time'] = $finalsStartTimeStr;
         $params['pause_after_heats'] = $pauseAfterHeats;
+        $params['cups_count'] = $cupsCount;
         $params['award_ceremony_time'] = $awardCeremonyTimeStr;
         $params['min_time_before_ceremony'] = $minTimeBeforeCeremony;
         $params['finale_publish_time'] = $finalePublishTimeStr;
@@ -2451,7 +2503,7 @@ class RegattaRaffleController extends Controller
 
                 if ($firstLane['is_final']) {
                     $tabele->ueberschrift = $firstLane['final_type'] . ' ' . $firstLane['gruppe_name'];
-                    $tabele->finale = ($firstLane['final_type'] === 'A-Finale') ? 1 : 0;
+                    $tabele->finale = str_starts_with((string) $firstLane['final_type'], 'A-Finale') ? 1 : 0;
                     $tabele->tabelleLevelVon = $params['heats_count']+1 ?? 2;
                     $tabele->tabelleLevelBis = $params['heats_count']+1 ?? 2;
                     $tabele->wertungsart = $params['wertungsart'] ?? 1;
@@ -2639,10 +2691,41 @@ class RegattaRaffleController extends Controller
         foreach ($finalTables as $table) {
             $data = Tabledata::join('regatta_teams', 'tabledatas.mannschaft_id', '=', 'regatta_teams.id')
                 ->where('tabledatas.tabele_id', $table->id)
-                ->where('regatta_teams.teamlink', '>', 0)
                 ->select('tabledatas.*', 'regatta_teams.teamlink')
                 ->get();
 
+            if ($data->isEmpty()) {
+                continue;
+            }
+
+            // Primär die echte gespeicherte Platzierung verwenden (tabledatas.platz),
+            // damit kein Re-Ranking entsteht, wenn Teams ohne teamlink herausgefiltert werden.
+            $rowsWithStoredPlace = $data
+                ->filter(fn($row) => (int) ($row->platz ?? 0) > 0)
+                ->sortBy(fn($row) => (int) $row->platz)
+                ->values();
+
+            if ($rowsWithStoredPlace->isNotEmpty()) {
+                foreach ($rowsWithStoredPlace as $row) {
+                    $teamlink = (int) ($row->teamlink ?? 0);
+                    $rank = (int) ($row->platz ?? 0);
+
+                    if ($teamlink <= 0 || $rank <= 0) {
+                        continue;
+                    }
+
+                    // Falls ein Teamlink in mehreren Finalen auftaucht, gewinnt die bessere Platzierung.
+                    if (!isset($results[$teamlink]) || $rank < $results[$teamlink]['platz']) {
+                        $results[$teamlink] = [
+                            'platz' => $rank,
+                            'tabelle' => $table->ueberschrift,
+                        ];
+                    }
+                }
+                continue;
+            }
+
+            // Fallback: Falls keine gespeicherte Platzierung vorhanden ist, Ranking berechnen.
             if ($table->wertungsart == 2) {
                 // Zeit-Wertung: Kleinste Zeit gewinnt
                 $sorted = $data->sort(function ($a, $b) {
@@ -2658,11 +2741,16 @@ class RegattaRaffleController extends Controller
 
             $rank = 1;
             foreach ($sorted as $row) {
-                // Falls ein Teamlink in mehreren Finalen auftaucht (unwahrscheinlich), gewinnt die bessere Platzierung
-                if (!isset($results[$row->teamlink]) || $rank < $results[$row->teamlink]['platz']) {
-                    $results[$row->teamlink] = [
+                $teamlink = (int) ($row->teamlink ?? 0);
+                if ($teamlink <= 0) {
+                    $rank++;
+                    continue;
+                }
+
+                if (!isset($results[$teamlink]) || $rank < $results[$teamlink]['platz']) {
+                    $results[$teamlink] = [
                         'platz' => $rank,
-                        'tabelle' => $table->ueberschrift
+                        'tabelle' => $table->ueberschrift,
                     ];
                 }
                 $rank++;

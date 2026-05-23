@@ -15,38 +15,38 @@
                     @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="verein" class="block font-semibold mb-1">Verein:</label>
-                    <input type="text" name="verein" id="verein" value="{{ old('verein', $regattaTeam->verein) }}" class="form-input w-full">
+                    <label for="verein" class="block font-semibold mb-1">Verein: <span class="text-red-600">*</span></label>
+                    <input type="text" name="verein" id="verein" value="{{ old('verein', $regattaTeam->verein) }}" class="form-input w-full" required>
                     @error('verein') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="teamcaptain" class="block font-semibold mb-1">Teamcaptain:</label>
-                    <input type="text" name="teamcaptain" id="teamcaptain" value="{{ old('teamcaptain', $regattaTeam->teamcaptain) }}" class="form-input w-full">
+                    <label for="teamcaptain" class="block font-semibold mb-1">Teamcaptain: <span class="text-red-600">*</span></label>
+                    <input type="text" name="teamcaptain" id="teamcaptain" value="{{ old('teamcaptain', $regattaTeam->teamcaptain) }}" class="form-input w-full" required>
                     @error('teamcaptain') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="strasse" class="block font-semibold mb-1">Straße:</label>
-                    <input type="text" name="strasse" id="strasse" value="{{ old('strasse', $regattaTeam->strasse) }}" class="form-input w-full">
+                    <label for="strasse" class="block font-semibold mb-1">Straße: <span class="text-red-600">*</span></label>
+                    <input type="text" name="strasse" id="strasse" value="{{ old('strasse', $regattaTeam->strasse) }}" class="form-input w-full" required>
                     @error('strasse') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="plz" class="block font-semibold mb-1">PLZ:</label>
-                    <input type="text" name="plz" id="plz" value="{{ old('plz', $regattaTeam->plz) }}" class="form-input w-full">
+                    <label for="plz" class="block font-semibold mb-1">PLZ: <span class="text-red-600">*</span></label>
+                    <input type="text" name="plz" id="plz" value="{{ old('plz', $regattaTeam->plz) }}" class="form-input w-full" required>
                     @error('plz') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="ort" class="block font-semibold mb-1">Ort:</label>
-                    <input type="text" name="ort" id="ort" value="{{ old('ort', $regattaTeam->ort) }}" class="form-input w-full">
+                    <label for="ort" class="block font-semibold mb-1">Ort: <span class="text-red-600">*</span></label>
+                    <input type="text" name="ort" id="ort" value="{{ old('ort', $regattaTeam->ort) }}" class="form-input w-full" required>
                     @error('ort') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="telefon" class="block font-semibold mb-1">Telefon:</label>
-                    <input type="text" name="telefon" id="telefon" value="{{ old('telefon', $regattaTeam->telefon) }}" class="form-input w-full">
+                    <label for="telefon" class="block font-semibold mb-1">Telefon: <span class="text-red-600">*</span></label>
+                    <input type="text" name="telefon" id="telefon" value="{{ old('telefon', $regattaTeam->telefon) }}" class="form-input w-full" required>
                     @error('telefon') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="email" class="block font-semibold mb-1">E-Mail:</label>
-                    <input type="email" name="email" id="email" value="{{ old('email', $regattaTeam->email) }}" class="form-input w-full">
+                    <label for="email" class="block font-semibold mb-1">E-Mail: <span class="text-red-600">*</span></label>
+                    <input type="email" name="email" id="email" value="{{ old('email', $regattaTeam->email) }}" class="form-input w-full" required>
                     @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
@@ -65,8 +65,8 @@
                     @error('kommentar') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4">
-                    <label for="gruppe_id" class="block font-semibold mb-1">Wertungsgruppe:</label>
-                    <select name="gruppe_id" id="gruppe_id" class="form-input w-full">
+                    <label for="gruppe_id" class="block font-semibold mb-1">Wertungsgruppe: <span class="text-red-600">*</span></label>
+                    <select name="gruppe_id" id="gruppe_id" class="form-input w-full" required>
                         <option value="">Bitte wählen</option>
                         @foreach($gruppen as $gruppe)
                             <option value="{{ $gruppe->id }}" @if(old('gruppe_id', $regattaTeam->gruppe_id)==$gruppe->id) selected @endif>
@@ -105,8 +105,8 @@
                 </div>
                 <div class="mb-4">
                     <label for="status" class="block font-semibold mb-1">Status:</label>
-                    <select name="status" id="status" class="form-input w-full">
-                        <option value="Neuanmeldung" @if(old('status', $regattaTeam->status ?? 'Neuanmeldung') == 'Neuanmeldung') selected @endif>Neuanmeldung</option>
+                    <select name="status" id="status" class="form-input w-full" required>
+                        <option value="Neuanmeldung" @if(old('status', 'Neuanmeldung') == 'Neuanmeldung') selected @endif>Neuanmeldung</option>
                         <option value="Warteliste" @if(old('status', $regattaTeam->status) == 'Warteliste') selected @endif>Warteliste</option>
                         <option value="Ausgeschieden" @if(old('status', $regattaTeam->status) == 'Ausgeschieden') selected @endif>Ausgeschieden</option>
                         <option value="Gelöscht" @if(old('status', $regattaTeam->status) == 'Gelöscht') selected @endif>Gelöscht</option>

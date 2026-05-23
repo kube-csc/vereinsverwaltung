@@ -27,6 +27,7 @@ class UserSeeder extends Seeder
                 'vorname' => 'Vorname 1',
                 'geschlecht' => 'm',
                 'name' => 'Admin',
+                'admin' => '4',
                 'email' => 'info@info.de',
                 'email_verified_at' => NULL,
                 'password' => '$2y$10$KjSWWuLzgumtluwPbs1/S.jht7Hm79U11B9b3tVVhTx2o0N7gGwt2', //password
@@ -43,6 +44,7 @@ class UserSeeder extends Seeder
                 'vorname' => 'Vorname 2',
                 'geschlecht' => 'w',
                 'name' => 'Admin',
+                'admin' => '2',
                 'email' => 'info2@info.de',
                 'email_verified_at' => NULL,
                 'password' => '$2y$10$KjSWWuLzgumtluwPbs1/S.jht7Hm79U11B9b3tVVhTx2o0N7gGwt2', //password
@@ -59,6 +61,7 @@ class UserSeeder extends Seeder
                  'vorname' => 'Mannschaft 2',
                  'geschlecht' => 'm',
                  'name' => 'Trainer',
+                 'admin' => '3',
                  'email' => 'info3@info.de',
                  'email_verified_at' => NULL,
                  'password' => '$2y$10$KjSWWuLzgumtluwPbs1/S.jht7Hm79U11B9b3tVVhTx2o0N7gGwt2', //password

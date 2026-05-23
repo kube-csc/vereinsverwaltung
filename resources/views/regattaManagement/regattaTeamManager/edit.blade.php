@@ -12,6 +12,9 @@
                     <h1 class="text-2xl font-bold text-blue-800">Teamlink bearbeiten</h1>
                     <p class="text-sm text-gray-600 mt-1">
                         Team: <strong>{{ $team->teamname }}</strong> (#{{ $team->id }})
+                        @if($team->teamlink > 0 && isset($finalTeamlinks[$team->teamlink]))
+                            <span title="War bei der letzten Regatta in einem Finale ({{ $finalTeamlinks[$team->teamlink]['tabelle'] }}, Platz {{ $finalTeamlinks[$team->teamlink]['platz'] }})" class="cursor-help">🏆 {{ $finalTeamlinks[$team->teamlink]['platz'] }}.</span>
+                        @endif
                     </p>
                 </div>
 
@@ -83,6 +86,9 @@
                                     <div class="flex-1">
                                         <div class="font-semibold text-lg text-green-800">
                                             Team: {{ $linked->teamname ?? '-' }} (#{{ $linked->id }})
+                                            @if($linked->teamlink > 0 && isset($finalTeamlinks[$linked->teamlink]))
+                                                <span title="War bei der letzten Regatta in einem Finale ({{ $finalTeamlinks[$linked->teamlink]['tabelle'] }}, Platz {{ $finalTeamlinks[$linked->teamlink]['platz'] }})" class="cursor-help text-base">🏆 {{ $finalTeamlinks[$linked->teamlink]['platz'] }}.</span>
+                                            @endif
                                         </div>
                                         <div class="text-xs text-gray-600">
                                             PLZ: {{ $linked->plz ?? '-' }} {{ $linked->ort ?? '' }}<br>
@@ -169,6 +175,9 @@
                                     <div class="flex-1">
                                         <div class="font-semibold text-lg text-blue-800">
                                             Team: {{ $suggestion->teamname ?? '-' }} (#{{ $suggestion->id }})
+                                            @if($suggestion->teamlink > 0 && isset($finalTeamlinks[$suggestion->teamlink]))
+                                                <span title="War bei der letzten Regatta in einem Finale (Platz {{ $finalTeamlinks[$suggestion->teamlink] }})" class="cursor-help">🏆 {{ $finalTeamlinks[$suggestion->teamlink] }}.</span>
+                                            @endif
                                         </div>
                                         <div class="text-xs text-gray-600">
                                             Teamlink-ID: {{ $suggestion->teamlink ?? '-' }}<br>

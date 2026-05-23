@@ -306,6 +306,8 @@ Route::get('/Regattateam/Werbungsquelle/public/{regatta_id?}', [RegattaTeamContr
 
 // RegattaTeamManager (Mannschaften/teamlink verwalten)
 Route::get('/RegattateamManager',                     [RegattaTeamManagerController::class, 'index'])  ->name('regattaTeamManager.index');
+Route::get('/RegattateamManager/import',              [RegattaTeamManagerController::class, 'import']) ->name('regattaTeamManager.import');
+Route::post('/RegattateamManager/import',             [RegattaTeamManagerController::class, 'importStore']) ->name('regattaTeamManager.importStore');
 Route::get('/RegattateamManager/edit/{id}',           [RegattaTeamManagerController::class, 'edit'])   ->name('regattaTeamManager.edit');
 Route::post('/RegattateamManager/update/{id}',         [RegattaTeamManagerController::class, 'update']) ->name('regattaTeamManager.update');
 Route::post('/RegattateamManager/sync/{id}',           [RegattaTeamManagerController::class, 'sync'])   ->name('regattaTeamManager.sync');

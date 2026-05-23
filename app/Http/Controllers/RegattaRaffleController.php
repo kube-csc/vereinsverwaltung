@@ -905,38 +905,11 @@ class RegattaRaffleController extends Controller
                 // f=1 (B-Finale): (3-1-1)*4 + 1 = 5 -> Plätze 5-8
                 // f=2 (A-Finale): (3-1-2)*4 + 1 = 1 -> Plätze 1-4
                 // Das ist korrekt für die sportliche Zuordnung.
-                // Das stärkste Team (Platz 1) soll zuletzt im Finale gesetzt werden (auf die Mittelbahn).
-                // Da calculateSeededLanes die Bahnen von "stark" nach "schwach" ausgibt,
-                // müssen wir die Platzierungen so zuordnen, dass die niedrigen Platzierungen (starke Teams)
-                // auf die vorderen (besonderen) Bahnen laut Seeding kommen.
-
-                // Korrektur: Der User wünscht, dass die "starken Teams später gesetzt werden".
-                // In einem Finale (z.B. A-Finale) ist die Setzung der Teams auf die Bahnen bereits das "Rennen".
-                // Wenn er meint, dass die Platzierungen 1, 2, 3 später (auf die besseren Bahnen) kommen sollen:
-                // calculateSeededLanes gibt z.B. [3, 2, 4, 1] zurück.
-                // Wir wollen: Bahn 3 -> Platz 1, Bahn 2 -> Platz 2, Bahn 4 -> Platz 3, Bahn 1 -> Platz 4.
-                // Aktuell: $platzImRanking = $startPlatz + $lIdx; wobei $lIdx 0, 1, 2, 3 ist.
-                // Das bedeutet:
-                // $lIdx=0 (Bahn 3) -> Platz 1
-                // $lIdx=1 (Bahn 2) -> Platz 2
-                // ...
-                // Das ist sportlich korrekt (Seeding).
-
-                // Aber der User sagt: "Die setzung der temas für die Finale ist falscherum die Startsen sollen im Spätern verlauf gesetzt werden."
-                // Wenn "Startsen" die starken Teams sind (Platz 1, 2...), und er möchte, dass diese in der Liste/Anzeige
-                // oder in der Logik "später" kommen (z.B. höhere Bahnnummern oder einfach umgekehrte Reihenfolge im Loop),
-                // dann müssen wir $laneAssignment umkehren, damit die schwächeren Teams zuerst (auf die äußeren Bahnen)
-                // und die starken Teams zuletzt (auf die Mittelbahnen) im Loop verarbeitet werden.
-
-                // Bahnverteilung in Finals: Immer bei Bahn 1 anfangen, nur so viele wie Teams.
-                // Um die Anforderung "stärkste Teams zuletzt setzen" zu erfüllen,
-                // durchlaufen wir die Plätze von schwach nach stark.
+                // Finals werden nach Seeding gesetzt: starke Platzierungen in die Mitte,
+                // nach außen hin schwächer (Center-Out).
                 $teamsInThisFinal = min($lanesCount, $totalTeamsInGroup - $startPlatz + 1);
 
-                $laneAssignment = [];
-                for ($i = 0; $i < $teamsInThisFinal; $i++) {
-                    $laneAssignment[] = 1 + $i;
-                }
+                $laneAssignment = array_slice($this->calculateSeededLanes($lanesCount), 0, max(0, $teamsInThisFinal));
 
                 // Berechne Abstand zum letzten Vorlauf dieser Gruppe
                 $finalPause = '-';
@@ -948,11 +921,9 @@ class RegattaRaffleController extends Controller
                 }
 
                 foreach ($laneAssignment as $lIdx => $laneNumber) {
-                    // Wir iterieren von der schwächsten zur stärksten Platzierung.
-                    // Die schwächsten Teams bekommen die niedrigeren Bahnen (am Rand),
-                    // die stärksten Teams bekommen die höheren Bahnen (in der Mitte).
-                    $reverseIdx = ($teamsInThisFinal - 1) - $lIdx;
-                    $platzImRanking = $startPlatz + $reverseIdx;
+                    // Niedrige Platzierung = starkes Team.
+                    // $lIdx folgt der Seeding-Reihenfolge aus calculateSeededLanes().
+                    $platzImRanking = $startPlatz + $lIdx;
 
                     if ($platzImRanking > $totalTeamsInGroup) continue;
 

@@ -460,14 +460,18 @@
                                             <input type="radio" name="pause_type" value="time" {{ ($draft && ($draft->params['pause_type'] ?? 'none') == 'time') ? 'checked' : '' }} class="mr-1"> Ab Zeit
                                         </label>
                                         <label class="flex items-center text-xs">
-                                            <input type="radio" name="pause_type" value="heat" {{ ($draft && ($draft->params['pause_type'] ?? 'none') == 'heat') ? 'checked' : '' }} class="mr-1"> Nach Vorlauf
+                                            <input type="radio" name="pause_type" value="race" {{ ($draft && ($draft->params['pause_type'] ?? 'none') == 'race') ? 'checked' : '' }} class="mr-1"> Nach Läufen
+                                        </label>
+                                        <label class="flex items-center text-xs">
+                                            <input type="radio" name="pause_type" value="heat" {{ ($draft && ($draft->params['pause_type'] ?? 'none') == 'heat') ? 'checked' : '' }} class="mr-1"> Nach Vorlaufblöcken
                                         </label>
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-[10px] font-medium text-gray-700">Ab Uhrzeit / Nach Rennen (Kommasepariert)</label>
-                                            <input type="text" name="pause_trigger" value="{{ $draft ? ($draft->params['pause_trigger'] ?? '') : '' }}" placeholder="z.B. 12:00 oder 14,20" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-xs">
+                                            <label class="block text-[10px] font-medium text-gray-700">Trigger (kommagetrennte Liste)</label>
+                                            <input type="text" name="pause_trigger" value="{{ $draft ? ($draft->params['pause_trigger'] ?? '') : '' }}" placeholder="Zeit: 12:00,13:30 | Lauf: 1,10,13 | Vorlaufblöcke (heat_index): 1,2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-xs">
+                                            <p class="text-[10px] text-gray-500 mt-1 italic">Ab Zeit: HH:MM. Nach Läufen: 1,10,13. Nach Vorlaufblöcken: 1,2.</p>
                                         </div>
                                         <div>
                                             <label class="block text-[10px] font-medium text-gray-700">Pausenlänge (Min.)</label>
@@ -512,7 +516,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Mindestpause Organisation (Min.)</label>
-                                <input type="number" name="min_pause_org" value="{{ $draft ? ($draft->params['min_pause_org'] ?? 10) : 10 }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <input type="number" name="min_pause_org" value="{{ $draft ? ($draft->params['min_pause_org'] ?? 40) : 40 }}" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <p class="text-[10px] text-gray-500 mt-0.5 italic">Mindestzeit zwischen Teams der gleichen Organisation.</p>
                             </div>
                             <div class="border-t pt-4 mt-4">

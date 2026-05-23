@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('is_final')->default(false);
             $table->string('final_type')->nullable();
             $table->string('placeholder_name')->nullable();
-            $table->unsignedBigInteger('source_tabele_id');
+            $table->unsignedBigInteger('source_tabele_id')->nullable();
             $table->integer('source_place')->nullable();
             $table->integer('heat_index')->nullable();
             $table->integer('pause_minutes')->nullable();

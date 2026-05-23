@@ -19,6 +19,8 @@ class RafflePlanItem extends Model
         'is_final',
         'final_type',
         'placeholder_name',
+        'source_tabele_id',
+        'source_place',
         'heat_index',
         'level',
         'pause_minutes',

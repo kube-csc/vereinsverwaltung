@@ -254,7 +254,7 @@ class RegattaRaffleController extends Controller
         $wertungsart = $request->input('wertungsart', 1); // 1 = Punkte
         $heatsCount = $request->input('heats_count', 3);
         $minPause = $request->input('min_pause', 20);
-        $minPauseOrg = $request->input('min_pause_org', 10);
+        $minPauseOrg = $request->input('min_pause_org', 40);
         $pauseAfterHeats = $request->input('pause_after_heats', 30);
 
         // Zusätzliche Pausenoptionen
@@ -440,6 +440,7 @@ class RegattaRaffleController extends Controller
                 for ($nextIdx = $heatIndexInAllHeats + 1; $nextIdx < count($allHeats); $nextIdx++) {
                     $nextHeat = $allHeats[$nextIdx];
                     if (isset($nextHeat['teams'])) continue; // Schon geplant
+                    if ((int)($nextHeat['heat_index'] ?? 0) !== (int)$hIndex) continue; // Blockgrenze nicht überschreiten
 
                     $nextGruppeId = $nextHeat['gruppe_id'];
                     $nextHIndex = $nextHeat['heat_index'];
@@ -739,40 +740,27 @@ class RegattaRaffleController extends Controller
                     } catch (\Exception $e) {
                         // Ignorieren bei Fehlformatierung
                     }
-                } elseif ($pauseType === 'heat' && !empty($pauseTrigger)) {
-                    // Der User kann entweder eine Vorlauf-Runde (z.B. "1"), eine absolute Rennnummer (z.B. "14")
-                    // oder eine Liste von Rennnummern (z.B. "14, 20") meinen.
-                    $triggerNumbers = array_map('trim', explode(',', (string)$pauseTrigger));
+                } elseif (($pauseType === 'heat' || $pauseType === 'race') && !empty($pauseTrigger)) {
+                    $triggerNumbers = array_values(array_unique(array_filter(array_map(
+                        fn($v) => (int)trim($v),
+                        explode(',', (string)$pauseTrigger)
+                    ), fn($v) => $v > 0)));
 
-                    $triggerId = null;
-                    if (in_array((string)$h, $triggerNumbers) && ($i == $maxHeatsInRound - 1)) {
-                        $triggerId = 'heat_' . $h;
-                    } elseif (in_array((string)($raceNumber - 1), $triggerNumbers)) {
-                        $triggerId = 'race_' . ($raceNumber - 1);
-                    }
+                    $nextHeatData = $allHeats[$heatIndexInAllHeats + 1] ?? null;
+                    $isEndOfHeatBlock = !$nextHeatData || (int)($nextHeatData['heat_index'] ?? 0) !== (int)$hIndex;
+                    $currentRaceNumber = (int)($raceNumber - 1);
 
-                    // Wir identifizieren den absolut letzten Vorlauf-Heat, um einen Fallback zu haben
-                    $isLastOverallHeat = ($heatIndexInAllHeats == count($allHeats) - 1);
+                    $isHeatTrigger = $pauseType === 'heat'
+                        && $isEndOfHeatBlock
+                        && in_array((int)$hIndex, $triggerNumbers, true);
+                    $isRaceTrigger = $pauseType === 'race'
+                        && in_array($currentRaceNumber, $triggerNumbers, true);
 
-                    if ($triggerId && !in_array($triggerId, $appliedPauseTriggers)) {
+                    $triggerId = $isHeatTrigger ? ('heat_' . $hIndex) : ('race_' . $currentRaceNumber);
+
+                    if (($isHeatTrigger || $isRaceTrigger) && !in_array($triggerId, $appliedPauseTriggers, true)) {
                         $currentGlobalTime->addMinutes($pauseDuration);
                         $appliedPauseTriggers[] = $triggerId;
-                        $preview[] = [
-                            'time' => $currentGlobalTime->copy()->subMinutes($pauseDuration)->format('H:i'),
-                            'is_extra_pause' => true,
-                            'is_award_ceremony' => false,
-                            'pause_duration' => $pauseDuration,
-                            'is_final' => false,
-                            'race_number' => 0,
-                            'gruppe_id' => 0,
-                            'heat_index' => $h,
-                            'gruppe_name' => 'Mittagspause',
-                            'placeholder_name' => 'Mittagspause (' . $pauseDuration . ' Min)'
-                        ];
-                    } elseif ($isLastOverallHeat && empty($appliedPauseTriggers) && $pauseType !== 'none') {
-                        // Fallback am Ende der Vorläufe, falls noch gar keine Pause gemacht wurde
-                        $currentGlobalTime->addMinutes($pauseDuration);
-                        $appliedPauseTriggers[] = 'fallback_end';
                         $preview[] = [
                             'time' => $currentGlobalTime->copy()->subMinutes($pauseDuration)->format('H:i'),
                             'is_extra_pause' => true,
@@ -1952,7 +1940,7 @@ class RegattaRaffleController extends Controller
         $startTime = $request->input('start_time');
         $interval = $request->input('interval', 10);
         $minPause = $request->input('min_pause', 20);
-        $minPauseOrg = $request->input('min_pause_org', 10);
+        $minPauseOrg = $request->input('min_pause_org', 40);
         $finalsStartTimeStr = $request->input('finals_start_time');
         $pauseAfterHeats = $request->input('pause_after_heats', 30);
 
@@ -1961,6 +1949,11 @@ class RegattaRaffleController extends Controller
         $pauseTrigger = $request->input('pause_trigger', $draft->params['pause_trigger'] ?? '');
         $pauseDuration = (int)$request->input('pause_duration', $draft->params['pause_duration'] ?? 30);
         $extraPauseApplied = false;
+        $appliedPauseTriggers = [];
+        $pauseTriggerNumbers = array_values(array_unique(array_filter(array_map(
+            fn($v) => (int)trim($v),
+            explode(',', (string)$pauseTrigger)
+        ), fn($v) => $v > 0)));
 
         $awardCeremonyTimeStr = $request->input('award_ceremony_time');
         $minTimeBeforeCeremony = $request->input('min_time_before_ceremony', 30);
@@ -1990,6 +1983,12 @@ class RegattaRaffleController extends Controller
                 $ceremonyItems->push($item);
             }
         }
+
+        // Bestehende Mittagspause-Items werden für die Recalculate-Logik neu aufgebaut.
+        foreach ($pauseItems as $oldPauseItem) {
+            $oldPauseItem->delete();
+        }
+        $pauseItems = collect();
 
         // Nur echte Rennen für die Zeit-Neuberechnung verwenden
         $raceGroups = $items->reject(function ($i) {
@@ -2042,21 +2041,29 @@ class RegattaRaffleController extends Controller
 
             // Sonderfall: Mittagspause-Item (falls vorhanden) direkt in die Berechnung einfließen lassen
             // Wir prüfen bei jedem Rennen, ob wir die Mittagspause (falls zeitbasiert) einschieben müssen
-            if (!$extraPauseApplied && !empty($pauseItems)) {
-                $pItem = $pauseItems[0];
-                if ($pauseType === 'time' && !empty($pauseTrigger)) {
-                    $triggerTime = \Carbon\Carbon::parse($pauseTrigger);
-                    if ($currentGlobalTime->format('H:i') >= $triggerTime->format('H:i')) {
-                        $pDuration = $pItem->pause_duration ?? $pauseDuration;
-                        $pItem->time = $currentGlobalTime->format('H:i');
-                        $pItem->placeholder_name = 'Mittagspause (' . $pDuration . ' Min)';
-                        $pItem->heat_index = $lanes[0]->heat_index ?? null;
-                        $pItem->save();
+            if (!$extraPauseApplied && $pauseType === 'time' && !empty($pauseTrigger)) {
+                $triggerTime = \Carbon\Carbon::parse($pauseTrigger);
+                if ($currentGlobalTime->format('H:i') >= $triggerTime->format('H:i')) {
+                    $draft->items()->create([
+                        'race_number' => 0,
+                        'gruppe_id' => 0,
+                        'time' => $currentGlobalTime->format('H:i'),
+                        'lane' => null,
+                        'team_id' => null,
+                        'is_final' => false,
+                        'final_type' => null,
+                        'placeholder_name' => 'Mittagspause (' . $pauseDuration . ' Min)',
+                        'source_tabele_id' => null,
+                        'source_place' => null,
+                        'heat_index' => $lanes[0]->heat_index ?? null,
+                        'pause_minutes' => null,
+                        'conflicts' => 0,
+                        'org_intervals' => null,
+                    ]);
 
-                        $currentGlobalTime->addMinutes($pDuration);
-                        $timeStr = $currentGlobalTime->format('H:i');
-                        $extraPauseApplied = true;
-                    }
+                    $currentGlobalTime->addMinutes($pauseDuration);
+                    $timeStr = $currentGlobalTime->format('H:i');
+                    $extraPauseApplied = true;
                 }
             }
 
@@ -2141,7 +2148,7 @@ class RegattaRaffleController extends Controller
                                 'error' => $e->getMessage(),
                             ]);
                         }
-                    } elseif ($pauseType === 'heat' && !empty($pauseTrigger)) {
+                    } elseif (($pauseType === 'heat' || $pauseType === 'race') && !empty($pauseTrigger)) {
                         // Bei Neuberechnung ist es schwerer den "letzten Heat der Runde" zu finden
                         // Wir könnten schauen ob der nächste Heat ein höheres Level hat.
                         // Aber da wir die Pause als Item in der DB haben (falls sie existiert),
@@ -2151,39 +2158,45 @@ class RegattaRaffleController extends Controller
                     }
                 }
             }
-            // Mittagspause-Item (falls vorhanden) am Ende der Vorläufe einfügen, falls nicht bereits geschehen (z.B. bei 'heat' Typ)
-            if (!$isFinal && !$extraPauseApplied && !empty($pauseItems)) {
-                $pItem = $pauseItems[0];
+            // Mittagspause(n) nach definierten Läufen oder am Ende definierter Heat-Blöcke einfügen.
+            if (!$isFinal && ($pauseType === 'heat' || $pauseType === 'race') && !empty($pauseTriggerNumbers)) {
                 $nextRn = $rn + 1;
                 $nextLanes = $raceGroups[$nextRn] ?? null;
                 $isNextFinal = $nextLanes ? $nextLanes[0]->is_final : true;
 
-                // Bei 'heat' Modus prüfen wir auf Vorlauf-Runde ODER absolute Rennnummer
                 $currentHeatRound = $lanes[0]->heat_index ?? 0;
-                $currentRaceNumber = $rn;
+                $nextHeatRound = $nextLanes ? ($nextLanes[0]->heat_index ?? 0) : 0;
+                $isLastHeatOfRound = ($nextHeatRound > $currentHeatRound || $isNextFinal);
+                $currentRaceNumber = (int)$rn;
 
-                if ($isNextFinal || ($pauseType === 'heat' && !empty($pauseTrigger))) {
-                    $triggerNumbers = array_map('trim', explode(',', (string)$pauseTrigger));
+                $isHeatTrigger = $pauseType === 'heat'
+                    && $isLastHeatOfRound
+                    && in_array((int)$currentHeatRound, $pauseTriggerNumbers, true);
+                $isRaceTrigger = $pauseType === 'race'
+                    && in_array($currentRaceNumber, $pauseTriggerNumbers, true);
+                $triggerId = $isHeatTrigger ? ('heat_' . $currentHeatRound) : ('race_' . $currentRaceNumber);
 
-                    $isTriggerHeatRound = in_array((string)$currentHeatRound, $triggerNumbers);
-                    $isTriggerRaceNumber = in_array((string)$currentRaceNumber, $triggerNumbers);
+                if (($isHeatTrigger || $isRaceTrigger) && !in_array($triggerId, $appliedPauseTriggers, true)) {
+                    $pauseStart = $currentGlobalTime->copy()->addMinutes($interval);
+                    $draft->items()->create([
+                        'race_number' => 0,
+                        'gruppe_id' => 0,
+                        'time' => $pauseStart->format('H:i'),
+                        'lane' => null,
+                        'team_id' => null,
+                        'is_final' => false,
+                        'final_type' => null,
+                        'placeholder_name' => 'Mittagspause (' . $pauseDuration . ' Min)',
+                        'source_tabele_id' => null,
+                        'source_place' => null,
+                        'heat_index' => $currentHeatRound ?: ($lanes[0]->heat_index ?? null),
+                        'pause_minutes' => null,
+                        'conflicts' => 0,
+                        'org_intervals' => null,
+                    ]);
 
-                    // Wir müssen sicherstellen, dass dies der LETZTE Lauf dieser Runde ist (falls es eine Runde ist).
-                    // Bei einer Rennnummer ist es eindeutig.
-                    $nextHeatRound = $nextLanes ? ($nextLanes[0]->heat_index ?? 0) : 0;
-                    $isLastHeatOfRound = ($nextHeatRound > $currentHeatRound || $isNextFinal);
-
-                    if (($isTriggerHeatRound && $isLastHeatOfRound) || $isTriggerRaceNumber || ($isNextFinal && !$extraPauseApplied)) {
-                        $pDuration = $pItem->pause_duration ?? $pauseDuration;
-                        $pItem->time = $currentGlobalTime->copy()->addMinutes($interval)->format('H:i');
-                        $pItem->placeholder_name = 'Mittagspause (' . $pDuration . ' Min)';
-                        $pItem->heat_index = $currentHeatRound ?: ($lanes[0]->heat_index ?? null);
-                        $pItem->save();
-
-                        // Wir müssen die Zeit für den nächsten Block erhöhen
-                        $currentGlobalTime->addMinutes($pDuration);
-                        $extraPauseApplied = true;
-                    }
+                    $appliedPauseTriggers[] = $triggerId;
+                    $currentGlobalTime->addMinutes($pauseDuration);
                 }
             }
             $currentGlobalTime->addMinutes($interval);

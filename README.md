@@ -167,10 +167,21 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
     <li>Rennklassen können als Vorlage angelegt und bearbeitet werden</li>
     <li>Rennklassen können der Regatta zugeordnet werden</li>
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
-    <li>FAQ für die Regattamanagement APP</li>
-    <li>Mannschaften können angelegt und bearbeitet werden</li>
-    <li><strong>Team-Import ohne Meldetool:</strong> Mannschaften können direkt per Texteingabe (Textarea) importiert werden – eine Zeile pro Teamname. Pflichtfelder werden automatisch mit definierten Platzhalter-Werten befüllt (z.B. PLZ: 99999, Telefon: 999999999, Verein: „nicht angegeben"). Wenn ein Team bereits bei einem früheren Event gemeldet war, werden die Vorwerte übernommen und der Teamlink automatisch synchronisiert.</li>
-    <li>Rennen anlegen und bearbeiten</li>
+     <li>FAQ für die Regattamanagement APP</li>
+     <li>Mannschaften können angelegt und bearbeitet werden</li>
+      <li><strong>Team-Import ohne Meldetool:</strong> Mannschaften können direkt per Texteingabe (Textarea) importiert werden – eine Zeile pro Teamname. Pflichtfelder werden automatisch mit definierten Platzhalter-Werten befüllt (Verein, Teamcaptain, Straße, Ort: „nicht angegeben"; PLZ: 99999; Telefon: 999999999; E-Mail: import@invalid.local). Wenn ein Team bereits bei einem früheren Event gemeldet war, werden die Vorwerte übernommen und der Teamlink automatisch synchronisiert (bestehender übernommen oder neue freie ID vergeben).</li>
+      <li><strong>Automatisierte Rennplanung (Verlosung):</strong> Intelligente Generierung eines Rennplans basierend auf Fairness-Kriterien:
+        <ul>
+          <li>Gegner-Durchmischung: Maximale Variation der Paarungen über mehrere Vorläufe hinweg</li>
+          <li>Intelligente Bahnverteilung (Seeding): Stärkste Finals-Teams in der Mitte (Center-Out), schwächere an Außenbahnen</li>
+          <li>Zeitabstands-Optimierung: Einhaltung von Mindestpausen je Team und Organisations-Pause (Verein/Standort)</li>
+          <li>Interaktive Anpassung: Manuelle Verschiebung von Rennen und Neuberechnung von Startzeiten möglich</li>
+          <li>Final-Planung: Blockweise Planung mehrerer Finalrunden (A/B-Finals) mit automatischer Zeitplanung</li>
+          <li>Pausen & Siegerehrung: Pausenblöcke zwischen Vorläufen/Finals, Siegerehrung am Abschluss</li>
+          <li>Gegner-Übersicht & Zeitplan: Detaillierte Reportings und chronologische Gesamt-Zeitplan</li>
+        </ul>
+      </li>
+     <li>Rennen anlegen und bearbeiten</li>
     <li>Rennen können Tabellen oder mehrere Tabellen zugeordnet werden</li>
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>
     <li>Mannschaften können den Rennen zugeteilt werden</li>

@@ -19,8 +19,60 @@
 - **Optimierte Validierung:** Alle Pflichtfelder (`verein`, `teamcaptain`, `strasse`, `plz`, `ort`, `telefon`, `email`, `status`, `groupe_id`) sind jetzt korrekt als `required` validiert.
 - **Flexible Werbungs-Option:** Das Feld `werbung` akzeptiert beliebige nicht-negative Ganzzahlen (`integer|min:0`) statt einer fixen Liste.
 
+****Regatta-Rennplanung (RegattaRaffle) – Automatisierte Verlosung****
+- **Automatische Rennplanerstellung:** Intelligenter Algorithmus zur Verteilung von Teams auf Rennen und Bahnen unter Berücksichtigung aller Fairness-Kriterien.
+- **Gegner-Durchmischung:** Maximale Durchmischung von Paarungen über mehrere Vorläufe hinweg mit Konflikt-Erkennung und Transparenz.
+- **Intelligente Bahnverteilung:** 
+  - **Seeding für Finals:** Stärkste Teams in der Mitte (Center-Out-Seeding), schwächere Teams an den Außenbahnen.
+  - **Automatische Bahnzuweisung:** Bahnen werden unabhängig pro Finale neu verteilt – keine Übernahme aus vorherigen Läufen.
+  - **Unit-Tests:** Bahnverteilungs-Logik wird durch automatisierte Tests (`FinalLaneAssignmentTest.php`) validiert.
+- **Zeitabstands-Optimierung (Pausen-Malus):**
+  - **Team-Mindestpause:** Konfigurierbare Mindestpause zwischen Starts desselben Teams (Standard 40 Min).
+  - **Organisations-Pause:** Teams derselben Organisation (Verein/Standort) werden mit Zeitabstand geplant (Standard 40 Min).
+  - **Iterative Optimierung:** Tausch-Algorithmus löst Pausenkonflikte am Ende des Planungsprozesses.
+  - **Dokumentation:** Alle Tausch-Operationen werden mit Begründung und Vor/Nachher-Werten protokolliert.
+- **Organisations-Management:**
+  - Teams können zu Organisationen (Gruppen) zusammengefasst werden.
+  - Automatische Erstzuordnung basierend auf Verein, PLZ oder Ort.
+  - Flexibles manuelles CRUD-Interface zur Verwaltung von Organisationen und Zuweisungen.
+  - "Neu starten"-Funktion zum Zurücksetzen aller Zuordnungen für erneute Planung.
+- **Final-Planung:**
+  - Konfigurierbare Anzahl von Finalrunden pro Gruppe (z.B. nur A-Finale oder A/B-Finals).
+  - Platzhalter-Teams für Qualifikation (z.B. "Platz 1 der Tabelle [Gruppe]").
+  - Blockweise Planung: Alle E-Finals, dann D-Finals, dann C-Finals, etc., mit A-Finals am Ende.
+  - Final-Pause konfigurierbar vor Beginn der Finals (Standard 30 Min).
+- **Weitere Pausen & Blöcke:**
+  - Pausenblock nach Vorläufen automatisch eingeplant.
+  - Zusätzliche Pausen: Nach Läufen, nach heat_index-Blöcken oder zu festen Uhrzeiten.
+  - Siegerehrung als Abschlusselement mit konfigurierbarer Mindestzeit (Default 30 Min nach letztem Rennen).
+  - Veröffentlichungszeit für Finals automatisch 1 Stunde nach Siegerehrung.
+- **Zeitplanung:**
+  - **Start:** Konfigurierbare Startzeit (Default 09:00 Uhr).
+  - **Intervall:** Feste Pausenzeit zwischen Rennen (Default 10 Min).
+  - **Zu jedem Zeitpunkt nur ein Rennen:** Global chronologische Planung ohne Parallelstarts.
+- **Interaktive Anpassung:**
+  - Einzelne Rennen können manuell in der Reihenfolge verschoben werden (Pfeile nach oben/unten).
+  - Startzeiten für alle Rennen können basierend auf neuer Reihenfolge neu berechnet werden.
+  - Pausenblock-Verschiebung wird korrekt berechnet (mit oder ohne Übernahme von Rennzeiten).
+- **Vorschau & Reporting:**
+  - **Gegner-Übersicht:** Detaillierte Anzeige aller Gegner pro Team pro Vorlauf-Lauf, gruppiert nach Wertungsgruppen.
+  - **Gesamt-Zeitplan:** Chronologische Übersicht aller Rennen mit Pausenblöcken und Siegerehrung.
+  - **Team-Final-Kennzeichnung:** Teams aus früheren Regatta-Finals derselben Gruppe werden mit Pokal-Icon (🏆) und Platzierung gekennzeichnet.
+  - **Gruppierte Ansicht:** Darstellung nach Wertungsklassen mit konfigurierter Anzahl zu importierender Teams pro Gruppe in Kopfzeilen.
+- **Speicherung & Persistenz:**
+  - Vor dem Speichern werden bestehende Rennpläne bereinigt (Tabellen, Rennen, Bahnen).
+  - Strukturierte Speicherung mit `race_number`, `heat_index`, `level` und `rennBezeichnung`.
+  - Final-Bahnen speichern Quellreferenzen (`tabelevor_id`, `platzvor`) für automatisierte Team-Zuordnung nach Vorläufen.
+  - Metadaten wie `finaleAnzeigen` (Veröffentlichungszeit) und `veroeffentlichungUhrzeit` werden automatisch gesetzt.
+
 ***Hinweise nach dem Update***
-- Keine Migration erforderlich.
+- Migration erforderlich.
+- Routen für Team-Import: `GET /RegattateamManager/import` und `POST /RegattateamManager/import`
+- Neue Blade-Datei: `resources/views/regattaManagement/regattaTeamManager/import.blade.php`
+- Rennplanung: Detaillierte Spezifikation unter `resources/views/regattaManagement/regattaRaffle/regattaRaffle.md`
+- Unit-Tests für Bahnverteilung: `tests/Feature/FinalLaneAssignmentTest.php` (nach Änderungen ausführen: `php artisan test --filter FinalLaneAssignmentTest`)
+
+---
 
 **Version V00.10.06**
 

@@ -1,4 +1,27 @@
 ## Update Anleitung
+**Version V00.10.07**
+
+***Neue Funktionen***
+****Regatta-Verwaltung – Team-Import ohne Meldetool****
+- **Textdatei-Import für Mannschaften:** Für Regatten ohne Meldeportal können Teams direkt per Textarea importiert werden (eine Zeile = ein Teamname).
+- **Automatische Platzhalter-Werte:** Pflichtfelder ohne Daten werden automatisch befüllt:
+  - Verein, Teamcaptain, Straße, Ort → `nicht angegeben`
+  - PLZ → `99999`
+  - Telefon → `999999999`
+  - E-Mail → `import@invalid.local`
+  - Status → `Neuanmeldung`
+- **Übernahme aus Vormeldung:** Wenn ein Team bereits bei einem früheren Event gemeldet war, werden alle verfügbaren Werte automatisch übernommen.
+- **Teamlink-Synchronisierung beim Import:** Wird ein passendes Alt-Team (gleiche `race_type_template_id`) gefunden, wird der `teamlink` automatisch synchronisiert (bestehenden übernehmen oder neue freie ID vergeben).
+- **Import-Validierung:** Jedes Team wird vor dem Speichern gegen die Datenbankregeln geprüft. Fehlerhafte Teams werden übersprungen und im Import-Bericht ausgewiesen.
+- **Import-Ergebnis:** Nach dem Import wird eine Zusammenfassung angezeigt (neu angelegt, aktualisiert, übersprungen, Warnungen).
+
+****Regatta-Verwaltung – Verbesserungen Mannschafts-Formular****
+- **Optimierte Validierung:** Alle Pflichtfelder (`verein`, `teamcaptain`, `strasse`, `plz`, `ort`, `telefon`, `email`, `status`, `groupe_id`) sind jetzt korrekt als `required` validiert.
+- **Flexible Werbungs-Option:** Das Feld `werbung` akzeptiert beliebige nicht-negative Ganzzahlen (`integer|min:0`) statt einer fixen Liste.
+
+***Hinweise nach dem Update***
+- Keine Migration erforderlich.
+
 **Version V00.10.06**
 
 ***Neue Funktionen***

@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.10.06</p>
+<p>Version: V00.10.07</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -169,6 +169,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
     <li>Regatta Informationen können angelegt und bearbeitet werden</li>
     <li>FAQ für die Regattamanagement APP</li>
     <li>Mannschaften können angelegt und bearbeitet werden</li>
+    <li><strong>Team-Import ohne Meldetool:</strong> Mannschaften können direkt per Texteingabe (Textarea) importiert werden – eine Zeile pro Teamname. Pflichtfelder werden automatisch mit definierten Platzhalter-Werten befüllt (z.B. PLZ: 99999, Telefon: 999999999, Verein: „nicht angegeben"). Wenn ein Team bereits bei einem früheren Event gemeldet war, werden die Vorwerte übernommen und der Teamlink automatisch synchronisiert.</li>
     <li>Rennen anlegen und bearbeiten</li>
     <li>Rennen können Tabellen oder mehrere Tabellen zugeordnet werden</li>
     <li>Programm und Ergebnislisten für jedes Rennen oder Gruppenweise hochladen</li>

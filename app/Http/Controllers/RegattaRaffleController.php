@@ -64,7 +64,10 @@ class RegattaRaffleController extends Controller
         $maxFinalsTotal = 0;
         foreach ($teamsByGroup as $gruppeId => $gruppeTeams) {
             $raceType = $raceTypes->firstWhere('id', $gruppeId);
-            $lanesCount = $raceType->bahnen ?? 4;
+            $lanesCount = (int) ($raceType->bahnen ?? 0);
+            if ($lanesCount <= 0) {
+                $lanesCount = 4;
+            }
             $maxFinalsInGroup = ceil($gruppeTeams->count() / $lanesCount);
             if ($maxFinalsInGroup > $maxFinalsTotal) {
                 $maxFinalsTotal = $maxFinalsInGroup;
@@ -266,7 +269,7 @@ class RegattaRaffleController extends Controller
         $finalsStartTimeStr = $request->input('finals_start_time', '14:00');
         $awardCeremonyTimeStr = $request->input('award_ceremony_time', '18:00');
         $minTimeBeforeCeremony = $request->input('min_time_before_ceremony', 30);
-        $finalePublishTimeStr = $request->input('finale_publish_time'); // Manuelle Eingabe falls vorhanden
+        $finalePublishTimeStr = trim((string) $request->input('finale_publish_time', '')); // Manuelle Eingabe falls vorhanden
 
         $finalsCount = $request->input('finals_count', 1);
         $buchholzwertung = $request->input('buchholzwertung', 0);
@@ -1381,8 +1384,8 @@ class RegattaRaffleController extends Controller
                 }
             }
 
-        // Veröffentlichungszeit: 1 Stunde nach der angegebenen Referenzzeit
-        if ($awardCeremonyTimeStr) {
+        // Veröffentlichungszeit: Falls nicht manuell gesetzt, 1 Stunde nach Siegerehrung als Fallback
+        if ($finalePublishTimeStr === '' && $awardCeremonyTimeStr) {
             $awardCeremonyTime = \Carbon\Carbon::parse($awardCeremonyTimeStr);
             $finalePublishTime = $awardCeremonyTime->copy()->addHour();
             $finalePublishTimeStr = $finalePublishTime->format('H:i');
@@ -1957,7 +1960,7 @@ class RegattaRaffleController extends Controller
 
         $awardCeremonyTimeStr = $request->input('award_ceremony_time');
         $minTimeBeforeCeremony = $request->input('min_time_before_ceremony', 30);
-        $finalePublishTimeStr = $request->input('finale_publish_time');
+        $finalePublishTimeStr = trim((string) $request->input('finale_publish_time', ''));
 
         $items = $draft->items()->orderBy('race_number')->orderBy('lane')->get();
         $pauseBlockLabel = '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
@@ -2235,10 +2238,9 @@ class RegattaRaffleController extends Controller
             ]);
         }
 
-        // Berechne Veröffentlichungszeit für Finals (1 Stunde nach Siegerehrungszeit)
+        // Berechne Veröffentlichungszeit für Finals (Fallback: 1 Stunde nach Siegerehrungszeit)
         $finalePublishTime = null;
-        $finalePublishTimeStr = null;
-        if ($awardCeremonyTimeStr) {
+        if ($finalePublishTimeStr === '' && $awardCeremonyTimeStr) {
             $finalePublishTime = \Carbon\Carbon::parse($awardCeremonyTimeStr)->addHour();
             $finalePublishTimeStr = $finalePublishTime->format('H:i');
         }
@@ -2445,6 +2447,7 @@ class RegattaRaffleController extends Controller
                 $tabele->event_id = $regattaId;
                 $tabele->gruppe_id = $gruppeId;
                 $tabele->tabelleDatumVon = $rennDatum;
+                $tabele->getrenntewertung = 0;
 
                 if ($firstLane['is_final']) {
                     $tabele->ueberschrift = $firstLane['final_type'] . ' ' . $firstLane['gruppe_name'];
@@ -2473,8 +2476,6 @@ class RegattaRaffleController extends Controller
                 $tabele->save();
 
                 $tabeleIds[$key] = $tabele->id;
-
-                // ...existing code...
             }
 
             // Vorlauf-Quellenmap deterministisch aus tatsächlich erzeugten Tabellen ableiten.

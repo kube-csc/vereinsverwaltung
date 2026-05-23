@@ -254,8 +254,16 @@ class RegattaTeamManagerController extends Controller
             $currentTeam->passwort = $currentTeam->passwort ?: ' ';
             $currentTeam->mailen = $currentTeam->mailen ?: ' ';
 
-            if (!$currentTeam->email) {
-                $currentTeam->email = 'import@invalid.local';
+            // Validierungslogik vor dem Speichern
+            $validationErrors = $this->validateImportTeamData($currentTeam);
+            if (!empty($validationErrors)) {
+                $report['skipped']++;
+                $report['warnings'][] = sprintf(
+                    'Team "%s" übersprungen: %s',
+                    $normalizedTeamName,
+                    implode(', ', $validationErrors)
+                );
+                continue;
             }
 
             $currentTeam->save();
@@ -659,24 +667,22 @@ class RegattaTeamManagerController extends Controller
 
     private function buildImportValues(string $teamName, ?RegattaTeam $sourceTeam, int $raceTypeId): array
     {
-        $fallbackText = ' ';
-
         return [
             'teamname' => $teamName,
-            'verein' => $this->valueOrFallback($sourceTeam->verein ?? null, $fallbackText),
-            'teamcaptain' => $this->valueOrFallback($sourceTeam->teamcaptain ?? null, $fallbackText),
-            'strasse' => $this->valueOrFallback($sourceTeam->strasse ?? null, $fallbackText),
-            'plz' => $this->valueOrFallback($sourceTeam->plz ?? null, $fallbackText),
-            'ort' => $this->valueOrFallback($sourceTeam->ort ?? null, $fallbackText),
-            'telefon' => $this->valueOrFallback($sourceTeam->telefon ?? null, $fallbackText),
-            'email' => $this->valueOrFallback($sourceTeam->email ?? null, 'import@invalid.local'),
-            'homepage' => $this->valueOrFallback($sourceTeam->homepage ?? null, $fallbackText),
-            'beschreibung' => $this->valueOrFallback($sourceTeam->beschreibung ?? null, $fallbackText),
-            'kommentar' => $this->valueOrFallback($sourceTeam->kommentar ?? null, $fallbackText),
-            'gruppe_id' => $raceTypeId,
-            'status' => $this->valueOrFallback($sourceTeam->status ?? null, 'Neuanmeldung'),
-            'passwort' => $this->valueOrFallback($sourceTeam->passwort ?? null, $fallbackText),
-            'mailen' => $this->valueOrFallback($sourceTeam->mailen ?? null, $fallbackText),
+            'verein'      => $this->valueOrFallback($sourceTeam->verein      ?? null, 'nicht angegeben'),
+            'teamcaptain' => $this->valueOrFallback($sourceTeam->teamcaptain ?? null, 'nicht angegeben'),
+            'strasse'     => $this->valueOrFallback($sourceTeam->strasse     ?? null, 'nicht angegeben'),
+            'plz'         => $this->valueOrFallback($sourceTeam->plz         ?? null, '99999'),
+            'ort'         => $this->valueOrFallback($sourceTeam->ort         ?? null, 'nicht angegeben'),
+            'telefon'     => $this->valueOrFallback($sourceTeam->telefon     ?? null, '999999999'),
+            'email'        => $this->valueOrFallback($sourceTeam->email        ?? null, 'import@invalid.local'),
+            'homepage'     => $this->valueOrFallback($sourceTeam->homepage     ?? null, ''),
+            'beschreibung' => $this->valueOrFallback($sourceTeam->beschreibung ?? null, ''),
+            'kommentar'    => $this->valueOrFallback($sourceTeam->kommentar    ?? null, ''),
+            'gruppe_id'    => $raceTypeId,
+            'status'       => $this->valueOrFallback($sourceTeam->status       ?? null, 'Neuanmeldung'),
+            'passwort'     => $this->valueOrFallback($sourceTeam->passwort     ?? null, 'nicht angegeben'),
+            'mailen'       => $this->valueOrFallback($sourceTeam->mailen       ?? null, 'nicht angegeben'),
             'werbung' => $this->valueOrFallback($sourceTeam->werbung ?? null, '0'),
             'teamlink' => $sourceTeam && (int) $sourceTeam->teamlink > 0 ? (int) $sourceTeam->teamlink : 0,
             'training' => $sourceTeam ? (int) ($sourceTeam->training ?? 0) : 0,
@@ -693,6 +699,70 @@ class RegattaTeamManagerController extends Controller
         $value = trim((string) $value);
 
         return $value === '' ? $fallback : $value;
+    }
+
+    /**
+     * Validiert die Import-Teamdaten gegen die Datenbankregeln.
+     * Gibt ein Array von Fehlermeldungen zurück (leer = erfolgreich validiert).
+     *
+     * Akzeptiert auch Platzhalter wie Leerzeichen " " oder Zahlen wie "9999" in Pflichtfeldern.
+     */
+    private function validateImportTeamData(RegattaTeam $team): array
+    {
+        $errors = [];
+
+        // Teamname: muss vorhanden sein (nicht nur Leerzeichen erlaubt)
+        if (!$team->teamname || trim($team->teamname) === '') {
+            $errors[] = 'Teamname ist erforderlich';
+        }
+
+        // String-Felder: können Platzhalter wie " " oder Text enthalten, müssen aber vorhanden sein
+        // Diese Validierung akzeptiert: echte Werte, Leerzeichen, Zahlen wie "9999", etc.
+        $stringFields = ['verein', 'teamcaptain', 'strasse', 'plz', 'ort', 'telefon'];
+        $stringFieldLabels = [
+            'verein' => 'Verein',
+            'teamcaptain' => 'Teamcaptain',
+            'strasse' => 'Straße',
+            'plz' => 'PLZ',
+            'ort' => 'Ort',
+            'telefon' => 'Telefon'
+        ];
+
+        foreach ($stringFields as $field) {
+            // Prüfe nur, ob das Feld existiert (nicht null)
+            // Leerzeichen und Zahlenwerte sind erlaubt
+            if ($team->{$field} === null) {
+                $errors[] = $stringFieldLabels[$field] . ' darf nicht null sein';
+            }
+        }
+
+        // E-Mail-Validierung: Akzeptiert auch Platzhalter wie "import@invalid.local"
+        if (!$team->email) {
+            $errors[] = 'E-Mail ist erforderlich';
+        } elseif ($team->email !== ' ' && $team->email !== 'import@invalid.local' && !filter_var($team->email, FILTER_VALIDATE_EMAIL)) {
+            // Validiere echte E-Mail-Adressen, aber akzeptiere bekannte Platzhalter
+            $errors[] = sprintf('E-Mail "%s" hat ungültiges Format', $team->email);
+        }
+
+        // Status-Validierung
+        $validStatuses = ['Neuanmeldung', 'Warteliste', 'Nicht angetreten', 'Disqualifiziert', 'Ausgeschieden', 'Gelöscht', 'Abgemeldet'];
+        if (!$team->status || !in_array($team->status, $validStatuses, true)) {
+            $errors[] = sprintf('Status "%s" ist ungültig', $team->status ?? '(leer)');
+        }
+
+        // gruppe_id-Validierung (muss in race_types existieren)
+        if (!$team->gruppe_id || !RaceType::find($team->gruppe_id)) {
+            $errors[] = sprintf('race_type mit ID %d existiert nicht', $team->gruppe_id ?? 0);
+        }
+
+        // werbung-Validierung (nullable integer, min 0)
+        if ($team->werbung !== null && $team->werbung !== '0' && !is_numeric($team->werbung)) {
+            $errors[] = sprintf('Werbung "%s" muss eine Zahl sein', $team->werbung);
+        } elseif ($team->werbung !== null && is_numeric($team->werbung) && (int) $team->werbung < 0) {
+            $errors[] = 'Werbung darf nicht negativ sein';
+        }
+
+        return $errors;
     }
 
     /**

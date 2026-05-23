@@ -66,18 +66,20 @@ class RegattaTeamController extends Controller
                     }
                 }
             ],
-            'verein' => 'nullable|string|max:255',
-            'teamcaptain' => 'nullable|string|max:255',
-            'strasse' => 'nullable|string|max:255',
-            'plz' => 'nullable|string|max:20',
-            'ort' => 'nullable|string|max:255',
-            'telefon' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'verein' => 'required|string|max:255',
+            'teamcaptain' => 'required|string|max:255',
+            'strasse' => 'required|string|max:255',
+            'plz' => 'required|string|max:20',
+            'ort' => 'required|string|max:255',
+            'telefon' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'homepage' => 'nullable|string|max:255',
             'beschreibung' => 'nullable|string',
             'kommentar' => 'nullable|string',
-            'gruppe_id' => 'required',
-            'werbung' => 'nullable|in:0,1,2,3,4,5,6,7,8,9,10,11,12,13',
+            'gruppe_id' => 'required|exists:race_types,id',
+            'status' => 'required|string|in:Neuanmeldung,Warteliste,Nicht angetreten,Disqualifiziert,Ausgeschieden,Gelöscht,Abgemeldet',
+            'werbung' => 'nullable|integer|min:0',
+            'einverstaendnis' => 'nullable|boolean',
         ]);
 
         $regattaTeam = new RegattaTeam();
@@ -149,7 +151,6 @@ class RegattaTeamController extends Controller
                 'required',
                 'string',
                 'max:255',
-                // Name muss innerhalb der gleichen Regatta eindeutig sein, außer für das aktuelle Team
                 function ($attribute, $value, $fail) use ($request, $regattaTeam) {
                     $exists = RegattaTeam::where('regatta_id', $regattaTeam->regatta_id)
                         ->where('teamname', $value)
@@ -160,18 +161,20 @@ class RegattaTeamController extends Controller
                     }
                 }
             ],
-            'verein' => 'nullable|string|max:255',
-            'teamcaptain' => 'nullable|string|max:255',
-            'strasse' => 'nullable|string|max:255',
-            'plz' => 'nullable|string|max:20',
-            'ort' => 'nullable|string|max:255',
-            'telefon' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'verein' => 'required|string|max:255',
+            'teamcaptain' => 'required|string|max:255',
+            'strasse' => 'required|string|max:255',
+            'plz' => 'required|string|max:20',
+            'ort' => 'required|string|max:255',
+            'telefon' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'homepage' => 'nullable|string|max:255',
             'beschreibung' => 'nullable|string',
             'kommentar' => 'nullable|string',
-            'gruppe_id' => 'required',
-            'werbung' => 'nullable|in:0,1,2,3,4,5,6,7,8,9,10,11,12,13'
+            'gruppe_id' => 'required|exists:race_types,id',
+            'status' => 'required|string|in:Neuanmeldung,Warteliste,Nicht angetreten,Disqualifiziert,Ausgeschieden,Gelöscht,Abgemeldet',
+            'werbung' => 'nullable|integer|min:0',
+            'einverstaendnis' => 'nullable|boolean',
         ]);
 
         $regattaTeam->teamname = $request->input('name');

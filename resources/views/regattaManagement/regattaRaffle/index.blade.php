@@ -158,16 +158,16 @@
                                     </table>
                                     @if($unassignedTeams->isNotEmpty())
                                         <div class="p-2 bg-gray-50 border-t">
-                                            <form action="{{ route('raffleOrganizations.assignTeam') }}" method="POST" class="flex gap-2">
+                                            <form action="{{ route('raffleOrganizations.assignTeam') }}" method="POST" class="flex flex-col gap-2">
                                                 @csrf
                                                 <input type="hidden" name="organization_id" value="{{ $org->id }}">
-                                                <select name="team_id" required class="text-[10px] border-gray-300 rounded p-1 flex-grow">
+                                                <select name="team_id" required class="text-[10px] border-gray-300 rounded p-1 w-full">
                                                     <option value="">+ Team hinzufügen...</option>
                                                     @foreach($unassignedTeams as $ut)
                                                         <option value="{{ $ut->id }}">{{ $ut->teamname }} ({{ $ut->verein ?: $ut->ort ?: 'ID: '.$ut->id }})</option>
                                                     @endforeach
                                                 </select>
-                                                <button type="submit" class="bg-blue-500 text-white text-[10px] px-2 rounded">OK</button>
+                                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-[10px] px-2 py-1 rounded w-full">OK</button>
                                             </form>
                                         </div>
                                     @endif
@@ -520,7 +520,7 @@
                                 <div class="grid grid-cols-2 gap-4 mt-2">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Anzahl pro Gruppe</label>
-                                        <input type="number" name="finals_count" value="{{ $draft ? ($draft->params['finals_count'] ?? 1) : 1 }}" min="0" max="{{ $maxFinalsTotal ?? 10 }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                        <input type="number" name="finals_count" value="{{ old('finals_count', $draft ? ($draft->params['finals_count'] ?? ($maxFinalsTotal ?? 1)) : ($maxFinalsTotal ?? 1)) }}" min="0" max="{{ $maxFinalsTotal ?? 10 }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Startzeit Finals</label>

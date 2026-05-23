@@ -142,59 +142,59 @@ class RegattaRaffleController extends Controller
 
         $finalTeamlinks = $this->getFinalTeamlinks($regattaId);
 
-        foreach ($preview as &$row) {
+        foreach ($preview as $previewIndex => $row) {
             // Markiere Siegerehrung/Mittagspause basierend auf race_number und gruppe_id
             if ((isset($row['race_number']) && $row['race_number'] == 0) && (isset($row['gruppe_id']) && $row['gruppe_id'] == 0)) {
                 $isAwardFlag = !empty($row['is_award_ceremony']) || $this->isAwardCeremonyPlanItem($row);
                 $isPauseFlag = !empty($row['is_extra_pause']) || $this->isPausePlanItem($row);
 
                 if ($isPauseFlag && !$isAwardFlag) {
-                    $row['is_extra_pause'] = true;
-                    $row['is_award_ceremony'] = false;
-                    $row['gruppe_name'] = (($row['placeholder_name'] ?? null) && str_contains(strtoupper((string)$row['placeholder_name']), 'MITTAGSPAUSE'))
+                    $preview[$previewIndex]['is_extra_pause'] = true;
+                    $preview[$previewIndex]['is_award_ceremony'] = false;
+                    $preview[$previewIndex]['gruppe_name'] = (($row['placeholder_name'] ?? null) && str_contains(strtoupper((string)$row['placeholder_name']), 'MITTAGSPAUSE'))
                         ? 'Mittagspause'
                         : '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
                 } elseif ($isAwardFlag) {
-                    $row['is_award_ceremony'] = true;
-                    $row['is_extra_pause'] = false;
-                    $row['gruppe_name'] = 'Siegerehrung';
-                    $row['heat_index'] = null;
+                    $preview[$previewIndex]['is_award_ceremony'] = true;
+                    $preview[$previewIndex]['is_extra_pause'] = false;
+                    $preview[$previewIndex]['gruppe_name'] = 'Siegerehrung';
+                    $preview[$previewIndex]['heat_index'] = null;
                 } else {
                     // Fallback: unbekannte 0-Items behandeln wir defensiv als Pause.
-                    $row['is_award_ceremony'] = false;
-                    $row['is_extra_pause'] = true;
-                    $row['gruppe_name'] = '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
+                    $preview[$previewIndex]['is_award_ceremony'] = false;
+                    $preview[$previewIndex]['is_extra_pause'] = true;
+                    $preview[$previewIndex]['gruppe_name'] = '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
                 }
                 // Wichtig: Wir behalten race_number 0 für die UI-Zuordnung
             } else {
                 // Wenn es kein 0-Item ist, aber vielleicht das Flag trägt (aus DB geladen)
                 if (!empty($row['is_extra_pause']) || $this->isPausePlanItem($row)) {
-                    $row['is_award_ceremony'] = false;
-                    $row['gruppe_name'] = (($row['placeholder_name'] ?? null) && str_contains(strtoupper((string)$row['placeholder_name']), 'MITTAGSPAUSE'))
+                    $preview[$previewIndex]['is_award_ceremony'] = false;
+                    $preview[$previewIndex]['gruppe_name'] = (($row['placeholder_name'] ?? null) && str_contains(strtoupper((string)$row['placeholder_name']), 'MITTAGSPAUSE'))
                         ? 'Mittagspause'
                         : '--- PAUSENBLOCK NACH DEN VORLÄUFEN ---';
-                    $row['race_number'] = 0;
+                    $preview[$previewIndex]['race_number'] = 0;
                 } elseif (!empty($row['is_award_ceremony']) || $this->isAwardCeremonyPlanItem($row)) {
-                    $row['is_extra_pause'] = false;
-                    $row['gruppe_name'] = 'Siegerehrung';
-                    $row['race_number'] = 0; // Sicherstellen, dass es als 0 behandelt wird
-                    $row['heat_index'] = null;
+                    $preview[$previewIndex]['is_extra_pause'] = false;
+                    $preview[$previewIndex]['gruppe_name'] = 'Siegerehrung';
+                    $preview[$previewIndex]['race_number'] = 0; // Sicherstellen, dass es als 0 behandelt wird
+                    $preview[$previewIndex]['heat_index'] = null;
                 } else {
-                    $row['is_award_ceremony'] = false;
-                    $row['is_extra_pause'] = false;
-                    $row['gruppe_name'] = $gruppeNames[$row['gruppe_id']] ?? 'Unbekannt';
+                    $preview[$previewIndex]['is_award_ceremony'] = false;
+                    $preview[$previewIndex]['is_extra_pause'] = false;
+                    $preview[$previewIndex]['gruppe_name'] = $gruppeNames[$row['gruppe_id']] ?? 'Unbekannt';
                 }
             }
             if (isset($row['is_final']) && $row['is_final']) {
-                $row['team_name'] = $row['placeholder_name'] ?? 'Platzhalter';
-                $row['has_pokal'] = false;
-                $row['last_final_platz'] = null;
+                $preview[$previewIndex]['team_name'] = $row['placeholder_name'] ?? 'Platzhalter';
+                $preview[$previewIndex]['has_pokal'] = false;
+                $preview[$previewIndex]['last_final_platz'] = null;
             } else {
                 $teamInfo = $teamNames[$row['team_id'] ?? null] ?? null;
-                $row['team_name'] = is_array($teamInfo) ? ($teamInfo['name'] ?? 'Unbekannt') : ($teamInfo ?? 'Unbekannt');
+                $preview[$previewIndex]['team_name'] = is_array($teamInfo) ? ($teamInfo['name'] ?? 'Unbekannt') : ($teamInfo ?? 'Unbekannt');
                 $teamlink = is_array($teamInfo) ? ($teamInfo['teamlink'] ?? 0) : 0;
-                $row['has_pokal'] = ($teamlink > 0 && isset($finalTeamlinks[$teamlink]));
-                $row['last_final_platz'] = $row['has_pokal'] ? $finalTeamlinks[$teamlink] : null;
+                $preview[$previewIndex]['has_pokal'] = ($teamlink > 0 && isset($finalTeamlinks[$teamlink]));
+                $preview[$previewIndex]['last_final_platz'] = $preview[$previewIndex]['has_pokal'] ? $finalTeamlinks[$teamlink] : null;
             }
         }
 
@@ -808,21 +808,8 @@ class RegattaRaffleController extends Controller
             }
         }
 
-        foreach ($preview as &$pItem) {
-            if ($pItem['is_final'] || $pItem['race_number'] == 0 || !$pItem['team_id']) continue;
-            $tA = $pItem['team_id'];
-            $currentRaceTeams = collect($preview)->where('race_number', $pItem['race_number'])->pluck('team_id')->toArray();
-            $conflicts = 0;
-            foreach ($currentRaceTeams as $tB) {
-                if ($tB && $tA != $tB) {
-                    // Konflikt = wie oft haben sie INGESAMT gegeneinander gespielt (bis zu diesem Punkt im NEUEN Plan)
-                    // Eigentlich wollen wir hier die Wiederholungen sehen.
-                    // Wir zählen einfach die Historie bis zu diesem Rennen neu.
-                }
-            }
-        }
         // Vereinfacht: Wir aktualisieren nur die conflicts Anzeige basierend auf der finalen History
-        foreach ($preview as &$pItem) {
+        foreach ($preview as $previewIndex => $pItem) {
             if ($pItem['is_final'] || $pItem['race_number'] == 0 || !$pItem['team_id']) continue;
             $tA = $pItem['team_id'];
             $currentRaceTeams = collect($preview)->where('race_number', $pItem['race_number'])->pluck('team_id')->toArray();
@@ -833,7 +820,7 @@ class RegattaRaffleController extends Controller
                     $conflicts += ($opponentHistory[$tA][$tB] ?? 1) - 1;
                 }
             }
-            $pItem['conflicts'] = $conflicts;
+            $preview[$previewIndex]['conflicts'] = $conflicts;
         }
         // --- ENDE NACHBESSERUNG KONFLIKTE ---
 
@@ -1010,18 +997,18 @@ class RegattaRaffleController extends Controller
 
         // Zähle Heats pro Team für Level-Bestimmung
         $teamHeatCounts = [];
-        foreach ($preview as $item) {
-            if (!$item['is_final'] && isset($item['team_id']) && $item['team_id']) {
-                $teamHeatCounts[$item['team_id']] = ($teamHeatCounts[$item['team_id']] ?? 0) + 1;
+        foreach ($preview as $previewRow) {
+            if (!$previewRow['is_final'] && isset($previewRow['team_id']) && $previewRow['team_id']) {
+                $teamHeatCounts[$previewRow['team_id']] = ($teamHeatCounts[$previewRow['team_id']] ?? 0) + 1;
             }
         }
 
         // Level (Laufanzahl) zu Items hinzufügen
-        foreach ($preview as &$item) {
-            if (isset($item['team_id']) && $item['team_id']) {
-                $item['level'] = $teamHeatCounts[$item['team_id']] ?? 0;
+        foreach ($preview as $previewIndex => $previewLevelItem) {
+            if (isset($previewLevelItem['team_id']) && $previewLevelItem['team_id']) {
+                $preview[$previewIndex]['level'] = $teamHeatCounts[$previewLevelItem['team_id']] ?? 0;
             } else {
-                $item['level'] = 0;
+                $preview[$previewIndex]['level'] = 0;
             }
         }
 
@@ -1040,7 +1027,8 @@ class RegattaRaffleController extends Controller
             // Wir sortieren die Vorläufe chronologisch für die Analyse
             $heats = collect($preview)->where('is_final', false)->where('race_number', '>', 0)->sortBy('race_number');
 
-            foreach ($heats as $index => $item) {
+            foreach ($heats as $index => $heatItem) {
+                $item = $heatItem;
                 if (!isset($item['team_id']) || !$item['team_id']) continue;
 
                 $teamId = $item['team_id'];
@@ -1363,18 +1351,18 @@ class RegattaRaffleController extends Controller
             return $aLane - $bLane;
         });
 
-            foreach ($preview as &$pItem) {
+            foreach ($preview as $previewIndex => $pItem) {
                 if (!isset($pItem['team_id']) || !$pItem['team_id']) continue;
                 $tId = $pItem['team_id'];
                 $currT = \Carbon\Carbon::parse($pItem['time']);
 
                 if (isset($lastStartsLocal[$tId])) {
                     $diff = $currT->diffInMinutes($lastStartsLocal[$tId]);
-                    $pItem['pause'] = $diff;
-                    $pItem['pause_minutes'] = (int)$diff;
+                    $preview[$previewIndex]['pause'] = $diff;
+                    $preview[$previewIndex]['pause_minutes'] = (int)$diff;
                 } else {
-                    $pItem['pause'] = '-';
-                    $pItem['pause_minutes'] = null;
+                    $preview[$previewIndex]['pause'] = '-';
+                    $preview[$previewIndex]['pause_minutes'] = null;
                 }
                 $lastStartsLocal[$tId] = $currT;
 
@@ -1382,9 +1370,9 @@ class RegattaRaffleController extends Controller
                 $oId = $orgAssignments[$tId] ?? null;
                 if ($oId) {
                     if (isset($lastOrgStartsLocal[$oId]) && $lastOrgTeamLocal[$oId] != $tId) {
-                        $pItem['org_pause'] = $currT->diffInMinutes($lastOrgStartsLocal[$oId]);
+                        $preview[$previewIndex]['org_pause'] = $currT->diffInMinutes($lastOrgStartsLocal[$oId]);
                     } else {
-                        $pItem['org_pause'] = '-';
+                        $preview[$previewIndex]['org_pause'] = '-';
                     }
                     $lastOrgStartsLocal[$oId] = $currT;
                     $lastOrgTeamLocal[$oId] = $tId;
@@ -2177,6 +2165,10 @@ class RegattaRaffleController extends Controller
                             }
                         } catch (\Exception $e) {
                             // Ignorieren bei Fehlformatierung
+                            \Illuminate\Support\Facades\Log::debug('Ungueltiger Pause-Trigger bei Recalculate', [
+                                'trigger' => $triggerString,
+                                'error' => $e->getMessage(),
+                            ]);
                         }
                     } elseif ($pauseType === 'heat' && !empty($pauseTrigger)) {
                         // Bei Neuberechnung ist es schwerer den "letzten Heat der Runde" zu finden

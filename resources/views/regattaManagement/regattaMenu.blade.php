@@ -327,16 +327,18 @@
 
                                     <div class="ml-12">
                                         <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                            <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Regatta/Rennplan-Logik')">
-                                                <div class="justify-between my-2">
-                                                    <div class="flex items-center">
-                                                        <box-icon name='calendar-event'></box-icon>
-                                                        <p class="font-bold text-lg ml-2">
-                                                            Rennplan erstellen
-                                                        </p>
+                                            @if(Session::has('regattaSelectUeberschrift'))
+                                                <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Regatta/Rennplan-Logik')">
+                                                    <div class="justify-between my-2">
+                                                        <div class="flex items-center">
+                                                            <box-icon name='calendar-event'></box-icon>
+                                                            <p class="font-bold text-lg ml-2">
+                                                                Rennplan erstellen
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

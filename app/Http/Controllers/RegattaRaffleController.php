@@ -2467,9 +2467,26 @@ class RegattaRaffleController extends Controller
             $event = \App\Models\Event::find($regattaId);
             $rennDatum = $event->datumvon;
 
-            // Erste echte Renn-Startzeit ermitteln (für veroeffentlichungUhrzeit bei Nicht-Finals).
+            $normalizeTime = static function ($time, string $fallback = '00:00:00'): string {
+                if (!is_string($time) || trim($time) === '') {
+                    return $fallback;
+                }
+
+                $time = trim($time);
+                if (preg_match('/^\d{1,2}:\d{2}$/', $time)) {
+                    return $time . ':00';
+                }
+
+                if (preg_match('/^\d{1,2}:\d{2}:\d{2}$/', $time)) {
+                    return $time;
+                }
+
+                return $fallback;
+            };
+
+            // Erste echte Renn-Startzeit ermitteln (für Fallbacks).
             // Spezialblöcke (Pause/Siegerehrung) dürfen hier nicht einfließen.
-            $firstRaceTime = collect($preview)
+            $firstRaceTime = $normalizeTime(collect($preview)
                 ->where('gruppe_id', '!=', 0)
                 ->filter(function ($item) {
                     return empty($item['is_extra_pause']) && empty($item['is_award_ceremony']);
@@ -2478,7 +2495,32 @@ class RegattaRaffleController extends Controller
                     ['time', 'asc'],
                     ['race_number', 'asc'],
                 ])
-                ->first()['time'] ?? '00:00';
+                ->first()['time'] ?? null);
+
+            // Für Vorläufe je Gruppe die Startzeit des 1. Laufs bestimmen.
+            $firstVorlaufTimeByGroup = collect($preview)
+                ->where('gruppe_id', '!=', 0)
+                ->filter(function ($item) {
+                    return empty($item['is_extra_pause'])
+                        && empty($item['is_award_ceremony'])
+                        && empty($item['is_final']);
+                })
+                ->groupBy('gruppe_id')
+                ->map(function ($groupItems) use ($normalizeTime, $firstRaceTime) {
+                    $firstGroupHeat = collect($groupItems)
+                        ->sortBy(function ($item) {
+                            return sprintf(
+                                '%03d_%s_%06d',
+                                (int)($item['heat_index'] ?? 999),
+                                (string)($item['time'] ?? '99:99:99'),
+                                (int)($item['race_number'] ?? 999999)
+                            );
+                        })
+                        ->first();
+
+                    return $normalizeTime($firstGroupHeat['time'] ?? null, $firstRaceTime);
+                })
+                ->all();
 
             // Tabellen erstellen: Gruppiert nach Gruppe (für Vorläufe) und Gruppe + Final-Typ (für Endläufe)
             $groupedForTables = collect($preview)->where('gruppe_id', '!=', 0)->groupBy(function ($item) {
@@ -2510,7 +2552,7 @@ class RegattaRaffleController extends Controller
                     $tabele->system_id = $params['tabelleSystem'] ?? null;
                     $tabele->buchholzwertungaktiv = 0; // Finals nie mit Buchholz
                     $tabele->tabelleVisible = 0;
-                    $tabele->finaleAnzeigen = (!empty($params['finale_publish_time']) ? $params['finale_publish_time'] : '00:00:00') ;
+                    $tabele->finaleAnzeigen = $normalizeTime($params['finale_publish_time'] ?? null);
                 } else {
                     $tabele->ueberschrift = 'Vorlauf ' . $firstLane['gruppe_name'];
                     $tabele->finale = 0;
@@ -2520,7 +2562,7 @@ class RegattaRaffleController extends Controller
                     $tabele->buchholzwertungaktiv = $params['buchholzwertung'] ?? 0;
                     $tabele->system_id = $params['tabelleSystem'] ?? null;
                     $tabele->tabelleVisible = 1;
-                    $tabele->finaleAnzeigen = $firstRaceTime ;
+                    $tabele->finaleAnzeigen = $firstVorlaufTimeByGroup[$gruppeId] ?? $firstRaceTime;
                 }
 
                 $tabele->autor_id = $userId;
@@ -2583,13 +2625,15 @@ class RegattaRaffleController extends Controller
                 $race->tabele_id = $tabeleIds[$tableKey] ?? null;
                 $race->gruppe_id = $gruppeId;
                 $race->rennDatum = $rennDatum;
-                $race->rennUhrzeit = $firstLane['time'];
+                $raceStartTime = $normalizeTime($firstLane['time'] ?? null, $firstRaceTime);
+                $race->rennUhrzeit = $raceStartTime;
+                $race->verspaetungUhrzeit = $raceStartTime;
 
-                // Veröffentlichungsuhrzeit: Bei Finals 'finale_publish_time', sonst die erste Startzeit der Regatta
+                // Veröffentlichungsuhrzeit: Bei Finals 'finale_publish_time', bei Vorläufen Startzeit des 1. Laufs der Gruppe
                 if ($firstLane['is_final']) {
-                    $race->veroeffentlichungUhrzeit = $params['finale_publish_time'] ?? '00:00';
+                    $race->veroeffentlichungUhrzeit = $normalizeTime($params['finale_publish_time'] ?? null);
                 } else {
-                    $race->veroeffentlichungUhrzeit = $firstRaceTime;
+                    $race->veroeffentlichungUhrzeit = $firstVorlaufTimeByGroup[$gruppeId] ?? $firstRaceTime;
                 }
 
                 $race->level = $firstLane['heat_index'] ?? 1;
@@ -2699,33 +2743,9 @@ class RegattaRaffleController extends Controller
             }
 
             // Primär die echte gespeicherte Platzierung verwenden (tabledatas.platz),
-            // damit kein Re-Ranking entsteht, wenn Teams ohne teamlink herausgefiltert werden.
-            $rowsWithStoredPlace = $data
-                ->filter(fn($row) => (int) ($row->platz ?? 0) > 0)
-                ->sortBy(fn($row) => (int) $row->platz)
-                ->values();
-
-            if ($rowsWithStoredPlace->isNotEmpty()) {
-                foreach ($rowsWithStoredPlace as $row) {
-                    $teamlink = (int) ($row->teamlink ?? 0);
-                    $rank = (int) ($row->platz ?? 0);
-
-                    if ($teamlink <= 0 || $rank <= 0) {
-                        continue;
-                    }
-
-                    // Falls ein Teamlink in mehreren Finalen auftaucht, gewinnt die bessere Platzierung.
-                    if (!isset($results[$teamlink]) || $rank < $results[$teamlink]['platz']) {
-                        $results[$teamlink] = [
-                            'platz' => $rank,
-                            'tabelle' => $table->ueberschrift,
-                        ];
-                    }
-                }
-                continue;
-            }
-
-            // Fallback: Falls keine gespeicherte Platzierung vorhanden ist, Ranking berechnen.
+            // damit kein Re-Ranking entsteht wenn Teams ohne teamlink herausgefiltert worden wären.
+            // WICHTIG: Das Ranking muss über ALLE Teams berechnet werden (auch teamlink=0),
+            //          damit nachfolgende Teams nicht fälschlich nach oben rücken.
             if ($table->wertungsart == 2) {
                 // Zeit-Wertung: Kleinste Zeit gewinnt
                 $sorted = $data->sort(function ($a, $b) {
@@ -2742,17 +2762,19 @@ class RegattaRaffleController extends Controller
             $rank = 1;
             foreach ($sorted as $row) {
                 $teamlink = (int) ($row->teamlink ?? 0);
-                if ($teamlink <= 0) {
-                    $rank++;
-                    continue;
+
+                // Rang wird für ALLE Teams hochgezählt (auch ohne teamlink),
+                // damit kein fälschliches Aufrücken entsteht.
+                if ($teamlink > 0) {
+                    // Falls ein Teamlink in mehreren Finals auftaucht, gewinnt die bessere Platzierung.
+                    if (!isset($results[$teamlink]) || $rank < $results[$teamlink]['platz']) {
+                        $results[$teamlink] = [
+                            'platz' => $rank,
+                            'tabelle' => $table->ueberschrift,
+                        ];
+                    }
                 }
 
-                if (!isset($results[$teamlink]) || $rank < $results[$teamlink]['platz']) {
-                    $results[$teamlink] = [
-                        'platz' => $rank,
-                        'tabelle' => $table->ueberschrift,
-                    ];
-                }
                 $rank++;
             }
         }

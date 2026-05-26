@@ -20,10 +20,12 @@ class CreateTabelesTable extends Migration
             $table->unsignedBigInteger('system_id')->nullable();
             $table->date('tabelleDatumVon');
             $table->string('ueberschrift', 50)->default('');
-            $table->binary('beschreibung', 65535)->nullable();
+            //$table->binary('beschreibung', 65535)->nullable();
+            $table->text('beschreibung')->nullable();
             $table->integer('tabelleLevelVon');
             $table->integer('tabelleLevelBis');
-            $table->integer('wertungsart')->default(0);  //1 = Punkte
+            $table->integer('wertungsart')->default(0);
+                                                                       //1 = Punkte
                                                                       //2 = Zeit
                                                                       //3 = Lauf
             $table->integer('status')->default(0);

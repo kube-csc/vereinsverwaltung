@@ -51,7 +51,7 @@
                         {{ $veroeffentlichungUhrzeitAlt }} Uhr
                     </div>
                 </div>
-                <form action="{{ url('/Teamverlosung/platzierung/update/'.$race->id) }}" method="post">
+                <form action="{{ url('/Teamverlosung/Platzierung/update/'.$race->id) }}" method="post">
                     @csrf
                     <table class="w-full mb-6">
                         <thead>

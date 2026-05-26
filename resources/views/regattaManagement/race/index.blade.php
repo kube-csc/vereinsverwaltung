@@ -146,9 +146,11 @@
                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/Ergebnisse/'.$race->id) }}">
                                                 <box-icon name='user'></box-icon>
                                            </a>
-                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/platzierung/'.$race->id) }}" title="Platzierung eingeben">
+                                           @if($race->status == 2)
+                                           <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/Platzierung/'.$race->id) }}" title="Platzierung eingeben">
                                                 <box-icon name='trophy' ></box-icon>
                                            </a>
+                                          @endif
                                         @endif
                                      </div>
                                   </div>

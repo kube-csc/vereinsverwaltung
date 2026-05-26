@@ -176,7 +176,7 @@
                                         <div class="font-semibold text-lg text-blue-800">
                                             Team: {{ $suggestion->teamname ?? '-' }} (#{{ $suggestion->id }})
                                             @if($suggestion->teamlink > 0 && isset($finalTeamlinks[$suggestion->teamlink]))
-                                                <span title="War bei der letzten Regatta in einem Finale (Platz {{ $finalTeamlinks[$suggestion->teamlink] }})" class="cursor-help">🏆 {{ $finalTeamlinks[$suggestion->teamlink] }}.</span>
+                                                <span title="War bei der letzten Regatta in einem Finale ({{ $finalTeamlinks[$suggestion->teamlink]['tabelle'] }}, Platz {{ $finalTeamlinks[$suggestion->teamlink]['platz'] }})" class="cursor-help">🏆 {{ $finalTeamlinks[$suggestion->teamlink]['platz'] }}.</span>
                                             @endif
                                         </div>
                                         <div class="text-xs text-gray-600">

@@ -168,9 +168,7 @@ class LaneController extends Controller
                         'punkte' => 0,
                         'platz' => 0,
                         'bearbeiter_id' => Auth::id(),
-                        'autor_id' => Auth::id(),
-                        'updated_at' => Carbon::now(),
-                        'created_at' => Carbon::now()
+                        'autor_id' => Auth::id()
                     ]);
                 }
                 $lane->save();
@@ -251,9 +249,7 @@ class LaneController extends Controller
                         'tabelevor_id'  => 0,
                         'platzvor'      => 0,
                         'bearbeiter_id' => Auth::id(),
-                        'autor_id'      => Auth::id(),
-                        'updated_at'    => Carbon::now(),
-                        'created_at'    => Carbon::now()
+                        'autor_id'      => Auth::id()
                     ]);
                 }
                 $lane->save();
@@ -336,6 +332,10 @@ class LaneController extends Controller
             $ractetime=$race->verspaetungUhrzeit;
         }
 
+        if (!Session::has('regattaRennzeitVorsprung')) {
+            Session::put('regattaRennzeitVorsprung', 0);
+        }
+
         return view('regattaManagement.lane.editResult')->with(
             [
                 'lanes'        => $lanes,
@@ -371,6 +371,10 @@ class LaneController extends Controller
             $ractetime = $race->verspaetungUhrzeit;
         }
 
+        if (!Session::has('regattaRennzeitVorsprung')) {
+            Session::put('regattaRennzeitVorsprung', 0);
+        }
+
         return view('regattaManagement.lane.editPlatzierung')->with([
             'race' => $race,
             'lanes' => $lanes,
@@ -389,6 +393,7 @@ class LaneController extends Controller
      */
     public function update(Request $request, int $raceId)
     {
+        $saveAsDraft = $request->input('save_mode') === 'draft';
         $changeCount=0;
         foreach ($request->laneId as $index => $laneId) {
             $lane = Lane::find($laneId);
@@ -409,7 +414,6 @@ class LaneController extends Controller
                 if($changeCount == 1){
                     $lane->platz = 0;
                     $lane->bearbeiter_id = Auth::id();
-                    $lane->updated_at    = Carbon::now();
                     $lane->save();
 
                     $mannschaftCount = Lane::where('regatta_id', Session::get('regattaSelectId'))
@@ -498,6 +502,13 @@ class LaneController extends Controller
             $success = 'Es gab keine Änderung.';
         }
 
+        // Optionaler Entwurfsmodus: Startaufstellung bleibt unveroeffentlicht.
+        if ($saveAsDraft && $race->status < 3) {
+            $race->status = 1;
+            $race->save();
+            $success = 'Die Startaufstellung wurde als Entwurf gespeichert (nicht veroeffentlicht).';
+        }
+
         return redirect('/Rennen/Programm')->with([
                 'success' => $success
             ]
@@ -537,7 +548,6 @@ class LaneController extends Controller
                     $lane->mannschaft_id = Null;
                     $lane->platz = 0;
                     $lane->bearbeiter_id = Auth::id();
-                    $lane->updated_at    = Carbon::now();
                     $lane->save();
                 }
             }
@@ -608,7 +618,6 @@ class LaneController extends Controller
             if (($lane && $lane->mannschaft_id) && (($lane->platz != $request->platz[$index]) || ($request->newCalculate == 1))) {
                 $lane->platz = $request->platz[$index];
                 $lane->bearbeiter_id = Auth::id();
-                $lane->updated_at    = Carbon::now();
                 $lane->save();
 
                 $aenderung[$laneId] = 1;
@@ -685,7 +694,6 @@ class LaneController extends Controller
                         $tabledata->rennanzahl  += 1;
                         $tabledata->bearbeiter_id = Auth::id();
                         $tabledata->autor_id         = Auth::id();
-                        $tabledata->updated_at    = Carbon::now();
                         $tabledata->save();
 
                         $laneRacesSave = Lane::find($lane->id);
@@ -704,7 +712,6 @@ class LaneController extends Controller
                         }
 
                         $tabledata->bearbeiter_id = Auth::id();
-                        $tabledata->updated_at    = Carbon::now();
                         $tabledata->save();
 
                         $laneRacesSave = Lane::find($lane->id);
@@ -720,9 +727,7 @@ class LaneController extends Controller
                         'rennanzahl'      => 1,
                         'punkte'            => $punkte,
                         'bearbeiter_id'  => Auth::id(),
-                        'autor_id'          => Auth::id(),
-                        'updated_at'     => Carbon::now(),
-                        'created_at'      => Carbon::now()
+                        'autor_id'          => Auth::id()
                     ]);
                     $tabledata->save();
 
@@ -793,7 +798,6 @@ class LaneController extends Controller
                 'rennzeit'                     => $request->rennzeit,
                 'status'                        => 4,
                 'bearbeiter_id'             => Auth::id(),
-                'updated_at'                => Carbon::now(),
                 'liveStream'                 => false
             ]);
 
@@ -808,7 +812,6 @@ class LaneController extends Controller
                 'rennzeit'                    => $request->rennzeit,
                 'status'                       => 2,
                 'bearbeiter_id'            => Auth::id(),
-                'updated_at'               => Carbon::now(),
             ]);
 
            RaceTimeHelper::timeVerschiebung($raceId, $request->rennUhrzeit, $request->zeit, $request->zeitMinAbstand);
@@ -833,7 +836,6 @@ class LaneController extends Controller
                 if ($lane) {
                     $lane->platz = $platz;
                     $lane->bearbeiter_id = Auth::id();
-                    $lane->updated_at = now();
                     $lane->save();
                 }
             }
@@ -842,7 +844,7 @@ class LaneController extends Controller
         // Übernehme weitere Felder analog zu updateResult
         Session::put('regattaZeit', $request->zeit);
         Session::put('regattaZeitMinAbstand', $request->zeitMinAbstand);
-        Session::put('regattaRennzeitVorsprung', $request->rennzeit_vorsprung == 1 ? 1 : 0);
+        Session::put('regattaRennzeitVorsprung', $request->boolean('rennzeit_vorsprung') ? 1 : 0);
 
         if($request->rennzeit==Null) {
             $request->rennzeit = 0;
@@ -868,7 +870,6 @@ class LaneController extends Controller
         }
         $race->liveStream     = false;
         $race->bearbeiter_id = Auth::id();
-        $race->updated_at    = now();
         $race->save();
 
         // Zeitverschiebung berechnen wie in updateResult
@@ -910,8 +911,6 @@ class LaneController extends Controller
             $lane->platzvor      = 0;
             $lane->bearbeiter_id = Auth::id();
             $lane->autor_id      = Auth::id();
-            $lane->updated_at    = Carbon::now();
-            $lane->created_at    = Carbon::now();
             $lane->restore();
             $lane->save();
         }
@@ -928,9 +927,7 @@ class LaneController extends Controller
                 'tabelevor_id' => 0,
                 'platzvor' => 0,
                 'bearbeiter_id' => Auth::id(),
-                'autor_id' => Auth::id(),
-                'updated_at' => Carbon::now(),
-                'created_at' => Carbon::now()
+                'autor_id' => Auth::id()
             ]);
             $lane->save();
         }

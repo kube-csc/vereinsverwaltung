@@ -222,7 +222,6 @@ class RaceController extends Controller
             'abspielzeit'                         => 'nullable|integer|min:0',
         ];
 
-        // tabeleId ist nur erforderlich, wenn einzelRennen nicht 1 ist
         if($request->einzelRennen != 1) {
             $rules['tabeleId'] = 'required';
         } else {
@@ -259,8 +258,6 @@ class RaceController extends Controller
                 'finale'                      => 0,
                 'bearbeiter_id'          => Auth::id(),
                 'autor_id'                  => Auth::id(),
-                'updated_at'             => Carbon::now(),
-                'created_at'              => Carbon::now()
             ]);
 
             $tabele->save();
@@ -285,12 +282,11 @@ class RaceController extends Controller
                 'abspielzeit'                       => $request->abspielzeit,
                 'bearbeiter_id'                   => Auth::id(),
                 'autor_id'                           => Auth::id(),
-                'updated_at'                      => Carbon::now(),
-                'created_at'                       => Carbon::now()
             ]);
+
         $race->save();
 
-        // ToDo: Wenn es ein Rennen mit Mix ist, dann muss in der Tabele  das Feld maxrennen auf 0 gesetzt werden
+        // ToDo: Wenn es ein Rennen mit Mix ist, dann muss in der Tabelle das Feld maxrennen auf 0 gesetzt werden
         $tabele = Tabele::where('id', $request->tabeleId)
             ->where('maxrennen', '>', 0)
             ->update(['maxrennen' => 0]);

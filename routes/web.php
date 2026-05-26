@@ -368,11 +368,11 @@ Route::get('/Rennen/liveStream/activate/{id}',             [RaceController::clas
 Route::get('/Rennen/liveStream/deactivate/{id}',         [RaceController::class, 'liveStreamDeactivate']);
 
 Route::get('/Teamverlosung/{race_id}',                [LaneController::class, 'show'])            ->name('lane.show');
-Route::get('/Teamverlosung/setzen/{race_id}',         [LaneController::class, 'editDraw'])        ->name('lane.editDraw');
-Route::get('/Teamverlosung/Ergebnisse/{race_id}',     [LaneController::class, 'editResult'])      ->name('lane.editResult');
-Route::post('/Teamverlosung/update/{race_id}',        [LaneController::class, 'update'])          ->name('lane.update');
-Route::get('/Teamverlosung/platzierung/{race_id}',     [LaneController::class, 'editPlatzierung'])->name('lane.editPlatzierung');
-Route::post('/Teamverlosung/platzierung/update/{race_id}', [LaneController::class, 'updatePlatzierung'])->name('lane.updatePlatzierung');
+Route::get('/Teamverlosung/setzen/{race_id}',  [LaneController::class, 'editDraw'])        ->name('lane.editDraw');
+Route::get('/Teamverlosung/Ergebnisse/{race_id}', [LaneController::class, 'editResult'])      ->name('lane.editResult');
+Route::post('/Teamverlosung/update/{race_id}',   [LaneController::class, 'update'])          ->name('lane.update');
+Route::get('/Teamverlosung/Platzierung/{race_id}',  [LaneController::class, 'editPlatzierung'])->name('lane.editPlatzierung');
+Route::post('/Teamverlosung/Platzierung/update/{race_id}', [LaneController::class, 'updatePlatzierung'])->name('lane.updatePlatzierung');
 Route::post('/Rennergebnisse/update/{race_id}',       [LaneController::class, 'updateResult'])    ->name('lane.updateResult');
 Route::get('/Teamverlosung/planen/{race_id}',         [LaneController::class, 'editSetDraw'])     ->name('lane.editSetDraw');
 Route::post('/Teamverlosung/planen/update/{race_id}', [LaneController::class, 'updateSetDraw'])   ->name('lane.updateSetDraw');

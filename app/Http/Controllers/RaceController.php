@@ -42,6 +42,22 @@ class RaceController extends Controller
         return Redirect()->back()->with('success' , 'Das Rennen wurde unsichtbar geschaltet.');
     }
 
+    public function publishAllSetRaces()
+    {
+        $updatedCount = Race::where('event_id', Session::get('regattaSelectId'))
+            ->where('status', 1)
+            ->update([
+                'status'        => 2,
+                'bearbeiter_id' => Auth::id()
+            ]);
+
+        if ($updatedCount > 0) {
+            return redirect()->back()->with('success', $updatedCount . ' gesetzte Rennen wurden veröffentlicht.');
+        }
+
+        return redirect()->back()->with('error', 'Es wurden keine gesetzten Rennen mit gesetzten Mannschaften gefunden.');
+    }
+
     /**
      * Display a listing of the resource.
      *

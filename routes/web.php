@@ -346,6 +346,7 @@ Route::get('/Rennen/edit/{race_id}',                             [RaceController
 Route::post('/Rennen/update/{race_id}',                      [RaceController::class, 'update'])          ->name('race.update');
 Route::get('/Rennen/aktiv/{race_id}',                            [RaceController::class, 'aktiv'])           ->name('race.aktiv');
 Route::get('/Rennen/inaktiv/{race_id}',                         [RaceController::class, 'inaktiv'])         ->name('race.inaktiv');
+Route::get('/Rennen/Veroeffendlichen',                    [RaceController::class, 'publishAllSetRaces'])->name('race.publishAllSetRaces');
 Route::get('/Rennen/liveAktuell/aktiv/{race_id}',           [RaceController::class, 'aktivLive'])       ->name('race.aktivLive');
 Route::get('/Rennen/liveAktuell/inaktiv/{race_id}',        [RaceController::class, 'inaktivLive'])     ->name('race.inaktivLive');
 Route::get('/Rennen/Programm',                                 [RaceController::class, 'indexProgram'])    ->name('race.indexProgram');

@@ -40,6 +40,11 @@
                                <a href="{{ route('race.create') }}">
                                 <box-icon name='plus'></box-icon>
                               </a>
+                              @if($funktionStatus==1)
+                              <a class="ml-3" href="{{ route('race.publishAllSetRaces') }}" title="Alle gesetzten Rennen veröffentlichen" onclick="return confirm('Alle gesetzten Rennen des Events veröffentlichen');">
+                                <box-icon name='check-double' color='green'></box-icon>
+                              </a>
+                              @endif
                             </div>
 
                             <div style="text-align: left">

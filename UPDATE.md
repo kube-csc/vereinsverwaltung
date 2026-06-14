@@ -18,7 +18,8 @@
 ****Regatta-Verwaltung – Verbesserungen Mannschafts-Formular****
 - **Optimierte Validierung:** Alle Pflichtfelder (`verein`, `teamcaptain`, `strasse`, `plz`, `ort`, `telefon`, `email`, `status`, `groupe_id`) sind jetzt korrekt als `required` validiert.
 - **Flexible Werbungs-Option:** Das Feld `werbung` akzeptiert beliebige nicht-negative Ganzzahlen (`integer|min:0`) statt einer fixen Liste.
-
+- **Gesetzte Rennen veröffentlichen**
+  - **Alle Rennen von Status 1 auf Status 2 setzen:** Eine Funktion zum Massen-Setzen des Status von Rennen auf Status 2, wenn sie noch nicht gestartet wurden.
 ****Regatta-Rennplanung (RegattaRaffle) – Automatisierte Verlosung****
 - **Automatische Rennplanerstellung:** Intelligenter Algorithmus zur Verteilung von Teams auf Rennen und Bahnen unter Berücksichtigung aller Fairness-Kriterien.
 - **Gegner-Durchmischung:** Maximale Durchmischung von Paarungen über mehrere Vorläufe hinweg mit Konflikt-Erkennung und Transparenz.

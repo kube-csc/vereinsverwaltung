@@ -120,7 +120,7 @@ Folgende Lizenz wird für die Nutzung des Frontends benötigt:
               <ul>
                   <li>Wähle einen Benutzer aus und ordne ihm eine oder mehrere Trainerfunktionen zu.</li>
                   <li>Beim Zuweisen werden die Voreinstellungen der Trainerfunktion automatisch übernommen (z. B. Standard-Veranstaltung und Standard-Abteilung).</li>
-                  <li>Zuordnungen können deaktiviert und später wieder reaktiviert werden.</li>
+                  <li>Zuordnungen können deaktiviert und später reaktiviert werden.</li>
                   <li>Die Sichtbarkeit kann pro Zuordnung umgeschaltet werden.</li>
               </ul>
           </li>
@@ -170,7 +170,7 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
      <li>FAQ für die Regattamanagement APP</li>
      <li>Mannschaften können angelegt und bearbeitet werden</li>
       <li><strong>Team-Import ohne Meldetool:</strong> Mannschaften können direkt per Texteingabe (Textarea) importiert werden – eine Zeile pro Teamname. Pflichtfelder werden automatisch mit definierten Platzhalter-Werten befüllt (Verein, Teamcaptain, Straße, Ort: „nicht angegeben"; PLZ: 99999; Telefon: 999999999; E-Mail: import@invalid.local). Wenn ein Team bereits bei einem früheren Event gemeldet war, werden die Vorwerte übernommen und der Teamlink automatisch synchronisiert (bestehender übernommen oder neue freie ID vergeben).</li>
-      <li><strong>Automatisierte Rennplanung (Verlosung):</strong> Intelligente Generierung eines Rennplans basierend auf Fairness-Kriterien:
+      <li><strong>Automatisierte Rennplanung (Verlosung [Beta-Version]:</strong> Intelligente Generierung eines Rennplans basierend auf Fairness-Kriterien:
         <ul>
           <li>Gegner-Durchmischung: Maximale Variation der Paarungen über mehrere Vorläufe hinweg</li>
           <li>Intelligente Bahnverteilung (Seeding): Stärkste Finals-Teams in der Mitte (Center-Out), schwächere an Außenbahnen</li>

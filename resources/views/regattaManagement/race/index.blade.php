@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
-              <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
                     {{ $titel }}
                   </div>
@@ -18,9 +18,9 @@
                    In diesem Bereich werden die Rennen der Regatta bearbeitet.
                   </div>
 
-              </div>
+               </div>
 
-              <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
+               <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                   <div class="p-6">
                       <div class="flex items-center">
                             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
@@ -30,14 +30,15 @@
                                 @if($funktionStatus==2)
                                     Ergebnisse der
                                 @endif
-                                    Rennen</div>
+                                    Rennen
+                            </div>
                       </div>
 
                       <div class="ml-12">
                           <div class="mt-2 text-sm text-gray-500">
 
                             <div class="my-4 flex">
-                               <a href="{{ route('race.create') }}">
+                               <a href="{{ route('race.create') }}" title="Neues Rennen anlegen">
                                 <box-icon name='plus'></box-icon>
                               </a>
                               @if($funktionStatus==1)
@@ -48,33 +49,33 @@
                             </div>
 
                             <div style="text-align: left">
-                              <div>
-                                  @if (session()->has('success'))
+                               <div>
+                                   @if (session()->has('success'))
                                       <div class="p-3 bg-green-300 text-green-800 rounded shadow-sm">
                                           {!! session('success') !!}
                                       </div>
-                                  @endif
-                                  @if (session()->has('error'))
+                                   @endif
+                                   @if (session()->has('error'))
                                       <div class="p-3 bg-red-500 text-red-800 rounded shadow-sm">
-                                            {!! session('error') !!}
+                                         {!! session('error') !!}
                                       </div>
-                                  @endif
-                              </div>
+                                   @endif
+                               </div>
 
                               @foreach ($races as $race)
                               <div class="rounded border shadow p-3 my-2 bg-blue-200">
                                   <div class="justify-between my-2">
                                      <div>
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/edit/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/edit/'.$race->id) }}" title="Rennen bearbeiten">
                                             <box-icon name='edit' type='solid'></box-icon>
                                         </a>
                                         @if($race['visible']==1)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/inaktiv/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('Rennen/inaktiv/'.$race->id) }}" title="Rennen ausblenden">
                                             <box-icon name='show' ></box-icon>
                                         </a>
                                         @endif
                                         @if($race['visible']==0)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/aktiv/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/aktiv/'.$race->id) }}" title="Rennen einblenden">
                                             <box-icon name='hide' ></box-icon>
                                         </a>
                                         @endif
@@ -89,15 +90,15 @@
                                          Bei anderen Werten werden spezielle Aktionen wie Teamverlosung angeboten.
                                         --}}
                                         @if($funktionStatus==1)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Programm/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Programm/'.$race->id) }}" title="Programmdatei verwalten">
                                             <box-icon name='file'></box-icon>
                                         </a>
                                         @endif
                                         @if($funktionStatus==2)
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Ergebnis/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Ergebnis/'.$race->id) }}" title="Ergebnisdatei verwalten">
                                             <box-icon name='file'></box-icon>
                                         </a>
-                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Zeit/'.$race->id) }}">
+                                        <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/Zeit/'.$race->id) }}" title="Rennzeit erfassen">
                                             <box-icon name='time'></box-icon>
                                         </a>
                                         @endif
@@ -105,27 +106,27 @@
                                         Ausgabe der Rennaufstellung
                                         --}}
                                         @if($funktionStatus != 1 and $funktionStatus != 2)
-                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/'.$race->id) }}">
+                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/'.$race->id) }}" title="Rennaufstellung anzeigen">
                                              <box-icon name='clipboard'></box-icon>
                                           </a>
                                         @endif
                                         @if($funktionStatus == 1 && $race->tabele_id && $race->status <4)
-                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/setzen/'.$race->id) }}">
+                                          <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/setzen/'.$race->id) }}" title="Teams manuell setzen">
                                               <box-icon name='user'></box-icon>
                                           </a>
                                         @endif
                                         @if($funktionStatus == 1 && $race->tabele_id && $race->status <2)
-                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/planen/'.$race->id) }}">
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/planen/'.$race->id) }}" title="Teams automatisch planen">
                                                 <box-icon name='shuffle'></box-icon>
                                             </a>
                                         @endif
                                         @if($race['aktuellLiveVideo']==1)
-                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveAktuell/inaktiv/'.$race->id) }}">
+                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveAktuell/inaktiv/'.$race->id) }}" title="Live-Rennen-Markierung deaktivieren">
                                                  <box-icon name='pin' type='solid'></box-icon>
                                              </a>
                                          @endif
                                         @if($race['aktuellLiveVideo']==0)
-                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveAktuell/aktiv/'.$race->id) }}">
+                                             <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Rennen/liveAktuell/aktiv/'.$race->id) }}" title="Als aktuelles Live-Rennen markieren">
                                                  <box-icon name='pin' ></box-icon>
                                              </a>
                                          @endif
@@ -148,7 +149,7 @@
                                             </a>
                                         @endif
                                         @if($funktionStatus == 2 && $race->tabele_id)
-                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/Ergebnisse/'.$race->id) }}">
+                                            <a class="ml-2 btn btn-sm btn-outline-primary" href="{{ url('/Teamverlosung/Ergebnisse/'.$race->id) }}" title="Ergebnisse den Teams zuordnen">
                                                 <box-icon name='user'></box-icon>
                                            </a>
                                            @if($race->status == 2)
@@ -192,7 +193,22 @@
                                           gestartet um
                                         @endif
                                         {{ date("H:i", strtotime($race->verspaetungUhrzeit)) }} Uhr
-                                        <br>Status: {{ $race->status }}
+                                        <br>Status:
+                                         @if($race->status==0)
+                                             Bahnen noch nicht besetzt
+                                         @elseif($race->status==1)
+                                             Bahnen besetzt noch nicht geprüft
+                                         @elseif($race->status==2)
+                                             Bahnen besetzt und geprüft
+                                         @elseif($race->status==3)
+                                             Rennergebniss eingetragen
+                                         @elseif($race->status==4)
+                                             Rennergebniss eingetragen, geprüft und gewertet
+                                         @elseif($race->status==5)
+                                             Rennen gesichert
+                                         @else
+                                             Status {{ $race->status }}
+                                         @endif
                                     </div>
                                   </div>
 
@@ -210,14 +226,11 @@
                   </div>
 
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
-                     <div class="flex items-center">
+                      <div class="flex items-center">
+                         <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
 
-                       <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
-
-                       </div>
-
-                     </div>
-
+                         </div>
+                      </div>
                   </div>
               </div>
             </div>

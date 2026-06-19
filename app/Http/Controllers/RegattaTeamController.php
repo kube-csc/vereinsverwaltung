@@ -24,6 +24,7 @@ class RegattaTeamController extends Controller
     {
         $regattaId = session()->get('regattaSelectId');
         $regattaTeams = RegattaTeam::where('regatta_id', $regattaId)
+            ->with('teamWertungsGruppe')
             ->orderBy('datum')
             ->paginate(10);
 

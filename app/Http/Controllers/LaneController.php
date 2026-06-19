@@ -60,13 +60,13 @@ class LaneController extends Controller
     {
         $race = Race::find($id);
 
-        if ($race->status != 4) {
+        if ($race->status <= 3) {
             $lanes = Lane::where('rennen_id', $id)->orderBy('bahn')->get();
         }
 
         $platzRennen=0;
         $highhour=0;
-        if($race->status == 4) {
+        if($race->status > 3) {
             $lanes = Lane::where('rennen_id',$id)->orderBy('platz')->get();
             foreach ($lanes as $lane) {
                 if ($lane->platz > 0) {
@@ -88,9 +88,27 @@ class LaneController extends Controller
             }
 
             if($platzRennen == 0) {
-                $lanes = Lane::where('rennen_id',$id)->orderBy('zeit')->orderBy('hundert')->get();
+                $lanes = Lane::where('rennen_id', $id)->get()->sort(function ($a, $b) {
+                    $aHasTime = ($a->zeit !== '00:00:00' || (int) $a->hundert > 0);
+                    $bHasTime = ($b->zeit !== '00:00:00' || (int) $b->hundert > 0);
+
+                    // Zeiten ohne gueltigen Wert immer ans Ende sortieren.
+                    if ($aHasTime !== $bHasTime) {
+                        return $aHasTime ? -1 : 1;
+                    }
+
+                    if ($a->zeit !== $b->zeit) {
+                        return strcmp($a->zeit, $b->zeit);
+                    }
+
+                    return ((int) $a->hundert) <=> ((int) $b->hundert);
+                })->values();
+
                 foreach($lanes as $lane) {
-                    $highhour=substr($lane->zeit,0,2);
+                    $hourPart = (int) substr((string) $lane->zeit, 0, 2);
+                    if ($hourPart > $highhour) {
+                        $highhour = $hourPart;
+                    }
                 }
                 $platzRennen = 2;
             }

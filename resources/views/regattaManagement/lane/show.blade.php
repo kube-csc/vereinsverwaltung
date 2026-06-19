@@ -66,6 +66,9 @@
                                @if($race->status==4)
                                  Rennergebniss eingetragen, geprüft und gewertet
                                @endif
+                               @if($race->status==5)
+                                  Rennen gesichert
+                               @endif
                                <br>
                                @php
                                    $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
@@ -99,9 +102,9 @@
                                                                 @php
                                                                     $text="0".$lane->hundert;
                                                                 @endphp
-                                                                {{ $zeit }},{{ $text }}
+                                                                {{ $lane->zeit }},{{ $text }}
                                                             @else
-                                                                {{ $zeit }},{{ $lane->hundert }}
+                                                                {{ $lane->zeit }},{{ $lane->hundert }}
                                                             @endif
                                                         @else
                                                             @php
@@ -144,4 +147,3 @@
         </div>
     </div>
 </x-app-layout>
-

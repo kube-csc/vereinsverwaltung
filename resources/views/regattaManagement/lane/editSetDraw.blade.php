@@ -69,6 +69,9 @@
                                 @if($race->status==4)
                                     Rennergebniss gewertet
                                 @endif
+                                @if($race->status==5)
+                                    Rennen gesichert
+                                @endif
                                 <br>
                                 @php
                                     $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
@@ -190,4 +193,3 @@
         </div>
     </div>
 </x-app-layout>
-

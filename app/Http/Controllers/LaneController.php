@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Lane;
 use App\Models\Race;
 use App\Models\RegattaTeam;
+use App\Models\RaceType;
 use App\Models\Tabele;
 use App\Models\Tabledata;
 use App\Models\Pointsystem;
@@ -116,12 +117,17 @@ class LaneController extends Controller
         }
 
         $tabele = Tabele::find( $race->tabele_id);
+        $raceType = null;
+        if (!is_null($race->gruppe_id)) {
+            $raceType = RaceType::find($race->gruppe_id);
+        }
 
         return view('regattaManagement.lane.show')->with(
             [
                 'lanes' => $lanes,
                 'race' => $race,
                 'tabele' => $tabele,
+                'raceType' => $raceType,
                 'platzRennen' => $platzRennen,
                 'highhour' => $highhour,
 

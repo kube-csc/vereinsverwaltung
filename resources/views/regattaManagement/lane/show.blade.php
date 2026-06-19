@@ -41,6 +41,24 @@
                                @if($race->bahnen>0)
                                    <br>Bahnen: {{ $race->bahnen }}
                                @endif
+                               @if(isset($raceType))
+                                   @if(!empty($raceType->distanz))
+                                       <br>Distanz: {{ $raceType->distanz }}
+                                   @endif
+                                   @if(!is_null($raceType->min) || !is_null($raceType->max))
+                                       <br>Besatzung:
+                                       @if(!is_null($raceType->min))
+                                           min. {{ $raceType->min }}
+                                       @endif
+                                       @if(!is_null($raceType->min) && !is_null($raceType->max))
+                                           /
+                                       @endif
+                                       @if(!is_null($raceType->max))
+                                           max. {{ $raceType->max }}
+                                       @endif
+                                       <br>
+                                   @endif
+                               @endif
 
                                @php
                                    $rennUhrzeitAlt= substr($race->rennUhrzeit, 0, -3);
@@ -84,9 +102,6 @@
                                       $platz=0;
                                     @endphp
                                     @foreach($lanes as $lane)
-                                        @php
-                                            $platz++
-                                        @endphp
                                         <div class="my-4" >
                                             @if($lane->mannschaft_id>0)
                                                 @if($platzRennen==1)
@@ -94,8 +109,12 @@
                                                 {{ $lane->platz }} <br>
                                                 @endif
                                                 @if($platzRennen==2)
+                                                    @php
+                                                        $platz++;
+                                                        $anzeigePlatz = ($lane->platz > 0) ? $lane->platz : $platz;
+                                                    @endphp
                                                     <label for="name">Platz:</label>
-                                                    {{ $platz }}
+                                                    {{ $anzeigePlatz }}
                                                         <label for="name">Zeit:</label>
                                                         @if($highhour>0)
                                                             @if($lane->hundert<10)

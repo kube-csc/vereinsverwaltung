@@ -38,6 +38,7 @@ class CreateRacesTable extends Migration
                                                                     // 2 => Mannschaften gesetzt und geprüft
                                                                     // 3 => Rennn-Ergebnisse eingetragen
                                                                     // 4 => Rennn-Ergebnisse geprüft
+                                                                    // 5 => Rennen abgeschlossen
             $table->string('bild')->nullable();
             $table->string('fileBild')->nullable();
             $table->integer('pixx')->nullable();

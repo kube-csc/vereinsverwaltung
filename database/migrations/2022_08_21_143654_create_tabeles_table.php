@@ -25,10 +25,13 @@ class CreateTabelesTable extends Migration
             $table->integer('tabelleLevelVon');
             $table->integer('tabelleLevelBis');
             $table->integer('wertungsart')->default(0);
-                                                                       //1 = Punkte
-                                                                      //2 = Zeit
-                                                                      //3 = Lauf
+                                                                       // 1 = Punkte
+                                                                       // 2 = Zeit
+                                                                       // 3 = Einzelner Lauf
             $table->integer('status')->default(0);
+                                                                       // 0 = offen       – Tabelle in Bearbeitung, Rennen laufen noch
+                                                                       // 1 = aktiv       – Tabelle aktiv / Ergebnisse werden erfasst
+                                                                       // 2 = abgeschlossen – Alle Ergebnisse eingetragen und gesichert
             $table->boolean('tabelleVisible')->default(true);  // true = 1 = sichtbar
             $table->integer('finale')->default(0);
             $table->integer('getrenntewertung')->default(0);

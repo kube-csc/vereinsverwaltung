@@ -51,7 +51,7 @@ class RegattaSettingsController extends Controller
 
         $validated = $request->validate([
             'teilnehmer' => ['nullable', 'integer', 'min:0'],
-            'teilnehmermax' => ['required', 'integer', 'in:0,1,2,3'],
+            'teilnehmermax' => ['required', 'integer', 'in:0,1,2,3,4'],
         ]);
 
         Event::findOrFail($eventId)->update([

@@ -11,11 +11,11 @@
 
               <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                   <div class="mt-8 text-2xl">
-                    Renntypen anlegen
+                    Wertung anlegen
                   </div>
 
                   <div class="mt-6 text-gray-500">
-                   In diesem Bereich werden die Renntypen zur Regatta kopiert
+                   In diesem Bereich werden die Wertung zur Regatta kopiert
                   </div>
 
               </div>
@@ -24,7 +24,7 @@
                   <div class="p-6">
                       <div class="flex items-center">
                             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
-                                Renntypen Vorlage
+                                Wertung Vorlage
                             </div>
                       </div>
 

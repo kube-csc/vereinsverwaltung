@@ -46,6 +46,7 @@ class RaceTypeTemplateController extends Controller
             'alterbis' => 'required|integer',
             'min' => 'required|integer',
             'max' => 'required|integer',
+            'max_wertungsteilnehmer' => 'required|integer|min:0',
             'weiblichmin' => 'required|integer',
             'weiblichmax' => 'required|integer',
             'manmin' => 'required|integer',
@@ -57,7 +58,7 @@ class RaceTypeTemplateController extends Controller
             'zusatzmanschaft' => 'boolean',
             'beschreibung' => 'nullable|string',
             'distanz' => 'required|string|max:255',
-            'meldeGebuehr' => 'required|numeric',
+            'meldeGebuehr' => 'nullable|numeric',
         ]);
 
         if(!isset($request->zusatzmanschaft)){
@@ -68,7 +69,7 @@ class RaceTypeTemplateController extends Controller
 
         RaceTypeTemplate::create($validatedData);
 
-        return redirect()->route('raceTypeTemplate.index')->with('success', 'Renntyp Vorlage '.$request->typ.' erfolgreich eingetragen.');
+        return redirect()->route('raceTypeTemplate.index')->with('success', 'Wertung Vorlage '.$request->typ.' erfolgreich eingetragen.');
     }
 
     /**
@@ -110,6 +111,7 @@ class RaceTypeTemplateController extends Controller
             'alterbis' => 'required|integer',
             'min' => 'required|integer',
             'max' => 'required|integer',
+            'max_wertungsteilnehmer' => 'required|integer|min:0',
             'weiblichmin' => 'required|integer',
             'weiblichmax' => 'required|integer',
             'manmin' => 'required|integer',
@@ -121,7 +123,7 @@ class RaceTypeTemplateController extends Controller
             'zusatzmanschaft' => 'boolean',
             'beschreibung' => 'nullable|string',
             'distanz' => 'required|string',
-            'meldeGebuehr' => 'required|numeric'
+            'meldeGebuehr' => 'nullable|numeric'
         ]);
 
         if(!isset($request->zusatzmanschaft)){
@@ -134,7 +136,7 @@ class RaceTypeTemplateController extends Controller
 
         $raceTypeTemplate->update($validatedData);
 
-        return redirect()->route('raceTypeTemplate.index')->with('success', 'Renntyp '.$raceTypeTemplate->typ.' erfolgreich geändert.');
+        return redirect()->route('raceTypeTemplate.index')->with('success', 'Wertung Vorlage '.$raceTypeTemplate->typ.' erfolgreich geändert.');
     }
 
     /**

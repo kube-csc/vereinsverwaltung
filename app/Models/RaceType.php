@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RaceType extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'regatta_id',
         'race_type_template_id',
@@ -14,6 +17,7 @@ class RaceType extends Model
         'alterbis',
         'min',
         'max',
+        'max_wertungsteilnehmer',
         'weiblichmin',
         'weiblichmax',
         'manmin',

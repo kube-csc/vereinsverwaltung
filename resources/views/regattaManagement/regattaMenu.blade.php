@@ -87,7 +87,7 @@
                                                     <div class="justify-between my-2">
                                                         <div class="flex">
                                                             <p class="font-bold text-lg">
-                                                                Rennklassen
+                                                                Wertung
                                                             </p>
                                                         </div>
                                                     </div>
@@ -102,7 +102,7 @@
                                                 <div class="justify-between my-2">
                                                     <div class="flex">
                                                         <p class="font-bold text-lg">
-                                                            Rennklassen Vorlage
+                                                            Wertung Vorlage
                                                         </p>
                                                     </div>
                                                 </div>

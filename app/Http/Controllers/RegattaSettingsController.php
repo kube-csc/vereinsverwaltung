@@ -31,6 +31,7 @@ class RegattaSettingsController extends Controller
             1 => 'max. Teilnehmerzahl, keine Meldung möglich, keine Warteliste',
             2 => 'max. Teilnehmerzahl mit Warteliste',
             3 => 'max. Teilnehmerzahl mit Warteliste + automatische Bahnauffüllung',
+            4 => 'max. Teilnehmerzahl, max. Teilnehmerzahl für jede Wertung, mit Wartelisten',
         ];
 
         return view('regattaManagement.regattaSettings.edit')->with([

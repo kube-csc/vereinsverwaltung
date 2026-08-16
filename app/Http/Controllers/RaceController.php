@@ -255,12 +255,19 @@ class RaceController extends Controller
             $request->einzelRennen=0;
         }
 
+        $einzelRennenFinale = 0;
+        if($request->einzelRennen == 1 && $request->has('einzelRennenFinale')) {
+            $einzelRennenFinale = 1;
+        }
+
         if($request->getrenntewertung==Null){
             $request->getrenntewertung=0;
         }
 
+        $createdTabele = null;
+
         if($request->einzelRennen == 1) {
-            $tabele= new Tabele([
+            $createdTabele = new Tabele([
                 'event_id'                  => Session::get('regattaSelectId'),
                 'gruppe_id'                => $request->gruppe_id,
                 'ueberschrift'            => $request->rennBezeichnung,
@@ -271,13 +278,13 @@ class RaceController extends Controller
                 'getrenntewertung'  => $request->getrenntewertung,
                 'wertungsart'            => 3,
                 'tabelleVisible'          => 0,
-                'finale'                      => 0,
+                'finale'                      => $einzelRennenFinale,
                 'bearbeiter_id'          => Auth::id(),
                 'autor_id'                  => Auth::id(),
             ]);
 
-            $tabele->save();
-            $request->tabeleId=$tabele->id;
+            $createdTabele->save();
+            $request->tabeleId=$createdTabele->id;
         }
 
         $race= new Race([
@@ -303,7 +310,7 @@ class RaceController extends Controller
         $race->save();
 
         // ToDo: Wenn es ein Rennen mit Mix ist, dann muss in der Tabelle das Feld maxrennen auf 0 gesetzt werden
-        $tabele = Tabele::where('id', $request->tabeleId)
+        Tabele::where('id', $request->tabeleId)
             ->where('maxrennen', '>', 0)
             ->update(['maxrennen' => 0]);
 
@@ -380,8 +387,17 @@ class RaceController extends Controller
         Session::put('rennNummer'                        , $rennNummer);
         Session::put('rennLevelSave'                     , $request->regattaLevel);
 
+        $successMessage = 'Das Rennen <b>' . $request->rennBezeichnung . '</b> wurde angelegt.';
+        if($createdTabele !== null) {
+            $successMessage .= ' Die Tabelle <b>' . $createdTabele->ueberschrift . '</b> wurde automatisch angelegt';
+            if((int)$createdTabele->finale === 1) {
+                $successMessage .= ' und als <b>Finale</b> markiert';
+            }
+            $successMessage .= '.';
+        }
+
         return redirect('/Rennen/neu')->with([
-            'success'         => 'Das Rennen <b>' . $request->rennBezeichnung . '</b> wurde angelegt.'
+            'success'         => $successMessage
         ]);
     }
 

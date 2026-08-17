@@ -101,6 +101,9 @@
                                                       checked
                                                @endif
                                            >
+                                           <div class="text-xs text-gray-600">
+                                               Bei Einzelrennen wird automatisch eine Tabelle angelegt.
+                                           </div>
                                        </div>
                                        {{-- Gruppen-Auswahl für Einzelrennen --}}
                                        <div class="my-4" id="gruppeSelectWrapper" @if(old('einzelRennen') != 1) style="display:none;" @endif>
@@ -117,17 +120,48 @@
                                            </select>
                                            <small class="form-text text-danger">{!! $errors->first('gruppe_id') !!}</small>
                                        </div>
+                                       <div class="my-4" id="einzelRennenFinaleWrapper" @if(old('einzelRennen') != 1) style="display:none;" @endif>
+                                           <label for="einzelRennenFinale">Als Finallauf markieren:</label>
+                                           <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2"
+                                                  id="einzelRennenFinale" name="einzelRennenFinale" value="1"
+                                                  @if(old('einzelRennenFinale') == 1)
+                                                      checked
+                                                  @endif
+                                                  @if(old('einzelRennen') != 1)
+                                                      disabled
+                                                  @endif
+                                           >
+                                       </div>
                                        <script>
                                            document.addEventListener('DOMContentLoaded', function() {
                                                const einzelRennen = document.getElementById('einzelRennen');
                                                const gruppeSelectWrapper = document.getElementById('gruppeSelectWrapper');
+                                               const einzelRennenFinaleWrapper = document.getElementById('einzelRennenFinaleWrapper');
+                                               const einzelRennenFinale = document.getElementById('einzelRennenFinale');
+                                               const tabeleIdWrapper = document.getElementById('tabeleIdWrapper');
+                                               const tabeleId = document.getElementById('tabeleId');
+
+                                               function toggleEinzelRennenFields(isEinzelRennen) {
+                                                   if(isEinzelRennen) {
+                                                       gruppeSelectWrapper.style.display = '';
+                                                       einzelRennenFinaleWrapper.style.display = '';
+                                                       einzelRennenFinale.disabled = false;
+                                                       tabeleIdWrapper.style.display = 'none';
+                                                       tabeleId.disabled = true;
+                                                   } else {
+                                                       gruppeSelectWrapper.style.display = 'none';
+                                                       einzelRennenFinaleWrapper.style.display = 'none';
+                                                       einzelRennenFinale.checked = false;
+                                                       einzelRennenFinale.disabled = true;
+                                                       tabeleIdWrapper.style.display = '';
+                                                       tabeleId.disabled = false;
+                                                   }
+                                               }
+
                                                if(einzelRennen) {
+                                                   toggleEinzelRennenFields(einzelRennen.checked);
                                                    einzelRennen.addEventListener('change', function() {
-                                                       if(this.checked) {
-                                                           gruppeSelectWrapper.style.display = '';
-                                                       } else {
-                                                           gruppeSelectWrapper.style.display = 'none';
-                                                       }
+                                                       toggleEinzelRennenFields(this.checked);
                                                    });
                                                }
                                            });
@@ -145,7 +179,7 @@
                                        >
                                    </div>
 
-                                   <div class="my-4">
+                                   <div class="my-4" id="tabeleIdWrapper">
                                        <label for="tabeleId">Tabelle:</label><br>
                                        <select name="tabeleId" id="tabeleId" >
                                            <option value=""

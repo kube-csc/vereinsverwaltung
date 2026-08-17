@@ -87,7 +87,7 @@
                                                     <div class="justify-between my-2">
                                                         <div class="flex">
                                                             <p class="font-bold text-lg">
-                                                                Rennklassen
+                                                                Wertung
                                                             </p>
                                                         </div>
                                                     </div>
@@ -102,7 +102,7 @@
                                                 <div class="justify-between my-2">
                                                     <div class="flex">
                                                         <p class="font-bold text-lg">
-                                                            Rennklassen Vorlage
+                                                            Wertung Vorlage
                                                         </p>
                                                     </div>
                                                 </div>
@@ -324,6 +324,23 @@
                                             @endif
                                         </div>
                                     </div>
+
+                                    <div class="ml-12">
+                                        <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                            @if(Session::has('regattaSelectUeberschrift'))
+                                                <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/Regatta/Rennplan-Logik')">
+                                                    <div class="justify-between my-2">
+                                                        <div class="flex items-center">
+                                                            <box-icon name='calendar-event'></box-icon>
+                                                            <p class="font-bold text-lg ml-2">
+                                                                Rennplan erstellen
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
@@ -366,8 +383,8 @@
                                     </div>
 
                                     <div class="ml-12">
-                                        <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                            @if(Session::has('regattaSelectUeberschrift'))
+                                        @if(Session::has('regattaSelectUeberschrift'))
+                                            <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
                                                 <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('/RegattateamManager')">
                                                     <div class="justify-between my-2">
                                                         <div class="flex">
@@ -377,8 +394,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            @endif
-                                        </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 

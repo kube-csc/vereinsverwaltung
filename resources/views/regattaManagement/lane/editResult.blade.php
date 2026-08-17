@@ -65,6 +65,9 @@
                                 @if($race->status==4)
                                   Rennergebniss gewertet
                                 @endif
+                                @if($race->status==5)
+                                     Rennen gesichert
+                                @endif
                                 <br>
                                 @php
                                     $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
@@ -80,8 +83,7 @@
                                   <form autocomplete="off" action="{{ url('/Rennergebnisse/update/'.$race->id) }}" method="post" enctype="multipart/form-data">
                                         @csrf
                                         @php
-                                            // ToDo:  @method('PUT') in Hobby Projekt noch mal erlernen
-                                          $bahn=0;
+                                            $bahn=0;
                                         @endphp
                                         @foreach($lanes as $lane)
                                             @php
@@ -144,6 +146,16 @@
                                           >
                                           <small class="form-text text-danger">{!! $errors->first('rennzeit') !!}</small>
                                       </div>
+                                      <div class="my-4" >
+                                          <label for="rennzeit_vorsprung">Vorsprung der Rennzeit mitnehmen:</label>
+                                          <input type="checkbox" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('rennzeit_vorsprung') ? 'bg-red-300' : '' }}"
+                                                 id="rennzeit_vorsprung" name="rennzeit_vorsprung" value="1"
+                                                 @if(old('rennzeit_vorsprung', Session::get('regattaRennzeitVorsprung'))==1)
+                                                     checked
+                                                @endif
+                                          >
+                                          <small class="form-text text-danger">{!! $errors->first('rennzeit_vorsprung') !!}</small>
+                                      </div>
                                       <div>
                                           <label for="zeit">Zeit in Minuten die pro Rennen aufgeholt werden kann:</label>
                                           <input type="number" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('zeit') ? 'bg-red-300' : '' }}"
@@ -190,4 +202,3 @@
         </div>
     </div>
 </x-app-layout>
-

@@ -13,6 +13,7 @@ class RaceTypeTemplate extends Model
         'alterbis',
         'min',
         'max',
+        'max_wertungsteilnehmer',
         'weiblichmin',
         'weiblichmax',
         'manmin',

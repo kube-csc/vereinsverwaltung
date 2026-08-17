@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\RaceType;
 use App\Models\RaceTypeTemplate;
 use App\Models\RegattaTeam;
+use App\Models\Tabledata;
+use App\Models\Tabele;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RegattaTeamManagerController extends Controller
 {
@@ -96,6 +100,9 @@ class RegattaTeamManagerController extends Controller
             ->orderBy('typ')
             ->get();
 
+        // Final-Teams der letzten Regatta ermitteln
+        $finalTeamlinks = $this->getFinalTeamlinks($regattaId);
+
         return view('regattaManagement.regattaTeamManager.index', [
             'regattaId' => $regattaId,
             'regattaTeams' => $regattaTeams,
@@ -103,7 +110,186 @@ class RegattaTeamManagerController extends Controller
             'raceTypeId' => $raceTypeId,
             'teamlinkFilter' => $teamlinkFilter,
             'raceTypes' => $raceTypes,
+            'finalTeamlinks' => $finalTeamlinks,
         ]);
+    }
+
+    /**
+     * Formular für den Textdatei-Import von Teams.
+     */
+    public function import()
+    {
+        $regattaId = session()->get('regattaSelectId');
+
+        if (!$regattaId) {
+            return redirect('/Regattamenu')->with('success', 'Bitte zuerst eine Regatta auswählen.');
+        }
+
+        $raceTypes = RaceType::where('regatta_id', $regattaId)
+            ->orderBy('typ')
+            ->get();
+
+        $currentEvent = Event::find($regattaId);
+
+        return view('regattaManagement.regattaTeamManager.import', [
+            'regattaId' => $regattaId,
+            'raceTypes' => $raceTypes,
+            'currentEvent' => $currentEvent,
+        ]);
+    }
+
+    /**
+     * Importiert Teams aus einer Textdatei in die aktuelle Regatta.
+     */
+    public function importStore(Request $request)
+    {
+        $regattaId = session()->get('regattaSelectId');
+
+        if (!$regattaId) {
+            return redirect('/Regattamenu')->with('success', 'Bitte zuerst eine Regatta auswählen.');
+        }
+
+        $raceTypes = RaceType::where('regatta_id', $regattaId)
+            ->orderBy('typ')
+            ->get();
+
+        if ($raceTypes->isEmpty()) {
+            return redirect()
+                ->route('regattaTeamManager.import')
+                ->withErrors(['default_race_type_id' => 'Für diese Regatta existieren noch keine race_types. Bitte zuerst mindestens eine Zuordnung anlegen.'])
+                ->withInput();
+        }
+
+        $validated = $request->validate([
+            'team_names' => 'required|string',
+            'default_race_type_id' => 'required|integer',
+        ]);
+
+        $defaultRaceType = $raceTypes->firstWhere('id', (int) $validated['default_race_type_id']);
+        if (!$defaultRaceType) {
+            return back()
+                ->withErrors(['default_race_type_id' => 'Die gewählte race_type gehört nicht zur aktuellen Regatta.'])
+                ->withInput();
+        }
+
+        $currentEvent = Event::find($regattaId);
+
+        $content = $validated['team_names'];
+        $lines = preg_split('/\R/u', (string) $content) ?: [];
+
+        $report = [
+            'created' => 0,
+            'updated' => 0,
+            'skipped' => 0,
+            'warnings' => [],
+        ];
+
+        $processedTeamNames = [];
+
+        foreach ($lines as $line) {
+            $teamName = $this->extractTeamNameFromLine($line);
+
+            if ($teamName === '') {
+                continue;
+            }
+
+            $normalizedTeamName = $this->normalizeTeamName($teamName);
+            $lookupKey = mb_strtolower($normalizedTeamName);
+
+            if (in_array($lookupKey, $processedTeamNames, true)) {
+                $report['skipped']++;
+                $report['warnings'][] = 'Doppelte Zeile im Import wurde übersprungen: ' . $normalizedTeamName;
+                continue;
+            }
+
+            $processedTeamNames[] = $lookupKey;
+
+            $currentTeam = RegattaTeam::where('regatta_id', $regattaId)
+                ->whereRaw('LOWER(TRIM(teamname)) = ?', [$lookupKey])
+                ->first();
+
+            $targetTemplateId = $defaultRaceType->race_type_template_id;
+            if ($currentTeam && $currentTeam->gruppe_id) {
+                $currentRaceType = RaceType::find($currentTeam->gruppe_id);
+                if ($currentRaceType && $currentRaceType->race_type_template_id) {
+                    $targetTemplateId = $currentRaceType->race_type_template_id;
+                }
+            }
+
+            $sourceTeam = $this->findPreviousTeamRegistration($normalizedTeamName, $currentEvent, $targetTemplateId);
+
+            $mappedRaceTypeId = $this->resolveRaceTypeIdForImport(
+                $defaultRaceType,
+                $sourceTeam,
+                $regattaId
+            );
+
+            if (!$currentTeam) {
+                $currentTeam = new RegattaTeam();
+                $currentTeam->regatta_id = $regattaId;
+                $currentTeam->datum = now();
+                $currentTeam->status = 'Neuanmeldung';
+                $currentTeam->training = 0;
+                $currentTeam->passwort = ' ';
+                $currentTeam->teamlink = 0;
+                $currentTeam->mailen = ' ';
+            }
+
+            $baseValues = $this->buildImportValues($normalizedTeamName, $sourceTeam, $mappedRaceTypeId);
+            $isNewTeam = !$currentTeam->exists;
+
+            foreach ($baseValues as $field => $value) {
+                if ($isNewTeam || $this->isEmptyImportValue($currentTeam->{$field} ?? null)) {
+                    $currentTeam->{$field} = $value;
+                }
+            }
+
+            // Pflichtfelder, die nicht leer sein dürfen, werden hier vorsorglich abgesichert.
+            $currentTeam->teamname = $currentTeam->teamname ?: $normalizedTeamName;
+            $currentTeam->gruppe_id = $currentTeam->gruppe_id ?: $mappedRaceTypeId;
+            $currentTeam->status = $currentTeam->status ?: 'Neuanmeldung';
+            $currentTeam->training = (int) ($currentTeam->training ?? 0);
+            $currentTeam->teamlink = (int) ($currentTeam->teamlink ?? 0);
+            $currentTeam->werbung = $currentTeam->werbung !== null && $currentTeam->werbung !== '' ? (string) $currentTeam->werbung : '0';
+            $currentTeam->passwort = $currentTeam->passwort ?: ' ';
+            $currentTeam->mailen = $currentTeam->mailen ?: ' ';
+
+            // Validierungslogik vor dem Speichern
+            $validationErrors = $this->validateImportTeamData($currentTeam);
+            if (!empty($validationErrors)) {
+                $report['skipped']++;
+                $report['warnings'][] = sprintf(
+                    'Team "%s" übersprungen: %s',
+                    $normalizedTeamName,
+                    implode(', ', $validationErrors)
+                );
+                continue;
+            }
+
+            $currentTeam->save();
+
+            if ($sourceTeam) {
+                $this->syncTeamlinkOnImport($currentTeam, $sourceTeam);
+            }
+
+            if ($isNewTeam) {
+                $report['created']++;
+            } else {
+                $report['updated']++;
+            }
+        }
+
+        $successMessage = sprintf(
+            'Import abgeschlossen: %d Teams neu angelegt, %d Teams ergänzt/aktualisiert, %d doppelte Zeilen übersprungen.',
+            $report['created'],
+            $report['updated'],
+            $report['skipped']
+        );
+
+        return redirect()
+            ->route('regattaTeamManager.index')
+            ->with('success', $successMessage)
+            ->with('importWarnings', $report['warnings']);
     }
 
     /**
@@ -216,6 +402,9 @@ class RegattaTeamManagerController extends Controller
         // JETZT extrahieren wir die PLZ und Bootstypen NUR aus den tatsächlich gefundenen Vorschlägen.
         $plz_options = $suggestions->pluck('plz')->filter()->unique()->values()->sort();
 
+        // Final-Teams der letzten Regatta ermitteln
+        $finalTeamlinks = $this->getFinalTeamlinks($regattaId);
+
         $bootstypen_ids = $suggestions->map(function($s) {
             return optional($s->teamWertungsGruppe)->race_type_template_id;
         })->filter()->unique();
@@ -251,6 +440,7 @@ class RegattaTeamManagerController extends Controller
             'q_plz' => $q_plz,
             'q_bootstyp' => $q_bootstyp,
             'nextFreeTeamlink' => $nextFreeTeamlink,
+            'finalTeamlinks' => $finalTeamlinks,
         ]);
     }
 
@@ -312,6 +502,332 @@ class RegattaTeamManagerController extends Controller
             $otherTeam->save();
             return redirect()->route('regattaTeamManager.edit', $otherTeam->id)->with('success', 'Vorschlag wurde dem Teamlink zugeordnet und wird nun bearbeitet.');
         }
+    }
+
+    private function extractTeamNameFromLine($line): string
+    {
+        $line = $this->normalizeTeamName((string) $line);
+
+        $line = preg_replace('/^\s*[-*•]\s*/u', '', $line) ?? $line;
+        $line = preg_replace('/^\s*\d+\s*[.) :]\s*/u', '', $line) ?? $line;
+        $line = trim($line, " \t\n\r\0\x0B\"'");
+
+        if ($line === '' || str_starts_with($line, '#')) {
+            return '';
+        }
+
+        $parts = preg_split('/[;\t|,]/u', $line);
+        $teamName = trim((string) ($parts[0] ?? ''));
+
+        return $this->normalizeTeamName($teamName);
+    }
+
+    private function normalizeTeamName(string $teamName): string
+    {
+        $teamName = trim($teamName);
+        $teamName = preg_replace('/\s+/u', ' ', $teamName) ?? $teamName;
+
+        return trim($teamName);
+    }
+
+    private function isEmptyImportValue($value): bool
+    {
+        if ($value === null) {
+            return true;
+        }
+
+        if (is_string($value)) {
+            return trim($value) === '';
+        }
+
+        return false;
+    }
+
+    /**
+     * Sucht die letzte gültige Meldung eines Teams vor dem aktuellen Event.
+     *
+     * @return \App\Models\RegattaTeam|null
+     */
+    private function findPreviousTeamRegistration(string $teamName, ?Event $currentEvent, ?int $targetTemplateId = null): ?RegattaTeam
+    {
+        if (!$currentEvent) {
+            return null;
+        }
+
+        $query = RegattaTeam::query()
+            ->select('regatta_teams.*')
+            ->join('events', 'events.id', '=', 'regatta_teams.regatta_id')
+            ->join('race_types', 'race_types.id', '=', 'regatta_teams.gruppe_id')
+            ->with(['teamWertungsGruppe.raceTypeTemplate', 'regatta'])
+            ->whereRaw('LOWER(TRIM(regatta_teams.teamname)) = ?', [mb_strtolower($this->normalizeTeamName($teamName))])
+            ->where('events.regatta', 1)
+            ->where('regatta_teams.status', '!=', 'Gelöscht');
+
+        if ($targetTemplateId) {
+            $query->where('race_types.race_type_template_id', $targetTemplateId);
+        }
+
+        if ($currentEvent->datumvon) {
+            $query->where('events.datumvon', '<', $currentEvent->datumvon);
+        } else {
+            $query->where('events.id', '<', $currentEvent->id);
+        }
+
+        /** @var \App\Models\RegattaTeam|null $previousTeam */
+        $previousTeam = $query->orderByDesc('events.datumvon')->orderByDesc('events.id')->first();
+
+        return $previousTeam;
+    }
+
+    /**
+     * Verknüpft ein importiertes Team mit der letzten passenden Meldung über teamlink.
+     *
+     * Regel:
+     * - Existiert bereits ein teamlink (>0), wird dieser für beide verwendet.
+     * - Haben beide teamlink=0, wird eine neue freie teamlink-ID erzeugt und beiden zugewiesen.
+     */
+    private function syncTeamlinkOnImport(RegattaTeam $currentTeam, RegattaTeam $sourceTeam): void
+    {
+        $currentTemplateId = optional($currentTeam->teamWertungsGruppe)->race_type_template_id;
+        $sourceTemplateId = optional($sourceTeam->teamWertungsGruppe)->race_type_template_id;
+
+        if (!$currentTemplateId || !$sourceTemplateId || (int) $currentTemplateId !== (int) $sourceTemplateId) {
+            return;
+        }
+
+        $currentLink = (int) ($currentTeam->teamlink ?? 0);
+        $sourceLink = (int) ($sourceTeam->teamlink ?? 0);
+
+        $linkToUse = 0;
+        if ($currentLink > 0) {
+            $linkToUse = $currentLink;
+        } elseif ($sourceLink > 0) {
+            $linkToUse = $sourceLink;
+        } else {
+            $linkToUse = $this->getNextFreeTeamlinkId();
+        }
+
+        if ($currentLink !== $linkToUse) {
+            $currentTeam->teamlink = $linkToUse;
+            $currentTeam->save();
+        }
+
+        if ($sourceLink !== $linkToUse) {
+            $sourceTeam->teamlink = $linkToUse;
+            $sourceTeam->save();
+        }
+    }
+
+    private function getNextFreeTeamlinkId(): int
+    {
+        $existingTeamlinks = RegattaTeam::where('teamlink', '>', 0)
+            ->distinct()
+            ->orderBy('teamlink')
+            ->pluck('teamlink')
+            ->toArray();
+
+        $nextFree = 1;
+        foreach ($existingTeamlinks as $link) {
+            if ((int) $link === $nextFree) {
+                $nextFree++;
+            } elseif ((int) $link > $nextFree) {
+                break;
+            }
+        }
+
+        return $nextFree;
+    }
+
+    private function resolveRaceTypeIdForImport(RaceType $defaultRaceType, ?RegattaTeam $sourceTeam, int $currentRegattaId): int
+    {
+        if ($sourceTeam && $sourceTeam->gruppe_id) {
+            $sourceRaceType = RaceType::find($sourceTeam->gruppe_id);
+
+            if ($sourceRaceType) {
+                $mappedByTemplate = RaceType::where('regatta_id', $currentRegattaId)
+                    ->where('race_type_template_id', $sourceRaceType->race_type_template_id)
+                    ->first();
+
+                if ($mappedByTemplate) {
+                    return (int) $mappedByTemplate->id;
+                }
+
+                $mappedByName = RaceType::where('regatta_id', $currentRegattaId)
+                    ->where('typ', $sourceRaceType->typ)
+                    ->first();
+
+                if ($mappedByName) {
+                    return (int) $mappedByName->id;
+                }
+            }
+        }
+
+        return (int) $defaultRaceType->id;
+    }
+
+    private function buildImportValues(string $teamName, ?RegattaTeam $sourceTeam, int $raceTypeId): array
+    {
+        return [
+            'teamname' => $teamName,
+            'verein'      => $this->valueOrFallback($sourceTeam->verein      ?? null, 'nicht angegeben'),
+            'teamcaptain' => $this->valueOrFallback($sourceTeam->teamcaptain ?? null, 'nicht angegeben'),
+            'strasse'     => $this->valueOrFallback($sourceTeam->strasse     ?? null, 'nicht angegeben'),
+            'plz'         => $this->valueOrFallback($sourceTeam->plz         ?? null, '99999'),
+            'ort'         => $this->valueOrFallback($sourceTeam->ort         ?? null, 'nicht angegeben'),
+            'telefon'     => $this->valueOrFallback($sourceTeam->telefon     ?? null, '999999999'),
+            'email'        => $this->valueOrFallback($sourceTeam->email        ?? null, 'import@invalid.local'),
+            'homepage'     => $this->valueOrFallback($sourceTeam->homepage     ?? null, ''),
+            'beschreibung' => $this->valueOrFallback($sourceTeam->beschreibung ?? null, ''),
+            'kommentar'    => $this->valueOrFallback($sourceTeam->kommentar    ?? null, ''),
+            'gruppe_id'    => $raceTypeId,
+            'status'       => $this->valueOrFallback($sourceTeam->status       ?? null, 'Neuanmeldung'),
+            'passwort'     => $this->valueOrFallback($sourceTeam->passwort     ?? null, 'nicht angegeben'),
+            'mailen'       => $this->valueOrFallback($sourceTeam->mailen       ?? null, 'nicht angegeben'),
+            'werbung' => $this->valueOrFallback($sourceTeam->werbung ?? null, '0'),
+            'teamlink' => $sourceTeam && (int) $sourceTeam->teamlink > 0 ? (int) $sourceTeam->teamlink : 0,
+            'training' => $sourceTeam ? (int) ($sourceTeam->training ?? 0) : 0,
+            'datum' => now(),
+        ];
+    }
+
+    private function valueOrFallback($value, string $fallback): string
+    {
+        if ($value === null) {
+            return $fallback;
+        }
+
+        $value = trim((string) $value);
+
+        return $value === '' ? $fallback : $value;
+    }
+
+    /**
+     * Validiert die Import-Teamdaten gegen die Datenbankregeln.
+     * Gibt ein Array von Fehlermeldungen zurück (leer = erfolgreich validiert).
+     *
+     * Akzeptiert auch Platzhalter wie Leerzeichen " " oder Zahlen wie "9999" in Pflichtfeldern.
+     */
+    private function validateImportTeamData(RegattaTeam $team): array
+    {
+        $errors = [];
+
+        // Teamname: muss vorhanden sein (nicht nur Leerzeichen erlaubt)
+        if (!$team->teamname || trim($team->teamname) === '') {
+            $errors[] = 'Teamname ist erforderlich';
+        }
+
+        // String-Felder: können Platzhalter wie " " oder Text enthalten, müssen aber vorhanden sein
+        // Diese Validierung akzeptiert: echte Werte, Leerzeichen, Zahlen wie "9999", etc.
+        $stringFields = ['verein', 'teamcaptain', 'strasse', 'plz', 'ort', 'telefon'];
+        $stringFieldLabels = [
+            'verein' => 'Verein',
+            'teamcaptain' => 'Teamcaptain',
+            'strasse' => 'Straße',
+            'plz' => 'PLZ',
+            'ort' => 'Ort',
+            'telefon' => 'Telefon'
+        ];
+
+        foreach ($stringFields as $field) {
+            // Prüfe nur, ob das Feld existiert (nicht null)
+            // Leerzeichen und Zahlenwerte sind erlaubt
+            if ($team->{$field} === null) {
+                $errors[] = $stringFieldLabels[$field] . ' darf nicht null sein';
+            }
+        }
+
+        // E-Mail-Validierung: Akzeptiert auch Platzhalter wie "import@invalid.local"
+        if (!$team->email) {
+            $errors[] = 'E-Mail ist erforderlich';
+        } elseif ($team->email !== ' ' && $team->email !== 'import@invalid.local' && !filter_var($team->email, FILTER_VALIDATE_EMAIL)) {
+            // Validiere echte E-Mail-Adressen, aber akzeptiere bekannte Platzhalter
+            $errors[] = sprintf('E-Mail "%s" hat ungültiges Format', $team->email);
+        }
+
+        // Status-Validierung
+        $validStatuses = ['Neuanmeldung', 'Warteliste', 'Nicht angetreten', 'Disqualifiziert', 'Ausgeschieden', 'Gelöscht', 'Abgemeldet'];
+        if (!$team->status || !in_array($team->status, $validStatuses, true)) {
+            $errors[] = sprintf('Status "%s" ist ungültig', $team->status ?? '(leer)');
+        }
+
+        // gruppe_id-Validierung (muss in race_types existieren)
+        if (!$team->gruppe_id || !RaceType::find($team->gruppe_id)) {
+            $errors[] = sprintf('race_type mit ID %d existiert nicht', $team->gruppe_id ?? 0);
+        }
+
+        // werbung-Validierung (nullable integer, min 0)
+        if ($team->werbung !== null && $team->werbung !== '0' && !is_numeric($team->werbung)) {
+            $errors[] = sprintf('Werbung "%s" muss eine Zahl sein', $team->werbung);
+        } elseif ($team->werbung !== null && is_numeric($team->werbung) && (int) $team->werbung < 0) {
+            $errors[] = 'Werbung darf nicht negativ sein';
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Ermittelt die Teamlink-IDs und Platzierungen der Teams, die bei der letzten Regatta der gleichen Gruppe in einem Finale waren.
+     * Die Platzierung wird basierend auf Punkten oder Zeit berechnet.
+     */
+    private function getFinalTeamlinks($currentRegattaId)
+    {
+        $currentEvent = Event::find($currentRegattaId);
+        if (!$currentEvent || !$currentEvent->eventGroup_id) {
+            return [];
+        }
+
+        // Finde das letzte Event derselben Gruppe (zeitlich vor dem aktuellen)
+        $lastEvent = Event::where('eventGroup_id', $currentEvent->eventGroup_id)
+            ->where('id', '!=', $currentRegattaId)
+            ->where('datumvon', '<', $currentEvent->datumvon)
+            ->orderBy('datumvon', 'desc')
+            ->first();
+
+        if (!$lastEvent) {
+            return [];
+        }
+
+        // Finde alle Final-Tabellen dieses Events
+        $finalTables = Tabele::where('event_id', $lastEvent->id)
+            ->where('finale', '>', 0)
+            ->get();
+
+        $results = [];
+
+        foreach ($finalTables as $table) {
+            $data = Tabledata::join('regatta_teams', 'tabledatas.mannschaft_id', '=', 'regatta_teams.id')
+                ->where('tabledatas.tabele_id', $table->id)
+                ->where('regatta_teams.teamlink', '>', 0)
+                ->select('tabledatas.*', 'regatta_teams.teamlink')
+                ->get();
+
+            if ($table->wertungsart == 2) {
+                // Zeit-Wertung: Kleinste Zeit gewinnt
+                $sorted = $data->sort(function ($a, $b) {
+                    if ($a->zeit === $b->zeit) {
+                        return $a->hundert <=> $b->hundert;
+                    }
+                    return $a->zeit <=> $b->zeit;
+                });
+            } else {
+                // Punkt-Wertung (Standard): Höchste Punkte gewinnen
+                $sorted = $data->sortByDesc('punkte');
+            }
+
+            $rank = 1;
+            foreach ($sorted as $row) {
+                // Falls ein Teamlink in mehreren Finalen auftaucht (unwahrscheinlich), gewinnt die bessere Platzierung
+                if (!isset($results[$row->teamlink]) || $rank < $results[$row->teamlink]['platz']) {
+                    $results[$row->teamlink] = [
+                        'platz' => $rank,
+                        'tabelle' => $table->ueberschrift
+                    ];
+                }
+                $rank++;
+            }
+        }
+
+        return $results;
     }
 }
 

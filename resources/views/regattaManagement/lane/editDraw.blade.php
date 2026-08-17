@@ -69,6 +69,9 @@
                                 @if($race->status==4)
                                     Rennergebniss gewertet
                                 @endif
+                                @if($race->status==5)
+                                    Rennen gesichert
+                                @endif
                                 <br>
                                 @php
                                     $veroeffentlichungUhrzeitAlt= substr($race->veroeffentlichungUhrzeit, 0, -3);
@@ -148,8 +151,9 @@
                                         @endif
                                     </div>
                                     <input type="hidden" name="bahnMax" value="{{ $bahn }}">
-                                    <div class="py-2">
-                                        <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white">Änderung speichern</button>
+                                    <div class="py-2 space-x-2">
+                                        <button type="submit" name="save_mode" value="publish" class="p-2 bg-blue-500 rounded shadow text-white">Änderung speichern</button>
+                                        <button type="submit" name="save_mode" value="draft" class="p-2 bg-gray-600 rounded shadow text-white">Als Entwurf speichern</button>
                                     </div>
 
                                 </form>
@@ -182,4 +186,3 @@
         </div>
     </div>
 </x-app-layout>
-

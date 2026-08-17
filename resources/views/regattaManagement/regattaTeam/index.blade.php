@@ -38,7 +38,7 @@
                                         {{ $regattaTeam->teamname }}
                                     </p>
                                     <p class="text-sm text-gray-600">
-                                        Wertungsart: {{ $regattaTeam->teamWertungsGruppe->typ }}
+                                        Wertungsart: {{ $regattaTeam->teamWertungsGruppe->typ ?? 'nicht gesetzt' }}
                                     </p>
                                     <p class="text-xs text-gray-500">
                                         Meldedatum: {{ $regattaTeam->datum ? \Carbon\Carbon::parse($regattaTeam->datum)->format('d.m.Y') : '-' }}

@@ -20,13 +20,18 @@ class CreateTabelesTable extends Migration
             $table->unsignedBigInteger('system_id')->nullable();
             $table->date('tabelleDatumVon');
             $table->string('ueberschrift', 50)->default('');
-            $table->binary('beschreibung', 65535)->nullable();
+            //$table->binary('beschreibung', 65535)->nullable();
+            $table->text('beschreibung')->nullable();
             $table->integer('tabelleLevelVon');
             $table->integer('tabelleLevelBis');
-            $table->integer('wertungsart')->default(0);  //1 = Punkte
-                                                                      //2 = Zeit
-                                                                      //3 = Lauf
+            $table->integer('wertungsart')->default(0);
+                                                                       // 1 = Punkte
+                                                                       // 2 = Zeit
+                                                                       // 3 = Einzelner Lauf
             $table->integer('status')->default(0);
+                                                                       // 0 = offen       – Tabelle in Bearbeitung, Rennen laufen noch
+                                                                       // 1 = aktiv       – Tabelle aktiv / Ergebnisse werden erfasst
+                                                                       // 2 = abgeschlossen – Alle Ergebnisse eingetragen und gesichert
             $table->boolean('tabelleVisible')->default(true);  // true = 1 = sichtbar
             $table->integer('finale')->default(0);
             $table->integer('getrenntewertung')->default(0);

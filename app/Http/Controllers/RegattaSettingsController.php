@@ -31,6 +31,7 @@ class RegattaSettingsController extends Controller
             1 => 'max. Teilnehmerzahl, keine Meldung möglich, keine Warteliste',
             2 => 'max. Teilnehmerzahl mit Warteliste',
             3 => 'max. Teilnehmerzahl mit Warteliste + automatische Bahnauffüllung',
+            4 => 'max. Teilnehmerzahl, max. Teilnehmerzahl für jede Wertung, mit Wartelisten',
         ];
 
         return view('regattaManagement.regattaSettings.edit')->with([
@@ -50,7 +51,7 @@ class RegattaSettingsController extends Controller
 
         $validated = $request->validate([
             'teilnehmer' => ['nullable', 'integer', 'min:0'],
-            'teilnehmermax' => ['required', 'integer', 'in:0,1,2,3'],
+            'teilnehmermax' => ['required', 'integer', 'in:0,1,2,3,4'],
         ]);
 
         Event::findOrFail($eventId)->update([

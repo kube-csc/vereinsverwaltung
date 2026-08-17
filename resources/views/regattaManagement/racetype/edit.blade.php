@@ -130,7 +130,7 @@
                                     <div class="my-4">
                                         <label for="meldeGebuehr">Meldegebühr:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('meldeGebuehr') ? 'bg-red-300' : '' }}"
-                                               id="meldeGebuehr" placeholder="Meldegebühr" name="meldeGebuehr" value="{{ old('meldeGebuehr') ?? $raceType->meldeGebuehr }}">
+                                               id="meldeGebuehr" placeholder="0" name="meldeGebuehr" value="{{ old('meldeGebuehr') ?? $raceType->meldeGebuehr }}">
                                         <small class="form-text text-danger">{!! $errors->first('meldeGebuehr') !!}</small>
                                     </div>
 
@@ -139,6 +139,13 @@
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
                                                id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') ?? $raceType->bahnen }}">
                                         <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
+                                    </div>
+
+                                    <div class="my-4">
+                                        <label for="max_wertungsteilnehmer">Maximale Teilnehmerzahl für Wertung:</label>
+                                        <input type="number" min="0" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('max_wertungsteilnehmer') ? 'bg-red-300' : '' }}"
+                                               id="max_wertungsteilnehmer" placeholder="Maximale Teilnehmerzahl für Wertung" name="max_wertungsteilnehmer" value="{{ old('max_wertungsteilnehmer') ?? ($raceType->max_wertungsteilnehmer ?? 0) }}">
+                                        <small class="form-text text-danger">{!! $errors->first('max_wertungsteilnehmer') !!}</small>
                                     </div>
 
                                     <div class="my-4" >
@@ -174,4 +181,3 @@
         </div>
     </div>
 </x-app-layout>
-

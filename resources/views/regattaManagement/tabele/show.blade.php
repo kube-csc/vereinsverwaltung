@@ -16,7 +16,16 @@
                     </div>
 
                     <div class="mt-6 text-gray-500">
-                        Wertungstabel ausgeben.
+                        <label for="name">Wertungsart:</label>
+                        @if((int) $tabele->wertungsart === 1)
+                            Punktewertung
+                        @elseif((int) $tabele->wertungsart === 2)
+                            Zeitwertung
+                        @elseif((int) $tabele->wertungsart === 3)
+                            Einzelner Lauf
+                        @else
+                            Unbekannt
+                        @endif
                     </div>
 
                 </div>
@@ -28,23 +37,30 @@
                             <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
                                <label for="name">Tabelle:</label>
                                {{ $tabele->ueberschrift }}
-
                             </div>
                         </div>
 
                         <div class="ml-12">
                             <div class="mt-2 text-sm text-gray-500">
                                     @php
-                                      $platz=0;
+                                      $isZeitwertung    = (int) $tabele->wertungsart === 2;
+                                      $isEinzelnerLauf  = (int) $tabele->wertungsart === 3;
                                     @endphp
                                     @foreach($tabeledatas as $tabeledata)
-                                        @php($platz++)
+                                        @php
+                                            $anzeigeWert = $isZeitwertung
+                                                ? $tabeledata->zeit . ',' . str_pad((string) ((int) $tabeledata->hundert), 2, '0', STR_PAD_LEFT)
+                                                : $tabeledata->punkte . ' Punkte';
+                                        @endphp
                                        <div class="my-4" >
                                           <label for="name">Platz:</label>
-                                            {{ $platz }} {{ $tabeledata->getMannschaft->teamname }} {{ $tabeledata->punkte }} Punkte {{ $tabeledata->rennanzahl }}/{{ $tabele->maxrennen }} Rennanzahl
-                                            @if($tabele->buchholzwertungaktiv)
-                                                {{ $tabeledata->buchholzzahl }} Buchholzzahl
-                                            @endif
+                                                  {{ $tabeledata->platz ?? '-' }} {{ $tabeledata->getMannschaft->teamname }} {{ $anzeigeWert }}
+                                                  @if(! $isEinzelnerLauf)
+                                                      {{ $tabeledata->rennanzahl }}/{{ $tabele->maxrennen }} Rennanzahl
+                                                  @endif
+                                                  @if($tabele->buchholzwertungaktiv && ! $isZeitwertung && ! $isEinzelnerLauf)
+                                                      {{ $tabeledata->buchholzzahl }} Buchholzzahl
+                                                  @endif
                                        </div>
                                    @endforeach
                               <br>
@@ -58,4 +74,3 @@
         </div>
     </div>
 </x-app-layout>
-

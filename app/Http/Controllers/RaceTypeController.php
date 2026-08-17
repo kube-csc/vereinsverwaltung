@@ -67,6 +67,7 @@ class RaceTypeController extends Controller
         $raceType->alterbis = $raceTypeTemplate->alterbis;
         $raceType->min = $raceTypeTemplate->min;
         $raceType->max = $raceTypeTemplate->max;
+        $raceType->max_wertungsteilnehmer = $raceTypeTemplate->max_wertungsteilnehmer;
         $raceType->weiblichmin = $raceTypeTemplate->weiblichmin;
         $raceType->weiblichmax = $raceTypeTemplate->weiblichmax;
         $raceType->manmin = $raceTypeTemplate->manmin;
@@ -129,6 +130,7 @@ class RaceTypeController extends Controller
             'alterbis' => 'required|integer',
             'min' => 'required|integer',
             'max' => 'required|integer',
+            'max_wertungsteilnehmer' => 'required|integer|min:0',
             'weiblichmin' => 'required|integer',
             'weiblichmax' => 'required|integer',
             'manmin' => 'required|integer',
@@ -137,7 +139,7 @@ class RaceTypeController extends Controller
             'training' => 'required|integer|min:0',
             'max_trainingstermine' => 'required|integer|min:0',
             'training_preis' => 'required|numeric|min:0',
-            'meldeGebuehr' => 'required|numeric',
+            'meldeGebuehr' => 'nullable|numeric',
             'zusatzmanschaft' => 'boolean',
         ]);
 

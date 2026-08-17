@@ -15,12 +15,32 @@
                     </p>
                 </div>
 
-                <div class="shrink-0">
-                    <a href="/Regattamenu" class="bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold py-2 px-4 rounded">
+                <div class="shrink-0 flex flex-col gap-2">
+                    <a href="{{ route('regattaTeamManager.import') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded text-center">
+                        Teams aus Textdatei importieren
+                    </a>
+                    <a href="/Regattamenu" class="bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold py-2 px-4 rounded text-center">
                         Zurück zum Regattamenü
                     </a>
                 </div>
             </div>
+
+            @if (session('success'))
+                <div class="mt-4 p-3 rounded bg-green-100 text-green-800">
+                    {!! session('success') !!}
+                </div>
+            @endif
+
+            @if (session('importWarnings') && count(session('importWarnings')))
+                <div class="mt-4 p-4 rounded bg-yellow-50 border border-yellow-200 text-yellow-900">
+                    <div class="font-semibold mb-2">Hinweise zum Import:</div>
+                    <ul class="list-disc pl-5 space-y-1 text-sm">
+                        @foreach(session('importWarnings') as $warning)
+                            <li>{{ $warning }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <div class="mt-6">
                 <form method="GET" action="{{ route('regattaTeamManager.index') }}" class="space-y-4">
@@ -83,6 +103,9 @@
                                     <div class="flex-1">
                                         <div class="font-semibold text-lg text-blue-800">
                                             Team: {{ $team->teamname ?? '-' }} (#{{ $team->id }})
+                                            @if($team->teamlink > 0 && isset($finalTeamlinks[$team->teamlink]))
+                                                <span title="War bei der letzten Regatta in einem Finale ({{ $finalTeamlinks[$team->teamlink]['tabelle'] }}, Platz {{ $finalTeamlinks[$team->teamlink]['platz'] }})" class="cursor-help">🏆 {{ $finalTeamlinks[$team->teamlink]['platz'] }}.</span>
+                                            @endif
                                         </div>
                                         <div class="text-xs text-gray-600">
                                             Team-ID: #{{ $team->id }} | Teamlink-ID: {{ $team->teamlink ?? '-' }}<br>

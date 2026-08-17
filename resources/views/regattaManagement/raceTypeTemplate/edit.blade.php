@@ -10,18 +10,18 @@
 
                 <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                     <div class="mt-8 text-2xl">
-                        Renntypevorlage: {{ old('typ') ?? $raceTypeTemplate->typ }}
+                        Wertung Vorlage: {{ old('typ') ?? $raceTypeTemplate->typ }}
                     </div>
 
                     <div class="mt-6 text-gray-500">
-                        Bitte gebe die Daten von Renntypevorlage ein.
+                        Bitte gebe die Daten von Wertung Vorlage ein.
                     </div>
                 </div>
 
                 <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
                     <div class="p-6">
                         <div class="flex items-center">
-                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Renntypenvorlagen Ändern</div>
+                            <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Wertung Vorlagen ändern</div>
                         </div>
 
                         <div class="ml-12">
@@ -130,7 +130,7 @@
                                     <div class="my-4">
                                         <label for="meldeGebuehr">Meldegebühr:</label>
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('meldeGebuehr') ? 'bg-red-300' : '' }}"
-                                               id="meldeGebuehr" placeholder="MeldegebÃ¼hr" name="meldeGebuehr" value="{{ old('meldeGebuehr') ?? $raceTypeTemplate->meldeGebuehr }}">
+                                               id="meldeGebuehr" placeholder="0" name="meldeGebuehr" value="{{ old('meldeGebuehr') ?? $raceTypeTemplate->meldeGebuehr }}">
                                         <small class="form-text text-danger">{!! $errors->first('meldeGebuehr') !!}</small>
                                     </div>
 
@@ -139,6 +139,13 @@
                                         <input type="text" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('bahnen') ? 'bg-red-300' : '' }}"
                                                id="bahnen" placeholder="Bahnen" name="bahnen" value="{{ old('bahnen') ?? $raceTypeTemplate->bahnen }}">
                                         <small class="form-text text-danger">{!! $errors->first('bahnen') !!}</small>
+                                    </div>
+
+                                    <div class="my-4">
+                                        <label for="max_wertungsteilnehmer">Maximale Teilnehmerzahl für Wertung:</label>
+                                        <input type="number" min="0" class="w-full border rounded shadow p-2 mr-2 my-2 {{ $errors->has('max_wertungsteilnehmer') ? 'bg-red-300' : '' }}"
+                                               id="max_wertungsteilnehmer" placeholder="Maximale Teilnehmerzahl für Wertung" name="max_wertungsteilnehmer" value="{{ old('max_wertungsteilnehmer') ?? ($raceTypeTemplate->max_wertungsteilnehmer ?? 0) }}">
+                                        <small class="form-text text-danger">{!! $errors->first('max_wertungsteilnehmer') !!}</small>
                                     </div>
 
                                     <div class="my-4" >
@@ -174,4 +181,3 @@
         </div>
     </div>
 </x-app-layout>
-

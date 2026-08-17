@@ -32,6 +32,8 @@ use App\Http\Controllers\RegattaTeamController;
 use App\Http\Controllers\FaqController ;
 use App\Http\Controllers\RegattaSettingsController;
 use App\Http\Controllers\RegattaTeamManagerController;
+use App\Http\Controllers\RegattaRaffleController;
+use App\Http\Controllers\RegattaRaffleOrganizationController;
 use App\Http\Controllers\TrainerAdminController;
 use App\Http\Controllers\TrainertypAdminController;
 
@@ -306,9 +308,33 @@ Route::get('/Regattateam/Werbungsquelle/public/{regatta_id?}', [RegattaTeamContr
 
 // RegattaTeamManager (Mannschaften/teamlink verwalten)
 Route::get('/RegattateamManager',                     [RegattaTeamManagerController::class, 'index'])  ->name('regattaTeamManager.index');
+Route::get('/RegattateamManager/import',              [RegattaTeamManagerController::class, 'import']) ->name('regattaTeamManager.import');
+Route::post('/RegattateamManager/import',             [RegattaTeamManagerController::class, 'importStore']) ->name('regattaTeamManager.importStore');
 Route::get('/RegattateamManager/edit/{id}',           [RegattaTeamManagerController::class, 'edit'])   ->name('regattaTeamManager.edit');
 Route::post('/RegattateamManager/update/{id}',         [RegattaTeamManagerController::class, 'update']) ->name('regattaTeamManager.update');
 Route::post('/RegattateamManager/sync/{id}',           [RegattaTeamManagerController::class, 'sync'])   ->name('regattaTeamManager.sync');
+
+// Regatta Rennplan-Logik (Spezifikation)
+Route::get('/Regatta/Rennplan-Logik',                 [RegattaRaffleController::class, 'index'])        ->name('regattaRaffle.index');
+Route::post('/Regatta/Rennplan-Logik/generate',        [RegattaRaffleController::class, 'generatePreview'])->name('regattaRaffle.generate');
+Route::post('/Regatta/Rennplan-Logik/store',           [RegattaRaffleController::class, 'store'])->name('regattaRaffle.store');
+Route::post('/Regatta/Rennplan-Logik/save-version',    [RegattaRaffleController::class, 'saveVersion'])->name('regattaRaffle.saveVersion');
+Route::get('/Regatta/Rennplan-Logik/load-version/{id}', [RegattaRaffleController::class, 'loadVersion'])->name('regattaRaffle.loadVersion');
+Route::post('/Regatta/Rennplan-Logik/clear-draft',     [RegattaRaffleController::class, 'clearDraft'])->name('regattaRaffle.clearDraft');
+Route::post('/Regatta/Rennplan-Logik/move',            [RegattaRaffleController::class, 'moveRace'])->name('regattaRaffle.move');
+Route::post('/Regatta/Rennplan-Logik/recalculate',     [RegattaRaffleController::class, 'recalculateTimes'])->name('regattaRaffle.recalculate');
+
+// Raffle Organization Management
+Route::prefix('Regatta/Rennplan-Logik/Organizations')->name('raffleOrganizations.')->group(function () {
+    Route::post('/auto-assign', [RegattaRaffleOrganizationController::class, 'autoAssign'])->name('autoAssign');
+    Route::post('/', [RegattaRaffleOrganizationController::class, 'store'])->name('store');
+    Route::post('/from-team', [RegattaRaffleOrganizationController::class, 'createFromTeam'])->name('createFromTeam');
+    Route::post('/{id}', [RegattaRaffleOrganizationController::class, 'update'])->whereNumber('id')->name('update');
+    Route::post('/{id}/rubrik', [RegattaRaffleOrganizationController::class, 'setRubrik'])->whereNumber('id')->name('setRubrik');
+    Route::delete('/{id}', [RegattaRaffleOrganizationController::class, 'destroy'])->whereNumber('id')->name('destroy');
+    Route::post('/assign-team', [RegattaRaffleOrganizationController::class, 'assignTeam'])->name('assignTeam');
+    Route::post('/reset', [RegattaRaffleOrganizationController::class, 'reset'])->name('reset');
+});
 
 Route::get('/Regatta/Einstellungen', [RegattaSettingsController::class, 'edit'])->name('regattaSettings.edit');
 Route::post('/Regatta/Einstellungen', [RegattaSettingsController::class, 'update'])->name('regattaSettings.update');
@@ -320,6 +346,7 @@ Route::get('/Rennen/edit/{race_id}',                             [RaceController
 Route::post('/Rennen/update/{race_id}',                      [RaceController::class, 'update'])          ->name('race.update');
 Route::get('/Rennen/aktiv/{race_id}',                            [RaceController::class, 'aktiv'])           ->name('race.aktiv');
 Route::get('/Rennen/inaktiv/{race_id}',                         [RaceController::class, 'inaktiv'])         ->name('race.inaktiv');
+Route::get('/Rennen/Veroeffendlichen',                    [RaceController::class, 'publishAllSetRaces'])->name('race.publishAllSetRaces');
 Route::get('/Rennen/liveAktuell/aktiv/{race_id}',           [RaceController::class, 'aktivLive'])       ->name('race.aktivLive');
 Route::get('/Rennen/liveAktuell/inaktiv/{race_id}',        [RaceController::class, 'inaktivLive'])     ->name('race.inaktivLive');
 Route::get('/Rennen/Programm',                                 [RaceController::class, 'indexProgram'])    ->name('race.indexProgram');
@@ -342,11 +369,11 @@ Route::get('/Rennen/liveStream/activate/{id}',             [RaceController::clas
 Route::get('/Rennen/liveStream/deactivate/{id}',         [RaceController::class, 'liveStreamDeactivate']);
 
 Route::get('/Teamverlosung/{race_id}',                [LaneController::class, 'show'])            ->name('lane.show');
-Route::get('/Teamverlosung/setzen/{race_id}',         [LaneController::class, 'editDraw'])        ->name('lane.editDraw');
-Route::get('/Teamverlosung/Ergebnisse/{race_id}',     [LaneController::class, 'editResult'])      ->name('lane.editResult');
-Route::post('/Teamverlosung/update/{race_id}',        [LaneController::class, 'update'])          ->name('lane.update');
-Route::get('/Teamverlosung/platzierung/{race_id}',     [LaneController::class, 'editPlatzierung'])->name('lane.editPlatzierung');
-Route::post('/Teamverlosung/platzierung/update/{race_id}', [LaneController::class, 'updatePlatzierung'])->name('lane.updatePlatzierung');
+Route::get('/Teamverlosung/setzen/{race_id}',  [LaneController::class, 'editDraw'])        ->name('lane.editDraw');
+Route::get('/Teamverlosung/Ergebnisse/{race_id}', [LaneController::class, 'editResult'])      ->name('lane.editResult');
+Route::post('/Teamverlosung/update/{race_id}',   [LaneController::class, 'update'])          ->name('lane.update');
+Route::get('/Teamverlosung/Platzierung/{race_id}',  [LaneController::class, 'editPlatzierung'])->name('lane.editPlatzierung');
+Route::post('/Teamverlosung/Platzierung/update/{race_id}', [LaneController::class, 'updatePlatzierung'])->name('lane.updatePlatzierung');
 Route::post('/Rennergebnisse/update/{race_id}',       [LaneController::class, 'updateResult'])    ->name('lane.updateResult');
 Route::get('/Teamverlosung/planen/{race_id}',         [LaneController::class, 'editSetDraw'])     ->name('lane.editSetDraw');
 Route::post('/Teamverlosung/planen/update/{race_id}', [LaneController::class, 'updateSetDraw'])   ->name('lane.updateSetDraw');

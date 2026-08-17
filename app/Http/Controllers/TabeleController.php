@@ -234,30 +234,57 @@ class TabeleController extends Controller
     {
         $tabele = Tabele::find($tabeleid);
 
-        // Sortierung wie $tabeledataShows und Platz-Berechnung ergänzen
-        $tabeledatas = Tabledata::where('tabele_id', $tabeleid)
-            ->orderBy('punkte', 'desc')
-            ->orderBy('zeit')
-            ->orderBy('hundert')
-            ->orderBy('buchholzzahl', 'desc')
-            ->get()
-            ->values();
+        $tabeledatasQuery = Tabledata::where('tabele_id', $tabeleid);
 
-        // Platz berechnen
-        $lastPoints = null;
-        $lastBuchholz = null;
-        $platz = 1;
-        foreach ($tabeledatas as $key => $item) {
-            if ($key === 0) {
-                $item->platz = 1;
-            } elseif ($item->punkte < $lastPoints || $item->buchholzzahl < $lastBuchholz) {
-                $platz = $key + 1;
-                $item->platz = $platz;
-            } else {
-                $item->platz = $platz;
+        if ((int) $tabele->wertungsart === 2) {
+            // Zeitwertung: kleinste Zeit zuerst, Sekundenbruchteile/Hundertstel als Tie-Breaker
+            $tabeledatas = $tabeledatasQuery
+                ->orderBy('zeit')
+                ->orderBy('hundert')
+                ->get()
+                ->values();
+
+            $lastZeit = null;
+            $lastHundert = null;
+            $platz = 1;
+            foreach ($tabeledatas as $key => $item) {
+                if ($key === 0) {
+                    $item->platz = 1;
+                } elseif ($item->zeit !== $lastZeit || (int) $item->hundert !== (int) $lastHundert) {
+                    $platz = $key + 1;
+                    $item->platz = $platz;
+                } else {
+                    $item->platz = $platz;
+                }
+                $lastZeit = $item->zeit;
+                $lastHundert = $item->hundert;
             }
-            $lastPoints = $item->punkte;
-            $lastBuchholz = $item->buchholzzahl;
+        } else {
+            // Standard: Punktewertung
+            $tabeledatas = $tabeledatasQuery
+                ->orderBy('punkte', 'desc')
+                ->orderBy('zeit')
+                ->orderBy('hundert')
+                ->orderBy('buchholzzahl', 'desc')
+                ->get()
+                ->values();
+
+            // Platz berechnen
+            $lastPoints = null;
+            $lastBuchholz = null;
+            $platz = 1;
+            foreach ($tabeledatas as $key => $item) {
+                if ($key === 0) {
+                    $item->platz = 1;
+                } elseif ($item->punkte < $lastPoints || $item->buchholzzahl < $lastBuchholz) {
+                    $platz = $key + 1;
+                    $item->platz = $platz;
+                } else {
+                    $item->platz = $platz;
+                }
+                $lastPoints = $item->punkte;
+                $lastBuchholz = $item->buchholzzahl;
+            }
         }
 
         return view('regattaManagement.tabele.show')->with([

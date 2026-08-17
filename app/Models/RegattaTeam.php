@@ -22,6 +22,11 @@ class RegattaTeam extends Model
         'bearbeiter_id'
     ];
 
+    public function raffleOrganizations()
+    {
+        return $this->belongsToMany(RaffleOrganization::class, 'raffle_organization_teams', 'team_id', 'organization_id')->withTimestamps();
+    }
+
     public function teamWertungsGruppe()
     {
         return $this->belongsTo(RaceType::class, 'gruppe_id');

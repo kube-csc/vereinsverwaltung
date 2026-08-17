@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
           $table->string('password_alt', 20)->nullable();
           $table->integer('webspace')->default(0);
           $table->integer('regattatrainer')->default(0);
-          $table->char('trainernachricht', 1)->default('');
+          $table->char('trainernachricht', 1)->default('0'); //ToDo::Muss noch mal in einer Migration geändert werden, da es hier um die Benachrichtigung des Trainers geht, ob er eine Nachricht erhalten möchte oder nicht. Es könnte auch ein Boolean sein, aber da es in der Datenbank als char gespeichert wird, bleibt es erstmal so.
           $table->decimal('gewicht', 4, 1)->default(0.0);
           $table->integer('position')->default(0);
           $table->integer('seite')->default(0);

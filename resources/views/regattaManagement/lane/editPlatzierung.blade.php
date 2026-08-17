@@ -43,6 +43,9 @@
                         @if($race->status==4)
                             Rennergebniss gewertet
                         @endif
+                        @if($race->status==5)
+                            Rennen gesichert
+                        @endif
                         <br>
                         @php
                             $veroeffentlichungUhrzeitAlt = substr($race->veroeffentlichungUhrzeit, 0, -3);
@@ -51,7 +54,7 @@
                         {{ $veroeffentlichungUhrzeitAlt }} Uhr
                     </div>
                 </div>
-                <form action="{{ url('/Teamverlosung/platzierung/update/'.$race->id) }}" method="post">
+                <form action="{{ url('/Teamverlosung/Platzierung/update/'.$race->id) }}" method="post">
                     @csrf
                     <table class="w-full mb-6">
                         <thead>

@@ -225,7 +225,7 @@
                     </div>
 
                     @foreach (Auth::user()->allTeams() as $team)
-                        <x-switchable-team :team="$team" component="jet-responsive-nav-link" />
+                        <x-switchable-team :team="$team" component="responsive-nav-link" />
                     @endforeach
                 @endif
             </div>

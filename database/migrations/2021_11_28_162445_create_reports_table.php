@@ -26,7 +26,8 @@ class CreateReportsTable extends Migration
             $table->integer('pixy')->nullable();
             $table->string('filename')->nullable();
             $table->integer('player')->nullable();
-            $table->integer('verwendung')->nullable();            //        0 = alter Status wird als Bild gewertet
+            $table->integer('verwendung')->nullable();
+                                                                         //        0 = alter Status wird als Bild gewertet,
                                                                          //        1 = Bild im Report
                                                                          //        2 = Ausschreibung
                                                                          //        3 = Programm

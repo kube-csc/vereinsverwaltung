@@ -31,7 +31,8 @@ class CreateEventsTable extends Migration
             $table->text('anmeldetext')->nullable();
             $table->char('onlinemeldung', 3)->nullable();
             $table->integer('regatta')->nullable();
-            $table->integer('verwendung')->default(0); // 0 = Event / Termin
+            $table->integer('verwendung')->default(0);
+                                               // verwendung 0 = Event / Termin
                                                                     // 1 =
                                                                     // 2 =
                                                                     // 3 =
@@ -41,11 +42,12 @@ class CreateEventsTable extends Migration
             $table->integer('teilnehmer')->default(0);
 
              /* Teilnehmermax::
-               0 = unbegrenzt;
-               1 = maximale Teilnehmerzahl keine Meldung möglich keine Warteliste;
-               2 = maximale Teilnehmerzahl mit Warteliste;
-               3 = maximale Teilnehmerzahl mit Warteliste aber  automatischer Bahnauffühlung
-             */
+                0 => 'unbegrenzt',
+                1 => 'max. Teilnehmerzahl, keine Meldung möglich, keine Warteliste',
+                2 => 'max. Teilnehmerzahl mit Warteliste',
+                3 => 'max. Teilnehmerzahl mit Warteliste + automatische Bahnauffüllung',
+                4 => 'max. Teilnehmerzahl, max. Teilnehmerzahl für jede Wertung, mit Wartelisten',
+            */
 
             $table->integer('teilnehmermax')->default(0);
             $table->unsignedBigInteger('externerCalender_id')->nullable();

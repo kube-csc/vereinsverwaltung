@@ -553,8 +553,12 @@ class TabeleController extends Controller
         $maxrennen = $tabele->maxrennen;
         $gruppe_id = $tabele->gruppe_id;
 
-        // Hole alle Mannschaften der Wertungsgruppe, auch gelöschte
-        $mannschaften = RegattaTeam::where('gruppe_id', $gruppe_id)->get();
+        // Nur aktiv gemeldete Mannschaften zählen in der Auswertung.
+        // Teams mit anderen Stati (z. B. Warteliste, Abgemeldet, Gelöscht, etc.)
+        // werden für die Konsistenzprüfung nicht berücksichtigt.
+        $mannschaften = RegattaTeam::where('gruppe_id', $gruppe_id)
+            ->where('status', 'Neuanmeldung')
+            ->get();
 
         // Hole alle Lanes für diese Tabelle
         $lanes = Lane::where('tabele_id', $tabele_id)->get();

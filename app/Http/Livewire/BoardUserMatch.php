@@ -79,8 +79,8 @@ class BoardUserMatch extends Component
         ]);
 
         $imageName  = $this->saveInmage();
-        if(isset($imageName)){
-            $boardUser    = boardUser::find($this->boardUserId);
+        $boardUser  = boardUser::find($this->boardUserId);
+        if(isset($imageName) && !is_null($boardUser->boardUser_id)){
             $oldPortraits = BoardPortrait::where('postenUser_id' , $boardUser->boardUser_id)->get();
 
             if ($oldPortraits->count()==0){
@@ -115,6 +115,8 @@ class BoardUserMatch extends Component
                 }
             }
             $this->deletionNote=0; // es wird hier nicht zusätzlich eine Bildlöschung angestossen
+        } elseif (isset($imageName)) {
+            session()->flash('message', 'Bild kann nicht gespeichert werden, da kein Mitglied zugeordnet ist.');
         }
 
         $this->image = '';

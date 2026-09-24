@@ -138,12 +138,12 @@
 </div>
 
 <script>
-    window.livewire.on('fileChoosen', () => {
+    Livewire.on('fileChoosen', () => {
         let inputField = document.getElementById('image')
         let file = inputField.files[0]
         let reader = new FileReader();
         reader.onloadend = () => {
-            window.livewire.emit('fileUpload', reader.result)
+            Livewire.dispatch('fileUpload', { imageData: reader.result })
         }
         reader.readAsDataURL(file);
     })

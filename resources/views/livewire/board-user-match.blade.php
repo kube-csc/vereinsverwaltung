@@ -33,10 +33,10 @@
 
                             <label for="number">Filter Mitglieder:</label>
                             <input id='searchUser' type="text" class="w-full rounded border shadow p-2 mr-2 my-2" wire:model.live.debounce.500ms="searchUser">
-                            <box-icon name='x' wire:click="$dispatch('userSelected', 0 )"></box-icon>
+                            <box-icon name='x' wire:click="$dispatch('userSelected', { userId: 0 })"></box-icon>
 
                         @foreach ($users as $user)
-                           <div class="rounded border shadow p-3 my-2 {{ $userSelected == $user->id ? 'bg-blue-300' : 'bg-blue-200' }}" wire:click="$dispatch('userSelected',{{ $user->id }})">
+                           <div class="rounded border shadow p-3 my-2 {{ $userSelected == $user->id ? 'bg-blue-300' : 'bg-blue-200' }}" wire:click="$dispatch('userSelected', { userId: {{ $user->id }} })">
                             {{ $user->vorname }} {{ $user->nachname }}
                            </div>
                         @endforeach
@@ -80,12 +80,12 @@
 </div>
 
 <script>
-    window.livewire.on('fileChoosen', () => {
+    Livewire.on('fileChoosen', () => {
         let inputField = document.getElementById('image')
         let file = inputField.files[0]
         let reader = new FileReader();
         reader.onloadend = () => {
-            window.livewire.emit('fileUpload', reader.result)
+            Livewire.dispatch('fileUpload', { imageData: reader.result })
         }
         reader.readAsDataURL(file);
     })

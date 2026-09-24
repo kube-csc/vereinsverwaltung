@@ -21,7 +21,7 @@
   </form>
 
   @foreach ( $abteilungs as $abteilung)
-  <div class="rounded border shadow p-3 my-2 {{$active == $abteilung->id ? 'bg-green-200':''}}" wire:click="$dispatch('sportSectionSelected',{{ $abteilung->id }})">
+  <div class="rounded border shadow p-3 my-2 {{$active == $abteilung->id ? 'bg-green-200':''}}" wire:click="$dispatch('sportSectionSelected', { sectionsportId: {{ $abteilung->id }} })">
       <div class="flex justify-between my-2">
         <div class="flex">
           <p class="font-bold text-lg">{{ $abteilung ['abteilung'] }} </p>

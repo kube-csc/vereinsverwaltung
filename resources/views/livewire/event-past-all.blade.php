@@ -8,7 +8,7 @@
                 <div class="col-md">
                     <div class="form-floating">
                         <label>Event Filter</label>
-                        <input class="form-control" wire:model.debounce.1000ms="search" maxlength="50" size="25">
+                        <input class="form-control" wire:model.live.debounce.1000ms="search" maxlength="50" size="25">
                     </div>
                 </div>
                 <div class="col-md">
@@ -16,7 +16,7 @@
                         <i class="bx bx-chevron-down" wire:click="monthDecrease"></i>
                         <label>Monat</label>
                         <i class="bx bx-chevron-up" wire:click="monthIncrease"></i></box-icon>
-                        <input class="form-control" wire:model.debounce.1000ms="month" type="number">
+                        <input class="form-control" wire:model.live.debounce.1000ms="month" type="number">
                     </div>
                 </div>
                 <div class="col-md">
@@ -24,7 +24,7 @@
                         <i class="bx bx-chevron-down" wire:click="yearDecrease"></i>
                         </box-icon><label>Jahr</label>
                         <i class="bx bx-chevron-up" wire:click="yearIncrease"></i>
-                        <input class="form-control" wire:model.debounce.1000ms="year" type="number">
+                        <input class="form-control" wire:model.live.debounce.1000ms="year" type="number">
                      </div>
                </div>
                 <div class="col-md">
@@ -35,7 +35,7 @@
                         :
                     </label>
                     <br>
-                    <select wire:model="sportSection_id">
+                    <select wire:model.live="sportSection_id">
                         <!-- name="sportSection_id"  -->
                         <option value="">Alle {{ env('MENUE_ABTEILUNG') }}
                             @if(env('MENUE_MANNSCHAFTEN')<>"nein")

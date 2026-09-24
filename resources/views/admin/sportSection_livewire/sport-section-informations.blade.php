@@ -19,7 +19,7 @@
         @if($this->image)
          <img src={{$this->image}} width="100" />
         @endif
-        <input type="file" id="image" wire:change="$emit('fileChoosen')">
+        <input type="file" id="image" wire:change="$dispatch('fileChoosen')">
         <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" wire:click="addHeader({{ $this->sectionsportId }})">Updaten Headerbild</button>
 
       @endif
@@ -30,7 +30,7 @@
     <?php // TODO: Value wird nicht im Eingabefeld angezeigt weinn Placeholderangeben ist ?>
       <form class="my-4 flex" wire:submit.prevent="updateDomian">
         <div>
-          <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Domain" wire:model.debounce.500ms="newDomain">
+          <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Domain" wire:model.live.debounce.500ms="newDomain">
         </div>
         <div class="py-2">
           <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" wire:click="updateDomian({{ $this->sectionsportId }})">Updaten Domain</button>
@@ -43,7 +43,7 @@
        <?php // TODO: Value wird nicht im Eingabefeld angezeigt weinn Placeholderangeben ist ?>
       <form class="my-4 flex" wire:submit.prevent="updateColor">
         <div>
-         <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Farbe der Webseite" wire:model.debounce.500ms="newColor">
+         <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Farbe der Webseite" wire:model.live.debounce.500ms="newColor">
         </div>
         <div class="py-2">
          <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" wire:click="updateColor({{ $this->sectionsportId }})">Updaten Farbe</button>
@@ -64,7 +64,7 @@
        <label for="name">Beschreibung:</label><br>
        <form class="my-4 flex" wire:submit.prevent="updateDescription">
          <div>
-          <textarea rows="25" cols="250" name="newDescription" class="w-full rounded border shadow p-2 mr-2 my-2" wire:model.debounce.500ms="newDescription">
+          <textarea rows="25" cols="250" name="newDescription" class="w-full rounded border shadow p-2 mr-2 my-2" wire:model.live.debounce.500ms="newDescription">
             {{ $this->newBeschreibung }}
           </textarea>
          </div>
@@ -88,7 +88,7 @@
           @if($this->image)
            <img src={{$this->image}} width="100" />
           @endif
-          <input type="file" id="image" wire:change="$emit('fileChoosen')">
+          <input type="file" id="image" wire:change="$dispatch('fileChoosen')">
           <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" wire:click="addHeader({{ $this->sectionsportId }})">Updaten Titelbild</button>
 
          @endif
@@ -99,7 +99,7 @@
         <?php // TODO: Value wird nicht im Eingabefeld angezeigt weinn Placeholderangeben ist ?>
           <form class="my-4 flex" wire:submit.prevent="updateDomian">
             <div>
-              <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Domain" wire:model.debounce.500ms="newDomain">
+              <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Domain" wire:model.live.debounce.500ms="newDomain">
             </div>
             <div class="py-2">
               <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" wire:click="updateDomian({{ $this->sectionsportId }})">Domain speichern</button>
@@ -112,7 +112,7 @@
            <?php // TODO: Value wird nicht im Eingabefeld angezeigt weinn Placeholderangeben ist ?>
           <form class="my-4 flex" wire:submit.prevent="updateColor">
             <div>
-             <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Farbe der Webseite" wire:model.debounce.500ms="newColor">
+             <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Farbe der Webseite" wire:model.live.debounce.500ms="newColor">
             </div>
             <div class="py-2">
              <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" wire:click="updateColor({{ $this->sectionsportId }})">Farbe speichen</button>
@@ -124,7 +124,7 @@
           <label for="name">Beschreibung:</label><br>
           <form class="my-4 flex" wire:submit.prevent="addDescription">
             <div>
-             <textarea rows="25" cols="250" class="w-full rounded border shadow p-2 mr-2 my-2" wire:model.debounce.500ms="newDescription">
+             <textarea rows="25" cols="250" class="w-full rounded border shadow p-2 mr-2 my-2" wire:model.live.debounce.500ms="newDescription">
                Beschreibe hier die Abteilung ...
              </textarea>  <?php // TODO: Vorgabetext wir nicht angezeigt ?>
             </div>

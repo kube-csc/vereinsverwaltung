@@ -12,16 +12,16 @@
 
     <form wire:submit.prevent="sendInvitation" class="flex items-center space-x-4">
         <div class="flex-grow">
-            <x-jet-input type="email" wire:model.defer="email" placeholder="E-Mail Adresse" class="w-full" />
-            <x-jet-input-error for="email" class="mt-2" />
+            <x-input type="email" wire:model="email" placeholder="E-Mail Adresse" class="w-full" />
+            <x-input-error for="email" class="mt-2" />
         </div>
         <div class="flex-grow">
-            <x-jet-input type="text" wire:model.defer="label" placeholder="Name / Label (optional wenn E-Mail)" class="w-full" />
-            <x-jet-input-error for="label" class="mt-2" />
+            <x-input type="text" wire:model="label" placeholder="Name / Label (optional wenn E-Mail)" class="w-full" />
+            <x-input-error for="label" class="mt-2" />
         </div>
-        <x-jet-button>
+        <x-button>
             Einladung erstellen
-        </x-jet-button>
+        </x-button>
     </form>
 
     <div class="mt-8">

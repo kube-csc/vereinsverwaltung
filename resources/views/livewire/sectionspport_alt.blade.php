@@ -13,7 +13,7 @@
 
   <form class="my-4 flex" wire:submit.prevent="addAbteilung">
     <div>
-      <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Sportabteilung" wire:model.debounce.500ms="newAbteilung">
+      <input type="text" class="w-full rounded border shadow p-2 mr-2 my-2" placeholder="Sportabteilung" wire:model.live.debounce.500ms="newAbteilung">
     </div>
     <div class="py-2">
       <button type="submit" class="p-2 bg-blue-500 w-40 rounded shadow text-white" wire:click="addAbteilung">neue Abteilung</button>
@@ -21,7 +21,7 @@
   </form>
 
   @foreach ( $abteilungs as $abteilung)
-  <div class="rounded border shadow p-3 my-2 {{$active == $abteilung->id ? 'bg-green-200':''}}" wire:click="$emit('sportSectionSelected',{{ $abteilung->id }})">
+  <div class="rounded border shadow p-3 my-2 {{$active == $abteilung->id ? 'bg-green-200':''}}" wire:click="$dispatch('sportSectionSelected',{{ $abteilung->id }})">
       <div class="flex justify-between my-2">
         <div class="flex">
           <p class="font-bold text-lg">{{ $abteilung ['abteilung'] }} </p>

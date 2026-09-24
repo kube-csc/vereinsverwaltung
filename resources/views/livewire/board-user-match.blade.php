@@ -32,11 +32,11 @@
                           @endif
 
                             <label for="number">Filter Mitglieder:</label>
-                            <input id='searchUser' type="text" class="w-full rounded border shadow p-2 mr-2 my-2" wire:model.debounce.500ms="searchUser">
-                            <box-icon name='x' wire:click="$emit('userSelected', 0 )"></box-icon>
+                            <input id='searchUser' type="text" class="w-full rounded border shadow p-2 mr-2 my-2" wire:model.live.debounce.500ms="searchUser">
+                            <box-icon name='x' wire:click="$dispatch('userSelected', 0 )"></box-icon>
 
                         @foreach ($users as $user)
-                           <div class="rounded border shadow p-3 my-2 {{ $userSelected == $user->id ? 'bg-blue-300' : 'bg-blue-200' }}" wire:click="$emit('userSelected',{{ $user->id }})">
+                           <div class="rounded border shadow p-3 my-2 {{ $userSelected == $user->id ? 'bg-blue-300' : 'bg-blue-200' }}" wire:click="$dispatch('userSelected',{{ $user->id }})">
                             {{ $user->vorname }} {{ $user->nachname }}
                            </div>
                         @endforeach
@@ -52,14 +52,14 @@
                                   <p>kein Porträt zum hochladen vorhanden</p>
                                 @endif
                             @endif
-                            <input type="file" id="image" wire:change="$emit('fileChoosen')">
+                            <input type="file" id="image" wire:change="$dispatch('fileChoosen')">
                         </div>
                         @if($currentImage!='')
                                <div class="w-full rounded border shadow p-2 mr-2 my-2">
                                     <label for="postenbild">Porträt:</label>
                                     <div class="flex ml-2">
                                         <div class="flex-initial"><img src={{ '/storage/boardPortrait/'.$currentImage }} width="200" /></div>
-                                        <div class="flex-initial ml-2 fas fa-times text-red-600 hover:text-red-00 cursor-pointer" wire:click="$emit('deletionNote')">x</div>
+                                        <div class="flex-initial ml-2 fas fa-times text-red-600 hover:text-red-00 cursor-pointer" wire:click="$dispatch('deletionNote')">x</div>
                                     </div>
                                </div>
                          @endif

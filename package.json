@@ -7,7 +7,9 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "vite:dev": "vite",
+        "vite:build": "vite build"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.2.1",
@@ -16,10 +18,15 @@
         "autoprefixer": "^10.0.2",
         "axios": "^0.21",
         "laravel-mix": "^6.0.6",
+        "laravel-vite-plugin": "^3.2.0",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
         "postcss-import": "^12.0.1",
-        "tailwindcss": "^2.0.1"
+        "tailwind-forms-v3": "npm:@tailwindcss/forms@^0.5.11",
+        "tailwind-typography-v3": "npm:@tailwindcss/typography@^0.5.20",
+        "tailwindcss": "^2.0.1",
+        "tailwindcss-v3": "npm:tailwindcss@3.4",
+        "vite": "^8.3.4"
     },
     "dependencies": {
         "boxicons": "^2.0.7"

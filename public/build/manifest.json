@@ -1,0 +1,17 @@
+{
+  "resources/css/admin.css": {
+    "file": "assets/admin-QgsRnmGj.css",
+    "name": "admin",
+    "names": [
+      "admin.css"
+    ],
+    "src": "resources/css/admin.css",
+    "isEntry": true
+  },
+  "resources/js/admin.js": {
+    "file": "assets/admin-CmYQyWiE.js",
+    "name": "admin",
+    "src": "resources/js/admin.js",
+    "isEntry": true
+  }
+}

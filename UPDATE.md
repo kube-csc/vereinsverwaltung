@@ -1,5 +1,5 @@
 ## Update Anleitung
-**Version V00.10.07**
+**Version V00.10.08**
 
 ***Neue Funktionen***
 ****Regatta-Verwaltung – Team-Import ohne Meldetool****

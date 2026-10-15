@@ -1,10 +1,10 @@
 <x-guest-layout>
-    <x-jet-authentication-card>
+    <x-authentication-card>
         <x-slot name="logo">
-            <x-jet-authentication-card-logo />
+            <x-authentication-card-logo />
         </x-slot>
 
-        <x-jet-validation-errors class="mb-4" />
+        <x-validation-errors class="mb-4" />
 
         <form method="POST" action="{{ route('register') }}">
             @csrf
@@ -27,17 +27,17 @@
             @endif
 
             <div>
-                <x-jet-label for="vorname" value="{{ __('Vorname') }}" />
-                <x-jet-input id="vorname" class="block mt-1 w-full" type="text" name="vorname" :value="old('vorname')" required autofocus autocomplete="given-name" :disabled="!$isValidInvitation" />
+                <x-label for="vorname" value="{{ __('Vorname') }}" />
+                <x-input id="vorname" class="block mt-1 w-full" type="text" name="vorname" :value="old('vorname')" required autofocus autocomplete="given-name" :disabled="!$isValidInvitation" />
             </div>
 
             <div class="mt-4">
-                <x-jet-label for="nachname" value="{{ __('Nachname') }}" />
-                <x-jet-input id="nachname" class="block mt-1 w-full" type="text" name="nachname" :value="old('nachname')" required autocomplete="family-name" :disabled="!$isValidInvitation" />
+                <x-label for="nachname" value="{{ __('Nachname') }}" />
+                <x-input id="nachname" class="block mt-1 w-full" type="text" name="nachname" :value="old('nachname')" required autocomplete="family-name" :disabled="!$isValidInvitation" />
             </div>
 
             <div class="mt-4">
-                <x-jet-label for="geschlecht" value="{{ __('Geschlecht') }}" />
+                <x-label for="geschlecht" value="{{ __('Geschlecht') }}" />
                 <select id="geschlecht" name="geschlecht" class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block mt-1 w-full" required {{ !$isValidInvitation ? 'disabled' : '' }}>
                     <option value="">{{ __('Bitte wählen...') }}</option>
                     <option value="m" {{ old('geschlecht') == 'm' ? 'selected' : '' }}>{{ __('Männlich') }}</option>
@@ -47,7 +47,7 @@
             </div>
 
             <div class="mt-4">
-                <x-jet-label for="sportSections_id" value="{{ __('Sportabteilung') }}" />
+                <x-label for="sportSections_id" value="{{ __('Sportabteilung') }}" />
                 <select id="sportSections_id" name="sportSections_id" class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block mt-1 w-full" required {{ !$isValidInvitation ? 'disabled' : '' }}>
                     <option value="">{{ __('Bitte wählen...') }}</option>
                     @foreach($sportSections as $section)
@@ -59,25 +59,25 @@
             </div>
 
             <div class="mt-4">
-                <x-jet-label for="email" value="{{ __('Email') }}" />
-                <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $invitation?->email)" required :readonly="$invitation && $invitation->email" :disabled="!$isValidInvitation" />
+                <x-label for="email" value="{{ __('Email') }}" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $invitation?->email)" required :readonly="$invitation && $invitation->email" :disabled="!$isValidInvitation" />
             </div>
 
             <div class="mt-4">
-                <x-jet-label for="password" value="{{ __('Password') }}" />
-                <x-jet-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" :disabled="!$isValidInvitation" />
+                <x-label for="password" value="{{ __('Password') }}" />
+                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" :disabled="!$isValidInvitation" />
             </div>
 
             <div class="mt-4">
-                <x-jet-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                <x-jet-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" :disabled="!$isValidInvitation" />
+                <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
+                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" :disabled="!$isValidInvitation" />
             </div>
 
             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
                 <div class="mt-4">
-                    <x-jet-label for="terms">
+                    <x-label for="terms">
                         <div class="flex items-center">
-                            <x-jet-checkbox name="terms" id="terms" :disabled="!$isValidInvitation" />
+                            <x-checkbox name="terms" id="terms" :disabled="!$isValidInvitation" />
 
                             <div class="ml-2">
                                 {!! __('I agree to the :terms_of_service and :privacy_policy', [
@@ -86,7 +86,7 @@
                                 ]) !!}
                             </div>
                         </div>
-                    </x-jet-label>
+                    </x-label>
                 </div>
             @endif
 
@@ -95,10 +95,10 @@
                     {{ __('Already registered?') }}
                 </a>
 
-                <x-jet-button class="ml-4" :disabled="!$isValidInvitation">
+                <x-button class="ml-4" :disabled="!$isValidInvitation">
                     {{ __('Register') }}
-                </x-jet-button>
+                </x-button>
             </div>
         </form>
-    </x-jet-authentication-card>
+    </x-authentication-card>
 </x-guest-layout>

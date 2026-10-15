@@ -1,5 +1,24 @@
 ## Update Anleitung
-**Version V00.10.08**
+**Version V00.10.08 – Umstellung auf Laravel 11**
+
+***Wichtigste Änderungen***
+- **Laravel** 10 → 11, **Livewire** 2 → 3, **Jetstream** 2 → 5, **Sanctum** 3 → 4, **PHPUnit** 10 → 11.
+- Alle Blade-Komponenten `x-jet-*` wurden auf das neue Präfix `x-*` umgestellt (z.B. `x-jet-input` → `x-input`).
+- `wire:model.defer` entfällt (Deferred ist jetzt Standardverhalten von Livewire 3).
+- Such-/Filterfelder mit `wire:model.debounce.*` und Live-Selects wurden auf `wire:model.live.debounce.*` bzw. `wire:model.live` umgestellt, da `wire:model` jetzt standardmäßig deferred ist.
+- `$emit(...)` in Blade-Views wurde durch `$dispatch(...)` ersetzt (in Livewire 3 entfernt).
+- Neue Team-Einladungs-Mail-View `resources/views/emails/team-invitation.blade.php` ergänzt (wurde von Jetstream 5 nicht mehr automatisch bereitgestellt).
+
+***Hinweise nach dem Update***
+- `composer update`
+- `php artisan package:discover --ansi` (Cache-Dateien `bootstrap/cache/packages.php` und `services.php` vorher löschen, falls Fehler wie "Class ... not found" auftreten)
+- `php artisan view:clear`
+- **Manuelle QA erforderlich:** Alle Livewire-Formulare mit Live-Suche (Termine-Filter, Abteilungs-/Mannschaftsverwaltung, Posten-Zuordnung) auf korrektes Live-Verhalten prüfen.
+- Bekannte, vom Update unabhängige Altlasten (nicht behoben): `HomeController::index()` nutzt `$_SERVER['HTTP_HOST']` direkt (bricht in Tests ohne Host-Header), `RegistrationTest`/`DeleteAccountTest` sind veraltete Standard-Tests, die nicht zu den angepassten Registrierungs-/Löschfeldern passen.
+
+---
+
+**Version V00.10.07**
 
 ***Neue Funktionen***
 ****Regatta-Verwaltung – Team-Import ohne Meldetool****

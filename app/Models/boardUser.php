@@ -20,4 +20,9 @@ class boardUser extends Model
     {
         return $this->belongsTo(User::class, 'board_id');
     }
+
+    public function board()
+    {
+        return $this->belongsTo(board::class, 'board_id');
+    }
 }

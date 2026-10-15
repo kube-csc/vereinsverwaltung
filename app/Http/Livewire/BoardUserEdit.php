@@ -52,8 +52,7 @@ class BoardUserEdit extends Component
         session()->flash('message', 'Daten wurden gespeichert.');
 
         $boardUser = boardUser::findOrFail($this->boardUserId);
-        return redirect()->route('admin.board.index', [ 'board_id' => $boardUser->board_id, ]);
-      // Temp: return redirect('/admin/board/'.$boardUser->board_id);
+        return redirect()->route('boardUser.index', [ 'board_id' => $boardUser->board_id, ]);
     }
 
     public function mount()

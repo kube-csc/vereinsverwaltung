@@ -1,4 +1,20 @@
 ## Update Anleitung
+**Version V00.10.09 – Umstellung auf Laravel 12**
+
+***Wichtigste Änderungen***
+- Laravel Framework von Version 11 auf Version 12 aktualisiert.
+- Die Composer-Plattform ist auf PHP 8.3 festgelegt; auf dem Server wird PHP 8.3 oder neuer benötigt.
+- Composer-Abhängigkeiten und `composer.lock` wurden für Laravel 12 aktualisiert.
+
+***Hinweise nach dem Update***
+- Vor dem Update Datenbank und Dateien unter `storage/app/public` sichern.
+- PHP-Version auf dem Server prüfen: `php -v` (mindestens PHP 8.3).
+- Anwendungscode aktualisieren und produktive Abhängigkeiten anhand des Lockfiles installieren: `composer install --no-dev --optimize-autoloader`.
+- Anwendungscaches leeren: `php artisan optimize:clear`.
+- Funktion von Anmeldung, Teamverwaltung, Livewire-Formularen und Regatta-Verwaltung prüfen.
+
+---
+
 **Version V00.10.08 – Umstellung auf Laravel 11**
 
 ***Wichtigste Änderungen***

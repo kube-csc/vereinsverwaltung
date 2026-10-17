@@ -108,6 +108,11 @@ class User extends Authenticatable
         return $this->hasRole(Role::GREMIUM) ? [Role::ANTRAGSTELLER] : [];
     }
 
+    public function bankAccounts(): HasMany
+    {
+        return $this->hasMany(BankAccount::class);
+    }
+
     public function trainerZuordnungen(): HasMany
     {
         return $this->hasMany(Trainertable::class, 'user_id');

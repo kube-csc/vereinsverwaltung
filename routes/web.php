@@ -67,13 +67,19 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');
 })->name('dashboard');
 
-Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('/antraege/dashboard', function () {
-    return view('antraege.dashboard');
-})->name('antraege.dashboard');
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('/antraege/dashboard', \App\Http\Controllers\AntraegeDashboardController::class)->name('antraege.dashboard');
 
 Route::middleware(['auth:sanctum', 'verified', 'can:antraege.benutzer'])->get('/antraege/benutzer', function () {
     return view('antraege.benutzer');
 })->name('antraege.benutzer');
+
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.stellen'])->get('/antraege/bankkonten', function () {
+    return view('antraege.bankkonten');
+})->name('antraege.bankkonten');
+
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('/antraege/foerderprogramme', function () {
+    return view('antraege.foerdertoepfe');
+})->name('antraege.foerderprogramme');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/Adminmenu', function () {
     return view('admin.adminmenu');

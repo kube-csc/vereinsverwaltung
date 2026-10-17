@@ -17,6 +17,14 @@ use Illuminate\View\View;
 
 class TrainerAdminController extends Controller
 {
+    // Nur Benutzer mit users.admin >= 2 dürfen Trainer werden.
+    private const MIN_TRAINER_ADMIN_LEVEL = 2;
+
+    private function ensureTrainerEligible(User $user): void
+    {
+        abort_unless((int)$user->admin >= self::MIN_TRAINER_ADMIN_LEVEL, 403, 'Dieser Benutzer darf kein Trainer sein (users.admin muss mindestens ' . self::MIN_TRAINER_ADMIN_LEVEL . ' sein).');
+    }
+
     public function sportSectionsForOrganiser(int $organiser): JsonResponse
     {
         $sportSectionIds = DB::table('organiser_sport_section')
@@ -48,6 +56,7 @@ class TrainerAdminController extends Controller
         $q = trim((string)$request->get('q', ''));
 
         $users = User::query()
+            ->where('admin', '>=', self::MIN_TRAINER_ADMIN_LEVEL)
             // Nur Mitglieder anzeigen, die nicht ausgetreten sind.
             ->where(function ($q) {
                 $q->whereNull('vereinsaustritt')
@@ -73,6 +82,8 @@ class TrainerAdminController extends Controller
 
     public function edit(User $user): View
     {
+        $this->ensureTrainerEligible($user);
+
         $trainertyps = Trainertyp::query()
             ->where('status', 1)
             ->orderBy('trainerfunktion')
@@ -112,6 +123,8 @@ class TrainerAdminController extends Controller
      */
     public function update(Request $request, User $user): RedirectResponse
     {
+        $this->ensureTrainerEligible($user);
+
         $validated = $request->validate([
             'trainertyp_ids' => ['nullable', 'array'],
             'trainertyp_ids.*' => ['integer', 'exists:trainertyps,id'],
@@ -262,6 +275,8 @@ class TrainerAdminController extends Controller
 
     public function reactivate(User $user, int $trainertable): RedirectResponse
     {
+        $this->ensureTrainerEligible($user);
+
         // Reaktivierung aus der Benutzer-Detailansicht (/admin/trainer/{user}).
         // Unterschied zu reactivateFromTypes():
         // - Hier wird die Zuordnung IM KONTEXT EINES BESTIMMTEN USERS reaktiviert.

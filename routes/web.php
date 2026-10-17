@@ -36,6 +36,7 @@ use App\Http\Controllers\RegattaRaffleController;
 use App\Http\Controllers\RegattaRaffleOrganizationController;
 use App\Http\Controllers\TrainerAdminController;
 use App\Http\Controllers\TrainertypAdminController;
+use App\Http\Controllers\UserRightsAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,6 +115,10 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')
     Route::post('/trainer-typen/zuordnung/{trainertable}/reaktivieren', [TrainerAdminController::class, 'reactivateFromTypes'])
         ->whereNumber('trainertable')
         ->name('trainer.types.reactivate');
+
+    // Rechteverwaltung (users.admin)
+    Route::get('/rechte', [UserRightsAdminController::class, 'index'])->name('rights.index');
+    Route::post('/rechte/{user}', [UserRightsAdminController::class, 'update'])->whereNumber('user')->name('rights.update');
 
     Route::get('/einladungen', function () {
         return view('admin.invitations');

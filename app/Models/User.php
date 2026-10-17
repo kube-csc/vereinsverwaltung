@@ -37,7 +37,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name', 'email', 'password', 'vorname', 'nachname', 'geschlecht', 'admin', 'sportSections_id',
-    ];
+                'vereinseintritt', 'vereinsaustritt',
+            ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -58,6 +59,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'vereinseintritt' => 'date:Y-m-d',
+        'vereinsaustritt' => 'date:Y-m-d',
     ];
 
     /**

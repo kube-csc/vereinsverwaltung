@@ -95,8 +95,8 @@
                       </div>
                   </div>
 
+                  @if(env('MENUE_VEREIN')<>"nein")
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
-                      @if(env('MENUE_VEREIN')<>"nein")
                       <div class="flex items-center">
                           <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">{{ env('MENUE_VEREIN') }} / {{ env('MENUE_VERBAND') }}</div>
                       </div>
@@ -128,8 +128,8 @@
 
                           </div>
                       </div>
-                      @endif
                   </div>
+                  @endif
 
                   <div class="p-6 border-t border-gray-200">
                       <div class="flex items-center">
@@ -185,50 +185,14 @@
                                           </div>
                                       </div>
                                   </div>
-
-                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainertyp.index') }}')">
-                                      <div class="flex justify-between my-2">
-                                          <div class="flex">
-                                              <p class="font-bold text-lg">Trainertypen verwalten</p>
-                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
-                                          </div>
-                                      </div>
-                                  </div>
-
-                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainer.index') }}')">
-                                      <div class="flex justify-between my-2">
-                                          <div class="flex">
-                                              <p class="font-bold text-lg">Trainerverwaltung</p>
-                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
-                                          </div>
-                                      </div>
-                                  </div>
-
-                                  <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainer.types.index') }}')">
-                                      <div class="flex justify-between my-2">
-                                          <div class="flex">
-                                              <p class="font-bold text-lg">Trainertypen – Übersicht</p>
-                                              <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
-                                          </div>
-                                      </div>
-                                  </div>
-
-                                   <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.invitations') }}')">
-                                       <div class="flex justify-between my-2">
-                                           <div class="flex">
-                                               <p class="font-bold text-lg">Mitglieder einladen</p>
-                                               <p class="mx-3 py-1 text-xs text-gray-500 font-semibold"></p>
-                                           </div>
-                                       </div>
-                                   </div>
                               </div>
 
                          </div>
                       </div>
                   </div>
 
+                  @if(env('VEREIN_CHATBOT')=="ja")
                   <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
-                    @if(env('VEREIN_CHATBOT')=="ja")
                       <div class="flex items-center">
                           <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Chat Bot</div>
                       </div>
@@ -269,8 +233,63 @@
 
                           </div>
                       </div>
-                    @endif
                   </div>
+                  @endif
+
+                  @if(Auth::user()->admin >= 3)
+                      <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
+                          <div class="flex items-center">
+                              <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Mitgliederverwaltung</div>
+                          </div>
+
+                          <div class="ml-12">
+                              <div class="mt-2 text-sm text-gray-500">
+                                  <div style="text-align: left">
+                                      <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.invitations') }}')">
+                                          <div class="flex justify-between my-2">
+                                              <div class="flex">
+                                                  <p class="font-bold text-lg">Mitglieder einladen</p>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.rights.index') }}')">
+                                          <div class="flex justify-between my-2">
+                                              <div class="flex">
+                                                  <p class="font-bold text-lg">Rechteverwaltung</p>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainer.index') }}')">
+                                          <div class="flex justify-between my-2">
+                                              <div class="flex">
+                                                  <p class="font-bold text-lg">Trainerverwaltung</p>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainer.types.index') }}')">
+                                          <div class="flex justify-between my-2">
+                                              <div class="flex">
+                                                  <p class="font-bold text-lg">Trainertypen – Übersicht</p>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      <div class="rounded border shadow p-3 my-2 bg-blue-200" onclick="window.location.replace('{{ route('admin.trainertyp.index') }}')">
+                                          <div class="flex justify-between my-2">
+                                              <div class="flex">
+                                                  <p class="font-bold text-lg">Trainertypen verwalten</p>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  @endif
 
                   <div class="p-6 border-t border-gray-200">
                       <div class="flex items-center">

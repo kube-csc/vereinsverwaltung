@@ -12,7 +12,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <div class="mt-2 text-2xl">User auswählen</div>
-                            <div class="mt-2 text-gray-500">Wähle einen Benutzer aus und hinterlege Trainerfunktionen (Mehrfachauswahl möglich).</div>
+                            <div class="mt-2 text-gray-500">Wähle einen Benutzer aus und hinterlege Trainerfunktionen (Mehrfachauswahl möglich). Nur Benutzer mit Admin-Stufe 2 oder höher werden angezeigt.</div>
                         </div>
                         <div>
                             <a class="p-2 bg-blue-500 w-40 rounded shadow text-white" href="/Adminmenu">

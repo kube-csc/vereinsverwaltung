@@ -1,4 +1,6 @@
 ## Update Anleitung
+**Version V00.10.09 – Umstellung auf Laravel 12**
+
 **Version V00.10.08 – Umstellung auf Laravel 11**
 
 ***Wichtigste Änderungen***

@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.10.08</p>
+<p>Version: V00.10.09</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -16,9 +16,9 @@ Beispiel für einen Kanuverein mit Abteilungen / Sportarten:
 
 <h2>Installierte Programme / Templets</h2>
 <ul>
-  <li>Installation Laravel 10.* mit Jetstream/Livewire 2.* (Teams) und TailwindCSS</li>
-  <li><a href="https://jetstream.laravel.com/2.x/introduction.html">jetstream 2.x Anleitung</a></li>
-  <li><a href="https://jetstream.laravel.com/2.x/stacks/livewire.html">livewire 2.x</a></li>
+  <li>Laravel 12 mit Jetstream 5, Livewire 3 und TailwindCSS</li>
+  <li><a href="https://jetstream.laravel.com/introduction.html">Jetstream-Dokumentation</a></li>
+  <li><a href="https://livewire.laravel.com/docs">Livewire-Dokumentation</a></li>
   <li><a href="https://boxicons.com/">boxicons</a>(Forntend)</li>
   <li><a href="https://tailwindcss.com/">Tailwindcss</a>(Backend)</li>
   <li><a href="https://bootstrapmade.com/squadfree-free-bootstrap-template-creative/">BootstrapMade.com </a></li>

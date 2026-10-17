@@ -80,6 +80,22 @@
                                 @endif
                             </div>
 
+                            @if((int) Auth::user()->admin === 4)
+                            <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
+                                <div class="flex items-center">
+                                    <div class="ml-4 text-lg leading-7 font-semibold">Antragsverwaltung</div>
+                                </div>
+
+                                <div class="ml-12">
+                                    <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                        <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
+                                            <span class="font-bold text-lg">Zur Antragsverwaltung</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
                                 <div class="flex items-center">
                                     <div class="ml-4 text-lg leading-7 font-semibold text-gray-900 dark:text-white">  </div>

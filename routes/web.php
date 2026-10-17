@@ -67,6 +67,12 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');
 })->name('dashboard');
 
+Route::middleware(['auth:sanctum', 'verified'])->get('/antraege/dashboard', function () {
+    abort_unless((int) auth()->user()->admin === 4, 403);
+
+    return view('antraege.dashboard');
+})->name('antraege.dashboard');
+
 Route::middleware(['auth:sanctum', 'verified'])->get('/Adminmenu', function () {
     return view('admin.adminmenu');
 })->name('adminmenu');

@@ -80,7 +80,7 @@
                                 @endif
                             </div>
 
-                            @if((int) Auth::user()->admin === 4)
+                            @can('antraege.verwalten')
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
                                 <div class="flex items-center">
                                     <div class="ml-4 text-lg leading-7 font-semibold">Antragsverwaltung</div>
@@ -94,7 +94,7 @@
                                     </div>
                                 </div>
                             </div>
-                            @endif
+                            @endcan
 
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
                                 <div class="flex items-center">

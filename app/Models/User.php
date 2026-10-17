@@ -12,6 +12,7 @@ use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 //Ergänzt
@@ -71,6 +72,41 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
+    public function hasRole(string ...$roles): bool
+    {
+        return $this->roles->pluck('name')->intersect($roles)->isNotEmpty();
+    }
+
+    public function assignRole(string $role): void
+    {
+        $this->roles()->syncWithoutDetaching([Role::where('name', $role)->firstOrFail()->id]);
+        $this->unsetRelation('roles');
+    }
+
+    public function removeRole(string $role): void
+    {
+        $this->roles()->detach(Role::where('name', $role)->firstOrFail()->id);
+        $this->unsetRelation('roles');
+    }
+
+    /**
+     * Rollen, die dieser Benutzer anderen Konten zuweisen darf:
+     * Administratoren alle, Gremiumsmitglieder nur „Antragsteller“.
+     */
+    public function assignableRoles(): array
+    {
+        if (Gate::forUser($this)->allows('antraege.verwalten')) {
+            return [Role::ADMINISTRATOR, Role::GREMIUM, Role::ANTRAGSTELLER];
+        }
+
+        return $this->hasRole(Role::GREMIUM) ? [Role::ANTRAGSTELLER] : [];
+    }
 
     public function trainerZuordnungen(): HasMany
     {

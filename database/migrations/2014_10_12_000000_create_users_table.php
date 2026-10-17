@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
           $table->id();
-          //Vereinsverwaltung
+
           $table->string('nachname', 40)->nullable();
           $table->string('vorname', 40)->nullable();
           $table->string('geschlecht', 1)->nullable();
@@ -32,6 +32,12 @@ class CreateUsersTable extends Migration
           $table->integer('seite')->default(0);
           $table->integer('status')->default(0);
           $table->integer('admin')->default(0);
+                    //       0 =>  ist der Standardwert bei neu angelegten Benutzern
+                    //       1  => besondere Bedeutung dafür ist dort nicht definiert.
+                    // ab 2 => Trainer möglich
+                    // ab 3 => wird das Regatta-Menü freigeschaltet.
+                    // ab 4 => wird das Mitgliederverwaltung
+
           $table->foreignId('vorstand_id')->default(0);
           $table->text('beschreibung')->nullable();
           $table->string('telefon', 25)->default('');

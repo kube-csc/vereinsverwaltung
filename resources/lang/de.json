@@ -26,5 +26,11 @@
     "Recovery Code": "Wiederherstellungscode",
     "Use a recovery code": "Wiederherstellungscode verwenden",
     "Use an authentication code": "Authentifizierungscode verwenden",
-    "Password Confirmation": "Passwort bestätigen"
+    "Password Confirmation": "Passwort bestätigen",
+    "Showing": "Zeige",
+    "to": "bis",
+    "of": "von",
+    "results": "Ergebnissen",
+    "Pagination Navigation": "Seitennavigation",
+    "Go to page :page": "Gehe zu Seite :page"
 }

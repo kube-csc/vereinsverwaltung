@@ -19,6 +19,17 @@
             <x-input type="text" wire:model="label" placeholder="Name / Label (optional wenn E-Mail)" class="w-full" />
             <x-input-error for="label" class="mt-2" />
         </div>
+        @if($assignableRoles->isNotEmpty())
+            <div class="text-sm text-gray-700">
+                <span class="block text-xs text-gray-500">Rollen nach der Registrierung</span>
+                @foreach($assignableRoles as $role)
+                    <label class="inline-flex items-center mr-3">
+                        <input type="checkbox" wire:model="selectedRoles" value="{{ $role->name }}" class="h-5 w-5 rounded border-2 border-gray-600 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                        <span class="ml-1">{{ $role->label ?? $role->name }}</span>
+                    </label>
+                @endforeach
+            </div>
+        @endif
         <x-button>
             Einladung erstellen
         </x-button>
@@ -45,6 +56,9 @@
                         @endif
                         @if($invitation->label)
                             <span class="text-xs text-gray-500 block italic">Name: {{ $invitation->label }}</span>
+                        @endif
+                        @if($invitation->roles->isNotEmpty())
+                            <span class="text-xs text-gray-500 block">Rollen: {{ $invitation->roles->map(fn ($r) => $r->label ?? $r->name)->implode(', ') }}</span>
                         @endif
                         @if(!$invitation->email && !$invitation->label)
                             <span class="text-gray-400">-</span>

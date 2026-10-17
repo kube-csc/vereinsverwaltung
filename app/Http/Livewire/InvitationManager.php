@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Invitation;
+use App\Models\Role;
 use App\Mail\UserInvitationMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -12,10 +13,12 @@ class InvitationManager extends Component
 {
     public $email;
     public $label;
+    public array $selectedRoles = [];
 
     protected $rules = [
         'email' => 'nullable|email|unique:users,email|unique:invitations,email',
         'label' => 'nullable|string|max:255',
+        'selectedRoles' => 'array',
     ];
 
     public function sendInvitation()
@@ -27,11 +30,18 @@ class InvitationManager extends Component
             return;
         }
 
+        $assignable = auth()->user()->assignableRoles();
+        $roles = array_values(array_intersect($this->selectedRoles, $assignable));
+
         $invitation = Invitation::create([
             'email' => $this->email ?: null,
             'label' => $this->label ?: null,
             'token' => Str::random(64),
         ]);
+
+        if ($roles) {
+            $invitation->roles()->sync(Role::whereIn('name', $roles)->pluck('id'));
+        }
 
         if ($this->email) {
             Mail::to($this->email)->send(new UserInvitationMail($invitation));
@@ -42,6 +52,7 @@ class InvitationManager extends Component
 
         $this->email = '';
         $this->label = '';
+        $this->selectedRoles = [];
         session()->flash('message', $message);
     }
 
@@ -53,7 +64,8 @@ class InvitationManager extends Component
     public function render()
     {
         return view('livewire.invitation-manager', [
-            'invitations' => Invitation::latest()->get(),
+            'invitations' => Invitation::with('roles')->latest()->get(),
+            'assignableRoles' => Role::whereIn('name', auth()->user()->assignableRoles())->get(),
         ]);
     }
 }

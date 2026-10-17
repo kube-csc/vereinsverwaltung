@@ -52,14 +52,16 @@ class CreateNewUser implements CreatesNewUsers
                 'geschlecht' => $input['geschlecht'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
-                'admin' => 1,
                 'sportSections_id' => $input['sportSections_id'],
             ]), function (User $user) use ($input) {
-                Invitation::where('token', $input['token'])->update([
+                $invitation = Invitation::where('token', $input['token'])->first();
+                $invitation->update([
                     'registered_at' => now(),
                     'user_id' => $user->id,
                     'email' => $input['email']
                 ]);
+                // Rollen, die der Einladende ausdrücklich vorgegeben hat
+                $invitation->roles->each(fn ($role) => $user->assignRole($role->name));
                 $this->createTeam($user);
             });
         });

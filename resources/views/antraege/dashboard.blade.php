@@ -14,6 +14,11 @@
                 <p class="mt-2 text-gray-600">
                     Dieser Bereich wird schrittweise aufgebaut. Die Verwaltung von Förder- und Vereinsanträgen folgt in späteren Umsetzungsschritten.
                 </p>
+                @can('antraege.benutzer')
+                    <a href="{{ route('antraege.benutzer') }}" class="inline-block mt-6 mr-6 text-blue-700 underline">
+                        Benutzer und Einladungen
+                    </a>
+                @endcan
                 <a href="{{ route('dashboard') }}" class="inline-block mt-6 text-blue-700 underline">
                     Zurück zum Dashboard
                 </a>

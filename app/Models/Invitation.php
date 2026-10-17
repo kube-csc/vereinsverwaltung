@@ -25,4 +25,9 @@ class Invitation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'invitation_role')->withTimestamps();
+    }
 }

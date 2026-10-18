@@ -55,4 +55,39 @@
     <div class="mt-4">
         {{ $users->links() }}
     </div>
+
+    @can('antraege.rechte_verwalten')
+        <section class="mt-8 border-t border-gray-200 pt-6">
+            <h4 class="text-lg font-semibold text-gray-900">Berechtigungen je Rolle</h4>
+            <p class="mb-4 text-sm text-gray-600">Administratoren besitzen immer alle Rechte. Fördertopfverwalter können ausschließlich Gremium- und Antragstellerrollen vergeben.</p>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="bg-gray-50 px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Rolle</th>
+                            @foreach($permissions as $permission)
+                                <th class="bg-gray-50 px-4 py-3 text-center text-xs font-medium text-gray-500">{{ $permission->label }}</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @foreach($roles as $role)
+                            <tr wire:key="role-permissions-{{ $role->id }}">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $role->label ?? $role->name }}</td>
+                                @foreach($permissions as $permission)
+                                    <td class="px-4 py-3 text-center">
+                                        <input type="checkbox"
+                                               class="h-5 w-5 rounded border-2 border-gray-600 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-200"
+                                               @checked($role->name === \App\Models\Role::ADMINISTRATOR || $role->permissions->contains('id', $permission->id))
+                                               @disabled($role->name === \App\Models\Role::ADMINISTRATOR)
+                                               wire:click="togglePermission({{ $role->id }}, {{ $permission->id }})">
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    @endcan
 </div>

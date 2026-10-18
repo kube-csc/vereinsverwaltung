@@ -3,7 +3,9 @@
 namespace App\Http\Livewire;
 
 use App\Models\Role;
+use App\Models\Permission;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,6 +17,25 @@ class BenutzerRollen extends Component
 
     public string $search = '';
     public int $perPage = 25;
+
+    public function mount(): void
+    {
+        Gate::authorize('antraege.benutzer');
+    }
+
+    public function togglePermission(int $roleId, int $permissionId): void
+    {
+        Gate::authorize('antraege.rechte_verwalten');
+        $role = Role::with('permissions')->findOrFail($roleId);
+        abort_unless($role->name !== Role::ADMINISTRATOR, 422);
+        $permission = Permission::findOrFail($permissionId);
+
+        if ($role->permissions->contains('id', $permission->id)) {
+            $role->permissions()->detach($permission);
+        } else {
+            $role->permissions()->syncWithoutDetaching([$permission->id]);
+        }
+    }
 
     public function updatingSearch(): void
     {
@@ -50,6 +71,7 @@ class BenutzerRollen extends Component
 
     public function render()
     {
+        Gate::authorize('antraege.benutzer');
         $words = preg_split('/\s+/', trim($this->search), -1, PREG_SPLIT_NO_EMPTY);
 
         $users = User::with('roles')
@@ -67,7 +89,8 @@ class BenutzerRollen extends Component
 
         return view('livewire.benutzer-rollen', [
             'users' => $users,
-            'roles' => Role::orderBy('id')->get(),
+            'roles' => Role::with('permissions')->orderBy('id')->get(),
+            'permissions' => Permission::orderBy('id')->get(),
             'assignable' => auth()->user()->assignableRoles(),
         ]);
     }

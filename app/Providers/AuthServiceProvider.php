@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Role;
 use App\Models\Team;
 use App\Models\User;
 use App\Policies\TeamPolicy;
@@ -29,12 +28,22 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // TODO: Übergangsregel `admin >= 4` entfernen, sobald das neue Rollensystem vollständig eingeführt ist.
-        Gate::define('antraege.verwalten', fn (User $user) => $user->admin >= 4 || $user->hasRole(Role::ADMINISTRATOR));
-        Gate::define('antraege.foerdermittel_verwalten', fn (User $user) => $user->admin >= 4 || $user->hasRole(Role::ADMINISTRATOR, Role::GREMIUM));
-        Gate::define('antraege.entscheiden', fn (User $user) => $user->hasRole(Role::GREMIUM));
-        Gate::define('antraege.stellen', fn (User $user) => $user->hasRole(Role::ANTRAGSTELLER));
-        Gate::define('antraege.dashboard', fn (User $user) => $user->can('antraege.foerdermittel_verwalten') || $user->can('antraege.stellen'));
-        Gate::define('antraege.benutzer', fn (User $user) => $user->assignableRoles() !== []);
+        Gate::define('antraege.verwalten', fn (User $user) => $user->hasRole(\App\Models\Role::ADMINISTRATOR));
+        Gate::define('antraege.rechte_verwalten', fn (User $user) => $user->hasRole(\App\Models\Role::ADMINISTRATOR));
+        Gate::define('antraege.foerdermittel_verwalten', fn (User $user) => $user->hasPermission('antraege.foerdermittel_verwalten'));
+        Gate::define('antraege.pruefen', fn (User $user) => $user->hasPermission('antraege.pruefen'));
+        Gate::define('antraege.entscheiden', fn (User $user) => $user->hasPermission('antraege.entscheiden'));
+        Gate::define('antraege.antraege_loeschen', fn (User $user) => $user->hasPermission('antraege.antraege_loeschen'));
+        Gate::define('antraege.pruefbereich', fn (User $user) => $user->can('antraege.pruefen')
+            || $user->can('antraege.antraege_loeschen'));
+        Gate::define('antraege.stellen', fn (User $user) => $user->hasPermission('antraege.stellen'));
+        // TODO: Keep this legacy dashboard entry until all existing admin users are migrated to the new roles.
+        Gate::define('antraege.dashboard', fn (User $user) => $user->admin >= 4
+            || $user->can('antraege.foerdermittel_verwalten')
+            || $user->can('antraege.pruefen')
+            || $user->can('antraege.stellen'));
+        Gate::define('antraege.benutzer', fn (User $user) => $user->admin >= 4
+            || $user->hasRole(\App\Models\Role::ADMINISTRATOR)
+            || $user->can('antraege.foerdermittel_verwalten'));
     }
 }

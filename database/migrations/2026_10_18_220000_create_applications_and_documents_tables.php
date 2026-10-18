@@ -20,6 +20,15 @@ return new class extends Migration
             $table->json('answers');
             $table->string('status', 20)->default('entwurf');
             $table->timestamp('submitted_at')->nullable();
+            $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('reviewed_at')->nullable();
+            $table->text('review_note')->nullable();
+            $table->foreignId('decided_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('decided_at')->nullable();
+            $table->text('decision_reason')->nullable();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->text('deletion_reason')->nullable();
+            $table->softDeletes();
             $table->timestamps();
             $table->index(['user_id', 'status']);
             $table->index(

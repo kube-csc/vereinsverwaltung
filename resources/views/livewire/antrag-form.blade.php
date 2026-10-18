@@ -21,14 +21,14 @@
             <div>
                 <x-label value="Antragstellender Verein *" />
                 <select wire:model="clubId" class="w-full border-gray-300 rounded-md shadow-sm">
-                    <option value="">– bitte eigenen Verein wählen –</option>
+                    <option value="">– bitte Verein wählen –</option>
                     @foreach($clubs as $club)
                         <option value="{{ $club->id }}">{{ $club->clubname }}</option>
                     @endforeach
                 </select>
                 <x-input-error for="clubId" class="mt-1" />
                 @if($clubs->isEmpty())
-                    <p class="mt-1 text-sm text-amber-800">Ihrem Benutzerkonto ist kein Verein zugeordnet. Bitte wenden Sie sich an die Vereinsverwaltung.</p>
+                    <p class="mt-1 text-sm text-amber-800">Es sind keine aktiven Vereine verfügbar. Bitte wenden Sie sich an die Vereinsverwaltung.</p>
                 @endif
             </div>
         @endif

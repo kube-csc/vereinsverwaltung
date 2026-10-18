@@ -135,7 +135,7 @@ class FundingPot extends Model
             /** @var self $pot */
             $pot = static::whereKey($this->getKey())->lockForUpdate()->firstOrFail();
 
-            if (! $pot->istOffen()) {
+            if ($art === FundingPotBinding::RESERVIERT && ! $pot->istOffen()) {
                 throw new DomainException('Der Fördertopf ist nicht offen.');
             }
             if ($cent > $pot->budgetInCent() - $pot->summeInCent()) {

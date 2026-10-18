@@ -65,9 +65,25 @@
                             </td>
                             <td class="px-4 py-3 text-gray-700">{{ $application->club?->clubname ?? '–' }}</td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ $application->status === $draftStatus ? 'bg-amber-100 text-amber-900' : 'bg-green-100 text-green-900' }}">
-                                    {{ $application->status === $draftStatus ? 'Entwurf' : 'Eingereicht' }}
+                                <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ match($application->status) {
+                                    \App\Models\Application::STATUS_DRAFT => 'bg-amber-100 text-amber-900',
+                                    \App\Models\Application::STATUS_APPROVED => 'bg-green-100 text-green-900',
+                                    \App\Models\Application::STATUS_REJECTED => 'bg-red-100 text-red-900',
+                                    \App\Models\Application::STATUS_IN_REVIEW => 'bg-blue-100 text-blue-900',
+                                    default => 'bg-gray-100 text-gray-900',
+                                } }}">
+                                    {{ match($application->status) {
+                                        \App\Models\Application::STATUS_DRAFT => 'Entwurf',
+                                        \App\Models\Application::STATUS_SUBMITTED => 'Eingereicht',
+                                        \App\Models\Application::STATUS_IN_REVIEW => 'In Prüfung',
+                                        \App\Models\Application::STATUS_APPROVED => 'Bewilligt',
+                                        \App\Models\Application::STATUS_REJECTED => 'Abgelehnt',
+                                        default => $application->status,
+                                    } }}
                                 </span>
+                                @if($application->decision_reason)
+                                    <span class="mt-1 block max-w-xs text-xs text-gray-600">{{ $application->decision_reason }}</span>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-gray-700">
                                 {{ $application->submitted_at?->format('d.m.Y H:i') ?? $application->updated_at->format('d.m.Y H:i') }}

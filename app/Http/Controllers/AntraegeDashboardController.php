@@ -11,7 +11,8 @@ class AntraegeDashboardController extends Controller
     public function __invoke()
     {
         $stats = [];
-        if (auth()->user()->can('antraege.verwalten')) {
+        // TODO: Remove the legacy admin-level fallback after existing administrators are migrated to roles.
+        if (auth()->user()->can('antraege.verwalten') || auth()->user()->admin >= 4) {
             $pots = FundingPot::all();
             $offene = $pots->filter(fn (FundingPot $pot) => $pot->istOffen());
             $verfuegbar = $offene->sum(fn (FundingPot $pot) => $pot->verfuegbar());

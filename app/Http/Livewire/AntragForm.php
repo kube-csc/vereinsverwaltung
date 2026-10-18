@@ -94,7 +94,6 @@ class AntragForm extends Component
                 $submitting && $type->requires_club ? 'required' : 'nullable',
                 'integer',
                 Rule::exists('clubs', 'id')->where(fn ($query) => $query
-                    ->where('user_id', auth()->id())
                     ->whereNull('deleted_at')),
             ],
             'bankAccountId' => [
@@ -218,7 +217,7 @@ class AntragForm extends Component
         try {
             $saved = DB::transaction(function () use ($application, $type, $answers, $clubId, $accountId, $fundingPotId, $submitting, &$newPaths, &$replacedPaths) {
                 $club = $clubId
-                    ? Club::where('user_id', auth()->id())->whereNull('deleted_at')->lockForUpdate()->findOrFail($clubId)
+                    ? Club::whereNull('deleted_at')->lockForUpdate()->findOrFail($clubId)
                     : null;
                 $account = $accountId
                     ? auth()->user()->bankAccounts()->lockForUpdate()->findOrFail($accountId)
@@ -375,7 +374,7 @@ class AntragForm extends Component
             'applicationType' => $type,
             'accounts' => auth()->user()->bankAccounts()->orderBy('kontoinhaber')->get(),
             'clubs' => $type->requires_club
-                ? Club::where('user_id', auth()->id())->orderBy('clubname')->get()
+                ? Club::whereNull('deleted_at')->orderBy('clubname')->get()
                 : collect(),
             'fundingPots' => $fundingPots,
             'selectedFundingPot' => $this->fundingPotId

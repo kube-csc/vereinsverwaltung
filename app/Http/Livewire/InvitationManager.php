@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\Invitation;
 use App\Models\Role;
 use App\Mail\UserInvitationMail;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -21,8 +22,14 @@ class InvitationManager extends Component
         'selectedRoles' => 'array',
     ];
 
+    public function mount(): void
+    {
+        Gate::authorize('antraege.benutzer');
+    }
+
     public function sendInvitation()
     {
+        Gate::authorize('antraege.benutzer');
         $this->validate();
 
         if (empty($this->email) && empty($this->label)) {
@@ -58,11 +65,13 @@ class InvitationManager extends Component
 
     public function deleteInvitation($id)
     {
+        Gate::authorize('antraege.benutzer');
         Invitation::findOrFail($id)->delete();
     }
 
     public function render()
     {
+        Gate::authorize('antraege.benutzer');
         return view('livewire.invitation-manager', [
             'invitations' => Invitation::with('roles')->latest()->get(),
             'assignableRoles' => Role::whereIn('name', auth()->user()->assignableRoles())->get(),

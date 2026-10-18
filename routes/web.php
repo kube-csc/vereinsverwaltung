@@ -73,6 +73,10 @@ Route::middleware(['auth:sanctum', 'verified', 'can:antraege.benutzer'])->get('/
     return view('antraege.benutzer');
 })->name('antraege.benutzer');
 
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.pruefbereich'])->get('/antraege/pruefung', function () {
+    return view('antraege.pruefung');
+})->name('antraege.pruefung');
+
 Route::middleware(['auth:sanctum', 'verified', 'can:antraege.stellen'])->get('/antraege/bankkonten', function () {
     return view('antraege.bankkonten');
 })->name('antraege.bankkonten');

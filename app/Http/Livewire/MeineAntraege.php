@@ -27,7 +27,7 @@ class MeineAntraege extends Component
                 ->filter(fn (ApplicationType $type) => ! $type->requires_funding_pot
                     || $type->fundingPots->contains(fn ($pot) => $pot->istOffen())),
             'applications' => $user->applications()
-                ->with('applicationType', 'club', 'fundingPot.program')
+                ->with('applicationType', 'club', 'fundingPot.program', 'decider')
                 ->latest()
                 ->get(),
             'draftStatus' => Application::STATUS_DRAFT,

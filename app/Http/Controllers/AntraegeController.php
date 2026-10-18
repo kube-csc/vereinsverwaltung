@@ -52,8 +52,10 @@ class AntraegeController extends Controller
     public function download(ApplicationDocument $applicationDocument)
     {
         $application = $applicationDocument->application;
-        $isReviewer = Gate::allows('antraege.verwalten') || Gate::allows('antraege.entscheiden');
-        $isOwner = $application->user_id === auth()->id() && Gate::allows('antraege.stellen');
+        $isReviewer = Gate::allows('antraege.pruefen');
+        $isOwner = ! $application->trashed()
+            && $application->user_id === auth()->id()
+            && Gate::allows('antraege.stellen');
 
         abort_unless($isOwner || $isReviewer, 403);
 

@@ -92,6 +92,14 @@
                                             <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
                                                 <span class="font-bold text-lg">Zur Antragsverwaltung</span>
                                             </a>
+                                        @elseif(auth()->user()->can('antraege.pruefbereich'))
+                                            <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-indigo-100">
+                                                <span class="font-bold text-lg">Zur Antragsprüfung</span>
+                                            </a>
+                                        @elseif(auth()->user()->admin >= 4)
+                                            <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
+                                                <span class="font-bold text-lg">Zur Antragsverwaltung</span>
+                                            </a>
                                         @endcan
                                         @can('antraege.stellen')
                                             <a href="{{ route('antraege.meine') }}" class="block rounded border shadow p-3 my-2 bg-green-100">

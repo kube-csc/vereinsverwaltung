@@ -14,14 +14,19 @@
                         @can('antraege.foerdermittel_verwalten')
                             Verwalten Sie Förderprogramme, Fördertöpfe und Antragsformulare an einem Ort.
                             @can('antraege.verwalten') Benutzerverwaltung und weitere Administrationsfunktionen sind ebenfalls verfügbar.@endcan
-                        @else
+                        @elseif(auth()->user()->can('antraege.stellen'))
                             Stellen Sie Förderanträge, speichern Sie Entwürfe und behalten Sie den Status Ihrer Anträge im Blick.
+                        @elseif(auth()->user()->admin >= 4)
+                            Sie sehen diese Verwaltungsübersicht noch aufgrund Ihrer bisherigen Admin-Stufe. Die fachlichen Verwaltungsrechte werden über das neue Rechtesystem vergeben.
+                        @else
+                            Prüfen Sie eingereichte Anträge und dokumentieren Sie nachvollziehbar Ihre Entscheidungen.
                         @endcan
                     </p>
                 </div>
             </div>
 
-            @can('antraege.foerdermittel_verwalten')
+            {{-- TODO: Remove the legacy admin-level fallback after existing administrators are migrated to roles. --}}
+            @if(auth()->user()->can('antraege.foerdermittel_verwalten') || auth()->user()->admin >= 4)
             @if(!empty($stats))
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     @foreach($stats as $stat)
@@ -35,7 +40,7 @@
                     @endforeach
                 </div>
             @endif
-            @endcan
+            @endif
 
             <div>
                 <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Bereiche</h4>
@@ -61,12 +66,23 @@
                         </a>
                     @endcan
 
-                    @can('antraege.benutzer')
+                    {{-- TODO: Remove the legacy admin-level fallback after existing administrators are migrated to roles. --}}
+                    @if(auth()->user()->can('antraege.benutzer') || auth()->user()->admin >= 4)
                         <a href="{{ route('antraege.benutzer') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-green-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">
                             <span class="flex-shrink-0 h-12 w-12 rounded-lg bg-green-100 text-green-700 flex items-center justify-center text-xl"><i class="fas fa-users"></i></span>
                             <span>
                                 <span class="block font-semibold text-gray-900 group-hover:text-blue-700">Benutzer und Einladungen</span>
                                 <span class="block mt-1 text-sm text-gray-600">Einladungslinks erstellen und Rollen zuweisen.</span>
+                            </span>
+                        </a>
+                    @endcan
+
+                    @can('antraege.pruefbereich')
+                        <a href="{{ route('antraege.pruefung') }}" class="group flex items-start space-x-4 rounded-xl border border-gray-300 bg-gray-50 p-6 shadow-md transition-all duration-200 hover:border-indigo-500 hover:bg-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
+                            <span class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-xl text-indigo-700"><i class="fas fa-clipboard-check"></i></span>
+                            <span>
+                                <span class="block font-semibold text-gray-900 group-hover:text-indigo-700">Antragsprüfung und Archiv</span>
+                                <span class="mt-1 block text-sm text-gray-600">Anträge prüfen, begründet entscheiden und eingereichte Förderanträge archivieren.</span>
                             </span>
                         </a>
                     @endcan

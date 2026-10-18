@@ -12,7 +12,6 @@ use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 //Ergänzt
@@ -83,6 +82,17 @@ class User extends Authenticatable
         return $this->roles->pluck('name')->intersect($roles)->isNotEmpty();
     }
 
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->hasRole(Role::ADMINISTRATOR)) {
+            return true;
+        }
+
+        return $this->roles()
+            ->whereHas('permissions', fn ($query) => $query->where('name', $permission))
+            ->exists();
+    }
+
     public function assignRole(string $role): void
     {
         $this->roles()->syncWithoutDetaching([Role::where('name', $role)->firstOrFail()->id]);
@@ -97,15 +107,22 @@ class User extends Authenticatable
 
     /**
      * Rollen, die dieser Benutzer anderen Konten zuweisen darf:
-     * Administratoren alle, Gremiumsmitglieder nur „Antragsteller“.
+     * Administratoren dürfen alle Rollen, Fördertopfverwalter nur Gremium und Antragsteller.
      */
     public function assignableRoles(): array
     {
-        if (Gate::forUser($this)->allows('antraege.verwalten')) {
-            return [Role::ADMINISTRATOR, Role::GREMIUM, Role::ANTRAGSTELLER];
+        if ($this->hasRole(Role::ADMINISTRATOR)) {
+            return Role::pluck('name')->all();
         }
 
-        return $this->hasRole(Role::GREMIUM) ? [Role::ANTRAGSTELLER] : [];
+        // TODO: Remove this legacy role-assignment access after existing administrators are migrated.
+        if ($this->admin >= 4) {
+            return Role::pluck('name')->all();
+        }
+
+        return $this->hasPermission('antraege.benutzer')
+            ? [Role::GREMIUM, Role::ANTRAGSTELLER]
+            : [];
     }
 
     public function bankAccounts(): HasMany

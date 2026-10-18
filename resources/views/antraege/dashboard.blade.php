@@ -67,6 +67,16 @@
                         </a>
                     @endcan
 
+                    @can('antraege.verwalten')
+                        <a href="{{ route('antraege.antragsarten') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-purple-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">
+                            <span class="flex-shrink-0 h-12 w-12 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center text-xl"><i class="fas fa-list-alt"></i></span>
+                            <span>
+                                <span class="block font-semibold text-gray-900 group-hover:text-purple-700">Antragsarten und Formulare</span>
+                                <span class="block mt-1 text-sm text-gray-600">Formulare, Pflichtfelder, Auswahlmöglichkeiten, Anlagen und Fristen konfigurieren.</span>
+                            </span>
+                        </a>
+                    @endcan
+
                     <div class="bg-gray-100 border-2 border-dashed border-gray-400 rounded-xl p-6 flex items-start space-x-4">
                         <span class="flex-shrink-0 h-12 w-12 rounded-lg bg-gray-300 text-gray-700 flex items-center justify-center text-xl"><i class="fas fa-file-alt"></i></span>
                         <span>

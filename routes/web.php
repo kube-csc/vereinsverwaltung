@@ -81,6 +81,10 @@ Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('
     return view('antraege.foerdertoepfe');
 })->name('antraege.foerderprogramme');
 
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('/antraege/antragsarten', function () {
+    return view('antraege.antragsarten');
+})->name('antraege.antragsarten');
+
 Route::middleware(['auth:sanctum', 'verified'])->get('/Adminmenu', function () {
     return view('admin.adminmenu');
 })->name('adminmenu');

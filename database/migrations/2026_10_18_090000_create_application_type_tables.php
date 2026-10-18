@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('beschreibung')->nullable();
             $table->date('frist')->nullable();
+            $table->boolean('requires_club')->default(false);
+            $table->boolean('requires_funding_pot')->default(false);
             $table->boolean('aktiv')->default(true);
             $table->timestamps();
         });
@@ -32,10 +34,19 @@ return new class extends Migration
             $table->timestamps();
             $table->unique(['application_type_id', 'key']);
         });
+
+        Schema::create('application_type_funding_pot', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('application_type_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('funding_pot_id')->constrained()->restrictOnDelete();
+            $table->timestamps();
+            $table->unique(['application_type_id', 'funding_pot_id'], 'application_type_funding_pot_unique');
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('application_type_funding_pot');
         Schema::dropIfExists('application_fields');
         Schema::dropIfExists('application_types');
     }

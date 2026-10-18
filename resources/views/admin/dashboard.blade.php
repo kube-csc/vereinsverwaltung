@@ -88,7 +88,7 @@
 
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                        @can('antraege.verwalten')
+                                        @can('antraege.foerdermittel_verwalten')
                                             <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
                                                 <span class="font-bold text-lg">Zur Antragsverwaltung</span>
                                             </a>

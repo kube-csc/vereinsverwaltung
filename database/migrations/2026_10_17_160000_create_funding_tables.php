@@ -27,6 +27,8 @@ return new class extends Migration
             $table->date('ende')->nullable();
             $table->decimal('budget', 12, 2)->default(0);
             $table->boolean('geschlossen')->default(false);
+            $table->unsignedInteger('max_applications_per_user')->default(1);
+            $table->unsignedInteger('max_applications_per_club')->nullable();
             $table->timestamps();
         });
 

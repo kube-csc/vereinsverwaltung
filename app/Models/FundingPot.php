@@ -17,7 +17,12 @@ class FundingPot extends Model
 
     protected $fillable = [
         'funding_program_id', 'name', 'beschreibung', 'jahr', 'laufzeit',
-        'beginn', 'ende', 'budget', 'geschlossen',
+        'beginn', 'ende', 'budget', 'geschlossen', 'max_applications_per_user',
+        'max_applications_per_club',
+    ];
+
+    protected $attributes = [
+        'max_applications_per_user' => 1,
     ];
 
     protected $casts = [
@@ -25,6 +30,8 @@ class FundingPot extends Model
         'ende' => 'date',
         'budget' => 'decimal:2',
         'geschlossen' => 'boolean',
+        'max_applications_per_user' => 'integer',
+        'max_applications_per_club' => 'integer',
     ];
 
     public function program(): BelongsTo

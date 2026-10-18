@@ -28,7 +28,7 @@ class Antragsarten extends Component
 
     private function authorizeVerwalten(): void
     {
-        Gate::authorize('antraege.verwalten');
+        Gate::authorize('antraege.foerdermittel_verwalten');
     }
 
     public function newType(): void
@@ -150,6 +150,14 @@ class Antragsarten extends Component
             'fields.*.options_text.required' => 'Für ein aktives Auswahlfeld muss mindestens eine Auswahlmöglichkeit angegeben werden.',
             'fields.*.options_text.not_regex' => 'Für ein aktives Auswahlfeld muss mindestens eine Auswahlmöglichkeit angegeben werden.',
         ]);
+
+        if ($this->typeId && ! $data['requiresClub']
+            && ApplicationType::whereKey($this->typeId)
+                ->whereHas('fundingPots', fn ($query) => $query->whereNotNull('max_applications_per_club'))
+                ->exists()) {
+            $this->addError('requiresClub', 'Die Vereinszuordnung kann nicht deaktiviert werden, solange ein zugeordneter Fördertopf eine Höchstzahl je Verein festlegt.');
+            return;
+        }
 
         DB::transaction(function () use ($data) {
             if ($this->typeId) {

@@ -11,8 +11,9 @@
                     <p class="text-sm uppercase tracking-wide text-blue-100">Willkommen, {{ auth()->user()->vorname ?: auth()->user()->name }}</p>
                     <h3 class="mt-1 text-2xl sm:text-3xl font-bold">Förder- und Vereinsanträge im Überblick</h3>
                     <p class="mt-2 text-blue-100 max-w-2xl">
-                        @can('antraege.verwalten')
-                            Verwalten Sie Förderprogramme, Fördertöpfe, Benutzer und Antragsformulare an einem Ort.
+                        @can('antraege.foerdermittel_verwalten')
+                            Verwalten Sie Förderprogramme, Fördertöpfe und Antragsformulare an einem Ort.
+                            @can('antraege.verwalten') Benutzerverwaltung und weitere Administrationsfunktionen sind ebenfalls verfügbar.@endcan
                         @else
                             Stellen Sie Förderanträge, speichern Sie Entwürfe und behalten Sie den Status Ihrer Anträge im Blick.
                         @endcan
@@ -20,7 +21,7 @@
                 </div>
             </div>
 
-            @can('antraege.verwalten')
+            @can('antraege.foerdermittel_verwalten')
             @if(!empty($stats))
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     @foreach($stats as $stat)
@@ -50,7 +51,7 @@
                         </a>
                     @endcan
 
-                    @can('antraege.verwalten')
+                    @can('antraege.foerdermittel_verwalten')
                         <a href="{{ route('antraege.foerderprogramme') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-blue-400 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">
                             <span class="flex-shrink-0 h-12 w-12 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xl"><i class="fas fa-coins"></i></span>
                             <span>
@@ -80,7 +81,7 @@
                         </a>
                     @endcan
 
-                    @can('antraege.verwalten')
+                    @can('antraege.foerdermittel_verwalten')
                         <a href="{{ route('antraege.antragsarten') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-purple-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">
                             <span class="flex-shrink-0 h-12 w-12 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center text-xl"><i class="fas fa-list-alt"></i></span>
                             <span>

@@ -36,7 +36,7 @@
         @if($fundingPots->isNotEmpty() || $applicationType->requires_funding_pot)
             <div>
                 <x-label value="Fördertopf{{ $applicationType->requires_funding_pot ? ' *' : '' }}" />
-                <select wire:model="fundingPotId" class="w-full border-gray-300 rounded-md shadow-sm">
+                <select wire:model.live="fundingPotId" class="w-full border-gray-300 rounded-md shadow-sm">
                     <option value="">– bitte offenen Fördertopf wählen –</option>
                     @foreach($fundingPots as $pot)
                         <option value="{{ $pot->id }}" @disabled(! $pot->istOffen())>
@@ -48,6 +48,19 @@
                     <p class="mt-1 text-sm text-amber-800">Für diese Antragsart ist derzeit kein offener zugeordneter Fördertopf verfügbar.</p>
                 @endif
                 <x-input-error for="fundingPotId" class="mt-1" />
+                @if($selectedFundingPot && ($selectedFundingPot->max_applications_per_user || $selectedFundingPot->max_applications_per_club))
+                    <p class="mt-1 text-xs text-gray-600">
+                        Höchstzahl für diesen Topf:
+                        @if($selectedFundingPot->max_applications_per_user)
+                            {{ $selectedFundingPot->max_applications_per_user }} je Antragstellerkonto
+                        @endif
+                        @if($selectedFundingPot->max_applications_per_user && $selectedFundingPot->max_applications_per_club) · @endif
+                        @if($selectedFundingPot->max_applications_per_club)
+                            {{ $selectedFundingPot->max_applications_per_club }} je Verein
+                        @endif
+                        (eingereichte Anträge).
+                    </p>
+                @endif
                 <p class="mt-1 text-xs text-gray-600">Der Fördertopf ordnet den Antrag einem Programm/Budget zu. Eine Budgetreservierung erfolgt erst bei einer späteren Entscheidung.</p>
             </div>
         @endif

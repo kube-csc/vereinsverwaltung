@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('application_type_id')->constrained()->restrictOnDelete();
+            $table->foreignId('funding_pot_id')->nullable()->constrained('funding_pots')->restrictOnDelete();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
             $table->foreignId('club_id')->nullable()->constrained('clubs')->nullOnDelete();
             $table->foreignId('bank_account_id')->nullable()->constrained('bank_accounts')->nullOnDelete();
@@ -21,6 +22,14 @@ return new class extends Migration
             $table->timestamp('submitted_at')->nullable();
             $table->timestamps();
             $table->index(['user_id', 'status']);
+            $table->index(
+                ['funding_pot_id', 'user_id', 'submitted_at'],
+                'applications_pot_user_submission_limit_index'
+            );
+            $table->index(
+                ['funding_pot_id', 'club_id', 'submitted_at'],
+                'applications_pot_club_submission_limit_index'
+            );
         });
 
         Schema::create('application_documents', function (Blueprint $table) {

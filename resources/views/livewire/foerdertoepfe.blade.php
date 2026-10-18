@@ -38,6 +38,8 @@
                             <th class="px-4 py-2 text-right">Reserviert</th>
                             <th class="px-4 py-2 text-right">Bewilligt</th>
                             <th class="px-4 py-2 text-right">Verfügbar</th>
+                            <th class="px-4 py-2 text-right">Max. je Person</th>
+                            <th class="px-4 py-2 text-right">Max. je Verein</th>
                             <th class="px-4 py-2">Status</th>
                             <th class="px-4 py-2 text-right">Aktionen</th>
                         </tr>
@@ -64,6 +66,8 @@
                                 <td class="px-4 py-2 text-right">{{ number_format($pot->reserviert(), 2, ',', '.') }} €</td>
                                 <td class="px-4 py-2 text-right">{{ number_format($pot->bewilligt(), 2, ',', '.') }} €</td>
                                 <td class="px-4 py-2 text-right font-semibold">{{ number_format($pot->verfuegbar(), 2, ',', '.') }} €</td>
+                                <td class="px-4 py-2 text-right">{{ $pot->max_applications_per_user ?? 'Unbegrenzt' }}</td>
+                                <td class="px-4 py-2 text-right">{{ $pot->max_applications_per_club ?? 'Unbegrenzt' }}</td>
                                 <td class="px-4 py-2">
                                     <span class="inline-block text-xs font-medium rounded-full px-2 py-0.5 {{ $pot->istOffen() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ $pot->statusLabel() }}</span>
                                 </td>
@@ -74,7 +78,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="9" class="px-4 py-3 text-center text-gray-500">Noch keine Fördertöpfe.</td></tr>
+                            <tr><td colspan="11" class="px-4 py-3 text-center text-gray-500">Noch keine Fördertöpfe.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -158,6 +162,19 @@
                 <x-input type="text" wire:model="potBudget" class="w-full" placeholder="z. B. 15.000,00" />
                 <x-input-error for="potBudget" class="mt-1" />
             </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <x-label value="Max. Anträge je Antragstellerkonto" />
+                    <x-input type="number" min="1" wire:model="potMaxApplicationsPerUser" class="w-full" />
+                    <x-input-error for="potMaxApplicationsPerUser" class="mt-1" />
+                </div>
+                <div>
+                    <x-label value="Max. Anträge je Verein (optional)" />
+                    <x-input type="number" min="1" wire:model="potMaxApplicationsPerClub" class="w-full" />
+                    <x-input-error for="potMaxApplicationsPerClub" class="mt-1" />
+                </div>
+            </div>
+            <p class="text-xs text-gray-600">Je Antragstellerkonto ist mindestens eine Höchstzahl erforderlich (Standard: 1). Eine Vereinsgrenze ist optional und nur bei Antragsarten mit erforderlicher Vereinszuordnung möglich. Entwürfe zählen nicht; eingereichte Anträge zählen auch nach Ablehnung oder Rücknahme weiter.</p>
             <div>
                 <x-label value="Beschreibung (optional)" />
                 <textarea wire:model="potBeschreibung" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>

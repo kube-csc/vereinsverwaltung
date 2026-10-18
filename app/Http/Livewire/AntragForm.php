@@ -233,7 +233,31 @@ class AntragForm extends Component
                     ($type->requires_funding_pot && ! $fundingPot)
                     || ($fundingPot && ! $fundingPot->istOffen())
                 )) {
-                    return false;
+                    return 'pot_unavailable';
+                }
+
+                if ($submitting && $fundingPot?->max_applications_per_user !== null) {
+                    $userApplications = Application::query()
+                        ->where('funding_pot_id', $fundingPot->id)
+                        ->where('user_id', auth()->id())
+                        ->whereNotNull('submitted_at')
+                        ->count();
+
+                    if ($userApplications >= $fundingPot->max_applications_per_user) {
+                        return 'user_limit';
+                    }
+                }
+
+                if ($submitting && $club && $fundingPot?->max_applications_per_club !== null) {
+                    $clubApplications = Application::query()
+                        ->where('funding_pot_id', $fundingPot->id)
+                        ->where('club_id', $club->id)
+                        ->whereNotNull('submitted_at')
+                        ->count();
+
+                    if ($clubApplications >= $fundingPot->max_applications_per_club) {
+                        return 'club_limit';
+                    }
                 }
 
                 $application->fill([
@@ -301,9 +325,14 @@ class AntragForm extends Component
             throw $exception;
         }
 
-        if (! $saved) {
+        if ($saved !== true) {
             Storage::disk('local')->delete($newPaths);
-            $this->addError('fundingPotId', 'Der ausgewählte Fördertopf ist inzwischen geschlossen oder nicht mehr verfügbar. Bitte wählen Sie einen offenen Topf.');
+            $message = match ($saved) {
+                'user_limit' => 'Sie haben die Höchstzahl eingereichter Anträge für diesen Fördertopf erreicht.',
+                'club_limit' => 'Für diesen Verein ist die Höchstzahl eingereichter Anträge für diesen Fördertopf erreicht.',
+                default => 'Der ausgewählte Fördertopf ist inzwischen geschlossen oder nicht mehr verfügbar. Bitte wählen Sie einen offenen Topf.',
+            };
+            $this->addError('fundingPotId', $message);
             return;
         }
 
@@ -349,6 +378,9 @@ class AntragForm extends Component
                 ? Club::where('user_id', auth()->id())->orderBy('clubname')->get()
                 : collect(),
             'fundingPots' => $fundingPots,
+            'selectedFundingPot' => $this->fundingPotId
+                ? $mappedFundingPots->firstWhere('id', (int) $this->fundingPotId)
+                : null,
             'documents' => $application?->documents ?? collect(),
             'deadlinePassed' => $type->frist?->isBefore(today()) ?? false,
         ]);

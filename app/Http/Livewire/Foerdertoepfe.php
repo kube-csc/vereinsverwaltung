@@ -24,6 +24,8 @@ class Foerdertoepfe extends Component
     public string $potBeginn = '';
     public string $potEnde = '';
     public string $potBudget = '';
+    public string $potMaxApplicationsPerUser = '1';
+    public string $potMaxApplicationsPerClub = '';
     public array $potApplicationTypeIds = [];
 
     public function mount(): void
@@ -33,7 +35,7 @@ class Foerdertoepfe extends Component
 
     private function authorizeVerwalten(): void
     {
-        abort_unless(Gate::allows('antraege.verwalten'), 403);
+        abort_unless(Gate::allows('antraege.foerdermittel_verwalten'), 403);
     }
 
     /** Akzeptiert „1.500,50“ und „1500.50“. */
@@ -117,6 +119,8 @@ class Foerdertoepfe extends Component
             'potBeginn' => ['nullable', 'date', 'required_if:potLaufzeit,' . FundingPot::BEFRISTET],
             'potEnde' => ['nullable', 'date', 'required_if:potLaufzeit,' . FundingPot::BEFRISTET, 'after_or_equal:potBeginn'],
             'potBudget' => ['required', 'numeric', 'min:0', 'max:9999999999'],
+            'potMaxApplicationsPerUser' => ['required', 'integer', 'min:1', 'max:4294967295'],
+            'potMaxApplicationsPerClub' => ['nullable', 'integer', 'min:1', 'max:4294967295'],
             'potApplicationTypeIds' => ['array'],
             'potApplicationTypeIds.*' => ['integer', 'distinct', 'exists:application_types,id'],
         ], [], [
@@ -125,6 +129,15 @@ class Foerdertoepfe extends Component
         ]);
 
         $fortlaufend = $data['potLaufzeit'] === FundingPot::FORTLAUFEND;
+        $requiresClub = ApplicationType::whereIn('id', array_map('intval', $data['potApplicationTypeIds']))
+            ->where('requires_club', false)
+            ->exists();
+
+        if (filled($data['potMaxApplicationsPerClub'])
+            && (empty($data['potApplicationTypeIds']) || $requiresClub)) {
+            $this->addError('potMaxApplicationsPerClub', 'Eine Höchstzahl je Verein ist nur möglich, wenn alle zugeordneten Antragsarten eine Vereinszuordnung verlangen.');
+            return;
+        }
 
         $attributes = [
             'funding_program_id' => $data['potProgramId'],
@@ -135,6 +148,8 @@ class Foerdertoepfe extends Component
             'beginn' => $fortlaufend ? null : $data['potBeginn'],
             'ende' => $fortlaufend ? null : $data['potEnde'],
             'budget' => $data['potBudget'],
+            'max_applications_per_user' => $data['potMaxApplicationsPerUser'] ?: null,
+            'max_applications_per_club' => $data['potMaxApplicationsPerClub'] ?: null,
         ];
 
         if ($this->potId) {
@@ -169,6 +184,8 @@ class Foerdertoepfe extends Component
         $this->potBeginn = $pot->beginn?->format('Y-m-d') ?? '';
         $this->potEnde = $pot->ende?->format('Y-m-d') ?? '';
         $this->potBudget = (string) $pot->budget;
+        $this->potMaxApplicationsPerUser = (string) $pot->max_applications_per_user;
+        $this->potMaxApplicationsPerClub = (string) $pot->max_applications_per_club;
         $this->potApplicationTypeIds = $pot->applicationTypes()->pluck('application_types.id')->map(fn ($id) => (string) $id)->all();
     }
 
@@ -180,7 +197,12 @@ class Foerdertoepfe extends Component
 
     public function cancelPot(): void
     {
-        $this->reset(['potId', 'potProgramId', 'potName', 'potBeschreibung', 'potJahr', 'potBeginn', 'potEnde', 'potBudget', 'potApplicationTypeIds']);
+        $this->reset([
+            'potId', 'potProgramId', 'potName', 'potBeschreibung', 'potJahr',
+            'potBeginn', 'potEnde', 'potBudget', 'potMaxApplicationsPerUser',
+            'potMaxApplicationsPerClub', 'potApplicationTypeIds',
+        ]);
+        $this->potMaxApplicationsPerUser = '1';
         $this->potLaufzeit = FundingPot::BEFRISTET;
         $this->resetValidation();
     }

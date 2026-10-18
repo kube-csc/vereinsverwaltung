@@ -77,11 +77,11 @@ Route::middleware(['auth:sanctum', 'verified', 'can:antraege.stellen'])->get('/a
     return view('antraege.bankkonten');
 })->name('antraege.bankkonten');
 
-Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('/antraege/foerderprogramme', function () {
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.foerdermittel_verwalten'])->get('/antraege/foerderprogramme', function () {
     return view('antraege.foerdertoepfe');
 })->name('antraege.foerderprogramme');
 
-Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('/antraege/antragsarten', function () {
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.foerdermittel_verwalten'])->get('/antraege/antragsarten', function () {
     return view('antraege.antragsarten');
 })->name('antraege.antragsarten');
 

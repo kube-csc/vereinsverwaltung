@@ -30,6 +30,8 @@
                         {{ $applicationType->fields->where('aktiv', true)->count() }} aktive Formularfelder
                         <span class="mx-1">·</span>
                         {{ $applicationType->requires_club ? 'Vereinsauswahl erforderlich' : 'Keine Vereinsauswahl' }}
+                        <span class="mx-1">·</span>
+                        {{ $applicationType->requires_funding_pot ? 'Fördertopf erforderlich' : 'Fördertopf optional' }}
                     </p>
                     <div class="flex gap-4 text-sm">
                         <button type="button" wire:click="editType({{ $applicationType->id }})" class="font-medium text-blue-700 hover:underline">Bearbeiten</button>
@@ -75,6 +77,16 @@
                     </span>
                 </label>
                 <x-input-error for="requiresClub" class="mt-1" />
+            </div>
+            <div class="md:col-span-2">
+                <label class="inline-flex items-start text-sm text-gray-700">
+                    <input type="checkbox" wire:model="requiresFundingPot" class="mt-0.5 h-5 w-5 rounded border-2 border-gray-600 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-2">
+                        <span class="block font-medium">Bei dieser Antragsart einen Fördertopf verlangen</span>
+                        <span class="block text-gray-600">Ordnen Sie passende Fördertöpfe in der Verwaltung „Förderprogramme und Fördertöpfe“ zu. Antragstellende können dann nur einen zugeordneten, aktuell offenen Topf auswählen.</span>
+                    </span>
+                </label>
+                <x-input-error for="requiresFundingPot" class="mt-1" />
             </div>
         </div>
 

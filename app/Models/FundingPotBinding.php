@@ -18,4 +18,9 @@ class FundingPotBinding extends Model
     {
         return $this->belongsTo(FundingPot::class, 'funding_pot_id');
     }
+
+    public function application(): BelongsTo
+    {
+        return $this->belongsTo(Application::class);
+    }
 }

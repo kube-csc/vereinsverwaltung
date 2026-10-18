@@ -33,6 +33,25 @@
             </div>
         @endif
 
+        @if($fundingPots->isNotEmpty() || $applicationType->requires_funding_pot)
+            <div>
+                <x-label value="Fördertopf{{ $applicationType->requires_funding_pot ? ' *' : '' }}" />
+                <select wire:model="fundingPotId" class="w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="">– bitte offenen Fördertopf wählen –</option>
+                    @foreach($fundingPots as $pot)
+                        <option value="{{ $pot->id }}" @disabled(! $pot->istOffen())>
+                            {{ $pot->program->name }} – {{ $pot->name }}{{ $pot->jahr ? ' (' . $pot->jahr . ')' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+                @if($applicationType->requires_funding_pot && $fundingPots->filter(fn ($pot) => $pot->istOffen())->isEmpty())
+                    <p class="mt-1 text-sm text-amber-800">Für diese Antragsart ist derzeit kein offener zugeordneter Fördertopf verfügbar.</p>
+                @endif
+                <x-input-error for="fundingPotId" class="mt-1" />
+                <p class="mt-1 text-xs text-gray-600">Der Fördertopf ordnet den Antrag einem Programm/Budget zu. Eine Budgetreservierung erfolgt erst bei einer späteren Entscheidung.</p>
+            </div>
+        @endif
+
         @foreach($applicationType->fields as $field)
             <div wire:key="feld-{{ $field->id }}">
                 @if($field->type === 'checkbox')

@@ -8,6 +8,7 @@ use App\Models\ApplicationField;
 use App\Models\ApplicationType;
 use App\Models\BankAccount;
 use App\Models\Club;
+use App\Models\FundingPot;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -25,6 +26,7 @@ class AntragForm extends Component
     public ?int $applicationId = null;
     public ?string $clubId = null;
     public ?string $bankAccountId = null;
+    public ?string $fundingPotId = null;
     public array $formData = [];
     public array $uploads = [];
 
@@ -41,6 +43,7 @@ class AntragForm extends Component
             $this->bankAccountId = $application->bankAccount()->exists()
                 ? (string) $application->bank_account_id
                 : null;
+            $this->fundingPotId = $application->funding_pot_id ? (string) $application->funding_pot_id : null;
             $this->formData = $application->answers ?? [];
         } else {
             $this->applicationType();
@@ -100,6 +103,12 @@ class AntragForm extends Component
                 Rule::exists('bank_accounts', 'id')->where(fn ($query) => $query
                     ->where('user_id', auth()->id())
                     ->whereNull('deleted_at')),
+            ],
+            'fundingPotId' => [
+                $submitting && $type->requires_funding_pot ? 'required' : 'nullable',
+                'integer',
+                Rule::exists('application_type_funding_pot', 'funding_pot_id')
+                    ->where('application_type_id', $type->id),
             ],
             'formData' => ['array'],
             'uploads' => ['array'],
@@ -165,6 +174,8 @@ class AntragForm extends Component
             'clubId.required' => 'Bitte wählen Sie den antragstellenden Verein aus.',
             'clubId.exists' => 'Der ausgewählte Verein ist nicht verfügbar.',
             'bankAccountId.exists' => 'Das ausgewählte Bankkonto ist nicht mehr verfügbar.',
+            'fundingPotId.required' => 'Bitte wählen Sie einen zugeordneten Fördertopf aus.',
+            'fundingPotId.exists' => 'Der ausgewählte Fördertopf ist dieser Antragsart nicht zugeordnet.',
             'uploads.*.mimes' => 'Erlaubte Dateitypen: PDF, JPG, PNG, DOC, DOCX, XLS und XLSX.',
             'uploads.*.max' => 'Die Anlage darf höchstens 10 MB groß sein.',
         ]);
@@ -200,20 +211,34 @@ class AntragForm extends Component
         $answers = array_merge($application->answers ?? [], $currentAnswers);
         $clubId = $type->requires_club && $this->clubId ? (int) $this->clubId : null;
         $accountId = $this->bankAccountId ? (int) $this->bankAccountId : null;
+        $fundingPotId = $this->fundingPotId ? (int) $this->fundingPotId : null;
         $newPaths = [];
         $replacedPaths = [];
 
         try {
-            DB::transaction(function () use ($application, $type, $answers, $clubId, $accountId, $submitting, &$newPaths, &$replacedPaths) {
+            $saved = DB::transaction(function () use ($application, $type, $answers, $clubId, $accountId, $fundingPotId, $submitting, &$newPaths, &$replacedPaths) {
                 $club = $clubId
                     ? Club::where('user_id', auth()->id())->whereNull('deleted_at')->lockForUpdate()->findOrFail($clubId)
                     : null;
                 $account = $accountId
                     ? auth()->user()->bankAccounts()->lockForUpdate()->findOrFail($accountId)
                     : null;
+                $fundingPot = $fundingPotId
+                    ? FundingPot::whereHas('applicationTypes', fn ($query) => $query->whereKey($type->id))
+                        ->lockForUpdate()
+                        ->findOrFail($fundingPotId)
+                    : null;
+
+                if ($submitting && (
+                    ($type->requires_funding_pot && ! $fundingPot)
+                    || ($fundingPot && ! $fundingPot->istOffen())
+                )) {
+                    return false;
+                }
 
                 $application->fill([
                     'application_type_id' => $type->id,
+                    'funding_pot_id' => $fundingPot?->id,
                     'user_id' => auth()->id(),
                     'club_id' => $club?->id,
                     'bank_account_id' => $account?->id,
@@ -268,10 +293,18 @@ class AntragForm extends Component
                         ]);
                     }
                 }
+
+                return true;
             });
         } catch (Throwable $exception) {
             Storage::disk('local')->delete($newPaths);
             throw $exception;
+        }
+
+        if (! $saved) {
+            Storage::disk('local')->delete($newPaths);
+            $this->addError('fundingPotId', 'Der ausgewählte Fördertopf ist inzwischen geschlossen oder nicht mehr verfügbar. Bitte wählen Sie einen offenen Topf.');
+            return;
         }
 
         Storage::disk('local')->delete($replacedPaths);
@@ -300,6 +333,14 @@ class AntragForm extends Component
     {
         $type = $this->applicationType();
         $application = $this->applicationId ? $this->draftApplication() : null;
+        $mappedFundingPots = $type->fundingPots()->with('program')->get();
+        $fundingPots = $mappedFundingPots->filter(fn (FundingPot $pot) => $pot->istOffen())->values();
+        if ($this->fundingPotId) {
+            $selectedPot = $mappedFundingPots->firstWhere('id', (int) $this->fundingPotId);
+            if ($selectedPot && ! $fundingPots->contains('id', $selectedPot->id)) {
+                $fundingPots->prepend($selectedPot);
+            }
+        }
 
         return view('livewire.antrag-form', [
             'applicationType' => $type,
@@ -307,6 +348,7 @@ class AntragForm extends Component
             'clubs' => $type->requires_club
                 ? Club::where('user_id', auth()->id())->orderBy('clubname')->get()
                 : collect(),
+            'fundingPots' => $fundingPots,
             'documents' => $application?->documents ?? collect(),
             'deadlinePassed' => $type->frist?->isBefore(today()) ?? false,
         ]);

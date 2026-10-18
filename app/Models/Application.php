@@ -13,6 +13,7 @@ class Application extends Model
 
     protected $fillable = [
         'application_type_id',
+        'funding_pot_id',
         'user_id',
         'club_id',
         'bank_account_id',
@@ -33,6 +34,11 @@ class Application extends Model
     public function applicationType(): BelongsTo
     {
         return $this->belongsTo(ApplicationType::class);
+    }
+
+    public function fundingPot(): BelongsTo
+    {
+        return $this->belongsTo(FundingPot::class);
     }
 
     public function user(): BelongsTo

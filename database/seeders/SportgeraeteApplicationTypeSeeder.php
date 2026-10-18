@@ -17,6 +17,7 @@ class SportgeraeteApplicationTypeSeeder extends ApplicationExampleSeeder
             'beschreibung' => 'Förderjahr und verbindliche Abgabefrist müssen vor der Aktivierung noch geklärt werden.',
             'frist' => null,
             'requires_club' => true,
+            'requires_funding_pot' => true,
             'aktiv' => false,
             'fields' => $fields,
         ];

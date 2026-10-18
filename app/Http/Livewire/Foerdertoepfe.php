@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\FundingPot;
 use App\Models\FundingProgram;
+use App\Models\ApplicationType;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
@@ -23,6 +24,7 @@ class Foerdertoepfe extends Component
     public string $potBeginn = '';
     public string $potEnde = '';
     public string $potBudget = '';
+    public array $potApplicationTypeIds = [];
 
     public function mount(): void
     {
@@ -115,6 +117,8 @@ class Foerdertoepfe extends Component
             'potBeginn' => ['nullable', 'date', 'required_if:potLaufzeit,' . FundingPot::BEFRISTET],
             'potEnde' => ['nullable', 'date', 'required_if:potLaufzeit,' . FundingPot::BEFRISTET, 'after_or_equal:potBeginn'],
             'potBudget' => ['required', 'numeric', 'min:0', 'max:9999999999'],
+            'potApplicationTypeIds' => ['array'],
+            'potApplicationTypeIds.*' => ['integer', 'distinct', 'exists:application_types,id'],
         ], [], [
             'potProgramId' => 'Förderprogramm', 'potName' => 'Name', 'potJahr' => 'Jahr',
             'potBeginn' => 'Beginn', 'potEnde' => 'Frist', 'potBudget' => 'Budget',
@@ -142,11 +146,12 @@ class Foerdertoepfe extends Component
             }
             $pot->update($attributes);
         } else {
-            FundingPot::create($attributes);
+            $pot = FundingPot::create($attributes);
         }
 
+        $pot->applicationTypes()->sync(array_map('intval', $data['potApplicationTypeIds']));
         $this->cancelPot();
-        session()->flash('message', 'Fördertopf gespeichert.');
+        session()->flash('message', 'Fördertopf und Zuordnung zu Antragsarten gespeichert.');
     }
 
     public function editPot(int $id): void
@@ -164,6 +169,7 @@ class Foerdertoepfe extends Component
         $this->potBeginn = $pot->beginn?->format('Y-m-d') ?? '';
         $this->potEnde = $pot->ende?->format('Y-m-d') ?? '';
         $this->potBudget = (string) $pot->budget;
+        $this->potApplicationTypeIds = $pot->applicationTypes()->pluck('application_types.id')->map(fn ($id) => (string) $id)->all();
     }
 
     public function newPot(int $programId): void
@@ -174,7 +180,7 @@ class Foerdertoepfe extends Component
 
     public function cancelPot(): void
     {
-        $this->reset(['potId', 'potProgramId', 'potName', 'potBeschreibung', 'potJahr', 'potBeginn', 'potEnde', 'potBudget']);
+        $this->reset(['potId', 'potProgramId', 'potName', 'potBeschreibung', 'potJahr', 'potBeginn', 'potEnde', 'potBudget', 'potApplicationTypeIds']);
         $this->potLaufzeit = FundingPot::BEFRISTET;
         $this->resetValidation();
     }
@@ -191,8 +197,8 @@ class Foerdertoepfe extends Component
         $this->authorizeVerwalten();
         $pot = FundingPot::findOrFail($id);
 
-        if ($pot->bindings()->exists()) {
-            session()->flash('error', 'Der Fördertopf hat bereits gebundene Beträge und kann nicht gelöscht werden. Schließen Sie ihn stattdessen.');
+        if ($pot->bindings()->exists() || $pot->applications()->exists() || $pot->applicationTypes()->exists()) {
+            session()->flash('error', 'Der Fördertopf ist bereits mit Anträgen, Antragsarten oder gebundenen Beträgen verknüpft und kann nicht gelöscht werden. Schließen Sie ihn stattdessen.');
             return;
         }
 
@@ -203,7 +209,8 @@ class Foerdertoepfe extends Component
     public function render()
     {
         return view('livewire.foerdertoepfe', [
-            'programs' => FundingProgram::with('pots')->orderBy('name')->get(),
+            'programs' => FundingProgram::with('pots.applicationTypes')->orderBy('name')->get(),
+            'applicationTypes' => ApplicationType::orderBy('name')->get(),
         ]);
     }
 }

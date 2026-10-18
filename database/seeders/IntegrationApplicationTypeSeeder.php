@@ -12,6 +12,7 @@ class IntegrationApplicationTypeSeeder extends ApplicationExampleSeeder
             'beschreibung' => 'Förderantrag für ein Projekt zur Integration geflüchteter Erwachsener.',
             'frist' => '2026-11-13',
             'requires_club' => true,
+            'requires_funding_pot' => true,
             'aktiv' => true,
             'fields' => array_merge($this->sharedFields(), $this->projectFields('Stellen Sie den Bezug zur Förderung der Integration geflüchteter Erwachsener dar.')),
         ];

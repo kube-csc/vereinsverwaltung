@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 abstract class ApplicationExampleSeeder extends Seeder
 {
     /**
-     * @return array{name: string, slug: string, beschreibung: string, frist: ?string, requires_club: bool, aktiv: bool, fields: array<int, array<string, mixed>>}
+     * @return array{name: string, slug: string, beschreibung: string, frist: ?string, requires_club: bool, requires_funding_pot: bool, aktiv: bool, fields: array<int, array<string, mixed>>}
      */
     abstract protected function definition(): array;
 
@@ -22,6 +22,7 @@ abstract class ApplicationExampleSeeder extends Seeder
                 'beschreibung' => $definition['beschreibung'],
                 'frist' => $definition['frist'],
                 'requires_club' => $definition['requires_club'],
+                'requires_funding_pot' => $definition['requires_funding_pot'],
                 'aktiv' => $definition['aktiv'],
             ]
         );
@@ -76,6 +77,7 @@ abstract class ApplicationExampleSeeder extends Seeder
             'beschreibung' => 'Noch nicht konfiguriert. Ergänzen Sie Formularfelder und gegebenenfalls eine Frist, bevor Sie diese Antragsart aktivieren.',
             'frist' => null,
             'requires_club' => false,
+            'requires_funding_pot' => false,
             'aktiv' => false,
             'fields' => [],
         ];

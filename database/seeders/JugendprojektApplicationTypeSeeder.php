@@ -12,6 +12,7 @@ class JugendprojektApplicationTypeSeeder extends ApplicationExampleSeeder
             'beschreibung' => 'Förderantrag für ein Jugendprojekt.',
             'frist' => '2026-11-13',
             'requires_club' => true,
+            'requires_funding_pot' => true,
             'aktiv' => true,
             'fields' => array_merge($this->sharedFields(), $this->projectFields('Bitte erläutern Sie Art, Inhalt, Umfang und Zeitraum des Jugendprojekts.')),
         ];

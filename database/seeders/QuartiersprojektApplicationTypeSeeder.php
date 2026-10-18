@@ -12,6 +12,7 @@ class QuartiersprojektApplicationTypeSeeder extends ApplicationExampleSeeder
             'beschreibung' => 'Förderantrag für ein öffentlichkeitswirksames Projekt in den Quartieren mit Bezug zum Pakt für den Sport.',
             'frist' => '2026-11-13',
             'requires_club' => true,
+            'requires_funding_pot' => true,
             'aktiv' => true,
             'fields' => array_merge($this->sharedFields(), $this->projectFields('Bitte erläutern Sie den Bezug zum Pakt für den Sport sowie Art, Inhalt, Umfang und Zeitraum des Projekts.')),
         ];

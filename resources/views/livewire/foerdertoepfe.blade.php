@@ -32,6 +32,7 @@
                     <thead>
                         <tr class="text-left text-xs font-medium text-gray-500 uppercase">
                             <th class="px-4 py-2">Fördertopf</th>
+                            <th class="px-4 py-2">Zugeordnete Antragsarten</th>
                             <th class="px-4 py-2">Laufzeit</th>
                             <th class="px-4 py-2 text-right">Budget</th>
                             <th class="px-4 py-2 text-right">Reserviert</th>
@@ -45,6 +46,13 @@
                         @forelse($program->pots->sortByDesc('jahr') as $pot)
                             <tr wire:key="topf-{{ $pot->id }}">
                                 <td class="px-4 py-2 text-gray-900">{{ $pot->name }}@if($pot->jahr) <span class="text-gray-500">({{ $pot->jahr }})</span>@endif</td>
+                                <td class="px-4 py-2 text-gray-700">
+                                    @forelse($pot->applicationTypes as $type)
+                                        <span class="inline-block mb-1 rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-900">{{ $type->name }}</span>
+                                    @empty
+                                        <span class="text-gray-500">Keine Antragsart zugeordnet</span>
+                                    @endforelse
+                                </td>
                                 <td class="px-4 py-2 text-gray-700">
                                     @if($pot->laufzeit === 'fortlaufend')
                                         Fortlaufend
@@ -66,7 +74,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="8" class="px-4 py-3 text-center text-gray-500">Noch keine Fördertöpfe.</td></tr>
+                            <tr><td colspan="9" class="px-4 py-3 text-center text-gray-500">Noch keine Fördertöpfe.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -153,6 +161,17 @@
             <div>
                 <x-label value="Beschreibung (optional)" />
                 <textarea wire:model="potBeschreibung" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+            </div>
+            <div>
+                <x-label value="Zugeordnete Antragsarten" />
+                <select wire:model="potApplicationTypeIds" multiple size="5" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                    @foreach($applicationTypes as $applicationType)
+                        <option value="{{ $applicationType->id }}">{{ $applicationType->name }}{{ $applicationType->aktiv ? '' : ' (inaktiv)' }}</option>
+                    @endforeach
+                </select>
+                <p class="mt-1 text-xs text-gray-600">Strg (Windows) bzw. Cmd (Mac) gedrückt halten, um mehrere Antragsarten auszuwählen. Nur offene, zugeordnete Fördertöpfe werden Antragstellenden angeboten.</p>
+                <x-input-error for="potApplicationTypeIds" class="mt-1" />
+                <x-input-error for="potApplicationTypeIds.*" class="mt-1" />
             </div>
             <div class="flex items-center space-x-4">
                 <x-button>{{ $potId ? 'Änderungen speichern' : 'Fördertopf speichern' }}</x-button>

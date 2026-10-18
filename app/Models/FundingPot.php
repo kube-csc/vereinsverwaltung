@@ -5,6 +5,7 @@ namespace App\Models;
 use DomainException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,16 @@ class FundingPot extends Model
     public function bindings(): HasMany
     {
         return $this->hasMany(FundingPotBinding::class);
+    }
+
+    public function applicationTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(ApplicationType::class, 'application_type_funding_pot')->withTimestamps();
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
     }
 
     private function summeInCent(?string $art = null): int

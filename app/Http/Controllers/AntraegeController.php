@@ -24,7 +24,12 @@ class AntraegeController extends Controller
         $type = ApplicationType::where('slug', $slug)
             ->where('aktiv', true)
             ->where(fn ($query) => $query->whereNull('frist')->orWhereDate('frist', '>=', today()))
+            ->with('fundingPots')
             ->firstOrFail();
+
+        if ($type->requires_funding_pot && ! $type->fundingPots->contains(fn ($pot) => $pot->istOffen())) {
+            abort(404);
+        }
 
         return view('antraege.antrag-form', ['typeId' => $type->id]);
     }

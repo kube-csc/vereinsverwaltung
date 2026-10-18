@@ -17,6 +17,7 @@ class Antragsarten extends Component
     public string $beschreibung = '';
     public string $frist = '';
     public bool $requiresClub = false;
+    public bool $requiresFundingPot = false;
     public bool $aktiv = true;
     public array $fields = [];
 
@@ -47,6 +48,7 @@ class Antragsarten extends Component
         $this->beschreibung = (string) $type->beschreibung;
         $this->frist = $type->frist?->format('Y-m-d') ?? '';
         $this->requiresClub = $type->requires_club;
+        $this->requiresFundingPot = $type->requires_funding_pot;
         $this->aktiv = $type->aktiv;
         $this->fields = $type->fields->map(fn (ApplicationField $field) => [
             'id' => $field->id,
@@ -108,6 +110,7 @@ class Antragsarten extends Component
             'beschreibung' => ['nullable', 'string', 'max:5000'],
             'frist' => ['nullable', 'date'],
             'requiresClub' => ['boolean'],
+            'requiresFundingPot' => ['boolean'],
             'aktiv' => ['boolean'],
             'fields' => [
                 'array',
@@ -168,6 +171,7 @@ class Antragsarten extends Component
                 'beschreibung' => $data['beschreibung'] ?: null,
                 'frist' => $data['frist'] ?: null,
                 'requires_club' => $data['requiresClub'],
+                'requires_funding_pot' => $data['requiresFundingPot'],
                 'aktiv' => $data['aktiv'],
             ])->save();
 
@@ -217,7 +221,7 @@ class Antragsarten extends Component
 
     private function resetForm(): void
     {
-        $this->reset(['typeId', 'name', 'beschreibung', 'frist', 'requiresClub', 'fields']);
+        $this->reset(['typeId', 'name', 'beschreibung', 'frist', 'requiresClub', 'requiresFundingPot', 'fields']);
         $this->aktiv = true;
         $this->resetValidation();
     }

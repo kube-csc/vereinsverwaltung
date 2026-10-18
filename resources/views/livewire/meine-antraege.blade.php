@@ -14,6 +14,12 @@
                     <div>
                         <h4 class="font-semibold text-gray-900">{{ $type->name }}</h4>
                         <p class="text-sm text-gray-600">{{ $type->beschreibung }}</p>
+                        @if($type->requires_funding_pot)
+                            <p class="mt-1 text-sm text-gray-700">
+                                Offene Fördertöpfe:
+                                {{ $type->fundingPots->filter(fn ($pot) => $pot->istOffen())->pluck('name')->join(', ') }}
+                            </p>
+                        @endif
                         @if($type->frist)
                             <p class="mt-1 text-sm text-gray-700">Abgabefrist: {{ $type->frist->format('d.m.Y') }}</p>
                         @endif
@@ -38,6 +44,7 @@
                 <thead>
                     <tr class="text-left text-xs font-semibold uppercase text-gray-600">
                         <th class="px-4 py-3">Antragsart</th>
+                        <th class="px-4 py-3">Fördertopf</th>
                         <th class="px-4 py-3">Verein</th>
                         <th class="px-4 py-3">Stand</th>
                         <th class="px-4 py-3">Datum</th>
@@ -48,6 +55,14 @@
                     @forelse($applications as $application)
                         <tr wire:key="antrag-{{ $application->id }}">
                             <td class="px-4 py-3 font-medium text-gray-900">{{ $application->applicationType->name }}</td>
+                            <td class="px-4 py-3 text-gray-700">
+                                @if($application->fundingPot)
+                                    {{ $application->fundingPot->program->name }} – {{ $application->fundingPot->name }}
+                                    @if($application->fundingPot->jahr) ({{ $application->fundingPot->jahr }}) @endif
+                                @else
+                                    –
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-gray-700">{{ $application->club?->clubname ?? '–' }}</td>
                             <td class="px-4 py-3">
                                 <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ $application->status === $draftStatus ? 'bg-amber-100 text-amber-900' : 'bg-green-100 text-green-900' }}">
@@ -66,7 +81,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="px-4 py-4 text-center text-gray-600">Sie haben noch keine Anträge gespeichert.</td></tr>
+                        <tr><td colspan="6" class="px-4 py-4 text-center text-gray-600">Sie haben noch keine Anträge gespeichert.</td></tr>
                     @endforelse
                 </tbody>
             </table>

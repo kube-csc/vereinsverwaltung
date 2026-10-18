@@ -19,12 +19,15 @@ class MeineAntraege extends Component
         $user = auth()->user();
 
         return view('livewire.meine-antraege', [
-            'applicationTypes' => ApplicationType::where('aktiv', true)
+            'applicationTypes' => ApplicationType::with(['fundingPots.program'])
+                ->where('aktiv', true)
                 ->where(fn ($query) => $query->whereNull('frist')->orWhereDate('frist', '>=', today()))
                 ->orderBy('name')
-                ->get(),
+                ->get()
+                ->filter(fn (ApplicationType $type) => ! $type->requires_funding_pot
+                    || $type->fundingPots->contains(fn ($pot) => $pot->istOffen())),
             'applications' => $user->applications()
-                ->with('applicationType', 'club')
+                ->with('applicationType', 'club', 'fundingPot.program')
                 ->latest()
                 ->get(),
             'draftStatus' => Application::STATUS_DRAFT,

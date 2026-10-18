@@ -67,7 +67,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.dashboard');
 })->name('dashboard');
 
-Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('/antraege/dashboard', \App\Http\Controllers\AntraegeDashboardController::class)->name('antraege.dashboard');
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.dashboard'])->get('/antraege/dashboard', \App\Http\Controllers\AntraegeDashboardController::class)->name('antraege.dashboard');
 
 Route::middleware(['auth:sanctum', 'verified', 'can:antraege.benutzer'])->get('/antraege/benutzer', function () {
     return view('antraege.benutzer');
@@ -84,6 +84,19 @@ Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('
 Route::middleware(['auth:sanctum', 'verified', 'can:antraege.verwalten'])->get('/antraege/antragsarten', function () {
     return view('antraege.antragsarten');
 })->name('antraege.antragsarten');
+
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.stellen'])->group(function () {
+    Route::get('/antraege/meine-antraege', [\App\Http\Controllers\AntraegeController::class, 'index'])->name('antraege.meine');
+    Route::get('/antraege/neu/{slug}', [\App\Http\Controllers\AntraegeController::class, 'create'])->name('antraege.neu');
+    Route::get('/antraege/{application}/bearbeiten', [\App\Http\Controllers\AntraegeController::class, 'edit'])
+        ->whereNumber('application')
+        ->name('antraege.bearbeiten');
+});
+
+Route::middleware(['auth:sanctum', 'verified'])->get(
+    '/antraege/dokumente/{applicationDocument}/download',
+    [\App\Http\Controllers\AntraegeController::class, 'download']
+)->whereNumber('applicationDocument')->name('antraege.dokumente.download');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/Adminmenu', function () {
     return view('admin.adminmenu');

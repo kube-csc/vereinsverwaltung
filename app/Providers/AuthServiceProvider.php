@@ -33,6 +33,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('antraege.verwalten', fn (User $user) => $user->admin >= 4 || $user->hasRole(Role::ADMINISTRATOR));
         Gate::define('antraege.entscheiden', fn (User $user) => $user->hasRole(Role::GREMIUM));
         Gate::define('antraege.stellen', fn (User $user) => $user->hasRole(Role::ANTRAGSTELLER));
+        Gate::define('antraege.dashboard', fn (User $user) => $user->can('antraege.verwalten') || $user->can('antraege.stellen'));
         Gate::define('antraege.benutzer', fn (User $user) => $user->assignableRoles() !== []);
     }
 }

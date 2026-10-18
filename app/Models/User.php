@@ -113,6 +113,11 @@ class User extends Authenticatable
         return $this->hasMany(BankAccount::class);
     }
 
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
+    }
+
     public function trainerZuordnungen(): HasMany
     {
         return $this->hasMany(Trainertable::class, 'user_id');

@@ -80,17 +80,24 @@
                                 @endif
                             </div>
 
-                            @can('antraege.verwalten')
+                            @can('antraege.dashboard')
                             <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
                                 <div class="flex items-center">
-                                    <div class="ml-4 text-lg leading-7 font-semibold">Antragsverwaltung</div>
+                                    <div class="ml-4 text-lg leading-7 font-semibold">Förderanträge</div>
                                 </div>
 
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                        <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
-                                            <span class="font-bold text-lg">Zur Antragsverwaltung</span>
-                                        </a>
+                                        @can('antraege.verwalten')
+                                            <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
+                                                <span class="font-bold text-lg">Zur Antragsverwaltung</span>
+                                            </a>
+                                        @endcan
+                                        @can('antraege.stellen')
+                                            <a href="{{ route('antraege.meine') }}" class="block rounded border shadow p-3 my-2 bg-green-100">
+                                                <span class="font-bold text-lg">Meine Anträge</span>
+                                            </a>
+                                        @endcan
                                     </div>
                                 </div>
                             </div>

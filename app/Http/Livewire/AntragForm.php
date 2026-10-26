@@ -284,6 +284,15 @@ class AntragForm extends Component
                     'submitted_at' => $submitting ? now() : null,
                 ])->save();
 
+                if ($submitting) {
+                    $application->events()->create([
+                        'actor_id' => auth()->id(),
+                        'actor_name' => auth()->user()->name,
+                        'event_type' => Application::EVENT_SUBMITTED,
+                        'message' => 'Der Antrag wurde eingereicht.',
+                    ]);
+                }
+
                 foreach ($type->fields as $field) {
                     $upload = $this->uploads[$field->key] ?? null;
                     if (! $upload) {

@@ -13,7 +13,8 @@
                     <p class="mt-2 text-blue-100 max-w-2xl">
                         @can('antraege.foerdermittel_verwalten')
                             Verwalten Sie Förderprogramme, Fördertöpfe und Antragsformulare an einem Ort.
-                            @can('antraege.verwalten') Benutzerverwaltung und weitere Administrationsfunktionen sind ebenfalls verfügbar.@endcan
+                            @can('antraege.verwalten') Benutzerverwaltung und weitere Administrationsfunktionen sind ebenfalls verfügbar.
+                            @endcan
                         @elseif(auth()->user()->can('antraege.stellen'))
                             Stellen Sie Förderanträge, speichern Sie Entwürfe und behalten Sie den Status Ihrer Anträge im Blick.
                         @elseif(auth()->user()->admin >= 4)
@@ -47,11 +48,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
                     @can('antraege.stellen')
-                        <a href="{{ route('antraege.meine') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-green-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">
+                        <a href="{{ route('antraege.dashboard.antragsteller') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-green-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">
                             <span class="flex-shrink-0 h-12 w-12 rounded-lg bg-green-100 text-green-700 flex items-center justify-center text-xl"><i class="fas fa-file-alt"></i></span>
                             <span>
-                                <span class="block font-semibold text-gray-900 group-hover:text-green-700">Meine Anträge</span>
-                                <span class="block mt-1 text-sm text-gray-600">Antragsarten auswählen, Anträge entwerfen und einreichen.</span>
+                                <span class="block font-semibold text-gray-900 group-hover:text-green-700">Mein Antragsteller-Dashboard</span>
+                                <span class="block mt-1 text-sm text-gray-600">Eigene Anträge, Bearbeitungsstände und verfügbare Antragsarten.</span>
                             </span>
                         </a>
                     @endcan
@@ -75,7 +76,7 @@
                                 <span class="block mt-1 text-sm text-gray-600">Einladungslinks erstellen und Rollen zuweisen.</span>
                             </span>
                         </a>
-                    @endcan
+                    @endif
 
                     @can('antraege.pruefbereich')
                         <a href="{{ route('antraege.pruefung') }}" class="group flex items-start space-x-4 rounded-xl border border-gray-300 bg-gray-50 p-6 shadow-md transition-all duration-200 hover:border-indigo-500 hover:bg-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
@@ -85,7 +86,7 @@
                                 <span class="mt-1 block text-sm text-gray-600">Anträge prüfen, begründet entscheiden und eingereichte Förderanträge archivieren.</span>
                             </span>
                         </a>
-                    @endcan
+                    @endif
 
                     @can('antraege.stellen')
                         <a href="{{ route('antraege.bankkonten') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-amber-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">

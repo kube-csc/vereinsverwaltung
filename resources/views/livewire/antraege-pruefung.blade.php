@@ -66,6 +66,31 @@
                 @if($application->decision_reason)
                     <p class="mt-3 text-sm text-gray-700"><span class="font-semibold">Entscheidungsbegründung:</span> {{ $application->decision_reason }} ({{ $application->decider?->name ?? 'unbekannt' }}, {{ $application->decided_at?->format('d.m.Y H:i') }})</p>
                 @endif
+                @if($application->events->isNotEmpty())
+                    <div class="mt-4 border-t border-gray-200 pt-3">
+                        <h5 class="text-sm font-semibold text-gray-800">Verlauf und Rückfragen</h5>
+                        <ol class="mt-2 space-y-2">
+                            @foreach($application->events as $event)
+                                <li class="rounded-md bg-gray-50 p-3">
+                                    <p class="text-xs font-semibold text-gray-700">
+                                        {{ match($event->event_type) {
+                                            \App\Models\Application::EVENT_SUBMITTED => 'Eingereicht',
+                                            \App\Models\Application::EVENT_REVIEW_STARTED => 'Prüfung aufgenommen',
+                                            \App\Models\Application::EVENT_QUESTION => 'Rückfrage gestellt',
+                                            \App\Models\Application::EVENT_ANSWER => 'Antwort eingegangen',
+                                            \App\Models\Application::EVENT_APPROVED => 'Bewilligt',
+                                            \App\Models\Application::EVENT_REJECTED => 'Abgelehnt',
+                                            \App\Models\Application::EVENT_ARCHIVED => 'Archiviert',
+                                            default => $event->event_type,
+                                        } }}
+                                        · {{ $event->actor_name }} · {{ $event->created_at->format('d.m.Y H:i') }}
+                                    </p>
+                                    <p class="mt-1 whitespace-pre-wrap text-sm text-gray-800">{{ $event->message }}</p>
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                @endif
             @endif
 
             @if(! $application->trashed())
@@ -80,7 +105,66 @@
                         </div>
                     @endif
 
+                    @if($canReview && in_array($application->status, [\App\Models\Application::STATUS_SUBMITTED, \App\Models\Application::STATUS_IN_REVIEW], true))
+                        <label class="text-sm text-gray-700">
+                            Rückfrage an Antragstellende
+                            <textarea wire:model="questions.{{ $application->id }}" rows="2" class="mt-1 w-full rounded-md border-gray-300 text-sm"></textarea>
+                            @error('questions.' . $application->id)<span class="text-red-700">{{ $message }}</span>@enderror
+                        </label>
+                        <button wire:click="requestInformation({{ $application->id }})" class="self-start rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Rückfrage senden</button>
+                    @endif
+
                     @if($canDecide && in_array($application->status, [\App\Models\Application::STATUS_SUBMITTED, \App\Models\Application::STATUS_IN_REVIEW], true))
+                        @if($application->funding_pot_id || array_key_exists('beantragter_zuschuss', $application->answers ?? []))
+                            <label class="text-sm text-gray-700">
+                                Tatsächlich bewilligter Betrag
+                                <select wire:model.live="decisionAmountModes.{{ $application->id }}" class="mt-1 w-full rounded-md border-gray-300 text-sm">
+                                    <option value="amount">Betrag in €</option>
+                                    @if(is_numeric($application->answers['beantragter_zuschuss'] ?? null) && (float) $application->answers['beantragter_zuschuss'] > 0)
+                                        <option value="percent">Prozent vom beantragten Betrag</option>
+                                    @endif
+                                </select>
+                                <input
+                                    type="number"
+                                    min="0.01"
+                                    max="{{ ($decisionAmountModes[$application->id] ?? 'amount') === 'percent' ? '100' : '9999999999.99' }}"
+                                    step="0.01"
+                                    wire:model.live="decisionAmounts.{{ $application->id }}"
+                                    class="mt-1 w-full rounded-md border-gray-300 text-sm"
+                                >
+                                <span class="mt-1 block text-xs text-gray-600">
+                                    {{ ($decisionAmountModes[$application->id] ?? 'amount') === 'percent' ? 'Eingabe in Prozent' : 'Eingabe in Euro' }}
+                                </span>
+                                @if(is_numeric($application->answers['beantragter_zuschuss'] ?? null))
+                                    <span class="mt-1 block text-xs text-gray-600">
+                                        Beantragt: {{ number_format((float) $application->answers['beantragter_zuschuss'], 2, ',', '.') }} €
+                                        @if(($decisionAmountModes[$application->id] ?? 'amount') === 'percent')
+                                            · Prozentangabe wird auf diesen Betrag angewendet; Rundung auf Cent.
+                                        @endif
+                                    </span>
+                                @endif
+                                @if(
+                                    ($decisionAmountModes[$application->id] ?? 'amount') === 'percent'
+                                    && is_numeric($decisionAmounts[$application->id] ?? null)
+                                    && is_numeric($application->answers['beantragter_zuschuss'] ?? null)
+                                )
+                                    <span class="mt-1 block font-semibold text-gray-800">
+                                        Bewilligter Betrag: {{ number_format(round((float) $application->answers['beantragter_zuschuss'] * (float) $decisionAmounts[$application->id] / 100, 2), 2, ',', '.') }} €
+                                    </span>
+                                @elseif(
+                                    ($decisionAmountModes[$application->id] ?? 'amount') === 'amount'
+                                    && is_numeric($decisionAmounts[$application->id] ?? null)
+                                    && is_numeric($application->answers['beantragter_zuschuss'] ?? null)
+                                    && (float) $application->answers['beantragter_zuschuss'] > 0
+                                )
+                                    <span class="mt-1 block font-semibold text-gray-800">
+                                        Entspricht {{ number_format((float) $decisionAmounts[$application->id] / (float) $application->answers['beantragter_zuschuss'] * 100, 2, ',', '.') }} % des beantragten Betrags
+                                    </span>
+                                @endif
+                                @error('decisionAmounts.' . $application->id)<span class="text-red-700">{{ $message }}</span>@enderror
+                                @error('decisionAmountModes.' . $application->id)<span class="text-red-700">{{ $message }}</span>@enderror
+                            </label>
+                        @endif
                         <label class="text-sm text-gray-700">
                             Begründung für die Entscheidung (Pflichtfeld)
                             <textarea wire:model="decisionReasons.{{ $application->id }}" rows="2" class="mt-1 w-full rounded-md border-gray-300 text-sm"></textarea>

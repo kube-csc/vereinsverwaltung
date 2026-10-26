@@ -69,6 +69,11 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 Route::middleware(['auth:sanctum', 'verified', 'can:antraege.dashboard'])->get('/antraege/dashboard', \App\Http\Controllers\AntraegeDashboardController::class)->name('antraege.dashboard');
 
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.stellen'])->get(
+    '/antraege/mein-dashboard',
+    [\App\Http\Controllers\AntraegeDashboardController::class, 'applicant']
+)->name('antraege.dashboard.antragsteller');
+
 Route::middleware(['auth:sanctum', 'verified', 'can:antraege.benutzer'])->get('/antraege/benutzer', function () {
     return view('antraege.benutzer');
 })->name('antraege.benutzer');

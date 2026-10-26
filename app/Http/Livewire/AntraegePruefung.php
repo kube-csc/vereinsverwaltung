@@ -16,7 +16,10 @@ class AntraegePruefung extends Component
 
     public bool $showArchived = false;
     public array $decisionReasons = [];
+    public array $decisionAmounts = [];
+    public array $decisionAmountModes = [];
     public array $reviewNotes = [];
+    public array $questions = [];
     public array $deletionReasons = [];
 
     public function mount(): void
@@ -36,16 +39,50 @@ class AntraegePruefung extends Component
         $this->validate([
             $noteKey => ['nullable', 'string', 'max:5000'],
         ], [], [$noteKey => 'Prüfnotiz']);
-        $application = $this->findApplication($applicationId);
-        abort_unless(! $application->trashed() && $application->status === Application::STATUS_SUBMITTED, 409);
-
         $note = trim($this->reviewNotes[$applicationId] ?? '');
-        $application->update([
-            'status' => Application::STATUS_IN_REVIEW,
-            'reviewed_by' => auth()->id(),
-            'reviewed_at' => now(),
-            'review_note' => $note !== '' ? $note : null,
-        ]);
+        DB::transaction(function () use ($applicationId, $note) {
+            $application = $this->findApplication($applicationId, lock: true);
+            abort_unless(! $application->trashed() && $application->status === Application::STATUS_SUBMITTED, 409);
+            $application->update([
+                'status' => Application::STATUS_IN_REVIEW,
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+                'review_note' => $note !== '' ? $note : null,
+            ]);
+            $this->recordEvent($application, Application::EVENT_REVIEW_STARTED, $note ?: 'Die Prüfung wurde aufgenommen.');
+        });
+    }
+
+    public function requestInformation(int $applicationId): void
+    {
+        Gate::authorize('antraege.pruefen');
+        $questionKey = 'questions.' . $applicationId;
+        $this->questions[$applicationId] = trim($this->questions[$applicationId] ?? '');
+        $this->validate([
+            $questionKey => ['required', 'string', 'min:3', 'max:5000'],
+        ], [], [$questionKey => 'Rückfrage']);
+
+        DB::transaction(function () use ($applicationId) {
+            $application = $this->findApplication($applicationId, lock: true);
+            abort_unless(
+                ! $application->trashed()
+                    && in_array($application->status, [
+                        Application::STATUS_SUBMITTED,
+                        Application::STATUS_IN_REVIEW,
+                    ], true),
+                409
+            );
+
+            $question = $this->questions[$applicationId];
+            $application->update([
+                'status' => Application::STATUS_QUESTION,
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+            ]);
+            $this->recordEvent($application, Application::EVENT_QUESTION, $question);
+        });
+
+        unset($this->questions[$applicationId]);
     }
 
     public function decide(int $applicationId, string $decision): void
@@ -53,13 +90,58 @@ class AntraegePruefung extends Component
         Gate::authorize('antraege.entscheiden');
         abort_unless(in_array($decision, [Application::STATUS_APPROVED, Application::STATUS_REJECTED], true), 422);
 
+        $application = $this->findApplication($applicationId);
+        abort_unless(
+            ! $application->trashed()
+                && in_array($application->status, [
+                    Application::STATUS_SUBMITTED,
+                    Application::STATUS_IN_REVIEW,
+                ], true),
+            409
+        );
+
         $reasonKey = 'decisionReasons.' . $applicationId;
+        $amountKey = 'decisionAmounts.' . $applicationId;
+        $amountModeKey = 'decisionAmountModes.' . $applicationId;
+        $requiresApprovedAmount = $decision === Application::STATUS_APPROVED
+            && ($application->funding_pot_id !== null
+                || array_key_exists('beantragter_zuschuss', $application->answers ?? []));
+        $amountMode = $this->decisionAmountModes[$applicationId] ?? 'amount';
+        $requestedAmount = $application->answers['beantragter_zuschuss'] ?? null;
+        $canCalculatePercentage = is_numeric($requestedAmount) && (float) $requestedAmount > 0;
         $this->validate([
             $reasonKey => ['required', 'string', 'min:5', 'max:5000'],
-        ], [], [$reasonKey => 'Begründung']);
+            $amountKey => $requiresApprovedAmount
+                ? ($amountMode === 'percent'
+                    ? ['required', 'numeric', 'min:0.01', 'max:100']
+                    : ['required', 'numeric', 'min:0.01', 'max:9999999999.99'])
+                : ['nullable', 'numeric', 'min:0', 'max:9999999999.99'],
+            $amountModeKey => ['nullable', 'in:amount,percent'],
+        ], [], [
+            $reasonKey => 'Begründung',
+            $amountKey => $amountMode === 'percent' ? 'Bewilligungsanteil' : 'bewilligter Betrag',
+            $amountModeKey => 'Eingabeart',
+        ]);
+
+        if ($requiresApprovedAmount && $amountMode === 'percent' && ! $canCalculatePercentage) {
+            $this->addError($amountModeKey, 'Eine Prozentangabe ist nur mit einem positiven beantragten Zuschuss möglich.');
+            return;
+        }
+
+        $approvedAmount = null;
+        if ($decision === Application::STATUS_APPROVED && $requiresApprovedAmount) {
+            $inputAmount = (float) $this->decisionAmounts[$applicationId];
+            $approvedAmount = $amountMode === 'percent'
+                ? round((float) $requestedAmount * $inputAmount / 100, 2)
+                : $inputAmount;
+            if ($approvedAmount < 0.01 || $approvedAmount > 9999999999.99) {
+                $this->addError($amountKey, 'Der berechnete bewilligte Betrag muss zwischen 0,01 € und 9.999.999.999,99 € liegen.');
+                return;
+            }
+        }
 
         try {
-            DB::transaction(function () use ($applicationId, $decision, $reasonKey) {
+            DB::transaction(function () use ($applicationId, $decision, $reasonKey, $approvedAmount) {
                 $application = $this->findApplication($applicationId, lock: true);
                 abort_unless(
                     ! $application->trashed()
@@ -71,15 +153,9 @@ class AntraegePruefung extends Component
                 );
 
                 if ($decision === Application::STATUS_APPROVED && $application->funding_pot_id !== null) {
-                    $amount = $application->answers['beantragter_zuschuss'] ?? null;
-                    if (! is_numeric($amount) || (float) $amount <= 0) {
-                        $this->addError($reasonKey, 'Der Antrag enthält keinen gültigen beantragten Zuschuss und kann nicht bewilligt werden.');
-                        return;
-                    }
-
                     $application->fundingPot->bind(
                         FundingPotBinding::BEWILLIGT,
-                        (float) $amount,
+                        $approvedAmount,
                         $application->id,
                         'Bewilligung durch ' . auth()->user()->name
                     );
@@ -92,7 +168,13 @@ class AntraegePruefung extends Component
                     'decided_by' => auth()->id(),
                     'decided_at' => now(),
                     'decision_reason' => $this->decisionReasons[$applicationId],
+                    'approved_amount' => $approvedAmount,
                 ]);
+                $this->recordEvent(
+                    $application,
+                    $decision === Application::STATUS_APPROVED ? Application::EVENT_APPROVED : Application::EVENT_REJECTED,
+                    $this->decisionReasons[$applicationId]
+                );
             });
         } catch (DomainException $exception) {
             $this->addError($reasonKey, $exception->getMessage());
@@ -121,6 +203,7 @@ class AntraegePruefung extends Component
                 'deleted_by' => auth()->id(),
                 'deletion_reason' => $this->deletionReasons[$application->id],
             ]);
+            $this->recordEvent($application, Application::EVENT_ARCHIVED, $this->deletionReasons[$application->id]);
             $application->delete();
         });
     }
@@ -145,12 +228,22 @@ class AntraegePruefung extends Component
         return $query->findOrFail($id);
     }
 
+    private function recordEvent(Application $application, string $type, string $message): void
+    {
+        $application->events()->create([
+            'actor_id' => auth()->id(),
+            'actor_name' => auth()->user()->name,
+            'event_type' => $type,
+            'message' => $message,
+        ]);
+    }
+
     public function render()
     {
         Gate::authorize('antraege.pruefbereich');
         $canReview = auth()->user()->can('antraege.pruefen');
         $query = Application::query()
-            ->with(['user', 'applicationType', 'fundingPot.program', 'documents', 'reviewer', 'decider', 'deleter'])
+            ->with(['user', 'applicationType', 'fundingPot.program', 'documents', 'reviewer', 'decider', 'deleter', 'events.actor'])
             ->whereNotNull('submitted_at');
 
         if (! $canReview) {
@@ -163,6 +256,7 @@ class AntraegePruefung extends Component
             $query->whereIn('status', [
                 Application::STATUS_SUBMITTED,
                 Application::STATUS_IN_REVIEW,
+                Application::STATUS_QUESTION,
                 Application::STATUS_APPROVED,
                 Application::STATUS_REJECTED,
             ]);

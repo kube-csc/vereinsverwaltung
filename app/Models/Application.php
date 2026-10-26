@@ -14,8 +14,17 @@ class Application extends Model
     public const STATUS_DRAFT = 'entwurf';
     public const STATUS_SUBMITTED = 'eingereicht';
     public const STATUS_IN_REVIEW = 'in_pruefung';
+    public const STATUS_QUESTION = 'rueckfrage';
     public const STATUS_APPROVED = 'bewilligt';
     public const STATUS_REJECTED = 'abgelehnt';
+
+    public const EVENT_SUBMITTED = 'eingereicht';
+    public const EVENT_REVIEW_STARTED = 'pruefung_gestartet';
+    public const EVENT_QUESTION = 'rueckfrage';
+    public const EVENT_ANSWER = 'antwort';
+    public const EVENT_APPROVED = 'bewilligt';
+    public const EVENT_REJECTED = 'abgelehnt';
+    public const EVENT_ARCHIVED = 'archiviert';
 
     protected $fillable = [
         'application_type_id',
@@ -34,6 +43,7 @@ class Application extends Model
         'decided_by',
         'decided_at',
         'decision_reason',
+        'approved_amount',
         'deleted_by',
         'deletion_reason',
     ];
@@ -45,6 +55,7 @@ class Application extends Model
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
         'decided_at' => 'datetime',
+        'approved_amount' => 'decimal:2',
     ];
 
     public function applicationType(): BelongsTo
@@ -90,6 +101,11 @@ class Application extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(ApplicationDocument::class);
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(ApplicationEvent::class)->orderBy('created_at')->orderBy('id');
     }
 
     public function isDraft(): bool

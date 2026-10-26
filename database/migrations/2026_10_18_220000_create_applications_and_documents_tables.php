@@ -26,6 +26,7 @@ return new class extends Migration
             $table->foreignId('decided_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('decided_at')->nullable();
             $table->text('decision_reason')->nullable();
+            $table->decimal('approved_amount', 12, 2)->nullable();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('deletion_reason')->nullable();
             $table->softDeletes();
@@ -52,10 +53,22 @@ return new class extends Migration
             $table->timestamps();
             $table->unique(['application_id', 'field_key']);
         });
+
+        Schema::create('application_events', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('application_id')->constrained()->restrictOnDelete();
+            $table->foreignId('actor_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('actor_name');
+            $table->string('event_type', 30);
+            $table->text('message');
+            $table->timestamp('created_at')->useCurrent();
+            $table->index(['application_id', 'created_at']);
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('application_events');
         Schema::dropIfExists('application_documents');
         Schema::dropIfExists('applications');
     }

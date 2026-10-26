@@ -102,8 +102,8 @@
                                             </a>
                                         @endcan
                                         @can('antraege.stellen')
-                                            <a href="{{ route('antraege.meine') }}" class="block rounded border shadow p-3 my-2 bg-green-100">
-                                                <span class="font-bold text-lg">Meine Anträge</span>
+                                            <a href="{{ route('antraege.dashboard.antragsteller') }}" class="block rounded border shadow p-3 my-2 bg-green-100">
+                                                <span class="font-bold text-lg">Mein Antragsbereich</span>
                                             </a>
                                         @endcan
                                     </div>

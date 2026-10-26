@@ -2,7 +2,6 @@
     @if (session()->has('message'))
         <div class="text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded p-3">{{ session('message') }}</div>
     @endif
-
     <section class="space-y-3">
         <div>
             <h3 class="text-lg font-semibold text-gray-900">Verfügbare Antragsarten</h3>
@@ -70,12 +69,14 @@
                                     \App\Models\Application::STATUS_APPROVED => 'bg-green-100 text-green-900',
                                     \App\Models\Application::STATUS_REJECTED => 'bg-red-100 text-red-900',
                                     \App\Models\Application::STATUS_IN_REVIEW => 'bg-blue-100 text-blue-900',
+                                    \App\Models\Application::STATUS_QUESTION => 'bg-amber-100 text-amber-900',
                                     default => 'bg-gray-100 text-gray-900',
                                 } }}">
                                     {{ match($application->status) {
                                         \App\Models\Application::STATUS_DRAFT => 'Entwurf',
                                         \App\Models\Application::STATUS_SUBMITTED => 'Eingereicht',
                                         \App\Models\Application::STATUS_IN_REVIEW => 'In Prüfung',
+                                        \App\Models\Application::STATUS_QUESTION => 'Rückfrage – Antwort erforderlich',
                                         \App\Models\Application::STATUS_APPROVED => 'Bewilligt',
                                         \App\Models\Application::STATUS_REJECTED => 'Abgelehnt',
                                         default => $application->status,
@@ -84,6 +85,21 @@
                                 @if($application->decision_reason)
                                     <span class="mt-1 block max-w-xs text-xs text-gray-600">{{ $application->decision_reason }}</span>
                                 @endif
+                                @php($publicEvents = $application->events->whereIn('event_type', [
+                                    \App\Models\Application::EVENT_QUESTION,
+                                    \App\Models\Application::EVENT_ANSWER,
+                                ]))
+                                @if($publicEvents->isNotEmpty())
+                                    <ol class="mt-2 max-w-sm space-y-2">
+                                        @foreach($publicEvents as $event)
+                                            <li class="rounded bg-gray-50 p-2 text-xs text-gray-700">
+                                                <span class="font-semibold">{{ $event->event_type === \App\Models\Application::EVENT_QUESTION ? 'Rückfrage' : 'Ihre Antwort' }}</span>
+                                                <span> · {{ $event->created_at->format('d.m.Y H:i') }}</span>
+                                                <p class="mt-1 whitespace-pre-wrap">{{ $event->message }}</p>
+                                            </li>
+                                        @endforeach
+                                    </ol>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-gray-700">
                                 {{ $application->submitted_at?->format('d.m.Y H:i') ?? $application->updated_at->format('d.m.Y H:i') }}
@@ -91,6 +107,13 @@
                             <td class="px-4 py-3 text-right">
                                 @if($application->status === $draftStatus)
                                     <a href="{{ route('antraege.bearbeiten', $application->id) }}" class="font-medium text-blue-700 hover:underline">Weiterbearbeiten</a>
+                                @elseif($application->status === \App\Models\Application::STATUS_QUESTION)
+                                    <label class="block text-left text-xs font-semibold text-gray-700">
+                                        Ihre Antwort
+                                        <textarea wire:model="questionResponses.{{ $application->id }}" rows="3" class="mt-1 w-64 rounded-md border-gray-300 text-sm"></textarea>
+                                        @error('questionResponses.' . $application->id)<span class="mt-1 block text-red-700">{{ $message }}</span>@enderror
+                                    </label>
+                                    <button wire:click="respondToQuestion({{ $application->id }})" class="mt-2 rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">Antwort übermitteln</button>
                                 @else
                                     <span class="text-gray-500">Abgegeben</span>
                                 @endif

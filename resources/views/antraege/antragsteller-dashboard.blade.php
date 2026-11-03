@@ -12,12 +12,6 @@
                 </div>
             </section>
 
-            @if($hasManagementAccess)
-                <a href="{{ route('antraege.dashboard') }}" class="inline-flex items-center rounded-md border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-900 hover:bg-indigo-100">
-                    Zur Verwaltungs- und Prüfungsübersicht
-                </a>
-            @endif
-
             <section>
                 <h3 class="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">Meine Anträge im Überblick</h3>
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">

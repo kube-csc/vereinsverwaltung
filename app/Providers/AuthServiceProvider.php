@@ -37,13 +37,15 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('antraege.pruefbereich', fn (User $user) => $user->can('antraege.pruefen')
             || $user->can('antraege.antraege_loeschen'));
         Gate::define('antraege.stellen', fn (User $user) => $user->hasPermission('antraege.stellen'));
+        Gate::define('antraege.verwaltung', fn (User $user) => $user->can('antraege.foerdermittel_verwalten')
+            || $user->hasPermission('antraege.benutzer')
+            || $user->can('antraege.pruefen')
+            || $user->can('antraege.entscheiden')
+            || $user->can('antraege.antraege_loeschen'));
         // TODO: Keep this legacy dashboard entry until all existing admin users are migrated to the new roles.
         Gate::define('antraege.dashboard', fn (User $user) => $user->admin >= 4
-            || $user->can('antraege.foerdermittel_verwalten')
-            || $user->can('antraege.pruefen')
+            || $user->can('antraege.verwaltung')
             || $user->can('antraege.stellen'));
-        Gate::define('antraege.benutzer', fn (User $user) => $user->admin >= 4
-            || $user->hasRole(\App\Models\Role::ADMINISTRATOR)
-            || $user->can('antraege.foerdermittel_verwalten'));
+        Gate::define('antraege.benutzer', fn (User $user) => $user->hasPermission('antraege.benutzer'));
     }
 }

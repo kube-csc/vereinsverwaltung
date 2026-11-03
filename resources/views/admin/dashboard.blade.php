@@ -88,9 +88,16 @@
 
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                        <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
-                                            <span class="font-bold text-lg">Antragsverwaltung</span>
-                                        </a>
+                                        @if(auth()->user()->can('antraege.stellen')
+                                            && !auth()->user()->can('antraege.verwaltung'))
+                                            <a href="{{ route('antraege.dashboard.antragsteller') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
+                                                <span class="font-bold text-lg">Antragsverwaltung</span>
+                                            </a>
+                                        @elseif(auth()->user()->can('antraege.verwaltung') || auth()->user()->admin >= 4)
+                                            <a href="{{ route('antraege.dashboard') }}" class="block rounded border shadow p-3 my-2 bg-blue-200">
+                                                <span class="font-bold text-lg">Antragsverwaltung</span>
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

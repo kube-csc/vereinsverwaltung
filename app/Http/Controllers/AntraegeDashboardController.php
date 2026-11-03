@@ -13,9 +13,7 @@ class AntraegeDashboardController extends Controller
     public function __invoke()
     {
         $user = auth()->user();
-        $hasManagementAccess = $user->can('antraege.foerdermittel_verwalten')
-            || $user->can('antraege.pruefbereich')
-            || $user->admin >= 4;
+        $hasManagementAccess = $user->can('antraege.verwaltung') || $user->admin >= 4;
 
         if (! $hasManagementAccess) {
             return $this->applicantDashboard();
@@ -117,9 +115,7 @@ class AntraegeDashboardController extends Controller
                     && $type->frist->between(today(), today()->addDays(30)))
                 ->sortBy('frist')
                 ->values(),
-            'hasManagementAccess' => $user->can('antraege.foerdermittel_verwalten')
-                || $user->can('antraege.pruefbereich')
-                || $user->admin >= 4,
+            'hasManagementAccess' => $user->can('antraege.verwaltung') || $user->admin >= 4,
         ]);
     }
 }

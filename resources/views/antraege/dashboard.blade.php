@@ -68,7 +68,7 @@
                     @endcan
 
                     {{-- TODO: Remove the legacy admin-level fallback after existing administrators are migrated to roles. --}}
-                    @if(auth()->user()->can('antraege.benutzer') || auth()->user()->admin >= 4)
+                    @can('antraege.benutzer')
                         <a href="{{ route('antraege.benutzer') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-green-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">
                             <span class="flex-shrink-0 h-12 w-12 rounded-lg bg-green-100 text-green-700 flex items-center justify-center text-xl"><i class="fas fa-users"></i></span>
                             <span>
@@ -76,7 +76,7 @@
                                 <span class="block mt-1 text-sm text-gray-600">Einladungslinks erstellen und Rollen zuweisen.</span>
                             </span>
                         </a>
-                    @endif
+                    @endcan
 
                     @can('antraege.pruefbereich')
                         <a href="{{ route('antraege.pruefung') }}" class="group flex items-start space-x-4 rounded-xl border border-gray-300 bg-gray-50 p-6 shadow-md transition-all duration-200 hover:border-indigo-500 hover:bg-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">

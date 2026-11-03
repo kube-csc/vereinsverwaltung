@@ -20,68 +20,69 @@
                         <p class="text-sm text-gray-600">{{ $program->beschreibung }}</p>
                     @endif
                 </div>
-                <div class="text-sm space-x-3">
-                    <button wire:click="newPot({{ $program->id }})" class="text-blue-700 hover:underline">Fördertopf anlegen</button>
-                    <button wire:click="editProgram({{ $program->id }})" class="text-blue-700 hover:underline">Bearbeiten</button>
-                    <button wire:click="deleteProgram({{ $program->id }})" wire:confirm="Förderprogramm wirklich löschen?" class="text-red-600 hover:underline">Löschen</button>
+                <div class="flex flex-wrap gap-2">
+                    <button wire:click="newPot({{ $program->id }})" class="rounded-md bg-blue-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Fördertopf anlegen</button>
+                    <button wire:click="editProgram({{ $program->id }})" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Bearbeiten</button>
+                    <button wire:click="deleteProgram({{ $program->id }})" wire:confirm="Förderprogramm wirklich löschen?" class="rounded-md bg-red-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">Löschen</button>
                 </div>
             </header>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-sm">
-                    <thead>
-                        <tr class="text-left text-xs font-medium text-gray-500 uppercase">
-                            <th class="px-4 py-2">Fördertopf</th>
-                            <th class="px-4 py-2">Zugeordnete Antragsarten</th>
-                            <th class="px-4 py-2">Laufzeit</th>
-                            <th class="px-4 py-2 text-right">Budget</th>
-                            <th class="px-4 py-2 text-right">Reserviert</th>
-                            <th class="px-4 py-2 text-right">Bewilligt</th>
-                            <th class="px-4 py-2 text-right">Verfügbar</th>
-                            <th class="px-4 py-2 text-right">Max. je Person</th>
-                            <th class="px-4 py-2 text-right">Max. je Verein</th>
-                            <th class="px-4 py-2">Status</th>
-                            <th class="px-4 py-2 text-right">Aktionen</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @forelse($program->pots->sortByDesc('jahr') as $pot)
-                            <tr wire:key="topf-{{ $pot->id }}">
-                                <td class="px-4 py-2 text-gray-900">{{ $pot->name }}@if($pot->jahr) <span class="text-gray-500">({{ $pot->jahr }})</span>@endif</td>
-                                <td class="px-4 py-2 text-gray-700">
+            <div class="space-y-3 p-3">
+                @forelse($program->pots->sortByDesc('jahr') as $pot)
+                    <article wire:key="topf-{{ $pot->id }}" class="overflow-hidden rounded-lg border border-gray-200">
+                        <header class="flex flex-wrap items-start justify-between gap-3 bg-gray-50 px-4 py-3">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h4 class="font-semibold text-gray-900">{{ $pot->name }}@if($pot->jahr) ({{ $pot->jahr }})@endif</h4>
+                                    <span class="inline-block rounded-full px-2 py-0.5 text-xs font-medium {{ $pot->istOffen() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ $pot->statusLabel() }}</span>
+                                </div>
+                                <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
+                                    <span>
+                                        @if($pot->laufzeit === 'fortlaufend')
+                                            Fortlaufend
+                                        @else
+                                            {{ $pot->beginn?->format('d.m.Y') }} – {{ $pot->ende?->format('d.m.Y') }}
+                                        @endif
+                                    </span>
+                                    <span>Max. je Konto: {{ $pot->max_applications_per_user ?? 'Unbegrenzt' }}</span>
+                                    <span>Max. je Verein: {{ $pot->max_applications_per_club ?? 'Unbegrenzt' }}</span>
+                                </div>
+                                <div class="mt-2 flex flex-wrap gap-1">
                                     @forelse($pot->applicationTypes as $type)
-                                        <span class="inline-block mb-1 rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-900">{{ $type->name }}</span>
+                                        <span class="inline-block rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-900">{{ $type->name }}</span>
                                     @empty
-                                        <span class="text-gray-500">Keine Antragsart zugeordnet</span>
+                                        <span class="text-xs text-gray-500">Keine aktive Antragsart zugeordnet</span>
                                     @endforelse
-                                </td>
-                                <td class="px-4 py-2 text-gray-700">
-                                    @if($pot->laufzeit === 'fortlaufend')
-                                        Fortlaufend
-                                    @else
-                                        {{ $pot->beginn?->format('d.m.Y') }} – {{ $pot->ende?->format('d.m.Y') }}
-                                    @endif
-                                </td>
-                                <td class="px-4 py-2 text-right">{{ number_format((float) $pot->budget, 2, ',', '.') }} €</td>
-                                <td class="px-4 py-2 text-right">{{ number_format($pot->reserviert(), 2, ',', '.') }} €</td>
-                                <td class="px-4 py-2 text-right">{{ number_format($pot->bewilligt(), 2, ',', '.') }} €</td>
-                                <td class="px-4 py-2 text-right font-semibold">{{ number_format($pot->verfuegbar(), 2, ',', '.') }} €</td>
-                                <td class="px-4 py-2 text-right">{{ $pot->max_applications_per_user ?? 'Unbegrenzt' }}</td>
-                                <td class="px-4 py-2 text-right">{{ $pot->max_applications_per_club ?? 'Unbegrenzt' }}</td>
-                                <td class="px-4 py-2">
-                                    <span class="inline-block text-xs font-medium rounded-full px-2 py-0.5 {{ $pot->istOffen() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ $pot->statusLabel() }}</span>
-                                </td>
-                                <td class="px-4 py-2 text-right whitespace-nowrap space-x-3">
-                                    <button wire:click="editPot({{ $pot->id }})" class="text-blue-700 hover:underline">Bearbeiten</button>
-                                    <button wire:click="toggleGeschlossen({{ $pot->id }})" class="text-gray-700 hover:underline">{{ $pot->geschlossen ? 'Öffnen' : 'Schließen' }}</button>
-                                    <button wire:click="deletePot({{ $pot->id }})" wire:confirm="Fördertopf wirklich löschen?" class="text-red-600 hover:underline">Löschen</button>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="11" class="px-4 py-3 text-center text-gray-500">Noch keine Fördertöpfe.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button wire:click="editPot({{ $pot->id }})" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Bearbeiten</button>
+                                <button wire:click="toggleGeschlossen({{ $pot->id }})" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">{{ $pot->geschlossen ? 'Öffnen' : 'Schließen' }}</button>
+                                <button wire:click="deletePot({{ $pot->id }})" wire:confirm="Fördertopf wirklich löschen?" class="rounded-md bg-red-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">Löschen</button>
+                            </div>
+                        </header>
+                        <dl class="grid grid-cols-2 gap-3 px-4 py-3 text-sm sm:grid-cols-4">
+                            <div>
+                                <dt class="text-xs text-gray-500">Budget</dt>
+                                <dd class="font-medium text-gray-900">{{ number_format((float) $pot->budget, 2, ',', '.') }} €</dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-gray-500">Gebunden (inkl. bewilligt)</dt>
+                                <dd class="text-gray-900">{{ number_format($pot->gebunden(), 2, ',', '.') }} €</dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-gray-500">Bewilligt</dt>
+                                <dd class="text-gray-900">{{ number_format($pot->bewilligt(), 2, ',', '.') }} €</dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-gray-500">Verfügbar</dt>
+                                <dd class="font-semibold text-gray-900">{{ number_format($pot->verfuegbar(), 2, ',', '.') }} €</dd>
+                            </div>
+                        </dl>
+                    </article>
+                @empty
+                    <p class="px-4 py-3 text-center text-sm text-gray-500">Noch keine Fördertöpfe.</p>
+                @endforelse
             </div>
         </section>
     @empty

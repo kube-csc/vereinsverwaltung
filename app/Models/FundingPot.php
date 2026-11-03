@@ -23,6 +23,7 @@ class FundingPot extends Model
 
     protected $attributes = [
         'max_applications_per_user' => null,
+        'max_applications_per_club' => null,
     ];
 
     protected $casts = [
@@ -56,7 +57,10 @@ class FundingPot extends Model
 
     private function summeInCent(?string $art = null): int
     {
-        $query = $this->bindings();
+        $query = $this->bindings()->whereIn('art', [
+            FundingPotBinding::RESERVIERT,
+            FundingPotBinding::BEWILLIGT,
+        ]);
         if ($art !== null) {
             $query->where('art', $art);
         }
@@ -77,6 +81,11 @@ class FundingPot extends Model
     public function bewilligt(): float
     {
         return $this->summeInCent(FundingPotBinding::BEWILLIGT) / 100;
+    }
+
+    public function gebunden(): float
+    {
+        return $this->summeInCent() / 100;
     }
 
     public function verfuegbar(): float
@@ -148,6 +157,101 @@ class FundingPot extends Model
                 'application_id' => $applicationId,
                 'referenz' => $referenz,
             ]);
+        });
+    }
+
+    public function reserveRequestedAmount(Application $application): FundingPotBinding
+    {
+        return DB::transaction(function () use ($application) {
+            /** @var self $pot */
+            $pot = static::whereKey($this->getKey())->lockForUpdate()->firstOrFail();
+
+            $existing = $pot->bindings()
+                ->where('application_id', $application->id)
+                ->where('art', FundingPotBinding::RESERVIERT)
+                ->lockForUpdate()
+                ->first();
+
+            if ($existing) {
+                return $existing;
+            }
+
+            $requestedAmount = $application->answers['beantragter_zuschuss'] ?? null;
+            if (! is_numeric($requestedAmount) || (float) $requestedAmount <= 0) {
+                throw new DomainException('Für die Prüfung muss ein positiver beantragter Zuschuss angegeben sein.');
+            }
+
+            $cent = (int) round((float) $requestedAmount * 100);
+            if ($cent > $pot->budgetInCent() - $pot->summeInCent()) {
+                throw new DomainException('Das verfügbare Budget reicht nicht aus.');
+            }
+
+            return $pot->bindings()->create([
+                'art' => FundingPotBinding::RESERVIERT,
+                'betrag' => $cent / 100,
+                'application_id' => $application->id,
+                'referenz' => 'Beantragter Zuschuss',
+            ]);
+        });
+    }
+
+    public function releaseApplicationReservation(int $applicationId): void
+    {
+        DB::transaction(function () use ($applicationId) {
+            /** @var self $pot */
+            $pot = static::whereKey($this->getKey())->lockForUpdate()->firstOrFail();
+            $reservation = $pot->bindings()
+                ->where('application_id', $applicationId)
+                ->where('art', FundingPotBinding::RESERVIERT)
+                ->lockForUpdate()
+                ->first();
+
+            $reservation?->update(['art' => FundingPotBinding::FREIGEGEBEN]);
+        });
+    }
+
+    public function approveApplicationReservation(
+        int $applicationId,
+        float $approvedAmount,
+        ?string $reference = null
+    ): FundingPotBinding {
+        return DB::transaction(function () use ($applicationId, $approvedAmount, $reference) {
+            /** @var self $pot */
+            $pot = static::whereKey($this->getKey())->lockForUpdate()->firstOrFail();
+            $reservation = $pot->bindings()
+                ->where('application_id', $applicationId)
+                ->where('art', FundingPotBinding::RESERVIERT)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $reservation) {
+                return $pot->bind(
+                    FundingPotBinding::BEWILLIGT,
+                    $approvedAmount,
+                    $applicationId,
+                    $reference
+                );
+            }
+
+            $approvedCent = (int) round($approvedAmount * 100);
+            $availableWithReservation = $pot->budgetInCent()
+                - $pot->summeInCent()
+                + (int) round((float) $reservation->betrag * 100);
+
+            if ($approvedCent <= 0) {
+                throw new DomainException('Der Betrag muss größer als 0 sein.');
+            }
+            if ($approvedCent > $availableWithReservation) {
+                throw new DomainException('Das verfügbare Budget reicht nicht aus.');
+            }
+
+            $reservation->update([
+                'art' => FundingPotBinding::BEWILLIGT,
+                'betrag' => $approvedCent / 100,
+                'referenz' => $reference,
+            ]);
+
+            return $reservation;
         });
     }
 }

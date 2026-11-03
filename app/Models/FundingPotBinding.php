@@ -9,6 +9,7 @@ class FundingPotBinding extends Model
 {
     public const RESERVIERT = 'reserviert';
     public const BEWILLIGT = 'bewilligt';
+    public const FREIGEGEBEN = 'freigegeben';
 
     protected $fillable = ['funding_pot_id', 'art', 'betrag', 'application_id', 'referenz'];
 

@@ -71,9 +71,10 @@
                     @foreach($application->form_snapshot ?? [] as $field)
                         @php($value = $application->answers[$field['key']] ?? null)
                         @if($value !== null && $value !== '')
+                            @php($displayValue = ($field['type'] ?? null) === 'date' ? \Illuminate\Support\Carbon::parse($value)->format('d.m.Y') : $value)
                             <div>
                                 <dt class="text-xs font-semibold uppercase text-gray-500">{{ $field['label'] ?? $field['key'] }}</dt>
-                                <dd class="mt-1 whitespace-pre-wrap break-words text-sm text-gray-900">{{ is_bool($value) ? ($value ? 'Ja' : 'Nein') : (is_array($value) ? implode(', ', $value) : $value) }}</dd>
+                                <dd class="mt-1 whitespace-pre-wrap break-words text-sm text-gray-900">{{ is_bool($displayValue) ? ($displayValue ? 'Ja' : 'Nein') : (is_array($displayValue) ? implode(', ', $displayValue) : $displayValue) }}</dd>
                             </div>
                         @endif
                     @endforeach

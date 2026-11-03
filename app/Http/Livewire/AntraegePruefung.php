@@ -3,7 +3,6 @@
 namespace App\Http\Livewire;
 
 use App\Models\Application;
-use App\Models\FundingPotBinding;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -32,17 +31,24 @@ class AntraegePruefung extends Component
             $noteKey => ['nullable', 'string', 'max:5000'],
         ], [], [$noteKey => 'Prüfnotiz']);
         $note = trim($this->reviewNotes[$applicationId] ?? '');
-        DB::transaction(function () use ($applicationId, $note) {
-            $application = $this->findApplication($applicationId, lock: true);
-            abort_unless(! $application->trashed() && $application->status === Application::STATUS_SUBMITTED, 409);
-            $application->update([
-                'status' => Application::STATUS_IN_REVIEW,
-                'reviewed_by' => auth()->id(),
-                'reviewed_at' => now(),
-                'review_note' => $note !== '' ? $note : null,
-            ]);
-            $this->recordEvent($application, Application::EVENT_REVIEW_STARTED, $note ?: 'Die Prüfung wurde aufgenommen.');
-        });
+        try {
+            DB::transaction(function () use ($applicationId, $note) {
+                $application = $this->findApplication($applicationId, lock: true);
+                abort_unless(! $application->trashed() && $application->status === Application::STATUS_SUBMITTED, 409);
+                if ($application->funding_pot_id !== null) {
+                    $application->fundingPot->reserveRequestedAmount($application);
+                }
+                $application->update([
+                    'status' => Application::STATUS_IN_REVIEW,
+                    'reviewed_by' => auth()->id(),
+                    'reviewed_at' => now(),
+                    'review_note' => $note !== '' ? $note : null,
+                ]);
+                $this->recordEvent($application, Application::EVENT_REVIEW_STARTED, $note ?: 'Die Prüfung wurde aufgenommen.');
+            });
+        } catch (DomainException $exception) {
+            $this->addError($noteKey, $exception->getMessage());
+        }
     }
 
     public function requestInformation(int $applicationId): void
@@ -66,6 +72,9 @@ class AntraegePruefung extends Component
             );
 
             $question = $this->questions[$applicationId];
+            if ($application->status === Application::STATUS_IN_REVIEW && $application->funding_pot_id !== null) {
+                $application->fundingPot->releaseApplicationReservation($application->id);
+            }
             $application->update([
                 'status' => Application::STATUS_QUESTION,
                 'reviewed_by' => auth()->id(),
@@ -145,12 +154,13 @@ class AntraegePruefung extends Component
                 );
 
                 if ($decision === Application::STATUS_APPROVED && $application->funding_pot_id !== null) {
-                    $application->fundingPot->bind(
-                        FundingPotBinding::BEWILLIGT,
-                        $approvedAmount,
+                    $application->fundingPot->approveApplicationReservation(
                         $application->id,
+                        $approvedAmount,
                         'Bewilligung durch ' . auth()->user()->name
                     );
+                } elseif ($decision === Application::STATUS_REJECTED && $application->funding_pot_id !== null) {
+                    $application->fundingPot->releaseApplicationReservation($application->id);
                 }
 
                 $application->update([

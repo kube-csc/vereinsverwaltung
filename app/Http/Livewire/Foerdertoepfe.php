@@ -231,8 +231,10 @@ class Foerdertoepfe extends Component
     public function render()
     {
         return view('livewire.foerdertoepfe', [
-            'programs' => FundingProgram::with('pots.applicationTypes')->orderBy('name')->get(),
-            'applicationTypes' => ApplicationType::orderBy('name')->get(),
+            'programs' => FundingProgram::with([
+                'pots.applicationTypes' => fn ($query) => $query->where('application_types.aktiv', true),
+            ])->orderBy('name')->get(),
+            'applicationTypes' => ApplicationType::where('aktiv', true)->orderBy('name')->get(),
         ]);
     }
 }

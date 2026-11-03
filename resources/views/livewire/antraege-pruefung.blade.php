@@ -23,6 +23,9 @@
                     <h4 class="font-semibold text-gray-900">{{ $application->applicationType->name }}</h4>
                     <p class="mt-1 text-sm text-gray-700">
                         {{ trim($application->user->vorname . ' ' . $application->user->nachname) ?: $application->user->name }}
+                        @if($application->club)
+                            · Verein: {{ $application->club->clubname }}
+                        @endif
                         · Eingereicht {{ $application->submitted_at?->format('d.m.Y H:i') }}
                         @if($application->fundingPot)
                             · {{ $application->fundingPot->program->name }} — {{ $application->fundingPot->name }}

@@ -11,6 +11,7 @@ use Livewire\Component;
 class AntraegePruefung extends Component
 {
     public bool $showArchived = false;
+    public ?int $selectedApplicationId = null;
     public array $decisionReasons = [];
     public array $decisionAmounts = [];
     public array $decisionAmountModes = [];
@@ -21,6 +22,15 @@ class AntraegePruefung extends Component
     public function mount(): void
     {
         Gate::authorize('antraege.pruefbereich');
+    }
+
+    public function selectApplication(int $applicationId): void
+    {
+        Gate::authorize('antraege.pruefbereich');
+        $application = $this->findApplication($applicationId);
+        abort_unless($application->submitted_at !== null, 404);
+
+        $this->selectedApplicationId = $application->id;
     }
 
     public function markForReview(int $applicationId): void
@@ -264,18 +274,23 @@ class AntraegePruefung extends Component
             ]);
         }
 
-        $pendingApplications = (clone $query)
-            ->whereIn('status', [
+        $applications = $query
+            ->orderByRaw('CASE WHEN status IN (?, ?) THEN 0 ELSE 1 END', [
                 Application::STATUS_SUBMITTED,
                 Application::STATUS_IN_REVIEW,
             ])
             ->latest('submitted_at')
             ->latest('id')
             ->get();
+        $selectedApplication = $applications->firstWhere('id', $this->selectedApplicationId);
+        if (! $selectedApplication) {
+            $selectedApplication = $applications->first();
+            $this->selectedApplicationId = $selectedApplication?->id;
+        }
 
         return view('livewire.antraege-pruefung', [
-            'applications' => $query->latest('submitted_at')->latest('id')->get(),
-            'pendingApplications' => $pendingApplications,
+            'applications' => $applications,
+            'selectedApplication' => $selectedApplication,
             'canReview' => $canReview,
             'canDecide' => auth()->user()->can('antraege.entscheiden'),
             'canArchive' => auth()->user()->can('antraege.antraege_loeschen'),

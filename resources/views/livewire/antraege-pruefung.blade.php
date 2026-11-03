@@ -16,63 +16,109 @@
         </label>
     </div>
 
-    @if(! $showArchived && $canReview)
-        <section class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
-            <h4 class="font-semibold text-gray-900">Anträge zur Prüfung auswählen</h4>
-            <p class="mt-1 text-sm text-gray-700">Noch offene Anträge stehen hier zuerst zur Auswahl.</p>
-            @if($pendingApplications->isNotEmpty())
-                <ul class="mt-3 divide-y divide-indigo-100">
-                    @foreach($pendingApplications as $pendingApplication)
-                        <li wire:key="pruef-auswahl-{{ $pendingApplication->id }}" class="py-2">
-                            <a href="#pruef-antrag-{{ $pendingApplication->id }}" class="font-medium text-indigo-800 underline hover:text-indigo-950">
-                                {{ $pendingApplication->applicationType->name }}
-                                · {{ trim($pendingApplication->user->vorname . ' ' . $pendingApplication->user->nachname) ?: $pendingApplication->user->name }}
-                                @if($pendingApplication->club)
-                                    · {{ $pendingApplication->club->clubname }}
-                                @endif
-                                · {{ $pendingApplication->status === \App\Models\Application::STATUS_SUBMITTED ? 'Eingereicht' : 'In Prüfung' }}
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            @else
-                <p class="mt-3 text-sm text-gray-600">Aktuell gibt es keine offenen Anträge zur Prüfung.</p>
-            @endif
+    @if($applications->isNotEmpty())
+        <section class="overflow-hidden rounded-lg border border-indigo-200 bg-white">
+            <header class="bg-indigo-50 px-4 py-3">
+                <h4 class="font-semibold text-gray-900">Anträge auswählen</h4>
+                <p class="mt-1 text-sm text-gray-700">Offene Anträge zur Prüfung stehen zuerst. Der ausgewählte Antrag ist farbig markiert und wird darunter angezeigt.</p>
+            </header>
+            <ul class="grid grid-cols-1 gap-2 p-3 md:grid-cols-2">
+                @foreach($applications as $applicationOption)
+                    @php($isSelected = $selectedApplicationId === $applicationOption->id)
+                    @php($applicationOptionStatusLabel = match($applicationOption->status) {
+                        \App\Models\Application::STATUS_SUBMITTED => 'Eingereicht',
+                        \App\Models\Application::STATUS_IN_REVIEW => 'In Prüfung',
+                        \App\Models\Application::STATUS_QUESTION => 'Rückfrage',
+                        \App\Models\Application::STATUS_APPROVED => 'Bewilligt',
+                        \App\Models\Application::STATUS_REJECTED => 'Abgelehnt',
+                        default => $applicationOption->status,
+                    })
+                    <li wire:key="pruef-auswahl-{{ $applicationOption->id }}">
+                        <button
+                            type="button"
+                            wire:click="selectApplication({{ $applicationOption->id }})"
+                            aria-pressed="{{ $isSelected ? 'true' : 'false' }}"
+                            class="block w-full rounded-lg border px-4 py-3 text-left focus:outline-none focus:ring-2 focus:ring-indigo-600 {{ $isSelected ? 'border-indigo-600 bg-indigo-100 ring-2 ring-indigo-300' : 'border-gray-200 bg-gray-50 hover:border-indigo-300 hover:bg-indigo-50' }}"
+                        >
+                            <span class="flex flex-wrap items-center justify-between gap-2">
+                                <span class="font-semibold text-gray-900">
+                                    {{ trim($applicationOption->user->vorname . ' ' . $applicationOption->user->nachname) ?: $applicationOption->user->name }}
+                                </span>
+                                <span class="rounded-full px-2 py-0.5 text-xs font-medium {{ match($applicationOption->status) {
+                                    \App\Models\Application::STATUS_APPROVED => 'bg-green-100 text-green-800',
+                                    \App\Models\Application::STATUS_REJECTED => 'bg-red-100 text-red-800',
+                                    \App\Models\Application::STATUS_IN_REVIEW => 'bg-amber-100 text-amber-800',
+                                    \App\Models\Application::STATUS_QUESTION => 'bg-orange-100 text-orange-800',
+                                    default => 'bg-blue-100 text-blue-800',
+                                } }}">{{ $applicationOptionStatusLabel }}</span>
+                            </span>
+                            <span class="mt-1 block text-sm text-gray-700">
+                                {{ $applicationOption->applicationType->name }}
+                                @if($applicationOption->club) · {{ $applicationOption->club->clubname }} @endif
+                                @if($applicationOption->fundingPot) · {{ $applicationOption->fundingPot->program->name }} — {{ $applicationOption->fundingPot->name }} @endif
+                            </span>
+                            @if($isSelected)
+                                <span class="mt-2 inline-block text-xs font-bold uppercase tracking-wide text-indigo-900">Gerade ausgewählt</span>
+                            @endif
+                        </button>
+                    </li>
+                @endforeach
+            </ul>
         </section>
     @endif
 
-    @forelse($applications as $application)
-        <article id="pruef-antrag-{{ $application->id }}" wire:key="pruef-antrag-{{ $application->id }}" class="rounded-xl border border-gray-300 bg-white p-5 shadow-sm">
-            <div class="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                    <h4 class="font-semibold text-gray-900">{{ $application->applicationType->name }}</h4>
+    @if($selectedApplication)
+        @php($application = $selectedApplication)
+        @php($applicationStatusLabel = match($application->status) {
+            \App\Models\Application::STATUS_SUBMITTED => 'Eingereicht',
+            \App\Models\Application::STATUS_IN_REVIEW => 'In Prüfung',
+            \App\Models\Application::STATUS_QUESTION => 'Rückfrage',
+            \App\Models\Application::STATUS_APPROVED => 'Bewilligt',
+            \App\Models\Application::STATUS_REJECTED => 'Abgelehnt',
+            default => $application->status,
+        })
+        <article id="pruef-antrag-{{ $application->id }}" wire:key="pruef-antrag-{{ $application->id }}" class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+            <header class="flex flex-wrap items-start justify-between gap-3 bg-gray-50 px-4 py-3">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h4 class="text-lg font-semibold text-gray-900">
+                            Antrag von {{ trim($application->user->vorname . ' ' . $application->user->nachname) ?: $application->user->name }}
+                        </h4>
+                        <span class="rounded-full px-2 py-0.5 text-xs font-medium {{ match($application->status) {
+                            \App\Models\Application::STATUS_APPROVED => 'bg-green-100 text-green-800',
+                            \App\Models\Application::STATUS_REJECTED => 'bg-red-100 text-red-800',
+                            \App\Models\Application::STATUS_IN_REVIEW => 'bg-amber-100 text-amber-800',
+                            \App\Models\Application::STATUS_QUESTION => 'bg-orange-100 text-orange-800',
+                            default => 'bg-blue-100 text-blue-800',
+                        } }}">{{ $applicationStatusLabel }}</span>
+                    </div>
                     <p class="mt-1 text-sm text-gray-700">
-                        {{ trim($application->user->vorname . ' ' . $application->user->nachname) ?: $application->user->name }}
-                        @if($application->club)
-                            · Verein: {{ $application->club->clubname }}
-                        @endif
-                        · Eingereicht {{ $application->submitted_at?->format('d.m.Y H:i') }}
-                        @if($application->fundingPot)
-                            · {{ $application->fundingPot->program->name }} — {{ $application->fundingPot->name }}
-                        @endif
+                        Antragsart: {{ $application->applicationType->name }}
+                        @if($application->club) · Verein: {{ $application->club->clubname }} @endif
                     </p>
-                    <p class="mt-1 text-sm font-medium text-gray-800">Status: {{ str_replace('_', ' ', ucfirst($application->status)) }}</p>
+                </div>
+                <div class="text-sm text-gray-600">
+                    <p>Eingereicht {{ $application->submitted_at?->format('d.m.Y H:i') }}</p>
+                    @if($application->fundingPot)
+                        <p>Fördertopf: {{ $application->fundingPot->program->name }} — {{ $application->fundingPot->name }}</p>
+                    @endif
                 </div>
                 @if($application->trashed())
-                    <div class="text-sm text-gray-700">
+                    <div class="w-full border-t border-gray-200 pt-2 text-sm text-gray-700">
                         Archiviert {{ $application->deleted_at?->format('d.m.Y H:i') }} von {{ $application->deleter?->name ?? 'unbekannt' }}.
                         <p class="mt-1">{{ $application->deletion_reason }}</p>
                     </div>
                 @endif
-            </div>
+            </header>
 
-            @if($canReview)
-                <dl class="mt-4 grid grid-cols-1 gap-3 border-t border-gray-200 pt-4 sm:grid-cols-2">
+            <div class="space-y-4 p-4">
+                @if($canReview)
+                <dl class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     @foreach($application->form_snapshot ?? [] as $field)
                         @php($value = $application->answers[$field['key']] ?? null)
                         @if($value !== null && $value !== '')
                             @php($displayValue = ($field['type'] ?? null) === 'date' ? \Illuminate\Support\Carbon::parse($value)->format('d.m.Y') : $value)
-                            <div>
+                            <div class="rounded-md border border-gray-100 bg-gray-50 px-3 py-2">
                                 <dt class="text-xs font-semibold uppercase text-gray-500">{{ $field['label'] ?? $field['key'] }}</dt>
                                 <dd class="mt-1 whitespace-pre-wrap break-words text-sm text-gray-900">{{ is_bool($displayValue) ? ($displayValue ? 'Ja' : 'Nein') : (is_array($displayValue) ? implode(', ', $displayValue) : $displayValue) }}</dd>
                             </div>
@@ -80,7 +126,7 @@
                     @endforeach
                 </dl>
                 @if($application->documents->isNotEmpty())
-                    <div class="mt-4 border-t border-gray-200 pt-3">
+                    <div class="rounded-md border border-gray-200 p-3">
                         <p class="text-sm font-semibold text-gray-800">Anlagen</p>
                         <ul class="mt-1 list-inside list-disc text-sm">
                             @foreach($application->documents as $document)
@@ -98,7 +144,7 @@
                     <p class="mt-3 text-sm text-gray-700"><span class="font-semibold">Entscheidungsbegründung:</span> {{ $application->decision_reason }} ({{ $deciderName }}@if($deciderRoles), {{ $deciderRoles }}@endif, {{ $application->decided_at?->format('d.m.Y H:i') }})</p>
                 @endif
                 @if($application->events->isNotEmpty())
-                    <div class="mt-4 border-t border-gray-200 pt-3">
+                    <div class="border-t border-gray-200 pt-3">
                         <h5 class="text-sm font-semibold text-gray-800">Verlauf und Rückfragen</h5>
                         <ol class="mt-2 space-y-2">
                             @foreach($application->events as $event)
@@ -127,7 +173,7 @@
             @endif
 
             @if(! $application->trashed())
-                <div class="mt-4 flex flex-col gap-3 border-t border-gray-200 pt-4">
+                <div class="flex flex-col gap-3 border-t border-gray-200 pt-4">
                     @if($canReview && $application->status === \App\Models\Application::STATUS_SUBMITTED)
                         <div class="flex flex-wrap items-end gap-3">
                             <label class="min-w-64 flex-1 text-sm text-gray-700">
@@ -219,10 +265,11 @@
                     @endif
                 </div>
             @endif
+            </div>
         </article>
-    @empty
+    @else
         <p class="rounded-lg border border-gray-200 bg-gray-50 p-5 text-sm text-gray-600">
             {{ $showArchived ? 'Keine archivierten Anträge vorhanden.' : 'Keine eingereichten Anträge vorhanden.' }}
         </p>
-    @endforelse
+    @endif
 </div>

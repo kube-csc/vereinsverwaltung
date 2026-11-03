@@ -243,7 +243,7 @@ class AntraegePruefung extends Component
         Gate::authorize('antraege.pruefbereich');
         $canReview = auth()->user()->can('antraege.pruefen');
         $query = Application::query()
-            ->with(['user', 'applicationType', 'fundingPot.program', 'documents', 'reviewer', 'decider', 'deleter', 'events.actor'])
+            ->with(['user', 'applicationType', 'fundingPot.program', 'documents', 'reviewer', 'decider.roles', 'deleter', 'events.actor.roles'])
             ->whereNotNull('submitted_at');
 
         if (! $canReview) {

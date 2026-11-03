@@ -64,7 +64,9 @@
                     <p class="mt-3 text-sm text-gray-700"><span class="font-semibold">Prüfnotiz:</span> {{ $application->review_note }}</p>
                 @endif
                 @if($application->decision_reason)
-                    <p class="mt-3 text-sm text-gray-700"><span class="font-semibold">Entscheidungsbegründung:</span> {{ $application->decision_reason }} ({{ $application->decider?->name ?? 'unbekannt' }}, {{ $application->decided_at?->format('d.m.Y H:i') }})</p>
+                    @php($deciderName = $application->decider ? (trim($application->decider->vorname . ' ' . $application->decider->nachname) ?: $application->decider->name) : 'unbekannt')
+                    @php($deciderRoles = $application->decider?->roles->map(fn ($role) => $role->label ?: $role->name)->implode(', '))
+                    <p class="mt-3 text-sm text-gray-700"><span class="font-semibold">Entscheidungsbegründung:</span> {{ $application->decision_reason }} ({{ $deciderName }}@if($deciderRoles), {{ $deciderRoles }}@endif, {{ $application->decided_at?->format('d.m.Y H:i') }})</p>
                 @endif
                 @if($application->events->isNotEmpty())
                     <div class="mt-4 border-t border-gray-200 pt-3">
@@ -73,6 +75,8 @@
                             @foreach($application->events as $event)
                                 <li class="rounded-md bg-gray-50 p-3">
                                     <p class="text-xs font-semibold text-gray-700">
+                                        @php($eventActorName = $event->actor ? (trim($event->actor->vorname . ' ' . $event->actor->nachname) ?: $event->actor->name) : ($event->actor_name ?: 'unbekannt'))
+                                        @php($eventActorRoles = $event->actor?->roles->map(fn ($role) => $role->label ?: $role->name)->implode(', '))
                                         {{ match($event->event_type) {
                                             \App\Models\Application::EVENT_SUBMITTED => 'Eingereicht',
                                             \App\Models\Application::EVENT_REVIEW_STARTED => 'Prüfung aufgenommen',
@@ -83,7 +87,7 @@
                                             \App\Models\Application::EVENT_ARCHIVED => 'Archiviert',
                                             default => $event->event_type,
                                         } }}
-                                        · {{ $event->actor_name }} · {{ $event->created_at->format('d.m.Y H:i') }}
+                                        · {{ $eventActorName }}@if($eventActorRoles), {{ $eventActorRoles }}@endif · {{ $event->created_at->format('d.m.Y H:i') }}
                                     </p>
                                     <p class="mt-1 whitespace-pre-wrap text-sm text-gray-800">{{ $event->message }}</p>
                                 </li>

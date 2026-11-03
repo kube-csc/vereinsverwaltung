@@ -6,7 +6,6 @@ use App\Models\Application;
 use App\Models\ApplicationType;
 use App\Models\FundingPot;
 use App\Models\FundingProgram;
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 class AntraegeDashboardController extends Controller
@@ -28,6 +27,9 @@ class AntraegeDashboardController extends Controller
             $pots = FundingPot::all();
             $offene = $pots->filter(fn (FundingPot $pot) => $pot->istOffen());
             $verfuegbar = $offene->sum(fn (FundingPot $pot) => $pot->verfuegbar());
+            $bewilligtImJahr = Application::where('status', Application::STATUS_APPROVED)
+                ->whereYear('decided_at', now()->year)
+                ->sum('approved_amount');
 
             $stats = [
                 [
@@ -48,10 +50,10 @@ class AntraegeDashboardController extends Controller
                     'border' => 'border-amber-500',
                 ],
                 [
-                    'label' => 'Konten ohne Rolle',
-                    'value' => User::doesntHave('roles')->count(),
-                    'hint' => 'noch ohne Berechtigung',
-                    'border' => 'border-gray-400',
+                    'label' => 'Bewilligte Fördergelder',
+                    'value' => number_format($bewilligtImJahr, 2, ',', '.') . ' €',
+                    'hint' => 'im Jahr ' . now()->year . ' bewilligt',
+                    'border' => 'border-green-500',
                 ],
             ];
         }

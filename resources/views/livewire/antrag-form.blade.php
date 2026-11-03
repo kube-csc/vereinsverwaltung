@@ -1,9 +1,9 @@
 <div class="space-y-6 bg-white p-6">
-    <header class="rounded-xl border-l-4 border-blue-300 bg-blue-800 px-5 py-4 text-white">
-        <p class="text-xs font-bold uppercase tracking-widest text-blue-200">Antragsformular</p>
+    <header class="rounded-xl border-l-4 border-gray-600 bg-gray-300 px-5 py-4 text-gray-900">
+        <p class="text-xs font-bold uppercase tracking-widest text-gray-700">Antragsformular</p>
         <h3 class="mt-1 text-xl font-bold">{{ $applicationType->name }}</h3>
         @if($applicationType->beschreibung)
-            <p class="mt-1 text-sm text-blue-100">{{ $applicationType->beschreibung }}</p>
+            <p class="mt-1 text-sm text-gray-800">{{ $applicationType->beschreibung }}</p>
         @endif
         @if($applicationType->frist)
             <p class="mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold {{ $deadlinePassed ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-900' }}">

@@ -1,8 +1,8 @@
 <div class="space-y-8 bg-white p-6">
-    <header class="rounded-xl border-l-4 border-indigo-300 bg-indigo-800 px-5 py-4 text-white">
-        <p class="text-xs font-bold uppercase tracking-widest text-indigo-200">Fördermittelverwaltung</p>
+    <header class="rounded-xl border-l-4 border-gray-600 bg-gray-300 px-5 py-4 text-gray-900">
+        <p class="text-xs font-bold uppercase tracking-widest text-gray-700">Fördermittelverwaltung</p>
         <h3 class="mt-1 text-lg font-bold">Programme und Budgets</h3>
-        <p class="mt-1 text-sm text-indigo-100">Förderprogramme, Fördertöpfe und deren Antragszuordnungen verwalten.</p>
+        <p class="mt-1 text-sm text-gray-800">Förderprogramme, Fördertöpfe und deren Antragszuordnungen verwalten.</p>
     </header>
     @if (session()->has('message'))
         <div class="text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded p-3">{{ session('message') }}</div>
@@ -13,16 +13,16 @@
 
     @forelse($programs as $program)
         <section wire:key="programm-{{ $program->id }}" class="overflow-hidden rounded-xl border-2 border-indigo-200 bg-white shadow-sm">
-            <header class="flex flex-wrap items-start justify-between gap-2 bg-indigo-800 px-4 py-3 text-white">
+            <header class="flex flex-wrap items-start justify-between gap-2 bg-gray-300 px-4 py-3 text-gray-900">
                 <div>
-                    <h3 class="text-lg font-bold text-white">
+                    <h3 class="text-lg font-bold text-gray-900">
                         {{ $program->name }}
                         @unless($program->aktiv)
                             <span class="ml-2 text-xs font-medium bg-gray-200 text-gray-700 rounded-full px-2 py-0.5">inaktiv</span>
                         @endunless
                     </h3>
                     @if($program->beschreibung)
-                        <p class="text-sm text-indigo-100">{{ $program->beschreibung }}</p>
+                        <p class="text-sm text-gray-700">{{ $program->beschreibung }}</p>
                     @endif
                 </div>
                 <div class="flex flex-wrap gap-2">

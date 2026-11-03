@@ -1,8 +1,8 @@
 <div class="space-y-6 bg-white p-6">
-    <header class="rounded-xl border-l-4 border-green-300 bg-green-800 px-5 py-4 text-white">
-        <p class="text-xs font-bold uppercase tracking-widest text-green-200">Auszahlung</p>
+    <header class="rounded-xl border-l-4 border-gray-600 bg-gray-300 px-5 py-4 text-gray-900">
+        <p class="text-xs font-bold uppercase tracking-widest text-gray-700">Auszahlung</p>
         <h3 class="mt-1 text-lg font-bold">Meine Bankkonten</h3>
-        <p class="mt-1 text-sm text-green-100">Diese Konten können Sie in Ihren Anträgen für die Auszahlung auswählen. Sie sind nur für Sie und berechtigte Personen sichtbar.</p>
+        <p class="mt-1 text-sm text-gray-800">Diese Konten können Sie in Ihren Anträgen für die Auszahlung auswählen. Sie sind nur für Sie und berechtigte Personen sichtbar.</p>
     </header>
 
     @if (session()->has('message'))

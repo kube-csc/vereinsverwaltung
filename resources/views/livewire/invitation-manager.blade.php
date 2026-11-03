@@ -1,8 +1,8 @@
 <div class="space-y-6 bg-white p-6">
-    <header class="rounded-xl bg-blue-800 px-5 py-4 text-white">
-        <p class="text-xs font-bold uppercase tracking-widest text-blue-200">Zugänge</p>
+    <header class="rounded-xl bg-gray-300 px-5 py-4 text-gray-900">
+        <p class="text-xs font-bold uppercase tracking-widest text-gray-700">Zugänge</p>
         <h3 class="mt-1 text-lg font-bold">Mitglieder zur {{ config('app.verein_name') }} einladen</h3>
-        <p class="mt-1 text-sm text-blue-100">Senden Sie einen Registrierungslink für {{ config('app.verein_name') }} an ein neues Mitglied.</p>
+        <p class="mt-1 text-sm text-gray-800">Senden Sie einen Registrierungslink für {{ config('app.verein_name') }} an ein neues Mitglied.</p>
     </header>
 
     @if (session()->has('message'))

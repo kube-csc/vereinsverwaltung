@@ -3,9 +3,9 @@
         <div class="text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded p-3">{{ session('message') }}</div>
     @endif
     <section class="space-y-4">
-        <div class="rounded-xl bg-blue-800 px-5 py-4 text-white">
+        <div class="rounded-xl bg-gray-300 px-5 py-4 text-gray-900">
             <h3 class="text-lg font-bold">Verfügbare Antragsarten</h3>
-            <p class="text-sm text-blue-100">Sie können einen Antrag zunächst als Entwurf speichern und später einreichen.</p>
+            <p class="text-sm text-gray-800">Sie können einen Antrag zunächst als Entwurf speichern und später einreichen.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @forelse($applicationTypes as $type)
@@ -34,9 +34,9 @@
     </section>
 
     <section class="space-y-4 border-t border-gray-200 pt-6">
-        <div class="rounded-xl bg-indigo-800 px-5 py-4 text-white">
+        <div class="rounded-xl bg-gray-300 px-5 py-4 text-gray-900">
             <h3 class="text-lg font-bold">Meine gespeicherten Anträge</h3>
-            <p class="text-sm text-indigo-100">Eingereichte Anträge können hier nicht mehr geändert werden.</p>
+            <p class="text-sm text-gray-800">Eingereichte Anträge können hier nicht mehr geändert werden.</p>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 text-sm">

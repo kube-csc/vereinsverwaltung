@@ -6,11 +6,11 @@
     <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
-            <div class="rounded-xl shadow-lg overflow-hidden bg-gradient-to-r from-blue-700 to-blue-500 text-white">
+            <div class="rounded-xl shadow-lg overflow-hidden bg-gray-300 text-gray-900">
                 <div class="px-6 py-8 sm:px-10">
-                    <p class="text-sm uppercase tracking-wide text-blue-100">Willkommen, {{ auth()->user()->vorname ?: auth()->user()->name }}</p>
+                    <p class="text-sm uppercase tracking-wide text-gray-700">Willkommen, {{ auth()->user()->vorname ?: auth()->user()->name }}</p>
                     <h3 class="mt-1 text-2xl sm:text-3xl font-bold">Förder- und Vereinsanträge im Überblick</h3>
-                    <p class="mt-2 text-blue-100 max-w-2xl">
+                    <p class="mt-2 text-gray-800 max-w-2xl">
                         @can('antraege.foerdermittel_verwalten')
                             Verwalten Sie Förderprogramme, Fördertöpfe und Antragsformulare an einem Ort.
                             @can('antraege.verwalten') Benutzerverwaltung und weitere Administrationsfunktionen sind ebenfalls verfügbar.

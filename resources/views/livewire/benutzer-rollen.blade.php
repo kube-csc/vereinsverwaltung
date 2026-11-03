@@ -1,8 +1,8 @@
 <div class="space-y-5 bg-white p-6">
-    <header class="rounded-xl bg-purple-800 px-5 py-4 text-white">
-        <p class="text-xs font-bold uppercase tracking-widest text-purple-200">Berechtigungen</p>
+    <header class="rounded-xl bg-gray-300 px-5 py-4 text-gray-900">
+        <p class="text-xs font-bold uppercase tracking-widest text-gray-700">Berechtigungen</p>
         <h3 class="mt-1 text-lg font-bold">Benutzer und Rollen</h3>
-        <p class="mt-1 text-sm text-purple-100">Konten ohne Rolle haben keine fachlichen Berechtigungen in der Antragsverwaltung.</p>
+        <p class="mt-1 text-sm text-gray-800">Konten ohne Rolle haben keine fachlichen Berechtigungen in der Antragsverwaltung.</p>
     </header>
 
     @if (session()->has('message'))

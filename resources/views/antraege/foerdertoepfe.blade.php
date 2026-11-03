@@ -7,10 +7,10 @@
 
     <div class="bg-gray-100 py-8">
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-            <section class="overflow-hidden rounded-xl border-l-4 border-indigo-300 bg-indigo-800 px-6 py-5 text-white shadow-lg">
-                <p class="text-xs font-bold uppercase tracking-widest text-indigo-200">Antragswesen · Verwaltung</p>
+            <section class="overflow-hidden rounded-xl border-l-4 border-gray-500 bg-gray-200 px-6 py-5 text-gray-900 shadow-lg">
+                <p class="text-xs font-bold uppercase tracking-widest text-gray-700">Antragswesen · Verwaltung</p>
                 <h3 class="mt-1 text-2xl font-bold">Förderprogramme und Fördertöpfe</h3>
-                <p class="mt-1 text-sm text-indigo-100">Programme, Budgets, Laufzeiten und zugeordnete Antragsarten verwalten.</p>
+                <p class="mt-1 text-sm text-gray-700">Programme, Budgets, Laufzeiten und zugeordnete Antragsarten verwalten.</p>
             </section>
             <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
                 @livewire('foerdertoepfe')

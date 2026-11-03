@@ -5,10 +5,10 @@
 
     <div class="py-10">
         <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
-            <section class="overflow-hidden rounded-xl bg-green-900 text-white shadow-lg">
+            <section class="overflow-hidden rounded-xl bg-gray-300 text-gray-900 shadow-lg">
                 <div class="px-6 py-8 sm:px-10">
                     <h3 class="mt-1 text-2xl font-bold sm:text-3xl">Willkommen, {{ auth()->user()->vorname ?: auth()->user()->name }}</h3>
-                    <p class="mt-2 max-w-2xl text-base text-white">Hier finden Sie passende Antragsarten, den Stand Ihrer Anträge und Ihre Bewilligungen.</p>
+                    <p class="mt-2 max-w-2xl text-base text-gray-800">Hier finden Sie passende Antragsarten, den Stand Ihrer Anträge und Ihre Bewilligungen.</p>
                 </div>
             </section>
 

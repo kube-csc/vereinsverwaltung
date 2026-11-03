@@ -4,10 +4,10 @@
     @endif
 
     <section class="space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-indigo-800 px-5 py-4 text-white shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-gray-300 px-5 py-4 text-gray-900 shadow-sm">
             <div>
                 <h3 class="text-lg font-bold">Vorhandene Antragsarten</h3>
-                <p class="text-sm text-indigo-100">Deaktivieren Sie nicht mehr verwendete Formulare, statt sie zu löschen.</p>
+                <p class="text-sm text-gray-800">Deaktivieren Sie nicht mehr verwendete Formulare, statt sie zu löschen.</p>
             </div>
             <x-button wire:click="newType">Antragsart anlegen</x-button>
         </div>

@@ -16,8 +16,33 @@
         </label>
     </div>
 
+    @if(! $showArchived && $canReview)
+        <section class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
+            <h4 class="font-semibold text-gray-900">Anträge zur Prüfung auswählen</h4>
+            <p class="mt-1 text-sm text-gray-700">Noch offene Anträge stehen hier zuerst zur Auswahl.</p>
+            @if($pendingApplications->isNotEmpty())
+                <ul class="mt-3 divide-y divide-indigo-100">
+                    @foreach($pendingApplications as $pendingApplication)
+                        <li wire:key="pruef-auswahl-{{ $pendingApplication->id }}" class="py-2">
+                            <a href="#pruef-antrag-{{ $pendingApplication->id }}" class="font-medium text-indigo-800 underline hover:text-indigo-950">
+                                {{ $pendingApplication->applicationType->name }}
+                                · {{ trim($pendingApplication->user->vorname . ' ' . $pendingApplication->user->nachname) ?: $pendingApplication->user->name }}
+                                @if($pendingApplication->club)
+                                    · {{ $pendingApplication->club->clubname }}
+                                @endif
+                                · {{ $pendingApplication->status === \App\Models\Application::STATUS_SUBMITTED ? 'Eingereicht' : 'In Prüfung' }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="mt-3 text-sm text-gray-600">Aktuell gibt es keine offenen Anträge zur Prüfung.</p>
+            @endif
+        </section>
+    @endif
+
     @forelse($applications as $application)
-        <article wire:key="pruef-antrag-{{ $application->id }}" class="rounded-xl border border-gray-300 bg-white p-5 shadow-sm">
+        <article id="pruef-antrag-{{ $application->id }}" wire:key="pruef-antrag-{{ $application->id }}" class="rounded-xl border border-gray-300 bg-white p-5 shadow-sm">
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <div>
                     <h4 class="font-semibold text-gray-900">{{ $application->applicationType->name }}</h4>
@@ -199,6 +224,4 @@
             {{ $showArchived ? 'Keine archivierten Anträge vorhanden.' : 'Keine eingereichten Anträge vorhanden.' }}
         </p>
     @endforelse
-
-    {{ $applications->links() }}
 </div>

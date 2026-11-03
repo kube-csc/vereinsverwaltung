@@ -164,17 +164,17 @@
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <x-label value="Max. Anträge je Antragstellerkonto" />
-                    <x-input type="number" min="1" wire:model="potMaxApplicationsPerUser" class="w-full" />
+                    <x-label value="Max. Anträge je Antragstellerkonto (optional)" />
+                    <x-input type="number" min="1" wire:model="potMaxApplicationsPerUser" class="w-full" placeholder="Unbegrenzt" />
                     <x-input-error for="potMaxApplicationsPerUser" class="mt-1" />
                 </div>
                 <div>
                     <x-label value="Max. Anträge je Verein (optional)" />
-                    <x-input type="number" min="1" wire:model="potMaxApplicationsPerClub" class="w-full" />
+                    <x-input type="number" min="1" wire:model="potMaxApplicationsPerClub" class="w-full" placeholder="Unbegrenzt" />
                     <x-input-error for="potMaxApplicationsPerClub" class="mt-1" />
                 </div>
             </div>
-            <p class="text-xs text-gray-600">Je Antragstellerkonto ist mindestens eine Höchstzahl erforderlich (Standard: 1). Eine Vereinsgrenze ist optional und nur bei Antragsarten mit erforderlicher Vereinszuordnung möglich. Entwürfe zählen nicht; eingereichte Anträge zählen auch nach Ablehnung oder Rücknahme weiter.</p>
+            <p class="text-xs text-gray-600">Beide Höchstzahlen sind optional und standardmäßig unbegrenzt: leer lassen bedeutet unbegrenzt. Eine Vereinsgrenze ist nur bei Antragsarten mit erforderlicher Vereinszuordnung möglich. Entwürfe zählen nicht; eingereichte Anträge zählen auch nach Ablehnung oder Rücknahme weiter.</p>
             <div>
                 <x-label value="Beschreibung (optional)" />
                 <textarea wire:model="potBeschreibung" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>

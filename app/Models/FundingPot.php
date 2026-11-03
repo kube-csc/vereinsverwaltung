@@ -22,7 +22,7 @@ class FundingPot extends Model
     ];
 
     protected $attributes = [
-        'max_applications_per_user' => 1,
+        'max_applications_per_user' => null,
     ];
 
     protected $casts = [

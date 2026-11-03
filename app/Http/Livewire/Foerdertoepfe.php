@@ -24,7 +24,7 @@ class Foerdertoepfe extends Component
     public string $potBeginn = '';
     public string $potEnde = '';
     public string $potBudget = '';
-    public string $potMaxApplicationsPerUser = '1';
+    public string $potMaxApplicationsPerUser = '';
     public string $potMaxApplicationsPerClub = '';
     public array $potApplicationTypeIds = [];
 
@@ -119,7 +119,7 @@ class Foerdertoepfe extends Component
             'potBeginn' => ['nullable', 'date', 'required_if:potLaufzeit,' . FundingPot::BEFRISTET],
             'potEnde' => ['nullable', 'date', 'required_if:potLaufzeit,' . FundingPot::BEFRISTET, 'after_or_equal:potBeginn'],
             'potBudget' => ['required', 'numeric', 'min:0', 'max:9999999999'],
-            'potMaxApplicationsPerUser' => ['required', 'integer', 'min:1', 'max:4294967295'],
+            'potMaxApplicationsPerUser' => ['nullable', 'integer', 'min:1', 'max:4294967295'],
             'potMaxApplicationsPerClub' => ['nullable', 'integer', 'min:1', 'max:4294967295'],
             'potApplicationTypeIds' => ['array'],
             'potApplicationTypeIds.*' => ['integer', 'distinct', 'exists:application_types,id'],
@@ -148,7 +148,9 @@ class Foerdertoepfe extends Component
             'beginn' => $fortlaufend ? null : $data['potBeginn'],
             'ende' => $fortlaufend ? null : $data['potEnde'],
             'budget' => $data['potBudget'],
-            'max_applications_per_user' => $data['potMaxApplicationsPerUser'] ?: null,
+            'max_applications_per_user' => filled($data['potMaxApplicationsPerUser'])
+                ? (int) $data['potMaxApplicationsPerUser']
+                : null,
             'max_applications_per_club' => $data['potMaxApplicationsPerClub'] ?: null,
         ];
 
@@ -202,7 +204,6 @@ class Foerdertoepfe extends Component
             'potBeginn', 'potEnde', 'potBudget', 'potMaxApplicationsPerUser',
             'potMaxApplicationsPerClub', 'potApplicationTypeIds',
         ]);
-        $this->potMaxApplicationsPerUser = '1';
         $this->potLaufzeit = FundingPot::BEFRISTET;
         $this->resetValidation();
     }

@@ -8,12 +8,9 @@ use DomainException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class AntraegePruefung extends Component
 {
-    use WithPagination;
-
     public bool $showArchived = false;
     public array $decisionReasons = [];
     public array $decisionAmounts = [];
@@ -25,11 +22,6 @@ class AntraegePruefung extends Component
     public function mount(): void
     {
         Gate::authorize('antraege.pruefbereich');
-    }
-
-    public function updatedShowArchived(): void
-    {
-        $this->resetPage();
     }
 
     public function markForReview(int $applicationId): void
@@ -262,8 +254,18 @@ class AntraegePruefung extends Component
             ]);
         }
 
+        $pendingApplications = (clone $query)
+            ->whereIn('status', [
+                Application::STATUS_SUBMITTED,
+                Application::STATUS_IN_REVIEW,
+            ])
+            ->latest('submitted_at')
+            ->latest('id')
+            ->get();
+
         return view('livewire.antraege-pruefung', [
-            'applications' => $query->latest('submitted_at')->paginate(20),
+            'applications' => $query->latest('submitted_at')->latest('id')->get(),
+            'pendingApplications' => $pendingApplications,
             'canReview' => $canReview,
             'canDecide' => auth()->user()->can('antraege.entscheiden'),
             'canArchive' => auth()->user()->can('antraege.antraege_loeschen'),

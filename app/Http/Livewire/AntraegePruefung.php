@@ -3,7 +3,12 @@
 namespace App\Http\Livewire;
 
 use App\Models\Application;
+use App\Models\ApplicationType;
+use App\Models\Club;
+use App\Models\FundingPot;
+use App\Models\User;
 use DomainException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
@@ -11,6 +16,11 @@ use Livewire\Component;
 class AntraegePruefung extends Component
 {
     public bool $showArchived = false;
+    public ?int $filterUserId = null;
+    public ?int $filterClubId = null;
+    public ?int $filterFundingPotId = null;
+    public ?int $filterApplicationTypeId = null;
+    public ?string $filterStatus = null;
     public ?int $selectedApplicationId = null;
     public array $decisionReasons = [];
     public array $decisionAmounts = [];
@@ -31,6 +41,15 @@ class AntraegePruefung extends Component
         abort_unless($application->submitted_at !== null, 404);
 
         $this->selectedApplicationId = $application->id;
+    }
+
+    public function resetFilters(): void
+    {
+        $this->filterUserId = null;
+        $this->filterClubId = null;
+        $this->filterFundingPotId = null;
+        $this->filterApplicationTypeId = null;
+        $this->filterStatus = null;
     }
 
     public function markForReview(int $applicationId): void
@@ -258,21 +277,43 @@ class AntraegePruefung extends Component
             ->with(['user', 'club', 'applicationType', 'fundingPot.program', 'documents', 'reviewer', 'decider.roles', 'deleter', 'events.actor.roles'])
             ->whereNotNull('submitted_at');
 
-        if (! $canReview) {
-            $query->whereNotNull('funding_pot_id');
-        }
+        $this->applyVisibilityConstraints($query, $canReview);
 
-        if ($this->showArchived) {
-            $query->onlyTrashed();
-        } else {
-            $query->whereIn('status', [
-                Application::STATUS_SUBMITTED,
-                Application::STATUS_IN_REVIEW,
-                Application::STATUS_QUESTION,
-                Application::STATUS_APPROVED,
-                Application::STATUS_REJECTED,
-            ]);
-        }
+        $filterQuery = clone $query;
+        $userIds = (clone $filterQuery)->select('user_id')->distinct()->pluck('user_id');
+        $clubIds = (clone $filterQuery)->whereNotNull('club_id')->select('club_id')->distinct()->pluck('club_id');
+        $fundingPotIds = (clone $filterQuery)->whereNotNull('funding_pot_id')->select('funding_pot_id')->distinct()->pluck('funding_pot_id');
+        $applicationTypeIds = (clone $filterQuery)->select('application_type_id')->distinct()->pluck('application_type_id');
+
+        $users = User::withTrashed()
+            ->whereIn('id', $userIds)
+            ->orderBy('vorname')
+            ->orderBy('nachname')
+            ->orderBy('name')
+            ->get();
+        $clubs = Club::withTrashed()->whereIn('id', $clubIds)->orderBy('clubname')->get();
+        $fundingPots = FundingPot::with('program')
+            ->whereIn('id', $fundingPotIds)
+            ->orderBy('name')
+            ->get();
+        $applicationTypes = ApplicationType::whereIn('id', $applicationTypeIds)
+            ->orderBy('name')
+            ->get();
+        $statusPresentation = $this->statusPresentation();
+        $statusOptions = array_map(
+            fn (array $presentation) => $presentation['label'],
+            $statusPresentation
+        );
+
+        $query
+            ->when($this->filterUserId, fn ($builder) => $builder->where('user_id', $this->filterUserId))
+            ->when($this->filterClubId, fn ($builder) => $builder->where('club_id', $this->filterClubId))
+            ->when($this->filterFundingPotId, fn ($builder) => $builder->where('funding_pot_id', $this->filterFundingPotId))
+            ->when($this->filterApplicationTypeId, fn ($builder) => $builder->where('application_type_id', $this->filterApplicationTypeId))
+            ->when(
+                in_array($this->filterStatus, array_keys($statusOptions), true),
+                fn ($builder) => $builder->where('status', $this->filterStatus)
+            );
 
         $applications = $query
             ->orderByRaw('CASE WHEN status IN (?, ?) THEN 0 ELSE 1 END', [
@@ -294,6 +335,36 @@ class AntraegePruefung extends Component
             'canReview' => $canReview,
             'canDecide' => auth()->user()->can('antraege.entscheiden'),
             'canArchive' => auth()->user()->can('antraege.antraege_loeschen'),
+            'filterUsers' => $users,
+            'filterClubs' => $clubs,
+            'filterFundingPots' => $fundingPots,
+            'filterApplicationTypes' => $applicationTypes,
+            'filterStatuses' => $statusOptions,
+            'statusPresentation' => $statusPresentation,
         ]);
+    }
+
+    private function statusPresentation(): array
+    {
+        return [
+            Application::STATUS_SUBMITTED => ['label' => 'Eingereicht', 'class' => 'bg-blue-100 text-blue-800'],
+            Application::STATUS_IN_REVIEW => ['label' => 'In Prüfung', 'class' => 'bg-yellow-100 text-yellow-800'],
+            Application::STATUS_QUESTION => ['label' => 'Rückfrage', 'class' => 'bg-orange-100 text-orange-800'],
+            Application::STATUS_APPROVED => ['label' => 'Bewilligt', 'class' => 'bg-green-100 text-green-800'],
+            Application::STATUS_REJECTED => ['label' => 'Abgelehnt', 'class' => 'bg-red-100 text-red-800'],
+        ];
+    }
+
+    private function applyVisibilityConstraints(Builder $query, bool $canReview): void
+    {
+        if (! $canReview) {
+            $query->whereNotNull('funding_pot_id');
+        }
+
+        if ($this->showArchived) {
+            $query->onlyTrashed();
+        } else {
+            $query->whereIn('status', array_keys($this->statusPresentation()));
+        }
     }
 }

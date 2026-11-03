@@ -1,12 +1,15 @@
-<div class="p-6 bg-white">
-    <h3 class="text-lg font-medium text-gray-900">Benutzer und Rollen</h3>
-    <p class="text-sm text-gray-600 mb-4">Konten ohne Rolle haben keine fachlichen Berechtigungen in der Antragsverwaltung.</p>
+<div class="space-y-5 bg-white p-6">
+    <header class="rounded-xl bg-purple-800 px-5 py-4 text-white">
+        <p class="text-xs font-bold uppercase tracking-widest text-purple-200">Berechtigungen</p>
+        <h3 class="mt-1 text-lg font-bold">Benutzer und Rollen</h3>
+        <p class="mt-1 text-sm text-purple-100">Konten ohne Rolle haben keine fachlichen Berechtigungen in der Antragsverwaltung.</p>
+    </header>
 
     @if (session()->has('message'))
         <div class="mb-4 text-sm font-medium text-red-600">{{ session('message') }}</div>
     @endif
 
-    <div class="flex flex-wrap items-center gap-4 mb-4">
+    <div class="flex flex-wrap items-center gap-4 rounded-lg border border-purple-200 bg-purple-50 p-4">
         <x-input type="search" wire:model.live.debounce.300ms="search" placeholder="Vorname, Nachname oder E-Mail suchen" class="w-full md:w-1/2" />
         <label class="text-sm text-gray-700">
             Zeilen pro Seite
@@ -18,13 +21,14 @@
         </label>
     </div>
 
-    <div class="overflow-x-auto">
+    <div class="overflow-hidden rounded-lg border border-gray-200">
+        <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead>
                 <tr>
-                    <th class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase">Benutzer</th>
+                    <th class="bg-purple-50 px-4 py-3 text-left text-xs font-semibold uppercase text-purple-900">Benutzer</th>
                     @foreach($roles as $role)
-                        <th class="px-4 py-3 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase">{{ $role->label ?? $role->name }}</th>
+                        <th class="bg-purple-50 px-4 py-3 text-center text-xs font-semibold uppercase text-purple-900">{{ $role->label ?? $role->name }}</th>
                     @endforeach
                 </tr>
             </thead>
@@ -50,6 +54,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     <div class="mt-4">
@@ -57,16 +62,19 @@
     </div>
 
     @can('antraege.rechte_verwalten')
-        <section class="mt-8 border-t border-gray-200 pt-6">
-            <h4 class="text-lg font-semibold text-gray-900">Berechtigungen je Rolle</h4>
-            <p class="mb-4 text-sm text-gray-600">Administratoren besitzen immer alle Rechte. Fördertopfverwalter können ausschließlich Gremium- und Antragstellerrollen vergeben.</p>
+        <section class="mt-8 space-y-4 rounded-xl border-2 border-indigo-200 bg-indigo-50 p-5">
+            <header class="border-b border-indigo-200 pb-3">
+                <h4 class="text-lg font-bold text-indigo-900">Berechtigungen je Rolle</h4>
+                <p class="text-sm text-indigo-800">Administratoren besitzen immer alle Rechte. Fördertopfverwalter können ausschließlich Gremium- und Antragstellerrollen vergeben.</p>
+            </header>
+            <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead>
                         <tr>
-                            <th class="bg-gray-50 px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Rolle</th>
+                            <th class="bg-indigo-100 px-4 py-3 text-left text-xs font-semibold uppercase text-indigo-900">Rolle</th>
                             @foreach($permissions as $permission)
-                                <th class="bg-gray-50 px-4 py-3 text-center text-xs font-medium text-gray-500">{{ $permission->label }}</th>
+                                <th class="bg-indigo-100 px-4 py-3 text-center text-xs font-semibold text-indigo-900">{{ $permission->label }}</th>
                             @endforeach
                         </tr>
                     </thead>
@@ -87,6 +95,7 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
             </div>
         </section>
     @endcan

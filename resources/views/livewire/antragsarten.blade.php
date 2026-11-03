@@ -1,20 +1,20 @@
-<div class="p-6 space-y-8">
+<div class="space-y-8 bg-white p-6">
     @if (session()->has('message'))
         <div class="text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded p-3">{{ session('message') }}</div>
     @endif
 
-    <section class="space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-3">
+    <section class="space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-indigo-800 px-5 py-4 text-white shadow-sm">
             <div>
-                <h3 class="text-lg font-semibold text-gray-900">Vorhandene Antragsarten</h3>
-                <p class="text-sm text-gray-600">Deaktivieren Sie nicht mehr verwendete Formulare, statt sie zu löschen.</p>
+                <h3 class="text-lg font-bold">Vorhandene Antragsarten</h3>
+                <p class="text-sm text-indigo-100">Deaktivieren Sie nicht mehr verwendete Formulare, statt sie zu löschen.</p>
             </div>
             <x-button wire:click="newType">Antragsart anlegen</x-button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @forelse($applicationTypes as $applicationType)
-                <article wire:key="antragsart-{{ $applicationType->id }}" class="border border-gray-300 rounded-lg p-4 space-y-3">
+                <article wire:key="antragsart-{{ $applicationType->id }}" class="space-y-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4 shadow-sm">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <h4 class="font-semibold text-gray-900">{{ $applicationType->name }}</h4>
@@ -46,10 +46,11 @@
         </div>
     </section>
 
-    <form wire:submit.prevent="saveType" class="space-y-6 border-t border-gray-200 pt-6">
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900">{{ $typeId ? 'Antragsart bearbeiten' : 'Neue Antragsart' }}</h3>
-            <p class="text-sm text-gray-600">Felder können als Pflichtangabe, Auswahl oder Anlage definiert und später deaktiviert werden.</p>
+    <form wire:submit.prevent="saveType" class="space-y-6 rounded-xl border-2 border-blue-200 bg-blue-50 p-5">
+        <div class="border-b border-blue-200 pb-3">
+            <p class="text-xs font-bold uppercase tracking-wider text-blue-700">Formularbaukasten</p>
+            <h3 class="mt-1 text-lg font-bold text-blue-900">{{ $typeId ? 'Antragsart bearbeiten' : 'Neue Antragsart' }}</h3>
+            <p class="text-sm text-blue-800">Felder können als Pflichtangabe, Auswahl oder Anlage definiert und später deaktiviert werden.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -96,13 +97,13 @@
         </label>
 
         <section class="space-y-4">
-            <div class="flex items-center justify-between gap-3">
-                <h4 class="font-semibold text-gray-900">Formularfelder</h4>
-                <button type="button" wire:click="addField" class="text-sm font-medium text-blue-700 hover:underline">Feld hinzufügen</button>
+            <div class="flex items-center justify-between gap-3 rounded-lg bg-blue-100 px-4 py-3">
+                <h4 class="font-semibold text-blue-900">Formularfelder</h4>
+                <button type="button" wire:click="addField" class="rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">Feld hinzufügen</button>
             </div>
 
             @foreach($fields as $index => $field)
-                <div wire:key="formularfeld-{{ $field['id'] ?? 'neu-' . $index }}" class="border border-gray-300 rounded-lg p-4 space-y-3 {{ empty($field['aktiv']) ? 'bg-gray-100' : 'bg-white' }}">
+                <div wire:key="formularfeld-{{ $field['id'] ?? 'neu-' . $index }}" class="rounded-lg border border-blue-200 p-4 space-y-3 {{ empty($field['aktiv']) ? 'bg-gray-100' : 'bg-white' }}">
                     <div class="flex items-center justify-between">
                         <h5 class="font-medium text-gray-900">Feld {{ $index + 1 }}{{ empty($field['aktiv']) ? ' (deaktiviert)' : '' }}</h5>
                         @if(empty($field['aktiv']))
@@ -160,7 +161,7 @@
             <x-input-error for="fields" class="mt-1" />
         </section>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 border-t border-blue-200 pt-4">
             <x-button>{{ $typeId ? 'Änderungen speichern' : 'Antragsart speichern' }}</x-button>
             @if($typeId || $name !== '' || count($fields))
                 <button type="button" wire:click="cancel" class="text-sm text-gray-700 underline">Abbrechen</button>

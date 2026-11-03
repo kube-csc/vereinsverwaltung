@@ -1,8 +1,9 @@
-<div class="p-6 bg-white border-b border-gray-200">
-    <div class="mb-4">
-        <h3 class="text-lg font-medium text-gray-900">Mitglieder zur {{ config('app.verein_name') }} einladen</h3>
-        <p class="text-sm text-gray-600">Senden Sie einen Registrierungslink für {{ config('app.verein_name') }} an ein neues Mitglied.</p>
-    </div>
+<div class="space-y-6 bg-white p-6">
+    <header class="rounded-xl bg-blue-800 px-5 py-4 text-white">
+        <p class="text-xs font-bold uppercase tracking-widest text-blue-200">Zugänge</p>
+        <h3 class="mt-1 text-lg font-bold">Mitglieder zur {{ config('app.verein_name') }} einladen</h3>
+        <p class="mt-1 text-sm text-blue-100">Senden Sie einen Registrierungslink für {{ config('app.verein_name') }} an ein neues Mitglied.</p>
+    </header>
 
     @if (session()->has('message'))
         <div class="mb-4 text-sm font-medium text-green-600">
@@ -10,7 +11,7 @@
         </div>
     @endif
 
-    <form wire:submit.prevent="sendInvitation" class="flex items-center space-x-4">
+    <form wire:submit.prevent="sendInvitation" class="grid grid-cols-1 items-end gap-4 rounded-xl border-2 border-blue-200 bg-blue-50 p-5 lg:grid-cols-2">
         <div class="flex-grow">
             <x-input type="email" wire:model="email" placeholder="E-Mail Adresse" class="w-full" />
             <x-input-error for="email" class="mt-2" />
@@ -20,7 +21,7 @@
             <x-input-error for="label" class="mt-2" />
         </div>
         @if($assignableRoles->isNotEmpty())
-            <div class="text-sm text-gray-700">
+            <div class="text-sm text-gray-700 lg:col-span-2">
                 <span class="block text-xs text-gray-500">Rollen nach der Registrierung</span>
                 @foreach($assignableRoles as $role)
                     <label class="inline-flex items-center mr-3">
@@ -30,21 +31,24 @@
                 @endforeach
             </div>
         @endif
+        <div class="lg:col-span-2">
         <x-button>
             Einladung erstellen
         </x-button>
+        </div>
     </form>
 
-    <div class="mt-8">
-        <h4 class="text-md font-medium text-gray-900 mb-4">Einladungen</h4>
+    <div class="overflow-hidden rounded-xl border border-gray-200">
+        <h4 class="bg-blue-50 px-4 py-3 text-md font-bold text-blue-900">Einladungen</h4>
+        <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead>
                 <tr>
-                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email / Label</th>
-                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Erstellt am</th>
-                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link / WhatsApp</th>
-                    <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
+                    <th class="bg-blue-50 px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-blue-900">Email / Label</th>
+                    <th class="bg-blue-50 px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-blue-900">Erstellt am</th>
+                    <th class="bg-blue-50 px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-blue-900">Status</th>
+                    <th class="bg-blue-50 px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-blue-900">Link / WhatsApp</th>
+                    <th class="bg-blue-50 px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-blue-900">Aktionen</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -67,9 +71,9 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $invitation->created_at->format('d.m.Y H:i') }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         @if($invitation->registered_at)
-                            <span class="text-green-600">Registriert am {{ $invitation->registered_at->format('d.m.Y') }}</span>
+                            <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">Registriert am {{ $invitation->registered_at->format('d.m.Y') }}</span>
                         @else
-                            <span class="text-orange-600">Offen</span>
+                            <span class="inline-flex rounded-full bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800">Offen</span>
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -104,5 +108,6 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 </div>

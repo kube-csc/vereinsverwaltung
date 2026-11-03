@@ -23,17 +23,17 @@
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
                     @php
                         $statusCards = [
-                            [\App\Models\Application::STATUS_DRAFT, 'Entwürfe', 'border-amber-500'],
-                            [\App\Models\Application::STATUS_SUBMITTED, 'Eingereicht', 'border-blue-500'],
-                            [\App\Models\Application::STATUS_IN_REVIEW, 'In Prüfung', 'border-indigo-500'],
-                            [\App\Models\Application::STATUS_QUESTION, 'Rückfragen', 'border-orange-500'],
-                            [\App\Models\Application::STATUS_APPROVED, 'Bewilligt', 'border-green-600'],
-                            [\App\Models\Application::STATUS_REJECTED, 'Abgelehnt', 'border-red-500'],
+                            [\App\Models\Application::STATUS_DRAFT, 'Entwürfe', 'bg-gray-100 text-gray-800'],
+                            [\App\Models\Application::STATUS_SUBMITTED, 'Eingereicht', 'bg-blue-100 text-blue-800'],
+                            [\App\Models\Application::STATUS_IN_REVIEW, 'In Prüfung', 'bg-yellow-100 text-yellow-800'],
+                            [\App\Models\Application::STATUS_QUESTION, 'Rückfragen', 'bg-orange-100 text-orange-800'],
+                            [\App\Models\Application::STATUS_APPROVED, 'Bewilligt', 'bg-green-100 text-green-800'],
+                            [\App\Models\Application::STATUS_REJECTED, 'Abgelehnt', 'bg-red-100 text-red-800'],
                         ];
                     @endphp
-                    @foreach($statusCards as [$status, $label, $border])
-                        <div class="rounded-xl border-l-4 {{ $border }} bg-white p-4 shadow">
-                            <p class="text-sm text-gray-600">{{ $label }}</p>
+                    @foreach($statusCards as [$status, $label, $statusClass])
+                        <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                            <p><span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ $statusClass }}">{{ $label }}</span></p>
                             <p class="mt-1 text-3xl font-bold text-gray-900">{{ $statusCounts[$status] }}</p>
                         </div>
                     @endforeach
@@ -140,16 +140,25 @@
                         @forelse($recentApplications as $application)
                             <li class="flex items-center justify-between gap-4 py-3">
                                 <span class="text-sm font-medium text-gray-900">{{ $application->applicationType->name }}</span>
-                                <span class="text-right text-sm text-gray-600">
-                                    {{ match($application->status) {
-                                        \App\Models\Application::STATUS_SUBMITTED => 'Eingereicht',
-                                        \App\Models\Application::STATUS_IN_REVIEW => 'In Prüfung',
-                                        \App\Models\Application::STATUS_QUESTION => 'Rückfrage',
-                                        \App\Models\Application::STATUS_APPROVED => 'Bewilligt',
-                                        \App\Models\Application::STATUS_REJECTED => 'Abgelehnt',
-                                        default => $application->status,
-                                    } }}
-                                    <span class="block text-xs text-gray-500">{{ $application->updated_at->format('d.m.Y') }}</span>
+                                <span class="text-right">
+                                    <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ match($application->status) {
+                                        \App\Models\Application::STATUS_SUBMITTED => 'bg-blue-100 text-blue-800',
+                                        \App\Models\Application::STATUS_IN_REVIEW => 'bg-yellow-100 text-yellow-800',
+                                        \App\Models\Application::STATUS_QUESTION => 'bg-orange-100 text-orange-800',
+                                        \App\Models\Application::STATUS_APPROVED => 'bg-green-100 text-green-800',
+                                        \App\Models\Application::STATUS_REJECTED => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800',
+                                    } }}">
+                                        {{ match($application->status) {
+                                            \App\Models\Application::STATUS_SUBMITTED => 'Eingereicht',
+                                            \App\Models\Application::STATUS_IN_REVIEW => 'In Prüfung',
+                                            \App\Models\Application::STATUS_QUESTION => 'Rückfrage',
+                                            \App\Models\Application::STATUS_APPROVED => 'Bewilligt',
+                                            \App\Models\Application::STATUS_REJECTED => 'Abgelehnt',
+                                            default => $application->status,
+                                        } }}
+                                    </span>
+                                    <span class="mt-1 block text-xs text-gray-500">{{ $application->updated_at->format('d.m.Y') }}</span>
                                 </span>
                             </li>
                         @empty

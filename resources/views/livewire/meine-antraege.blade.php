@@ -1,15 +1,15 @@
-<div class="p-6 space-y-8">
+<div class="space-y-8 bg-white p-6">
     @if (session()->has('message'))
         <div class="text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded p-3">{{ session('message') }}</div>
     @endif
-    <section class="space-y-3">
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900">Verfügbare Antragsarten</h3>
-            <p class="text-sm text-gray-600">Sie können einen Antrag zunächst als Entwurf speichern und später einreichen.</p>
+    <section class="space-y-4">
+        <div class="rounded-xl bg-blue-800 px-5 py-4 text-white">
+            <h3 class="text-lg font-bold">Verfügbare Antragsarten</h3>
+            <p class="text-sm text-blue-100">Sie können einen Antrag zunächst als Entwurf speichern und später einreichen.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @forelse($applicationTypes as $type)
-                <article wire:key="typ-{{ $type->id }}" class="border border-gray-300 rounded-lg p-4 flex flex-col gap-3">
+                <article wire:key="typ-{{ $type->id }}" class="flex flex-col gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 shadow-sm">
                     <div>
                         <h4 class="font-semibold text-gray-900">{{ $type->name }}</h4>
                         <p class="text-sm text-gray-600">{{ $type->beschreibung }}</p>
@@ -33,10 +33,10 @@
         </div>
     </section>
 
-    <section class="space-y-3 border-t border-gray-200 pt-6">
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900">Meine gespeicherten Anträge</h3>
-            <p class="text-sm text-gray-600">Eingereichte Anträge können hier nicht mehr geändert werden.</p>
+    <section class="space-y-4 border-t border-gray-200 pt-6">
+        <div class="rounded-xl bg-indigo-800 px-5 py-4 text-white">
+            <h3 class="text-lg font-bold">Meine gespeicherten Anträge</h3>
+            <p class="text-sm text-indigo-100">Eingereichte Anträge können hier nicht mehr geändert werden.</p>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -65,12 +65,13 @@
                             <td class="px-4 py-3 text-gray-700">{{ $application->club?->clubname ?? '–' }}</td>
                             <td class="px-4 py-3">
                                 <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ match($application->status) {
-                                    \App\Models\Application::STATUS_DRAFT => 'bg-amber-100 text-amber-900',
-                                    \App\Models\Application::STATUS_APPROVED => 'bg-green-100 text-green-900',
-                                    \App\Models\Application::STATUS_REJECTED => 'bg-red-100 text-red-900',
-                                    \App\Models\Application::STATUS_IN_REVIEW => 'bg-blue-100 text-blue-900',
-                                    \App\Models\Application::STATUS_QUESTION => 'bg-amber-100 text-amber-900',
-                                    default => 'bg-gray-100 text-gray-900',
+                                    \App\Models\Application::STATUS_DRAFT => 'bg-gray-100 text-gray-800',
+                                    \App\Models\Application::STATUS_APPROVED => 'bg-green-100 text-green-800',
+                                    \App\Models\Application::STATUS_REJECTED => 'bg-red-100 text-red-800',
+                                    \App\Models\Application::STATUS_SUBMITTED => 'bg-blue-100 text-blue-800',
+                                    \App\Models\Application::STATUS_IN_REVIEW => 'bg-yellow-100 text-yellow-800',
+                                    \App\Models\Application::STATUS_QUESTION => 'bg-orange-100 text-orange-800',
+                                    default => 'bg-gray-100 text-gray-800',
                                 } }}">
                                     {{ match($application->status) {
                                         \App\Models\Application::STATUS_DRAFT => 'Entwurf',

@@ -1,4 +1,9 @@
-<div class="p-6 bg-white space-y-8">
+<div class="space-y-8 bg-white p-6">
+    <header class="rounded-xl border-l-4 border-indigo-300 bg-indigo-800 px-5 py-4 text-white">
+        <p class="text-xs font-bold uppercase tracking-widest text-indigo-200">Fördermittelverwaltung</p>
+        <h3 class="mt-1 text-lg font-bold">Programme und Budgets</h3>
+        <p class="mt-1 text-sm text-indigo-100">Förderprogramme, Fördertöpfe und deren Antragszuordnungen verwalten.</p>
+    </header>
     @if (session()->has('message'))
         <div class="text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded p-3">{{ session('message') }}</div>
     @endif
@@ -7,17 +12,17 @@
     @endif
 
     @forelse($programs as $program)
-        <section wire:key="programm-{{ $program->id }}" class="border border-gray-200 rounded-lg">
-            <header class="flex flex-wrap items-start justify-between gap-2 bg-gray-50 px-4 py-3 rounded-t-lg">
+        <section wire:key="programm-{{ $program->id }}" class="overflow-hidden rounded-xl border-2 border-indigo-200 bg-white shadow-sm">
+            <header class="flex flex-wrap items-start justify-between gap-2 bg-indigo-800 px-4 py-3 text-white">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">
+                    <h3 class="text-lg font-bold text-white">
                         {{ $program->name }}
                         @unless($program->aktiv)
                             <span class="ml-2 text-xs font-medium bg-gray-200 text-gray-700 rounded-full px-2 py-0.5">inaktiv</span>
                         @endunless
                     </h3>
                     @if($program->beschreibung)
-                        <p class="text-sm text-gray-600">{{ $program->beschreibung }}</p>
+                        <p class="text-sm text-indigo-100">{{ $program->beschreibung }}</p>
                     @endif
                 </div>
                 <div class="flex flex-wrap gap-2">
@@ -29,8 +34,8 @@
 
             <div class="space-y-3 p-3">
                 @forelse($program->pots->sortByDesc('jahr') as $pot)
-                    <article wire:key="topf-{{ $pot->id }}" class="overflow-hidden rounded-lg border border-gray-200">
-                        <header class="flex flex-wrap items-start justify-between gap-3 bg-gray-50 px-4 py-3">
+                    <article wire:key="topf-{{ $pot->id }}" class="overflow-hidden rounded-lg border border-blue-200">
+                        <header class="flex flex-wrap items-start justify-between gap-3 bg-blue-50 px-4 py-3">
                             <div class="min-w-0 flex-1">
                                 <div class="flex flex-wrap items-center gap-2">
                                     <h4 class="font-semibold text-gray-900">{{ $pot->name }}@if($pot->jahr) ({{ $pot->jahr }})@endif</h4>
@@ -90,8 +95,8 @@
     @endforelse
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <form wire:submit.prevent="saveProgram" class="space-y-3 border border-gray-200 rounded-lg p-4">
-            <h4 class="font-medium text-gray-900">{{ $programId ? 'Förderprogramm bearbeiten' : 'Neues Förderprogramm' }}</h4>
+        <form wire:submit.prevent="saveProgram" class="space-y-3 rounded-xl border-2 border-indigo-200 bg-indigo-50 p-5">
+            <h4 class="border-b border-indigo-200 pb-3 font-bold text-indigo-900">{{ $programId ? 'Förderprogramm bearbeiten' : 'Neues Förderprogramm' }}</h4>
             <div>
                 <x-label value="Name" />
                 <x-input type="text" wire:model="programName" class="w-full" />
@@ -113,8 +118,8 @@
             </div>
         </form>
 
-        <form wire:submit.prevent="savePot" class="space-y-3 border border-gray-200 rounded-lg p-4">
-            <h4 class="font-medium text-gray-900">{{ $potId ? 'Fördertopf bearbeiten' : 'Neuer Fördertopf' }}</h4>
+        <form wire:submit.prevent="savePot" class="space-y-3 rounded-xl border-2 border-blue-200 bg-blue-50 p-5">
+            <h4 class="border-b border-blue-200 pb-3 font-bold text-blue-900">{{ $potId ? 'Fördertopf bearbeiten' : 'Neuer Fördertopf' }}</h4>
             <div>
                 <x-label value="Förderprogramm" />
                 <select wire:model="potProgramId" class="w-full border-gray-300 rounded-md shadow-sm text-sm">

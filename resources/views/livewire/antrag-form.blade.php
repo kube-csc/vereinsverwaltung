@@ -1,24 +1,25 @@
-<div class="p-6 space-y-6">
-    <div>
-        <h3 class="text-xl font-semibold text-gray-900">{{ $applicationType->name }}</h3>
+<div class="space-y-6 bg-white p-6">
+    <header class="rounded-xl border-l-4 border-blue-300 bg-blue-800 px-5 py-4 text-white">
+        <p class="text-xs font-bold uppercase tracking-widest text-blue-200">Antragsformular</p>
+        <h3 class="mt-1 text-xl font-bold">{{ $applicationType->name }}</h3>
         @if($applicationType->beschreibung)
-            <p class="mt-1 text-sm text-gray-600">{{ $applicationType->beschreibung }}</p>
+            <p class="mt-1 text-sm text-blue-100">{{ $applicationType->beschreibung }}</p>
         @endif
         @if($applicationType->frist)
-            <p class="mt-2 text-sm font-medium {{ $deadlinePassed ? 'text-red-700' : 'text-gray-700' }}">
+            <p class="mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold {{ $deadlinePassed ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-900' }}">
                 Abgabefrist: {{ $applicationType->frist->format('d.m.Y') }}
                 @if($deadlinePassed) – abgelaufen @endif
             </p>
         @endif
-    </div>
+    </header>
 
     @error('submission')
         <div class="rounded border border-red-300 bg-red-50 p-3 text-sm font-medium text-red-800">{{ $message }}</div>
     @enderror
 
-    <form wire:submit.prevent="saveDraft" class="space-y-6">
+    <form wire:submit.prevent="saveDraft" class="space-y-4">
         @if($applicationType->requires_club)
-            <div>
+            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
                 <x-label value="Antragstellender Verein *" />
                 <select wire:model="clubId" class="w-full border-gray-300 rounded-md shadow-sm">
                     <option value="">– bitte Verein wählen –</option>
@@ -34,7 +35,7 @@
         @endif
 
         @if($fundingPots->isNotEmpty() || $applicationType->requires_funding_pot)
-            <div>
+            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
                 <x-label value="Fördertopf{{ $applicationType->requires_funding_pot ? ' *' : '' }}" />
                 <select wire:model.live="fundingPotId" class="w-full border-gray-300 rounded-md shadow-sm">
                     <option value="">– bitte offenen Fördertopf wählen –</option>
@@ -66,7 +67,7 @@
         @endif
 
         @foreach($applicationType->fields as $field)
-            <div wire:key="feld-{{ $field->id }}">
+            <div wire:key="feld-{{ $field->id }}" class="rounded-lg border border-gray-200 bg-gray-50 p-4">
                 @if($field->type === 'checkbox')
                     <label class="inline-flex items-start text-sm text-gray-800">
                         <input type="checkbox" wire:model="formData.{{ $field->key }}" class="mt-0.5 h-5 w-5 rounded border-gray-400 text-blue-700 focus:ring-blue-600">
@@ -111,7 +112,7 @@
             </div>
         @endforeach
 
-        <div>
+        <div class="rounded-lg border border-green-200 bg-green-50 p-4">
             <x-label value="Bankkonto für eine mögliche Auszahlung (optional)" />
             <select wire:model="bankAccountId" class="w-full border-gray-300 rounded-md shadow-sm">
                 <option value="">– kein Bankkonto auswählen –</option>
@@ -126,7 +127,7 @@
             @endif
         </div>
 
-        <div class="flex flex-wrap items-center gap-4 border-t border-gray-200 pt-5">
+        <div class="flex flex-wrap items-center gap-4 border-t border-blue-200 pt-5">
             <x-button wire:loading.attr="disabled" wire:target="saveDraft,submitApplication,uploads">Entwurf speichern</x-button>
             <button
                 type="button"

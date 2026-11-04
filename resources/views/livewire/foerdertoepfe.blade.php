@@ -62,7 +62,10 @@
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button wire:click="editPot({{ $pot->id }})" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Bearbeiten</button>
-                                <button wire:click="toggleGeschlossen({{ $pot->id }})" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">{{ $pot->geschlossen ? 'Öffnen' : 'Schließen' }}</button>
+                                <button wire:click="toggleGeschlossen({{ $pot->id }})" @if(! $pot->geschlossen && $pot->endeNochNichtErreicht()) wire:confirm="Die Endzeit dieses Fördertopfs ({{ $pot->ende->format('d.m.Y') }}) ist noch nicht erreicht. Wirklich vorzeitig schließen? Neue Anträge sind dann nicht mehr möglich." @endif class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">{{ $pot->geschlossen ? 'Öffnen' : 'Schließen' }}</button>
+                                @if(! $pot->isSettled() && $pot->geschlossen)
+                                    <button wire:click="prepareSettlement({{ $pot->id }})" class="rounded-md bg-green-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2">Endabrechnung</button>
+                                @endif
                                 <button wire:click="deletePot({{ $pot->id }})" wire:confirm="Fördertopf wirklich löschen?" class="rounded-md bg-red-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">Löschen</button>
                             </div>
                         </header>
@@ -84,6 +87,37 @@
                                 <dd class="font-semibold text-gray-900">{{ number_format($pot->verfuegbar(), 2, ',', '.') }} €</dd>
                             </div>
                         </dl>
+                        @if($pot->isSettled())
+                            <p class="border-t border-gray-200 bg-green-50 px-4 py-2 text-xs text-green-900">
+                                Abgerechnet am {{ $pot->settled_at->format('d.m.Y H:i') }}: bewilligt {{ number_format((float) $pot->settlement_total, 2, ',', '.') }} €, Anteil {{ number_format((float) $pot->settlement_factor * 100, 2, ',', '.') }} %.
+                            </p>
+                        @endif
+                        @if($settlementPreview && $settlementPotId === $pot->id)
+                            <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 text-sm">
+                                <h5 class="font-semibold text-gray-900">Vorschau der Endabrechnung</h5>
+                                <p class="mt-1 text-xs text-gray-600">
+                                    Topfvolumen {{ number_format($settlementPreview['budget_cent'] / 100, 2, ',', '.') }} €,
+                                    bewilligt {{ number_format($settlementPreview['total_cent'] / 100, 2, ',', '.') }} €,
+                                    Anteil {{ number_format($settlementPreview['factor'] * 100, 2, ',', '.') }} %.
+                                </p>
+                                <table class="mt-2 w-full text-left text-xs">
+                                    <thead><tr class="text-gray-600"><th class="py-1">Antrag</th><th class="py-1">Bewilligt</th><th class="py-1">Endgültig</th></tr></thead>
+                                    <tbody>
+                                        @foreach($settlementPreview['rows'] as $row)
+                                            <tr class="border-t border-gray-200">
+                                                <td class="py-1">#{{ $row['application']->id }} {{ $row['application']->applicationType->name }} – {{ trim($row['application']->user->vorname . ' ' . $row['application']->user->nachname) ?: $row['application']->user->name }}</td>
+                                                <td class="py-1">{{ number_format($row['approved_cent'] / 100, 2, ',', '.') }} €</td>
+                                                <td class="py-1 font-semibold">{{ number_format($row['final_cent'] / 100, 2, ',', '.') }} €</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <div class="mt-3 flex gap-2">
+                                    <button wire:click="settlePot({{ $pot->id }})" wire:confirm="Endabrechnung verbindlich durchführen? Die endgültigen Beträge werden gespeichert und für Antragsteller sichtbar." class="rounded-md bg-green-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-green-800">Endabrechnung durchführen</button>
+                                    <button wire:click="cancelSettlement" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50">Abbrechen</button>
+                                </div>
+                            </div>
+                        @endif
                     </article>
                 @empty
                     <p class="px-4 py-3 text-center text-sm text-gray-500">Noch keine Fördertöpfe.</p>

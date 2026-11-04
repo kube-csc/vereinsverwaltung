@@ -25,6 +25,7 @@ class Application extends Model
     public const EVENT_APPROVED = 'bewilligt';
     public const EVENT_REJECTED = 'abgelehnt';
     public const EVENT_ARCHIVED = 'archiviert';
+    public const EVENT_SETTLED = 'endabrechnung';
 
     protected $fillable = [
         'application_type_id',
@@ -44,6 +45,7 @@ class Application extends Model
         'decided_at',
         'decision_reason',
         'approved_amount',
+        'final_amount',
         'deleted_by',
         'deletion_reason',
     ];
@@ -56,6 +58,7 @@ class Application extends Model
         'reviewed_at' => 'datetime',
         'decided_at' => 'datetime',
         'approved_amount' => 'decimal:2',
+        'final_amount' => 'decimal:2',
     ];
 
     public function applicationType(): BelongsTo

@@ -35,7 +35,7 @@
                 <div class="mt-4 rounded-xl border border-green-200 bg-green-50 p-5 shadow-sm">
                     <p class="text-sm font-medium text-green-900">Tatsächlich bewilligte Fördermittel</p>
                     <p class="mt-1 text-3xl font-bold text-green-950">{{ number_format($approvedAmount, 2, ',', '.') }} €</p>
-                    <p class="mt-1 text-xs text-green-800">Summe der endgültig bewilligten Beträge Ihrer nicht archivierten Förderanträge.</p>
+                    <p class="mt-1 text-xs text-green-800">Summe der endgültigen Förderbeträge Ihrer nicht archivierten Förderanträge.@if($pendingSettlementCount > 0) Für {{ $pendingSettlementCount }} bewilligte(n) Antrag/Anträge wird der endgültige Betrag nach der Endabrechnung des Fördertopfs angezeigt.@endif</p>
                 </div>
             </section>
 

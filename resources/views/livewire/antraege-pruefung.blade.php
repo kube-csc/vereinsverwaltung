@@ -103,6 +103,9 @@
                                 @if($applicationOption->club) · {{ $applicationOption->club->clubname }} @endif
                                 @if($applicationOption->fundingPot) · {{ $applicationOption->fundingPot->program->name }} — {{ $applicationOption->fundingPot->name }} @endif
                             </span>
+                            @if($applicationOption->status === \App\Models\Application::STATUS_APPROVED && $applicationOption->approved_amount !== null)
+                                <span class="mt-1 block text-sm font-semibold text-green-800">Bewilligt: {{ number_format((float) $applicationOption->approved_amount, 2, ',', '.') }} €</span>
+                            @endif
                             @if($isSelected)
                                 <span class="mt-2 inline-block text-xs font-bold uppercase tracking-wide text-indigo-900">Gerade ausgewählt</span>
                             @endif
@@ -162,6 +165,12 @@
                         <dt class="text-xs font-medium text-green-200">Eingereicht</dt>
                         <dd class="mt-1 font-semibold text-white">{{ $application->submitted_at?->format('d.m.Y H:i') }}</dd>
                     </div>
+                    @if($application->status === \App\Models\Application::STATUS_APPROVED && $application->approved_amount !== null)
+                        <div>
+                            <dt class="text-xs font-medium text-green-200">Bewilligte Summe</dt>
+                            <dd class="mt-1 font-semibold text-white">{{ number_format((float) $application->approved_amount, 2, ',', '.') }} €</dd>
+                        </div>
+                    @endif
                 </dl>
                 @endunless
                 @if($application->trashed())
@@ -193,6 +202,15 @@
                                 <dt class="text-xs font-semibold uppercase text-gray-500">Antragsteller</dt>
                                 <dd class="mt-1 break-words text-sm font-medium text-gray-900">{{ trim($application->user->vorname . ' ' . $application->user->nachname) ?: $application->user->name }}</dd>
                             </div>
+                            @if($application->status === \App\Models\Application::STATUS_APPROVED && $application->approved_amount !== null)
+                                <div class="rounded-md border border-blue-200 bg-white px-3 py-2">
+                                    <dt class="text-xs font-semibold uppercase text-gray-500">Bewilligte Summe</dt>
+                                    <dd class="mt-1 text-sm font-medium text-gray-900">{{ number_format((float) $application->approved_amount, 2, ',', '.') }} €</dd>
+                                    @if($application->final_amount !== null)
+                                        <dd class="text-xs text-gray-600">Endgültig: {{ number_format((float) $application->final_amount, 2, ',', '.') }} €</dd>
+                                    @endif
+                                </div>
+                            @endif
                             @if($application->fundingPot)
                                 <div class="rounded-md border border-blue-200 bg-white px-3 py-2">
                                     <dt class="text-xs font-semibold uppercase text-gray-500">Fördertopf</dt>
@@ -255,6 +273,7 @@
                                             \App\Models\Application::EVENT_APPROVED => 'Bewilligt',
                                             \App\Models\Application::EVENT_REJECTED => 'Abgelehnt',
                                             \App\Models\Application::EVENT_ARCHIVED => 'Archiviert',
+                                            \App\Models\Application::EVENT_SETTLED => 'Endabrechnung',
                                             default => $event->event_type,
                                         } }}
                                         · {{ $eventActorName }}@if($eventActorRoles), {{ $eventActorRoles }}@endif · {{ $event->created_at->format('d.m.Y H:i') }}
@@ -270,12 +289,12 @@
             @if(! $application->trashed())
                 <div class="flex flex-col gap-3 border-t border-gray-200 pt-4">
                     @if($canReview && $application->status === \App\Models\Application::STATUS_SUBMITTED)
-                        <div class="flex flex-wrap items-end gap-3">
-                            <label class="min-w-64 flex-1 text-sm text-gray-700">
+                        <div class="flex flex-col gap-3">
+                            <label class="text-sm text-gray-700">
                                 Prüfnotiz (optional)
                                 <textarea wire:model="reviewNotes.{{ $application->id }}" rows="2" class="mt-1 w-full rounded-md border-gray-300 text-sm"></textarea>
                             </label>
-                            <button wire:click="markForReview({{ $application->id }})" class="rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800">In Prüfung nehmen</button>
+                            <button wire:click="markForReview({{ $application->id }})" class="self-start rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800">In Prüfung nehmen</button>
                         </div>
                     @endif
 
@@ -303,7 +322,7 @@
                                     min="0.01"
                                     max="{{ ($decisionAmountModes[$application->id] ?? 'amount') === 'percent' ? '100' : '9999999999.99' }}"
                                     step="0.01"
-                                    wire:model.live="decisionAmounts.{{ $application->id }}"
+                                    wire:model.blur="decisionAmounts.{{ $application->id }}"
                                     class="mt-1 w-full rounded-md border-gray-300 text-sm"
                                 >
                                 <span class="mt-1 block text-xs text-gray-600">

@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\FundingPot;
 use App\Models\FundingProgram;
 use App\Models\ApplicationType;
+use DomainException;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
@@ -215,6 +216,49 @@ class Foerdertoepfe extends Component
         $pot->update(['geschlossen' => ! $pot->geschlossen]);
     }
 
+    public ?int $settlementPotId = null;
+
+    public function prepareSettlement(int $id): void
+    {
+        $this->authorizeVerwalten();
+        $pot = FundingPot::findOrFail($id);
+
+        if ($pot->isSettled()) {
+            session()->flash('error', 'Der Fördertopf wurde bereits abgerechnet.');
+            return;
+        }
+        if (! $pot->geschlossen) {
+            session()->flash('error', 'Die Endabrechnung ist erst möglich, wenn der Fördertopf geschlossen wurde.');
+            return;
+        }
+        if ($pot->applicationsInProgressCount() > 0) {
+            session()->flash('error', 'Es sind noch Anträge in Bearbeitung. Die Endabrechnung ist erst nach Abschluss aller Prüfungen möglich.');
+            return;
+        }
+
+        $this->settlementPotId = $pot->id;
+    }
+
+    public function cancelSettlement(): void
+    {
+        $this->settlementPotId = null;
+    }
+
+    public function settlePot(int $id): void
+    {
+        $this->authorizeVerwalten();
+
+        try {
+            FundingPot::findOrFail($id)->settle(auth()->user());
+        } catch (DomainException $exception) {
+            session()->flash('error', $exception->getMessage());
+            return;
+        }
+
+        $this->settlementPotId = null;
+        session()->flash('message', 'Endabrechnung durchgeführt. Die endgültigen Förderbeträge sind gespeichert.');
+    }
+
     public function deletePot(int $id): void
     {
         $this->authorizeVerwalten();
@@ -236,6 +280,9 @@ class Foerdertoepfe extends Component
                 'pots.applicationTypes' => fn ($query) => $query->where('application_types.aktiv', true),
             ])->orderBy('name')->get(),
             'applicationTypes' => ApplicationType::where('aktiv', true)->orderBy('name')->get(),
+            'settlementPreview' => $this->settlementPotId
+                ? FundingPot::find($this->settlementPotId)?->settlementPreview()
+                : null,
         ]);
     }
 }

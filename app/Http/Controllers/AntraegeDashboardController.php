@@ -6,6 +6,7 @@ use App\Models\Application;
 use App\Models\ApplicationType;
 use App\Models\FundingPot;
 use App\Models\FundingProgram;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class AntraegeDashboardController extends Controller
@@ -27,6 +28,10 @@ class AntraegeDashboardController extends Controller
             $verfuegbar = $offene->sum(fn (FundingPot $pot) => $pot->verfuegbar());
             $bewilligtImJahr = Application::where('status', Application::STATUS_APPROVED)
                 ->whereYear('decided_at', now()->year)
+                ->sum(DB::raw('COALESCE(final_amount, approved_amount)'));
+            $vorlaeufigImJahr = Application::where('status', Application::STATUS_APPROVED)
+                ->whereYear('decided_at', now()->year)
+                ->whereNull('final_amount')
                 ->sum('approved_amount');
 
             $stats = [
@@ -50,7 +55,10 @@ class AntraegeDashboardController extends Controller
                 [
                     'label' => 'Bewilligte Fördergelder',
                     'value' => number_format($bewilligtImJahr, 2, ',', '.') . ' €',
-                    'hint' => 'im Jahr ' . now()->year . ' bewilligt',
+                    'hint' => 'im Jahr ' . now()->year . ' bewilligt'
+                        . ($vorlaeufigImJahr > 0
+                            ? ', davon vorläufig ' . number_format($vorlaeufigImJahr, 2, ',', '.') . ' € (ohne Endabrechnung)'
+                            : ''),
                     'border' => 'border-green-500',
                 ],
             ];
@@ -97,7 +105,11 @@ class AntraegeDashboardController extends Controller
             'statusCounts' => $statusCounts,
             'approvedAmount' => (float) (clone $applications)
                 ->where('status', Application::STATUS_APPROVED)
-                ->sum('approved_amount'),
+                ->sum('final_amount'),
+            'pendingSettlementCount' => (clone $applications)
+                ->where('status', Application::STATUS_APPROVED)
+                ->whereNull('final_amount')
+                ->count(),
             'draftApplications' => (clone $applications)
                 ->with('applicationType')
                 ->where('status', Application::STATUS_DRAFT)

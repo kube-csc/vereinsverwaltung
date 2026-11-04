@@ -18,7 +18,7 @@ class FundingPot extends Model
     protected $fillable = [
         'funding_program_id', 'name', 'beschreibung', 'jahr', 'laufzeit',
         'beginn', 'ende', 'budget', 'geschlossen', 'max_applications_per_user',
-        'max_applications_per_club',
+        'max_applications_per_club', 'settled_at', 'settled_by', 'settlement_factor', 'settlement_total',
     ];
 
     protected $attributes = [
@@ -31,6 +31,9 @@ class FundingPot extends Model
         'ende' => 'date',
         'budget' => 'decimal:2',
         'geschlossen' => 'boolean',
+        'settled_at' => 'datetime',
+        'settlement_factor' => 'decimal:6',
+        'settlement_total' => 'decimal:2',
         'max_applications_per_user' => 'integer',
         'max_applications_per_club' => 'integer',
     ];
@@ -113,12 +116,13 @@ class FundingPot extends Model
     /** Anträge sind nur möglich, wenn der Topf offen, in der Laufzeit und nicht erschöpft ist. */
     public function istOffen(?Carbon $now = null): bool
     {
-        return ! $this->geschlossen && $this->istInLaufzeit($now) && ! $this->istErschoepft();
+        return ! $this->geschlossen && ! $this->isSettled() && $this->istInLaufzeit($now) && ! $this->istErschoepft();
     }
 
     public function statusLabel(): string
     {
         return match (true) {
+            $this->isSettled() => 'Abgerechnet',
             $this->geschlossen => 'Geschlossen',
             $this->istErschoepft() => 'Erschöpft',
             ! $this->istInLaufzeit() => 'Außerhalb der Laufzeit',
@@ -180,11 +184,9 @@ class FundingPot extends Model
             if (! is_numeric($requestedAmount) || (float) $requestedAmount <= 0) {
                 throw new DomainException('Für die Prüfung muss ein positiver beantragter Zuschuss angegeben sein.');
             }
+            $pot->assertNotSettled();
 
             $cent = (int) round((float) $requestedAmount * 100);
-            if ($cent > $pot->budgetInCent() - $pot->summeInCent()) {
-                throw new DomainException('Das verfügbare Budget reicht nicht aus.');
-            }
 
             return $pot->bindings()->create([
                 'art' => FundingPotBinding::RESERVIERT,
@@ -224,25 +226,21 @@ class FundingPot extends Model
                 ->lockForUpdate()
                 ->first();
 
-            if (! $reservation) {
-                return $pot->bind(
-                    FundingPotBinding::BEWILLIGT,
-                    $approvedAmount,
-                    $applicationId,
-                    $reference
-                );
-            }
+            $pot->assertNotSettled();
 
             $approvedCent = (int) round($approvedAmount * 100);
-            $availableWithReservation = $pot->budgetInCent()
-                - $pot->summeInCent()
-                + (int) round((float) $reservation->betrag * 100);
-
             if ($approvedCent <= 0) {
                 throw new DomainException('Der Betrag muss größer als 0 sein.');
             }
-            if ($approvedCent > $availableWithReservation) {
-                throw new DomainException('Das verfügbare Budget reicht nicht aus.');
+
+            // Bewilligungen dürfen das Budget übersteigen; die Kürzung erfolgt in der Endabrechnung.
+            if (! $reservation) {
+                return $pot->bindings()->create([
+                    'art' => FundingPotBinding::BEWILLIGT,
+                    'betrag' => $approvedCent / 100,
+                    'application_id' => $applicationId,
+                    'referenz' => $reference,
+                ]);
             }
 
             $reservation->update([
@@ -252,6 +250,136 @@ class FundingPot extends Model
             ]);
 
             return $reservation;
+        });
+    }
+
+    public function isSettled(): bool
+    {
+        return $this->settled_at !== null;
+    }
+
+    public function assertNotSettled(): void
+    {
+        if ($this->isSettled()) {
+            throw new DomainException('Der Fördertopf wurde bereits abgerechnet.');
+        }
+    }
+
+    public function endeNochNichtErreicht(?Carbon $now = null): bool
+    {
+        return $this->ende !== null && $this->ende->gte(($now ?? now())->startOfDay());
+    }
+
+    public function applicationsInProgressCount(): int
+    {
+        return $this->applications()->whereIn('status', [
+            Application::STATUS_SUBMITTED,
+            Application::STATUS_IN_REVIEW,
+            Application::STATUS_QUESTION,
+        ])->count();
+    }
+
+    /**
+     * Berechnet die endgültigen Beträge aller bewilligten Anträge. Reicht das Budget nicht,
+     * werden die Beträge anteilig gekürzt; Restcent gehen deterministisch an die größten Nachkommaanteile.
+     *
+     * @return array{rows: array<int, array{application: Application, approved_cent: int, final_cent: int}>, total_cent: int, budget_cent: int, factor: float}
+     */
+    public function settlementPreview(): array
+    {
+        $applications = $this->applications()
+            ->with('applicationType', 'user')
+            ->where('status', Application::STATUS_APPROVED)
+            ->where('approved_amount', '>', 0)
+            ->orderBy('id')
+            ->get();
+
+        $budget = $this->budgetInCent();
+        $approved = $applications->mapWithKeys(
+            fn (Application $application) => [$application->id => (int) round((float) $application->approved_amount * 100)]
+        );
+        $total = (int) $approved->sum();
+
+        $final = $approved->all();
+        if ($total > $budget) {
+            $remainders = [];
+            $assigned = 0;
+            foreach ($approved as $id => $cent) {
+                $final[$id] = intdiv($cent * $budget, $total);
+                $remainders[$id] = ($cent * $budget) % $total;
+                $assigned += $final[$id];
+            }
+            uksort($remainders, fn ($a, $b) => [$remainders[$b], $a] <=> [$remainders[$a], $b]);
+            foreach (array_slice(array_keys($remainders), 0, $budget - $assigned) as $id) {
+                $final[$id]++;
+            }
+        }
+
+        return [
+            'rows' => $applications->map(fn (Application $application) => [
+                'application' => $application,
+                'approved_cent' => $approved[$application->id],
+                'final_cent' => $final[$application->id],
+            ])->all(),
+            'total_cent' => $total,
+            'budget_cent' => $budget,
+            'factor' => $total > $budget && $total > 0 ? $budget / $total : 1.0,
+        ];
+    }
+
+    /** Führt die Endabrechnung durch und speichert die endgültigen Beträge in den Anträgen. */
+    public function settle(User $user): void
+    {
+        DB::transaction(function () use ($user) {
+            /** @var self $pot */
+            $pot = static::whereKey($this->getKey())->lockForUpdate()->firstOrFail();
+            $pot->assertNotSettled();
+
+            if (! $pot->geschlossen) {
+                throw new DomainException('Die Endabrechnung ist erst möglich, wenn der Fördertopf geschlossen wurde.');
+            }
+
+            if ($pot->applicationsInProgressCount() > 0) {
+                throw new DomainException('Es sind noch Anträge in Bearbeitung. Die Endabrechnung ist erst nach Abschluss aller Prüfungen möglich.');
+            }
+
+            $preview = $pot->settlementPreview();
+            if ($preview['rows'] === []) {
+                throw new DomainException('Der Fördertopf enthält keine bewilligten Anträge.');
+            }
+
+            $suffix = sprintf(
+                ' (Anteil %s %%, Topfvolumen %s €).',
+                number_format($preview['factor'] * 100, 2, ',', '.'),
+                number_format($preview['budget_cent'] / 100, 2, ',', '.')
+            );
+
+            foreach ($preview['rows'] as $row) {
+                /** @var Application $application */
+                $application = $row['application'];
+                $finalAmount = $row['final_cent'] / 100;
+
+                Application::whereKey($application->id)->update(['final_amount' => $finalAmount]);
+                $pot->bindings()
+                    ->where('application_id', $application->id)
+                    ->where('art', FundingPotBinding::BEWILLIGT)
+                    ->update(['betrag' => $finalAmount]);
+                $application->events()->create([
+                    'actor_id' => $user->id,
+                    'actor_name' => $user->name,
+                    'event_type' => Application::EVENT_SETTLED,
+                    'message' => 'Endabrechnung: bewilligt '
+                        . number_format($row['approved_cent'] / 100, 2, ',', '.') . ' €, endgültig '
+                        . number_format($finalAmount, 2, ',', '.') . ' €' . $suffix,
+                ]);
+            }
+
+            $pot->update([
+                'settled_at' => now(),
+                'settled_by' => $user->id,
+                'settlement_factor' => $preview['factor'],
+                'settlement_total' => $preview['total_cent'] / 100,
+            ]);
         });
     }
 }

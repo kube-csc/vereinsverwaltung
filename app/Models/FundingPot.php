@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DomainException;
+use App\Services\SepaCreditTransferXml;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,7 +18,7 @@ class FundingPot extends Model
 
     protected $fillable = [
         'funding_program_id', 'name', 'beschreibung', 'jahr', 'laufzeit',
-        'beginn', 'ende', 'budget', 'geschlossen', 'max_applications_per_user',
+        'beginn', 'ende', 'budget', 'bank_account_id', 'geschlossen', 'max_applications_per_user',
         'max_applications_per_club', 'settled_at', 'settled_by', 'settlement_factor', 'settlement_total',
     ];
 
@@ -41,6 +42,11 @@ class FundingPot extends Model
     public function program(): BelongsTo
     {
         return $this->belongsTo(FundingProgram::class, 'funding_program_id');
+    }
+
+    public function bankAccount(): BelongsTo
+    {
+        return $this->belongsTo(BankAccount::class);
     }
 
     public function bindings(): HasMany
@@ -383,6 +389,97 @@ class FundingPot extends Model
         });
     }
 
+    /** Auftraggeberkonto des Topfs; gibt es genau ein Vereinskonto, wird dieses automatisch genutzt. */
+    public function debtorAccount(): ?BankAccount
+    {
+        if ($this->bankAccount) {
+            return $this->bankAccount;
+        }
+
+        $accounts = BankAccount::operatorAccounts()->limit(2)->get();
+
+        return $accounts->count() === 1 ? $accounts->first() : null;
+    }
+
+    /** Abgerechnete, noch nicht exportierte Auszahlungen, getrennt nach vorhandener und fehlender Bankverbindung. */
+    public function openPayouts(): array
+    {
+        $applications = $this->applications()
+            ->where('status', Application::STATUS_APPROVED)
+            ->where('final_amount', '>', 0)
+            ->whereNull('payout_exported_at')
+            ->orderBy('id')
+            ->get();
+
+        [$ready, $missing] = $applications->partition(
+            fn (Application $application) => $application->payoutAccountData() !== null
+        );
+
+        return ['ready' => $ready->values(), 'missing' => $missing->values()];
+    }
+
+    /** Erzeugt die SEPA-Datei für alle offenen Auszahlungen und markiert diese als exportiert. */
+    public function exportPayouts(User $user, ?Carbon $executionDate = null): string
+    {
+        return DB::transaction(function () use ($user, $executionDate) {
+            /** @var self $pot */
+            $pot = static::whereKey($this->getKey())->lockForUpdate()->firstOrFail();
+
+            if (! $pot->isSettled()) {
+                throw new DomainException('Überweisungen sind erst nach der Endabrechnung möglich.');
+            }
+
+            $ready = $pot->openPayouts()['ready'];
+            if ($ready->isEmpty()) {
+                throw new DomainException('Es gibt keine offenen Auszahlungen mit Bankverbindung.');
+            }
+
+            $payments = $ready->map(function (Application $application) use ($pot) {
+                $account = $application->payoutAccountData();
+
+                return [
+                    'end_to_end' => 'ANTRAG' . $application->id,
+                    'name' => (string) ($account['kontoinhaber'] ?? ''),
+                    'iban' => (string) $account['iban'],
+                    'bic' => $account['bic'] ?? null,
+                    'amount_cent' => (int) round((float) $application->final_amount * 100),
+                    'purpose' => 'Foerderung ' . $pot->name . ' Antrag ' . $application->id,
+                ];
+            })->all();
+
+            $debtor = $pot->debtorAccount();
+            if (! $debtor) {
+                throw new DomainException('Es ist kein Auftraggeberkonto zugeordnet. Bitte dem Fördertopf ein Auftraggeberkonto zuweisen.');
+            }
+
+            $xml = (new SepaCreditTransferXml())->build(
+                (string) $debtor->kontoinhaber,
+                (string) $debtor->iban,
+                $debtor->bic,
+                $payments,
+                $executionDate ?? now()->addDay(),
+                'FT' . $pot->id . '-' . now()->format('YmdHis')
+            );
+
+            foreach ($ready as $application) {
+                $account = $application->payoutAccountData();
+                $application->update([
+                    'bank_account_snapshot' => $account,
+                    'payout_exported_at' => now(),
+                    'payout_exported_by' => $user->id,
+                ]);
+                $application->events()->create([
+                    'actor_id' => $user->id,
+                    'actor_name' => $user->name,
+                    'event_type' => Application::EVENT_PAYOUT_EXPORTED,
+                    'message' => 'Überweisung in Überweisungsdatei aufgenommen.',
+                ]);
+            }
+
+            return $xml;
+        });
+    }
+
     /** Nimmt die Endabrechnung zurück: endgültige Beträge entfallen, Bindungen zeigen wieder den bewilligten Betrag. */
     public function revokeSettlement(User $user): void
     {
@@ -395,6 +492,9 @@ class FundingPot extends Model
             }
 
             $applications = $pot->applications()->whereNotNull('final_amount')->get();
+            if ($applications->contains(fn (Application $application) => $application->payout_exported_at !== null)) {
+                throw new DomainException('Für diesen Fördertopf wurden bereits Überweisungen exportiert; die Endabrechnung kann nicht mehr zurückgenommen werden.');
+            }
             foreach ($applications as $application) {
                 $pot->bindings()
                     ->where('application_id', $application->id)

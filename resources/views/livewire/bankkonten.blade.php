@@ -14,6 +14,7 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead>
                 <tr>
+                    <th class="bg-green-50 px-4 py-3 text-left text-xs font-semibold uppercase text-green-900">Bezeichnung</th>
                     <th class="bg-green-50 px-4 py-3 text-left text-xs font-semibold uppercase text-green-900">Kontoinhaber</th>
                     <th class="bg-green-50 px-4 py-3 text-left text-xs font-semibold uppercase text-green-900">Bank</th>
                     <th class="bg-green-50 px-4 py-3 text-left text-xs font-semibold uppercase text-green-900">IBAN</th>
@@ -23,6 +24,7 @@
             <tbody class="divide-y divide-gray-200">
                 @forelse($accounts as $account)
                     <tr wire:key="konto-{{ $account->id }}">
+                        <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $account->bezeichnung ?: '-' }}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">{{ $account->kontoinhaber }}</td>
                         <td class="px-4 py-3 text-sm text-gray-700">{{ $account->bank_name ?: '-' }}</td>
                         <td class="px-4 py-3 text-sm text-gray-700 font-mono">{{ $account->maskedIban() }}</td>
@@ -43,6 +45,11 @@
         <div class="md:col-span-2 border-b border-green-200 pb-3">
             <h4 class="text-lg font-bold text-green-900">{{ $editingId ? 'Bankkonto bearbeiten' : 'Neues Bankkonto' }}</h4>
             <p class="mt-1 text-sm text-green-800">IBAN und BIC werden geschützt gespeichert.</p>
+        </div>
+        <div>
+            <x-label value="Bezeichnung" />
+            <x-input type="text" wire:model="bezeichnung" class="w-full" placeholder="z. B. Privatkonto" />
+            <x-input-error for="bezeichnung" class="mt-1" />
         </div>
         <div>
             <x-label value="Kontoinhaber" />

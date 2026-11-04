@@ -5,8 +5,10 @@ namespace App\Http\Livewire;
 use App\Models\FundingPot;
 use App\Models\FundingProgram;
 use App\Models\ApplicationType;
+use App\Models\BankAccount;
 use DomainException;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Foerdertoepfe extends Component
@@ -28,6 +30,14 @@ class Foerdertoepfe extends Component
     public string $potMaxApplicationsPerUser = '';
     public string $potMaxApplicationsPerClub = '';
     public array $potApplicationTypeIds = [];
+    public string $potBankAccountId = '';
+
+    public ?int $accountId = null;
+    public string $accountBezeichnung = '';
+    public string $accountKontoinhaber = '';
+    public string $accountBankName = '';
+    public string $accountIban = '';
+    public string $accountBic = '';
 
     public function mount(): void
     {
@@ -124,7 +134,10 @@ class Foerdertoepfe extends Component
             'potMaxApplicationsPerClub' => ['nullable', 'integer', 'min:1', 'max:4294967295'],
             'potApplicationTypeIds' => ['array'],
             'potApplicationTypeIds.*' => ['integer', 'distinct', 'exists:application_types,id'],
+            'potBankAccountId' => ['nullable', 'integer', Rule::exists('bank_accounts', 'id')
+                ->where(fn ($query) => $query->whereNull('user_id')->whereNull('deleted_at'))],
         ], [], [
+            'potBankAccountId' => 'Auftraggeberkonto',
             'potProgramId' => 'Förderprogramm', 'potName' => 'Name', 'potJahr' => 'Jahr',
             'potBeginn' => 'Beginn', 'potEnde' => 'Frist', 'potBudget' => 'Budget',
         ]);
@@ -153,6 +166,7 @@ class Foerdertoepfe extends Component
                 ? (int) $data['potMaxApplicationsPerUser']
                 : null,
             'max_applications_per_club' => $data['potMaxApplicationsPerClub'] ?: null,
+            'bank_account_id' => filled($data['potBankAccountId']) ? (int) $data['potBankAccountId'] : null,
         ];
 
         if ($this->potId) {
@@ -190,6 +204,7 @@ class Foerdertoepfe extends Component
         $this->potMaxApplicationsPerUser = (string) $pot->max_applications_per_user;
         $this->potMaxApplicationsPerClub = (string) $pot->max_applications_per_club;
         $this->potApplicationTypeIds = $pot->applicationTypes()->pluck('application_types.id')->map(fn ($id) => (string) $id)->all();
+        $this->potBankAccountId = (string) $pot->bank_account_id;
     }
 
     public function newPot(int $programId): void
@@ -203,10 +218,108 @@ class Foerdertoepfe extends Component
         $this->reset([
             'potId', 'potProgramId', 'potName', 'potBeschreibung', 'potJahr',
             'potBeginn', 'potEnde', 'potBudget', 'potMaxApplicationsPerUser',
-            'potMaxApplicationsPerClub', 'potApplicationTypeIds',
+            'potMaxApplicationsPerClub', 'potApplicationTypeIds', 'potBankAccountId',
         ]);
         $this->potLaufzeit = FundingPot::BEFRISTET;
         $this->resetValidation();
+    }
+
+    private function payerAccounts()
+    {
+        return BankAccount::operatorAccounts();
+    }
+
+    /** Ordnet einem Topf (auch nach der Endabrechnung) ein Auftraggeberkonto zu, solange nichts exportiert wurde. */
+    public function assignPotAccount(int $potId, $accountId): void
+    {
+        $this->authorizeVerwalten();
+
+        $pot = FundingPot::findOrFail($potId);
+        $accountId = filled($accountId) ? (int) $accountId : null;
+
+        if ($accountId !== null) {
+            $this->payerAccounts()->findOrFail($accountId);
+        }
+
+        if ($pot->applications()->whereNotNull('payout_exported_at')->exists()) {
+            $this->addError('potAccount' . $potId, 'Es wurden bereits Überweisungen exportiert; das Konto kann nicht mehr geändert werden.');
+
+            return;
+        }
+
+        $pot->update(['bank_account_id' => $accountId]);
+        $this->resetErrorBag('potAccount' . $potId);
+    }
+
+    public function saveAccount(): void
+    {
+        $this->authorizeVerwalten();
+
+        $data = $this->validate([
+            'accountBezeichnung' => ['required', 'string', 'max:100'],
+            'accountKontoinhaber' => ['required', 'string', 'max:255'],
+            'accountBankName' => ['nullable', 'string', 'max:255'],
+            'accountIban' => ['required', 'string', 'max:42', function ($attribute, $value, $fail) {
+                if (! BankAccount::isValidIban($value)) {
+                    $fail('Die IBAN ist ungültig.');
+                }
+            }],
+            'accountBic' => ['nullable', 'string', 'regex:/^[A-Za-z]{6}[A-Za-z0-9]{2}([A-Za-z0-9]{3})?$/'],
+        ], [
+            'accountBic.regex' => 'Die BIC ist ungültig.',
+        ], [
+            'accountBezeichnung' => 'Bezeichnung', 'accountKontoinhaber' => 'Kontoinhaber',
+            'accountIban' => 'IBAN', 'accountBic' => 'BIC',
+        ]);
+
+        $attributes = [
+            'bezeichnung' => $data['accountBezeichnung'],
+            'kontoinhaber' => $data['accountKontoinhaber'],
+            'bank_name' => $data['accountBankName'] ?: null,
+            'iban' => strtoupper(preg_replace('/\s+/', '', $data['accountIban'])),
+            'bic' => $data['accountBic'] ? strtoupper($data['accountBic']) : null,
+        ];
+
+        $this->accountId
+            ? $this->payerAccounts()->findOrFail($this->accountId)->update($attributes)
+            : BankAccount::create($attributes);
+
+        $this->cancelAccount();
+        session()->flash('message', 'Auftraggeberkonto gespeichert.');
+    }
+
+    public function editAccount(int $id): void
+    {
+        $this->authorizeVerwalten();
+        $account = $this->payerAccounts()->findOrFail($id);
+
+        $this->resetValidation();
+        $this->accountId = $account->id;
+        $this->accountBezeichnung = (string) $account->bezeichnung;
+        $this->accountKontoinhaber = $account->kontoinhaber;
+        $this->accountBankName = (string) $account->bank_name;
+        $this->accountIban = $account->formattedIban();
+        $this->accountBic = (string) $account->bic;
+    }
+
+    public function cancelAccount(): void
+    {
+        $this->reset(['accountId', 'accountBezeichnung', 'accountKontoinhaber', 'accountBankName', 'accountIban', 'accountBic']);
+        $this->resetValidation();
+    }
+
+    public function deleteAccount(int $id): void
+    {
+        $this->authorizeVerwalten();
+        $account = $this->payerAccounts()->findOrFail($id);
+
+        if (FundingPot::where('bank_account_id', $account->id)->exists()) {
+            session()->flash('error', 'Das Konto ist einem Fördertopf zugeordnet und kann nicht entfernt werden.');
+            return;
+        }
+
+        $account->delete();
+        $this->cancelAccount();
     }
 
     public function toggleGeschlossen(int $id): void
@@ -259,6 +372,23 @@ class Foerdertoepfe extends Component
         session()->flash('message', 'Endabrechnung durchgeführt. Die endgültigen Förderbeträge sind gespeichert.');
     }
 
+    public function downloadPayoutFile(int $id)
+    {
+        $this->authorizeVerwalten();
+        $pot = FundingPot::findOrFail($id);
+
+        try {
+            $xml = $pot->exportPayouts(auth()->user());
+        } catch (DomainException $exception) {
+            session()->flash('error', $exception->getMessage());
+            return null;
+        }
+
+        $name = 'ueberweisung-fordertopf-' . $pot->id . '-' . now()->format('Ymd-His') . '.xml';
+
+        return response()->streamDownload(fn () => print($xml), $name, ['Content-Type' => 'application/xml']);
+    }
+
     public function revokeSettlement(int $id): void
     {
         abort_unless(Gate::allows('antraege.verwalten'), 403);
@@ -294,6 +424,7 @@ class Foerdertoepfe extends Component
                 'pots.applicationTypes' => fn ($query) => $query->where('application_types.aktiv', true),
             ])->orderBy('name')->get(),
             'applicationTypes' => ApplicationType::where('aktiv', true)->orderBy('name')->get(),
+            'payerAccounts' => $this->payerAccounts()->orderBy('bezeichnung')->get(),
             'settlementPreview' => $this->settlementPotId
                 ? FundingPot::find($this->settlementPotId)?->settlementPreview()
                 : null,

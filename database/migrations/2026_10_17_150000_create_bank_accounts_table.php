@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('bank_accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete(); // null = Konto einer Einrichtung (z. B. Fördertopf-Auftraggeber)
+            $table->string('bezeichnung', 100)->nullable();
             $table->string('kontoinhaber');
             $table->string('bank_name')->nullable();
             // IBAN und BIC werden verschlüsselt gespeichert (Laravel-Cast "encrypted")

@@ -8,6 +8,7 @@ use Livewire\Component;
 class Bankkonten extends Component
 {
     public ?int $editingId = null;
+    public string $bezeichnung = '';
     public string $kontoinhaber = '';
     public string $bank_name = '';
     public string $iban = '';
@@ -16,6 +17,7 @@ class Bankkonten extends Component
     protected function rules(): array
     {
         return [
+            'bezeichnung' => ['required', 'string', 'max:100'],
             'kontoinhaber' => ['required', 'string', 'max:255'],
             'bank_name' => ['nullable', 'string', 'max:255'],
             'iban' => ['required', 'string', 'max:42', function ($attribute, $value, $fail) {
@@ -30,6 +32,7 @@ class Bankkonten extends Component
     protected function messages(): array
     {
         return [
+            'bezeichnung.required' => 'Bitte eine Bezeichnung angeben.',
             'kontoinhaber.required' => 'Bitte den Kontoinhaber angeben.',
             'iban.required' => 'Bitte die IBAN angeben.',
             'bic.regex' => 'Die BIC ist ungültig.',
@@ -66,6 +69,7 @@ class Bankkonten extends Component
         $this->resetValidation();
         $this->editingId = $account->id;
         $this->kontoinhaber = $account->kontoinhaber;
+        $this->bezeichnung = (string) $account->bezeichnung;
         $this->bank_name = (string) $account->bank_name;
         $this->iban = $account->formattedIban();
         $this->bic = (string) $account->bic;
@@ -84,7 +88,7 @@ class Bankkonten extends Component
 
     public function cancel(): void
     {
-        $this->reset(['editingId', 'kontoinhaber', 'bank_name', 'iban', 'bic']);
+        $this->reset(['editingId', 'bezeichnung', 'kontoinhaber', 'bank_name', 'iban', 'bic']);
         $this->resetValidation();
     }
 

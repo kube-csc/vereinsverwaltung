@@ -10,7 +10,7 @@ class BankAccount extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['kontoinhaber', 'bank_name', 'iban', 'bic'];
+    protected $fillable = ['bezeichnung', 'kontoinhaber', 'bank_name', 'iban', 'bic'];
 
     protected $hidden = ['iban', 'bic'];
 
@@ -22,6 +22,12 @@ class BankAccount extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** Auftraggeberkonten des Betreibers: Konten ohne Benutzerzuordnung. */
+    public function scopeOperatorAccounts($query)
+    {
+        return $query->whereNull('user_id');
     }
 
     /** IBAN in Vierergruppen, z. B. „DE89 3704 0044 0532 0130 00“. */

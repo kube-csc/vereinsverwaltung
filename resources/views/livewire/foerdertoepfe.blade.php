@@ -96,6 +96,32 @@
                                     <button wire:click="revokeSettlement({{ $pot->id }})" wire:confirm="Endabrechnung wirklich zurücknehmen? Die endgültigen Beträge werden gelöscht und sind für Antragsteller nicht mehr sichtbar." class="rounded-md border border-red-300 bg-white px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-50">Endabrechnung zurücknehmen</button>
                                 </div>
                             @endcan
+                            @php($payouts = $pot->openPayouts())
+                            <div class="space-y-2 border-t border-gray-200 bg-white px-4 py-3 text-sm">
+                                <h5 class="font-semibold text-gray-900">Überweisungen (SEPA)</h5>
+                                <div>
+                                    <label class="text-xs font-semibold text-gray-700">Auftraggeberkonto</label>
+                                    <select wire:change="assignPotAccount({{ $pot->id }}, $event.target.value)" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                        <option value="" @selected(! $pot->bank_account_id)>{{ $payerAccounts->count() === 1 ? 'Automatisch: ' . $payerAccounts->first()->bezeichnung : 'Bitte Konto wählen' }}</option>
+                                        @foreach($payerAccounts as $payerAccount)
+                                            <option value="{{ $payerAccount->id }}" @selected($pot->bank_account_id === $payerAccount->id)>{{ $payerAccount->bezeichnung }} – {{ $payerAccount->maskedIban() }}</option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error for="potAccount{{ $pot->id }}" class="mt-1" />
+                                </div>
+                                <p class="text-xs text-gray-600">
+                                    Offen mit Bankverbindung: {{ $payouts['ready']->count() }}
+                                    ({{ number_format($payouts['ready']->sum(fn ($a) => (float) $a->final_amount), 2, ',', '.') }} €).
+                                    Ohne Bankverbindung: {{ $payouts['missing']->count() }}.
+                                    Ergänzte oder geänderte Bankdaten werden beim nächsten Export automatisch berücksichtigt.
+                                </p>
+                                @foreach($payouts['missing'] as $missing)
+                                    <p class="text-xs text-orange-800">#{{ $missing->id }} {{ trim($missing->user->vorname . ' ' . $missing->user->nachname) ?: $missing->user->name }}: Bankverbindung fehlt.</p>
+                                @endforeach
+                                @if($payouts['ready']->isNotEmpty())
+                                    <button wire:click="downloadPayoutFile({{ $pot->id }})" class="rounded-md bg-blue-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-800">Überweisungsdatei erzeugen</button>
+                                @endif
+                            </div>
                         @endif
                         @if($settlementPreview && $settlementPotId === $pot->id)
                             <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 text-sm">
@@ -221,6 +247,17 @@
             </div>
             <p class="text-xs text-gray-600">Beide Höchstzahlen sind optional und standardmäßig unbegrenzt: leer lassen bedeutet unbegrenzt. Eine Vereinsgrenze ist nur bei Antragsarten mit erforderlicher Vereinszuordnung möglich. Entwürfe zählen nicht; eingereichte Anträge zählen auch nach Ablehnung oder Rücknahme weiter.</p>
             <div>
+                <x-label value="Auftraggeberkonto für Überweisungen (optional)" />
+                <select wire:model="potBankAccountId" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                    <option value="">Kein Konto</option>
+                    @foreach($payerAccounts as $payerAccount)
+                        <option value="{{ $payerAccount->id }}">{{ $payerAccount->bezeichnung }} – {{ $payerAccount->maskedIban() }}</option>
+                    @endforeach
+                </select>
+                <p class="mt-1 text-xs text-gray-600">Pro Fördertopf ist genau ein Konto möglich. Gibt es nur ein Vereinskonto, wird es automatisch genutzt.</p>
+                <x-input-error for="potBankAccountId" class="mt-1" />
+            </div>
+            <div>
                 <x-label value="Beschreibung (optional)" />
                 <textarea wire:model="potBeschreibung" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
             </div>
@@ -243,4 +280,61 @@
             </div>
         </form>
     </div>
+
+    <section class="space-y-4 rounded-xl border-2 border-gray-300 bg-gray-50 p-5">
+        <h4 class="border-b border-gray-300 pb-3 font-bold text-gray-900">Auftraggeberkonten für Überweisungen</h4>
+        @if($payerAccounts->isNotEmpty())
+            <table class="min-w-full text-sm">
+                <thead><tr class="text-left text-xs font-semibold uppercase text-gray-600"><th class="py-2 pr-4">Bezeichnung</th><th class="py-2 pr-4">Kontoinhaber</th><th class="py-2 pr-4">IBAN</th><th class="py-2 text-right">Aktion</th></tr></thead>
+                <tbody class="divide-y divide-gray-200">
+                    @foreach($payerAccounts as $payerAccount)
+                        <tr wire:key="konto-{{ $payerAccount->id }}">
+                            <td class="py-2 pr-4 font-medium text-gray-900">{{ $payerAccount->bezeichnung }}</td>
+                            <td class="py-2 pr-4">{{ $payerAccount->kontoinhaber }}</td>
+                            <td class="py-2 pr-4">{{ $payerAccount->maskedIban() }}</td>
+                            <td class="py-2 text-right">
+                                <button type="button" wire:click="editAccount({{ $payerAccount->id }})" class="text-blue-700 hover:underline">Bearbeiten</button>
+                                <button type="button" wire:click="deleteAccount({{ $payerAccount->id }})" wire:confirm="Konto wirklich entfernen?" class="ml-3 text-red-700 hover:underline">Entfernen</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p class="text-sm text-gray-600">Noch keine Auftraggeberkonten angelegt.</p>
+        @endif
+        <form wire:submit.prevent="saveAccount" class="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div>
+                <x-label value="Bezeichnung" />
+                <x-input type="text" wire:model="accountBezeichnung" class="w-full" placeholder="z. B. Jugendförderung Sparkasse" />
+                <x-input-error for="accountBezeichnung" class="mt-1" />
+            </div>
+            <div>
+                <x-label value="Kontoinhaber" />
+                <x-input type="text" wire:model="accountKontoinhaber" class="w-full" />
+                <x-input-error for="accountKontoinhaber" class="mt-1" />
+            </div>
+            <div>
+                <x-label value="IBAN" />
+                <x-input type="text" wire:model="accountIban" class="w-full" autocomplete="off" />
+                <x-input-error for="accountIban" class="mt-1" />
+            </div>
+            <div>
+                <x-label value="BIC (optional)" />
+                <x-input type="text" wire:model="accountBic" class="w-full" autocomplete="off" />
+                <x-input-error for="accountBic" class="mt-1" />
+            </div>
+            <div>
+                <x-label value="Bank (optional)" />
+                <x-input type="text" wire:model="accountBankName" class="w-full" />
+            </div>
+            <div class="flex items-end space-x-4">
+                <x-button>{{ $accountId ? 'Änderungen speichern' : 'Konto speichern' }}</x-button>
+                @if($accountId)
+                    <button type="button" wire:click="cancelAccount" class="text-sm text-gray-700 underline">Abbrechen</button>
+                @endif
+            </div>
+        </form>
+        <p class="text-xs text-gray-600">Die Angaben werden verschlüsselt gespeichert.</p>
+    </section>
 </div>

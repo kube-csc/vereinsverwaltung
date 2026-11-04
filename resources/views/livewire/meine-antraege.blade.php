@@ -117,6 +117,28 @@
                                     <button wire:click="respondToQuestion({{ $application->id }})" class="mt-2 rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">Antwort übermitteln</button>
                                 @else
                                     <span class="text-gray-500">Abgegeben</span>
+                                    @if($application->status === \App\Models\Application::STATUS_APPROVED && $application->funding_pot_id)
+                                        <div class="mt-2 text-left text-xs text-gray-700">
+                                            @php($payoutAccount = $application->payoutAccountData())
+                                            @if($application->payout_exported_at && $payoutAccount)
+                                                <p class="mb-1 font-semibold text-green-800">Überweisung veranlasst</p>
+                                            @endif
+                                            <p class="font-semibold">Bankverbindung für die Auszahlung</p>
+                                            <p>{{ $payoutAccount ? 'Aktuell: ' . ($payoutAccount['kontoinhaber'] ?? '') . ', ' . substr($payoutAccount['iban'], 0, 4) . ' •••• ' . substr($payoutAccount['iban'], -4) : 'Noch keine Bankverbindung hinterlegt.' }}</p>
+                                            @if($accounts->isNotEmpty())
+                                                <select wire:model="payoutAccounts.{{ $application->id }}" class="mt-1 w-64 rounded-md border-gray-300 text-sm">
+                                                    <option value="">Bankkonto wählen</option>
+                                                    @foreach($accounts as $account)
+                                                        <option value="{{ $account->id }}">{{ $account->kontoinhaber }} – {{ $account->maskedIban() }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('payoutAccounts.' . $application->id)<span class="mt-1 block text-red-700">{{ $message }}</span>@enderror
+                                                <button wire:click="updatePayoutAccount({{ $application->id }})" class="mt-1 block rounded-md bg-blue-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-800">Bankverbindung übernehmen</button>
+                                            @else
+                                                <p class="mt-1">Legen Sie zuerst unter „Bankkonten“ ein Konto an.</p>
+                                            @endif
+                                        </div>
+                                    @endif
                                 @endif
                             </td>
                         </tr>

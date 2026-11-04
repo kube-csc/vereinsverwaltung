@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('beginn')->nullable();
             $table->date('ende')->nullable();
             $table->decimal('budget', 12, 2)->default(0);
+            // Auftraggeberkonto für die Überweisungsdatei (Konto ohne Benutzer in bank_accounts)
+            $table->foreignId('bank_account_id')->nullable()->constrained('bank_accounts')->nullOnDelete();
             $table->boolean('geschlossen')->default(false);
             // null = unbegrenzt
             $table->unsignedInteger('max_applications_per_user')->nullable()->default(null);

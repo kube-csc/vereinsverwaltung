@@ -28,6 +28,8 @@ return new class extends Migration
             $table->text('decision_reason')->nullable();
             $table->decimal('approved_amount', 12, 2)->nullable();
             $table->decimal('final_amount', 12, 2)->nullable();
+            $table->timestamp('payout_exported_at')->nullable();
+            $table->foreignId('payout_exported_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('deletion_reason')->nullable();
             $table->softDeletes();

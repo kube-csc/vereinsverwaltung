@@ -28,6 +28,9 @@ class Application extends Model
     public const EVENT_SETTLED = 'endabrechnung';
     public const EVENT_SETTLEMENT_REVOKED = 'endabrechnung_zurueckgenommen';
 
+    public const EVENT_PAYOUT_EXPORTED = 'ueberweisung_exportiert';
+    public const EVENT_BANK_CHANGED = 'bankdaten_geaendert';
+
     protected $fillable = [
         'application_type_id',
         'funding_pot_id',
@@ -47,6 +50,8 @@ class Application extends Model
         'decision_reason',
         'approved_amount',
         'final_amount',
+        'payout_exported_at',
+        'payout_exported_by',
         'deleted_by',
         'deletion_reason',
     ];
@@ -58,6 +63,7 @@ class Application extends Model
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
         'decided_at' => 'datetime',
+        'payout_exported_at' => 'datetime',
         'approved_amount' => 'decimal:2',
         'final_amount' => 'decimal:2',
     ];
@@ -110,6 +116,26 @@ class Application extends Model
     public function events(): HasMany
     {
         return $this->hasMany(ApplicationEvent::class)->orderBy('created_at')->orderBy('id');
+    }
+
+    /** Bankdaten für die Auszahlung: fixierter Stand oder, falls keiner vorhanden ist, das einzige Konto des Antragstellers. */
+    public function payoutAccountData(): ?array
+    {
+        if (filled($this->bank_account_snapshot['iban'] ?? null)) {
+            return $this->bank_account_snapshot;
+        }
+
+        $accounts = $this->user?->bankAccounts()->limit(2)->get();
+        if ($accounts === null || $accounts->count() !== 1) {
+            return null;
+        }
+
+        return [
+            'kontoinhaber' => $accounts[0]->kontoinhaber,
+            'bank_name' => $accounts[0]->bank_name,
+            'iban' => $accounts[0]->iban,
+            'bic' => $accounts[0]->bic,
+        ];
     }
 
     public function isDraft(): bool

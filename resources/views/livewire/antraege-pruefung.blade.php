@@ -275,6 +275,8 @@
                                             \App\Models\Application::EVENT_ARCHIVED => 'Archiviert',
                                             \App\Models\Application::EVENT_SETTLED => 'Endabrechnung',
                                             \App\Models\Application::EVENT_SETTLEMENT_REVOKED => 'Endabrechnung zurückgenommen',
+                                            \App\Models\Application::EVENT_PAYOUT_EXPORTED => 'Überweisung exportiert',
+                                            \App\Models\Application::EVENT_BANK_CHANGED => 'Bankdaten geändert',
                                             default => $event->event_type,
                                         } }}
                                         · {{ $eventActorName }}@if($eventActorRoles), {{ $eventActorRoles }}@endif · {{ $event->created_at->format('d.m.Y H:i') }}

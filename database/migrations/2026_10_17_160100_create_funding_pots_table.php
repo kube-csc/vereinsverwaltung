@@ -8,14 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('funding_programs', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('beschreibung')->nullable();
-            $table->boolean('aktiv')->default(true);
-            $table->timestamps();
-        });
-
         Schema::create('funding_pots', function (Blueprint $table) {
             $table->id();
             $table->foreignId('funding_program_id')->constrained()->restrictOnDelete();
@@ -27,27 +19,20 @@ return new class extends Migration
             $table->date('ende')->nullable();
             $table->decimal('budget', 12, 2)->default(0);
             $table->boolean('geschlossen')->default(false);
+            // null = unbegrenzt
             $table->unsignedInteger('max_applications_per_user')->nullable()->default(null);
             $table->unsignedInteger('max_applications_per_club')->nullable()->default(null);
-            $table->timestamps();
-        });
-
-        // Budgetbindungen; application_id wird mit der Antragstellung (Schritt 9) verknüpft
-        Schema::create('funding_pot_bindings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('funding_pot_id')->constrained()->restrictOnDelete();
-            $table->string('art', 20); // reserviert | bewilligt | freigegeben
-            $table->decimal('betrag', 12, 2);
-            $table->unsignedBigInteger('application_id')->nullable()->index();
-            $table->string('referenz')->nullable();
+            // Endabrechnung
+            $table->timestamp('settled_at')->nullable();
+            $table->unsignedBigInteger('settled_by')->nullable();
+            $table->decimal('settlement_factor', 10, 6)->nullable();
+            $table->decimal('settlement_total', 12, 2)->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('funding_pot_bindings');
         Schema::dropIfExists('funding_pots');
-        Schema::dropIfExists('funding_programs');
     }
 };

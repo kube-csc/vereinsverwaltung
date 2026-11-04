@@ -27,6 +27,7 @@ return new class extends Migration
             $table->timestamp('decided_at')->nullable();
             $table->text('decision_reason')->nullable();
             $table->decimal('approved_amount', 12, 2)->nullable();
+            $table->decimal('final_amount', 12, 2)->nullable();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('deletion_reason')->nullable();
             $table->softDeletes();
@@ -41,35 +42,10 @@ return new class extends Migration
                 'applications_pot_club_submission_limit_index'
             );
         });
-
-        Schema::create('application_documents', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('application_id')->constrained()->restrictOnDelete();
-            $table->string('field_key', 100);
-            $table->string('original_name');
-            $table->string('path');
-            $table->string('mime_type', 150);
-            $table->unsignedBigInteger('size');
-            $table->timestamps();
-            $table->unique(['application_id', 'field_key']);
-        });
-
-        Schema::create('application_events', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('application_id')->constrained()->restrictOnDelete();
-            $table->foreignId('actor_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('actor_name');
-            $table->string('event_type', 30);
-            $table->text('message');
-            $table->timestamp('created_at')->useCurrent();
-            $table->index(['application_id', 'created_at']);
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('application_events');
-        Schema::dropIfExists('application_documents');
         Schema::dropIfExists('applications');
     }
 };

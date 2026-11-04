@@ -274,6 +274,7 @@
                                             \App\Models\Application::EVENT_REJECTED => 'Abgelehnt',
                                             \App\Models\Application::EVENT_ARCHIVED => 'Archiviert',
                                             \App\Models\Application::EVENT_SETTLED => 'Endabrechnung',
+                                            \App\Models\Application::EVENT_SETTLEMENT_REVOKED => 'Endabrechnung zurückgenommen',
                                             default => $event->event_type,
                                         } }}
                                         · {{ $eventActorName }}@if($eventActorRoles), {{ $eventActorRoles }}@endif · {{ $event->created_at->format('d.m.Y H:i') }}

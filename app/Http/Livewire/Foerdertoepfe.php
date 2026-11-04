@@ -259,6 +259,20 @@ class Foerdertoepfe extends Component
         session()->flash('message', 'Endabrechnung durchgeführt. Die endgültigen Förderbeträge sind gespeichert.');
     }
 
+    public function revokeSettlement(int $id): void
+    {
+        abort_unless(Gate::allows('antraege.verwalten'), 403);
+
+        try {
+            FundingPot::findOrFail($id)->revokeSettlement(auth()->user());
+        } catch (DomainException $exception) {
+            session()->flash('error', $exception->getMessage());
+            return;
+        }
+
+        session()->flash('message', 'Endabrechnung zurückgenommen. Antragsteller sehen wieder nur den beantragten Betrag.');
+    }
+
     public function deletePot(int $id): void
     {
         $this->authorizeVerwalten();

@@ -26,6 +26,7 @@ class Application extends Model
     public const EVENT_REJECTED = 'abgelehnt';
     public const EVENT_ARCHIVED = 'archiviert';
     public const EVENT_SETTLED = 'endabrechnung';
+    public const EVENT_SETTLEMENT_REVOKED = 'endabrechnung_zurueckgenommen';
 
     protected $fillable = [
         'application_type_id',

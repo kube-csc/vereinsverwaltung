@@ -382,4 +382,39 @@ class FundingPot extends Model
             ]);
         });
     }
+
+    /** Nimmt die Endabrechnung zurück: endgültige Beträge entfallen, Bindungen zeigen wieder den bewilligten Betrag. */
+    public function revokeSettlement(User $user): void
+    {
+        DB::transaction(function () use ($user) {
+            /** @var self $pot */
+            $pot = static::whereKey($this->getKey())->lockForUpdate()->firstOrFail();
+
+            if (! $pot->isSettled()) {
+                throw new DomainException('Der Fördertopf wurde noch nicht abgerechnet.');
+            }
+
+            $applications = $pot->applications()->whereNotNull('final_amount')->get();
+            foreach ($applications as $application) {
+                $pot->bindings()
+                    ->where('application_id', $application->id)
+                    ->where('art', FundingPotBinding::BEWILLIGT)
+                    ->update(['betrag' => $application->approved_amount]);
+                Application::whereKey($application->id)->update(['final_amount' => null]);
+                $application->events()->create([
+                    'actor_id' => $user->id,
+                    'actor_name' => $user->name,
+                    'event_type' => Application::EVENT_SETTLEMENT_REVOKED,
+                    'message' => 'Endabrechnung zurückgenommen; der endgültige Betrag ist für Antragsteller nicht mehr sichtbar.',
+                ]);
+            }
+
+            $pot->update([
+                'settled_at' => null,
+                'settled_by' => null,
+                'settlement_factor' => null,
+                'settlement_total' => null,
+            ]);
+        });
+    }
 }

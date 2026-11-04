@@ -91,6 +91,11 @@
                             <p class="border-t border-gray-200 bg-green-50 px-4 py-2 text-xs text-green-900">
                                 Abgerechnet am {{ $pot->settled_at->format('d.m.Y H:i') }}: bewilligt {{ number_format((float) $pot->settlement_total, 2, ',', '.') }} €, Anteil {{ number_format((float) $pot->settlement_factor * 100, 2, ',', '.') }} %.
                             </p>
+                            @can('antraege.verwalten')
+                                <div class="border-t border-gray-200 bg-green-50 px-4 pb-3">
+                                    <button wire:click="revokeSettlement({{ $pot->id }})" wire:confirm="Endabrechnung wirklich zurücknehmen? Die endgültigen Beträge werden gelöscht und sind für Antragsteller nicht mehr sichtbar." class="rounded-md border border-red-300 bg-white px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-50">Endabrechnung zurücknehmen</button>
+                                </div>
+                            @endcan
                         @endif
                         @if($settlementPreview && $settlementPotId === $pot->id)
                             <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 text-sm">

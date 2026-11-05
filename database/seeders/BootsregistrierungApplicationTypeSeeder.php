@@ -12,6 +12,8 @@ class BootsregistrierungApplicationTypeSeeder extends ApplicationExampleSeeder
             ['key' => 'bootslaenge_meter', 'label' => 'Bootslänge in Metern', 'type' => 'number', 'required' => true],
             ['key' => 'kennzeichen', 'label' => 'Bootskennzeichen, falls vorhanden', 'type' => 'text', 'required' => false],
             ['key' => 'boot_nachweis', 'label' => 'Bootsnachweis als Anlage', 'type' => 'file', 'required' => false],
+        ], [
+            ['key' => 'bootsplatz', 'label' => 'Bootsplatz', 'type' => 'text', 'required' => true, 'for_reviewer' => true, 'help_text' => 'Bitte gebe den Bootsplatz für die Bewilligung an.'],
         ], 'Bitte gebe den Bootsplatz für die Bewilligung an.');
     }
 }

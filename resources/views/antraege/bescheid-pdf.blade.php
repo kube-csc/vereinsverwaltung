@@ -40,18 +40,30 @@
     </div>
     @endif
 
-    @if($application->applicationType?->reviewer_note)
-    <div style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
-        <strong>Prüfaufgabe:</strong><br>
-        {{ $application->applicationType->reviewer_note }}
+    @if($application->applicationType->reviewer_note)
+    <div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #333;">Prüfaufgabe</h3>
+        <p style="white-space: pre-wrap; font-size: 11pt; color: #555;">{{ $application->applicationType->reviewer_note }}</p>
     </div>
     @endif
 
-    @php
-        $decider = $application->decider;
-        $deciderName = trim(($decider?->vorname ?? '') . ' ' . ($decider?->nachname ?? '')) ?: (string) $decider?->name;
-    @endphp
-    @if($deciderName)
+    @php($reviewerAnswerLines = $application->formattedReviewerAnswers())
+    @if(!empty($reviewerAnswerLines))
+    <div style="margin-top: 20px;">
+        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #333;">Prüfer-Antworten</h3>
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            @foreach($reviewerAnswerLines as $line)
+                @php($parts = explode(': ', $line, 2))
+                <tr>
+                    <td style="padding: 4px 8px 4px 0; font-weight: bold; color: #555; width: 40%; vertical-align: top;">{{ $parts[0] }}:</td>
+                    <td style="padding: 4px 0 4px 8px; color: #333;">{{ $parts[1] ?? '' }}</td>
+                </tr>
+            @endforeach
+        </table>
+    </div>
+    @endif
+
+    @if(isset($deciderName) && $deciderName !== '')
     <div style="margin-top: 30px;">
         Mit freundlichen Grüßen<br>
         <strong>{{ $deciderName }}</strong><br>

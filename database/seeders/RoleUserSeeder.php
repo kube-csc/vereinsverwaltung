@@ -6,7 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class AdministratorSeeder extends Seeder
+class RoleUserSeeder extends Seeder
 {
     public function run(): void
     {

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('help_text')->nullable();
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->boolean('aktiv')->default(true);
+            $table->boolean('for_reviewer')->default(false);
             $table->timestamps();
             $table->unique(['application_type_id', 'key']);
         });

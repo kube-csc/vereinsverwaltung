@@ -40,6 +40,8 @@ class Application extends Model
         'bank_account_snapshot',
         'form_snapshot',
         'answers',
+        'reviewer_answers',
+        'bescheid_pdf_path',
         'status',
         'submitted_at',
         'reviewed_by',
@@ -60,6 +62,7 @@ class Application extends Model
         'bank_account_snapshot' => 'encrypted:array',
         'form_snapshot' => 'array',
         'answers' => 'array',
+        'reviewer_answers' => 'array',
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
         'decided_at' => 'datetime',
@@ -190,6 +193,65 @@ class Application extends Model
     public function formattedAnswersText(): string
     {
         $lines = $this->formattedAnswers();
+        if (empty($lines)) {
+            return '';
+        }
+
+        return implode("\n", $lines);
+    }
+
+    /**
+     * Gibt die vom Prüfer eingetragenen Antworten als formatierte Zeilen zurück.
+     * Jedes Feld wird als „Label: Wert" ausgegeben.
+     * Die Labels stammen aus den aktuellen application_fields mit for_reviewer=true.
+     */
+    public function formattedReviewerAnswers(): array
+    {
+        $answers = $this->reviewer_answers ?? [];
+        if (empty($answers)) {
+            return [];
+        }
+
+        $fields = collect();
+        if ($this->applicationType?->fields !== null) {
+            $fields = $this->applicationType->fields
+                ->where('for_reviewer', true)
+                ->where('aktiv', true)
+                ->sortBy('sort_order');
+        }
+
+        $labels = [];
+        foreach ($fields as $field) {
+            $labels[$field->key] = $field->label;
+        }
+
+        $formatted = [];
+        foreach ($answers as $key => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            $label = $labels[$key] ?? $key;
+
+            // Checkbox-Werte lesbar machen
+            if (is_bool($value)) {
+                $formatted[] = $label . ': ' . ($value ? 'Ja' : 'Nein');
+            } elseif (is_array($value)) {
+                $formatted[] = $label . ': ' . implode(', ', array_filter($value, fn ($v) => $v !== '' && $v !== null));
+            } else {
+                $formatted[] = $label . ': ' . $value;
+            }
+        }
+
+        return $formatted;
+    }
+
+    /**
+     * Gibt die Prüfer-Antworten als einzelner Textblock mit Zeilenumbrüchen zurück.
+     */
+    public function formattedReviewerAnswersText(): string
+    {
+        $lines = $this->formattedReviewerAnswers();
         if (empty($lines)) {
             return '';
         }

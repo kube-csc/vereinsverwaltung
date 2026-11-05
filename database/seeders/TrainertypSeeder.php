@@ -13,7 +13,7 @@ class TrainertypSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('trainertypen')->insert([
+        DB::table('trainertyps')->insert([
             // Hinweis: default_* Felder werden in der App genutzt, um neue Trainertable-Zuordnungen vorzubelegen.
             array('id' => '1','trainerfunktion' => 'kein Trainer','status' => '0','default_sichtbar' => '0','organiser_id' => '0','deleted_at' => NULL,'created_at' => '2021-08-11 19:47:25','updated_at' => '2021-08-11 19:47:25'),
             array('id' => '2','trainerfunktion' => 'Test-Trainer','status' => '1','default_sichtbar' => '1','organiser_id' => '0','deleted_at' => NULL,'created_at' => '2021-08-11 19:47:25','updated_at' => '2021-08-11 19:47:25'),

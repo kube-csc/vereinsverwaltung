@@ -9,6 +9,7 @@ use App\Models\NoticeTemplate;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 /** Versand der E-Mail-Benachrichtigungen und Erzeugung der Bescheid-PDFs. */
@@ -35,12 +36,20 @@ class ApplicationNotifier
         $type = self::noticeType($application);
         abort_if($type === null, 404);
 
-        $application->loadMissing('decider');
+        $application->loadMissing('decider', 'applicationType');
         $notice = NoticeTemplate::forType($type)->render($application);
+
+        $deciderName = '';
+        $decider = $application->decider;
+        if ($decider !== null) {
+            $deciderName = trim(($decider->vorname ?? '') . ' ' . ($decider->nachname ?? '')) ?: (string) ($decider->name ?? '');
+        }
+
         $html = view('antraege.bescheid-pdf', [
             'notice' => $notice,
             'application' => $application,
             'verein' => config('app.verein_name'),
+            'deciderName' => $deciderName,
         ])->render();
 
         $options = new Options();
@@ -51,7 +60,64 @@ class ApplicationNotifier
         $dompdf->setPaper('A4');
         $dompdf->render();
 
-        return $dompdf->output();
+        $pdfContent = $dompdf->output();
+
+        // PDF nur speichern, wenn der Antrag endgültig entschieden ist
+        if ($this->isFinalDecision($application)) {
+            $this->savePdf($application, $pdfContent);
+        }
+
+        return $pdfContent;
+    }
+
+    /**
+     * Prüft, ob der Antrag endgültig entschieden ist und das Bescheid-PDF gespeichert werden darf.
+     * - Anträge ohne Fördertopf: Bei bewilligt oder abgelehnt ist die Entscheidung endgültig.
+     * - Anträge mit Fördertopf: Erst nach Endabrechnung (final_amount gesetzt) ist die Bewilligung endgültig.
+     *   Eine Ablehnung ist auch bei Fördertopf-Anträgen sofort endgültig.
+     */
+    private function isFinalDecision(Application $application): bool
+    {
+        $hasPot = $application->funding_pot_id !== null;
+
+        // Ablehnung ist immer endgültig
+        if ($application->status === Application::STATUS_REJECTED) {
+            return true;
+        }
+
+        // Bewilligung ohne Fördertopf ist sofort endgültig
+        if (!$hasPot && $application->status === Application::STATUS_APPROVED) {
+            return true;
+        }
+
+        // Bewilligung mit Fördertopf ist erst nach Endabrechnung endgültig
+        if ($hasPot && $application->status === Application::STATUS_APPROVED && $application->final_amount !== null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Speichert das Bescheid-PDF im Storage-Verzeichnis und hinterlegt den Pfad in der Datenbank.
+     * Wenn bereits ein PDF gespeichert ist, wird es überschrieben — z. B. nach Endabrechnung
+     * wird das endgültige PDF das vorläufige ersetzen.
+     */
+    private function savePdf(Application $application, string $pdfContent): void
+    {
+        $directory = 'bescheide/' . $application->id;
+        $filename = 'bescheid_' . $application->id . '_' . now()->format('Y-m-d') . '_' . $application->status . '.pdf';
+        $path = $directory . '/' . $filename;
+
+        // Falls bereits ein PDF existiert, löschen
+        if (!empty($application->bescheid_pdf_path)) {
+            Storage::disk('public')->delete($application->bescheid_pdf_path);
+        }
+
+        Storage::disk('public')->put($path, $pdfContent);
+
+        $application->bescheid_pdf_path = $path;
+        $application->save();
     }
 
     public function question(Application $application, string $question): void
@@ -66,6 +132,7 @@ class ApplicationNotifier
     public function decision(Application $application): void
     {
         $application->refresh();
+        $application->loadMissing('applicationType');
         $type = self::noticeType($application);
         if ($type === null) {
             return;
@@ -88,9 +155,18 @@ class ApplicationNotifier
             }
         }
 
-        // Prüfaufgabe hinzufügen, falls vorhanden
-        if (!empty($application->applicationType?->reviewer_note)) {
+        // Prüfaufgabe (reviewer_note) hinzufügen, falls vorhanden
+        if (!empty($application->applicationType->reviewer_note)) {
             $lines[] = 'Prüfaufgabe: ' . $application->applicationType->reviewer_note;
+        }
+
+        // Prüfer-Antworten hinzufügen, falls vorhanden
+        $reviewerAnswerLines = $application->formattedReviewerAnswers();
+        if (!empty($reviewerAnswerLines)) {
+            $lines[] = 'Prüfer-Antworten:';
+            foreach ($reviewerAnswerLines as $answerLine) {
+                $lines[] = '- ' . $answerLine;
+            }
         }
 
         $lines[] = 'Den Bescheid finden Sie im Anhang und unter „Meine Anträge“.';
@@ -108,6 +184,7 @@ class ApplicationNotifier
         $applications = $pot->applications()
             ->where('status', Application::STATUS_APPROVED)
             ->whereNotNull('final_amount')
+            ->with('applicationType')
             ->get();
 
         foreach ($applications as $application) {
@@ -125,9 +202,18 @@ class ApplicationNotifier
                 }
             }
 
-            // Prüfaufgabe hinzufügen, falls vorhanden
-            if (!empty($application->applicationType?->reviewer_note)) {
+            // Prüfaufgabe (reviewer_note) hinzufügen, falls vorhanden
+            if (!empty($application->applicationType->reviewer_note)) {
                 $lines[] = 'Prüfaufgabe: ' . $application->applicationType->reviewer_note;
+            }
+
+            // Prüfer-Antworten hinzufügen, falls vorhanden
+            $reviewerAnswerLines = $application->formattedReviewerAnswers();
+            if (!empty($reviewerAnswerLines)) {
+                $lines[] = 'Prüfer-Antworten:';
+                foreach ($reviewerAnswerLines as $answerLine) {
+                    $lines[] = '- ' . $answerLine;
+                }
             }
 
             $this->send($application, 'Endabrechnung: Förderbetrag zu Ihrem Antrag #' . $application->id, array_merge($lines, $this->bankLines($application)), true);
@@ -155,7 +241,7 @@ class ApplicationNotifier
     private function send(Application $application, string $subject, array $lines, bool $withPdf = false): void
     {
         try {
-            $application->loadMissing('user', 'decider');
+            $application->loadMissing('user', 'decider', 'applicationType');
             $user = $application->user;
             if (! $user || blank($user->email)) {
                 return;

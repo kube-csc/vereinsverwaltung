@@ -24,11 +24,11 @@ abstract class ApplicationExampleSeeder extends Seeder
         $attributes = [
             'name' => $definition['name'],
             'beschreibung' => $definition['beschreibung'],
-            'reviewer_note' => $definition['reviewer_note'] ?? null,
             'frist' => $definition['frist'],
             'requires_club' => $definition['requires_club'],
             'requires_funding_pot' => $definition['requires_funding_pot'],
             'aktiv' => $definition['aktiv'],
+            'reviewer_note' => $definition['reviewer_note'] ?? null,
         ];
 
         if ($type) {
@@ -37,6 +37,7 @@ abstract class ApplicationExampleSeeder extends Seeder
             $type = ApplicationType::create($attributes + ['slug' => $definition['slug']]);
         }
 
+        // Antragsteller-Felder
         foreach ($definition['fields'] as $order => $field) {
             $type->fields()->firstOrCreate(
                 ['key' => $field['key']],
@@ -48,6 +49,25 @@ abstract class ApplicationExampleSeeder extends Seeder
                     'help_text' => $field['help_text'] ?? null,
                     'sort_order' => $order,
                     'aktiv' => true,
+                    'for_reviewer' => false,
+                ]
+            );
+        }
+
+        // Prüfer-Felder
+        $reviewerFields = $definition['reviewer_fields'] ?? [];
+        foreach ($reviewerFields as $order => $field) {
+            $type->fields()->firstOrCreate(
+                ['key' => $field['key']],
+                [
+                    'label' => $field['label'],
+                    'type' => $field['type'],
+                    'required' => $field['required'] ?? false,
+                    'options' => $field['options'] ?? null,
+                    'help_text' => $field['help_text'] ?? null,
+                    'sort_order' => $order,
+                    'aktiv' => true,
+                    'for_reviewer' => true,
                 ]
             );
         }
@@ -107,11 +127,17 @@ abstract class ApplicationExampleSeeder extends Seeder
         ];
     }
 
-    protected function exampleDefinition(string $name, string $slug, string $purpose, array $fields, ?string $reviewerNote = null): array
+    /**
+     * @param array<int, array<string, mixed>> $fields Antragsteller-Felder
+     * @param array<int, array<string, mixed>> $reviewerFields Prüfer-Felder (optional)
+     * @param string|null $reviewerNote Hilfstext für Prüfer (optional)
+     */
+    protected function exampleDefinition(string $name, string $slug, string $purpose, array $fields, array $reviewerFields = [], ?string $reviewerNote = null): array
     {
         $definition = $this->placeholderDefinition($name, $slug);
         $definition['beschreibung'] = "Unverbindliche Beispielvorlage für {$purpose}. Vor Aktivierung fachlich prüfen und anpassen.";
         $definition['fields'] = $fields;
+        $definition['reviewer_fields'] = $reviewerFields;
         $definition['reviewer_note'] = $reviewerNote;
 
         return $definition;

@@ -28,12 +28,14 @@ class ApplicationField extends Model
         'help_text',
         'sort_order',
         'aktiv',
+        'for_reviewer',
     ];
 
     protected $casts = [
         'required' => 'boolean',
         'options' => 'array',
         'aktiv' => 'boolean',
+        'for_reviewer' => 'boolean',
     ];
 
     public function applicationType(): BelongsTo

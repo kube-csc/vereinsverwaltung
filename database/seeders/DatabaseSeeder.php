@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Tests\Integration\Queue\RoleUser;
 
 class DatabaseSeeder extends Seeder
 {
@@ -57,7 +56,7 @@ class DatabaseSeeder extends Seeder
        $this->call(PlayerDataSeeder::class);
        $this->call(PlayerSeeder::class);
        $this->call(FaqSeeder::class);
-       $this->call(RoleUser::class);
+       $this->call(RoleUserSeeder::class);
     }
 }
 

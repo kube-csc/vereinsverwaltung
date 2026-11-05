@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('bank_account_snapshot')->nullable();
             $table->json('form_snapshot')->nullable();
             $table->json('answers');
+            $table->json('reviewer_answers')->nullable();
+            $table->string('bescheid_pdf_path')->nullable();
             $table->string('status', 20)->default('entwurf');
             $table->timestamp('submitted_at')->nullable();
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('requires_club')->default(false);
             $table->boolean('requires_funding_pot')->default(false);
             $table->boolean('aktiv')->default(true);
+            $table->text('reviewer_note')->nullable();
             $table->timestamps();
         });
     }

@@ -65,7 +65,7 @@ class AntragForm extends Component
 
         return auth()->user()->applications()
             ->where('status', Application::STATUS_DRAFT)
-            ->with(['applicationType.fields' => fn ($query) => $query->where('aktiv', true), 'documents'])
+            ->with(['applicationType.fields' => fn ($query) => $query->where('aktiv', true)->where('for_reviewer', false), 'documents'])
             ->findOrFail($this->applicationId);
     }
 
@@ -83,7 +83,7 @@ class AntragForm extends Component
 
         return ApplicationType::where('aktiv', true)
             ->where(fn ($query) => $query->whereNull('frist')->orWhereDate('frist', '>=', today()))
-            ->with(['fields' => fn ($query) => $query->where('aktiv', true)])
+            ->with(['fields' => fn ($query) => $query->where('aktiv', true)->where('for_reviewer', false)])
             ->findOrFail($this->typeId);
     }
 

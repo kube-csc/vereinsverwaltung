@@ -184,10 +184,10 @@
             <div class="space-y-4 p-4">
                 @if($canReview)
                 @if($application->applicationType->reviewer_note)
-                    <div class="rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
-                        <p class="text-xs font-bold uppercase tracking-wider text-amber-700">Hinweis für den Prüfer</p>
-                        <p class="mt-1 text-sm text-amber-900">{{ $application->applicationType->reviewer_note }}</p>
-                    </div>
+                <div class="rounded-lg border-2 border-yellow-200 bg-yellow-50 p-4">
+                    <p class="text-xs font-bold uppercase tracking-wider text-yellow-700">Hinweis für den Prüfer</p>
+                    <p class="mt-1 whitespace-pre-wrap text-sm text-yellow-900">{{ $application->applicationType->reviewer_note }}</p>
+                </div>
                 @endif
                 <section class="overflow-hidden rounded-lg border-2 border-blue-200 bg-blue-50">
                     <header class="border-b border-blue-200 bg-blue-100 px-4 py-3">
@@ -244,6 +244,87 @@
                         @endforeach
                     </dl>
                 </section>
+                @php($reviewerFields = $application->applicationType->fields->where('for_reviewer', true)->where('aktiv', true)->sortBy('sort_order'))
+                @if($reviewerFields->isNotEmpty())
+                    <section class="overflow-hidden rounded-lg border-2 border-amber-200 bg-amber-50">
+                        <header class="border-b border-amber-200 bg-amber-100 px-4 py-3">
+                            <p class="text-xs font-bold uppercase tracking-wider text-amber-700">Prüfer-Felder</p>
+                            <h5 class="mt-1 text-lg font-bold text-amber-900">Felder für Prüfung und Bewilligung</h5>
+                            <p class="mt-1 text-sm text-amber-800">Diese Felder werden vom Prüfer ausgefüllt und im Bescheid aufgeführt.</p>
+                        </header>
+                        <dl class="grid grid-cols-1 gap-3 p-4 pt-2 sm:grid-cols-2">
+                            @foreach($reviewerFields as $field)
+                                <div class="rounded-md border border-amber-200 bg-white px-3 py-2">
+                                    <dt class="text-xs font-semibold uppercase text-gray-500">
+                                        {{ $field->label }}
+                                        @if($field->required)
+                                            <span class="text-red-600">*</span>
+                                        @endif
+                                    </dt>
+                                    @if(in_array($application->status, [\App\Models\Application::STATUS_SUBMITTED, \App\Models\Application::STATUS_IN_REVIEW], true))
+                                        @if($field->type === 'textarea')
+                                            <textarea 
+                                                wire:model="reviewerAnswers.{{ $application->id }}.{{ $field->key }}" 
+                                                rows="2" 
+                                                class="mt-1 w-full rounded-md border-gray-300 text-sm"
+                                            ></textarea>
+                                        @elseif($field->type === 'select' && !empty($field->options))
+                                            <select 
+                                                wire:model="reviewerAnswers.{{ $application->id }}.{{ $field->key }}" 
+                                                class="mt-1 w-full rounded-md border-gray-300 text-sm"
+                                            >
+                                                <option value="">-- Bitte wählen --</option>
+                                                @foreach($field->options as $option)
+                                                    <option value="{{ $option }}">{{ $option }}</option>
+                                                @endforeach
+                                            </select>
+                                        @elseif($field->type === 'checkbox')
+                                            <label class="mt-1 inline-flex items-center">
+                                                <input 
+                                                    type="checkbox" 
+                                                    wire:model="reviewerAnswers.{{ $application->id }}.{{ $field->key }}" 
+                                                    class="rounded border-gray-300 text-blue-600"
+                                                >
+                                                <span class="ml-2 text-sm text-gray-700">Ja</span>
+                                            </label>
+                                        @elseif($field->type === 'number')
+                                            <input 
+                                                type="number" 
+                                                wire:model="reviewerAnswers.{{ $application->id }}.{{ $field->key }}" 
+                                                class="mt-1 w-full rounded-md border-gray-300 text-sm"
+                                            >
+                                        @elseif($field->type === 'date')
+                                            <input 
+                                                type="date" 
+                                                wire:model="reviewerAnswers.{{ $application->id }}.{{ $field->key }}" 
+                                                class="mt-1 w-full rounded-md border-gray-300 text-sm"
+                                            >
+                                        @else
+                                            <input 
+                                                type="text" 
+                                                wire:model="reviewerAnswers.{{ $application->id }}.{{ $field->key }}" 
+                                                class="mt-1 w-full rounded-md border-gray-300 text-sm"
+                                            >
+                                        @endif
+                                        @if($field->help_text)
+                                            <p class="mt-1 text-xs text-gray-500">{{ $field->help_text }}</p>
+                                        @endif
+                                        @error('reviewerAnswers.' . $application->id . '.' . $field->key)
+                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    @else
+                                        @php($reviewerAnswer = $application->reviewer_answers[$field->key] ?? null)
+                                        @if($reviewerAnswer !== null && $reviewerAnswer !== '')
+                                            <dd class="mt-1 whitespace-pre-wrap break-words text-sm text-gray-900">
+                                                {{ is_bool($reviewerAnswer) ? ($reviewerAnswer ? 'Ja' : 'Nein') : $reviewerAnswer }}
+                                            </dd>
+                                        @endif
+                                    @endif
+                                </div>
+                            @endforeach
+                        </dl>
+                    </section>
+                @endif
                 @if($application->documents->isNotEmpty())
                     <div class="rounded-md border border-gray-200 p-3">
                         <p class="text-sm font-semibold text-gray-800">Anlagen</p>

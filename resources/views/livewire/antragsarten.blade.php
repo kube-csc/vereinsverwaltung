@@ -108,7 +108,7 @@
             <div class="md:col-span-2">
                 <x-label value="Hilfstext für Prüfer (optional)" />
                 <textarea wire:model="reviewerNote" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
-                <p class="mt-1 text-xs text-gray-600">Dieser Text wird dem Prüfer bei der Bearbeitung des Antrags angezeigt (z. B. "Bitte gebe den Bootsplatz für die Bewilligung an.").</p>
+                <p class="mt-1 text-xs text-gray-500">Dieser Text erscheint als Hinweis bei der Prüfung und im Bescheid (PDF und E-Mail).</p>
                 <x-input-error for="reviewerNote" class="mt-1" />
             </div>
             <div class="md:col-span-2">
@@ -138,68 +138,178 @@
             <span class="ml-2">Antragsart ist aktiv</span>
         </label>
 
-        <section class="space-y-4">
-            <div class="flex items-center justify-between gap-3 rounded-lg bg-blue-100 px-4 py-3">
+        <section class="space-y-6">
+            <div class="rounded-lg bg-blue-100 px-4 py-3">
                 <h4 class="font-semibold text-blue-900">Formularfelder</h4>
-                <button type="button" wire:click="addField" class="rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">Feld hinzufügen</button>
             </div>
 
-            @foreach($fields as $index => $field)
-                <div wire:key="formularfeld-{{ $field['id'] ?? 'neu-' . $index }}" class="rounded-lg border border-blue-200 p-4 space-y-3 {{ empty($field['aktiv']) ? 'bg-gray-100' : 'bg-white' }}">
-                    <div class="flex items-center justify-between">
-                        <h5 class="font-medium text-gray-900">Feld {{ $index + 1 }}{{ empty($field['aktiv']) ? ' (deaktiviert)' : '' }}</h5>
-                        @if(empty($field['aktiv']))
-                            <button type="button" wire:click="restoreField({{ $index }})" class="text-sm text-green-700 hover:underline">Reaktivieren</button>
-                        @else
-                            <button type="button" wire:click="removeField({{ $index }})" class="text-sm text-red-700 hover:underline">{{ empty($field['id']) ? 'Entfernen' : 'Deaktivieren' }}</button>
-                        @endif
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-                        <div>
-                            <x-label value="Bezeichnung" />
-                            <x-input type="text" wire:model="fields.{{ $index }}.label" class="w-full" />
-                            <x-input-error for="fields.{{ $index }}.label" class="mt-1" />
-                        </div>
-                        <div>
-                            <x-label value="Schlüssel (z. B. projekt_titel)" />
-                            <x-input type="text" wire:model="fields.{{ $index }}.key" class="w-full" />
-                            <x-input-error for="fields.{{ $index }}.key" class="mt-1" />
-                        </div>
-                        <div>
-                            <x-label value="Feldtyp" />
-                            <select wire:model="fields.{{ $index }}.type" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                <option value="text">Text</option>
-                                <option value="textarea">Mehrzeiliger Text</option>
-                                <option value="number">Zahl / Betrag</option>
-                                <option value="date">Datum</option>
-                                <option value="email">E-Mail</option>
-                                <option value="select">Auswahlliste</option>
-                                <option value="checkbox">Bestätigung</option>
-                                <option value="file">Dateianlage</option>
-                            </select>
-                            <x-input-error for="fields.{{ $index }}.type" class="mt-1" />
-                        </div>
-                        <label class="inline-flex items-center self-end text-sm text-gray-700 pb-2">
-                            <input type="checkbox" wire:model="fields.{{ $index }}.required" class="h-5 w-5 rounded border-2 border-gray-600 text-blue-600 focus:ring-blue-500">
-                            <span class="ml-2">Pflichtfeld</span>
-                        </label>
-                    </div>
-
-                    @if($field['type'] === 'select')
-                        <div>
-                            <x-label value="Auswahlmöglichkeiten (je eine pro Zeile)" />
-                            <textarea wire:model="fields.{{ $index }}.options_text" rows="3" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
-                            <x-input-error for="fields.{{ $index }}.options_text" class="mt-1" />
-                        </div>
+            @if(count($fields) > 0)
+                @php($hasApplicantFields = false)
+                @php($hasReviewerFields = false)
+                @foreach($fields as $index => $field)
+                    @if(!($field['for_reviewer'] ?? false))
+                        @php($hasApplicantFields = true)
+                    @else
+                        @php($hasReviewerFields = true)
                     @endif
-                    <div>
-                        <x-label value="Hinweis zum Feld (optional)" />
-                        <textarea wire:model="fields.{{ $index }}.help_text" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
-                        <x-input-error for="fields.{{ $index }}.help_text" class="mt-1" />
-                    </div>
+                @endforeach
+
+                @if($hasReviewerFields)
+                <div class="space-y-3">
+                    <h5 class="text-sm font-semibold text-amber-700">Prüfer-Felder (erscheinen nur bei der Prüfung und im Bescheid)</h5>
+                    @foreach($fields as $index => $field)
+                        @continue(!($field['for_reviewer'] ?? false))
+                        <div wire:key="formularfeld-{{ $field['id'] ?? 'neu-' . $index }}" class="rounded-lg border-2 border-amber-200 p-4 space-y-3 {{ empty($field['aktiv']) ? 'bg-gray-100' : 'bg-amber-50' }}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex flex-col">
+                                        <button type="button" wire:click="moveField({{ $index }}, 'up')" title="Nach oben" class="text-gray-500 hover:text-gray-800 text-xs leading-none">▲</button>
+                                        <button type="button" wire:click="moveField({{ $index }}, 'down')" title="Nach unten" class="text-gray-500 hover:text-gray-800 text-xs leading-none">▼</button>
+                                    </div>
+                                    <h6 class="font-medium text-gray-900">Prüfer-Feld {{ $index + 1 }}{{ empty($field['aktiv']) ? ' (deaktiviert)' : '' }}</h6>
+                                </div>
+                                @if(empty($field['aktiv']))
+                                    <button type="button" wire:click="restoreField({{ $index }})" class="text-sm text-green-700 hover:underline">Reaktivieren</button>
+                                @else
+                                    <button type="button" wire:click="removeField({{ $index }})" class="text-sm text-red-700 hover:underline">{{ empty($field['id']) ? 'Entfernen' : 'Deaktivieren' }}</button>
+                                @endif
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+                                <div>
+                                    <x-label value="Bezeichnung" />
+                                    <x-input type="text" wire:model="fields.{{ $index }}.label" class="w-full" />
+                                    <x-input-error for="fields.{{ $index }}.label" class="mt-1" />
+                                </div>
+                                <div>
+                                    <x-label value="Schlüssel (z. B. bootsplatz)" />
+                                    <x-input type="text" wire:model="fields.{{ $index }}.key" class="w-full" />
+                                    <x-input-error for="fields.{{ $index }}.key" class="mt-1" />
+                                </div>
+                                <div>
+                                    <x-label value="Feldtyp" />
+                                    <select wire:model="fields.{{ $index }}.type" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                        <option value="text">Text</option>
+                                        <option value="textarea">Mehrzeiliger Text</option>
+                                        <option value="number">Zahl / Betrag</option>
+                                        <option value="date">Datum</option>
+                                        <option value="email">E-Mail</option>
+                                        <option value="select">Auswahlliste</option>
+                                        <option value="checkbox">Bestätigung</option>
+                                        <option value="file">Dateianlage</option>
+                                    </select>
+                                    <x-input-error for="fields.{{ $index }}.type" class="mt-1" />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="inline-flex items-center text-sm text-gray-700">
+                                        <input type="checkbox" wire:model="fields.{{ $index }}.required" class="h-5 w-5 rounded border-2 border-gray-600 text-blue-600 focus:ring-blue-500">
+                                        <span class="ml-2">Pflichtfeld</span>
+                                    </label>
+                                    <label class="inline-flex items-center text-sm text-gray-700">
+                                        <input type="checkbox" wire:model="fields.{{ $index }}.for_reviewer" class="h-5 w-5 rounded border-2 border-gray-600 text-amber-600 focus:ring-amber-500">
+                                        <span class="ml-2">Prüfer-Feld</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            @if($field['type'] === 'select')
+                                <div>
+                                    <x-label value="Auswahlmöglichkeiten (je eine pro Zeile)" />
+                                    <textarea wire:model="fields.{{ $index }}.options_text" rows="3" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                                    <x-input-error for="fields.{{ $index }}.options_text" class="mt-1" />
+                                </div>
+                            @endif
+                            <div>
+                                <x-label value="Hinweis zum Feld (optional)" />
+                                <textarea wire:model="fields.{{ $index }}.help_text" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                                <x-input-error for="fields.{{ $index }}.help_text" class="mt-1" />
+                            </div>
+                        </div>
+                    @endforeach
+                    <button type="button" wire:click="addField(true)" class="rounded-md bg-amber-700 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-800">Prüfer-Feld hinzufügen</button>
                 </div>
-            @endforeach
+                @endif
+
+                @if($hasApplicantFields)
+                <div class="space-y-3">
+                    <h5 class="text-sm font-semibold text-gray-700">Antragsformular (erscheint im Online-Formular)</h5>
+                    @foreach($fields as $index => $field)
+                        @continue($field['for_reviewer'] ?? false)
+                        <div wire:key="formularfeld-{{ $field['id'] ?? 'neu-' . $index }}" class="rounded-lg border border-blue-200 p-4 space-y-3 {{ empty($field['aktiv']) ? 'bg-gray-100' : 'bg-white' }}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex flex-col">
+                                        <button type="button" wire:click="moveField({{ $index }}, 'up')" title="Nach oben" class="text-gray-500 hover:text-gray-800 text-xs leading-none">▲</button>
+                                        <button type="button" wire:click="moveField({{ $index }}, 'down')" title="Nach unten" class="text-gray-500 hover:text-gray-800 text-xs leading-none">▼</button>
+                                    </div>
+                                    <h6 class="font-medium text-gray-900">Feld {{ $index + 1 }}{{ empty($field['aktiv']) ? ' (deaktiviert)' : '' }}</h6>
+                                </div>
+                                @if(empty($field['aktiv']))
+                                    <button type="button" wire:click="restoreField({{ $index }})" class="text-sm text-green-700 hover:underline">Reaktivieren</button>
+                                @else
+                                    <button type="button" wire:click="removeField({{ $index }})" class="text-sm text-red-700 hover:underline">{{ empty($field['id']) ? 'Entfernen' : 'Deaktivieren' }}</button>
+                                @endif
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+                                <div>
+                                    <x-label value="Bezeichnung" />
+                                    <x-input type="text" wire:model="fields.{{ $index }}.label" class="w-full" />
+                                    <x-input-error for="fields.{{ $index }}.label" class="mt-1" />
+                                </div>
+                                <div>
+                                    <x-label value="Schlüssel (z. B. projekt_titel)" />
+                                    <x-input type="text" wire:model="fields.{{ $index }}.key" class="w-full" />
+                                    <x-input-error for="fields.{{ $index }}.key" class="mt-1" />
+                                </div>
+                                <div>
+                                    <x-label value="Feldtyp" />
+                                    <select wire:model="fields.{{ $index }}.type" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                        <option value="text">Text</option>
+                                        <option value="textarea">Mehrzeiliger Text</option>
+                                        <option value="number">Zahl / Betrag</option>
+                                        <option value="date">Datum</option>
+                                        <option value="email">E-Mail</option>
+                                        <option value="select">Auswahlliste</option>
+                                        <option value="checkbox">Bestätigung</option>
+                                        <option value="file">Dateianlage</option>
+                                    </select>
+                                    <x-input-error for="fields.{{ $index }}.type" class="mt-1" />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="inline-flex items-center text-sm text-gray-700">
+                                        <input type="checkbox" wire:model="fields.{{ $index }}.required" class="h-5 w-5 rounded border-2 border-gray-600 text-blue-600 focus:ring-blue-500">
+                                        <span class="ml-2">Pflichtfeld</span>
+                                    </label>
+                                    <label class="inline-flex items-center text-sm text-gray-700">
+                                        <input type="checkbox" wire:model="fields.{{ $index }}.for_reviewer" class="h-5 w-5 rounded border-2 border-gray-600 text-amber-600 focus:ring-amber-500">
+                                        <span class="ml-2">Prüfer-Feld</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            @if($field['type'] === 'select')
+                                <div>
+                                    <x-label value="Auswahlmöglichkeiten (je eine pro Zeile)" />
+                                    <textarea wire:model="fields.{{ $index }}.options_text" rows="3" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                                    <x-input-error for="fields.{{ $index }}.options_text" class="mt-1" />
+                                </div>
+                            @endif
+                            <div>
+                                <x-label value="Hinweis zum Feld (optional)" />
+                                <textarea wire:model="fields.{{ $index }}.help_text" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                                <x-input-error for="fields.{{ $index }}.help_text" class="mt-1" />
+                            </div>
+                        </div>
+                    @endforeach
+                    <button type="button" wire:click="addField" class="rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">Feld hinzufügen</button>
+                </div>
+                @endif
+            @else
+                <p class="text-sm text-gray-600">Noch keine Felder angelegt.</p>
+                <button type="button" wire:click="addField" class="rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">Feld hinzufügen</button>
+            @endif
+
             <x-input-error for="fields" class="mt-1" />
         </section>
 

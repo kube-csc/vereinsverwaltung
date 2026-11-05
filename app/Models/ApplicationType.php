@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ApplicationType extends Model
 {
-    protected $fillable = ['name', 'slug', 'beschreibung', 'reviewer_note', 'frist', 'requires_club', 'requires_funding_pot', 'aktiv'];
+    protected $fillable = ['name', 'slug', 'beschreibung', 'frist', 'requires_club', 'requires_funding_pot', 'aktiv', 'reviewer_note'];
 
     protected $casts = [
         'frist' => 'date',

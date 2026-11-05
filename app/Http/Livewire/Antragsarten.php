@@ -15,11 +15,11 @@ class Antragsarten extends Component
     public ?int $typeId = null;
     public string $name = '';
     public string $beschreibung = '';
-    public string $reviewerNote = '';
     public string $frist = '';
     public bool $requiresClub = false;
     public bool $requiresFundingPot = false;
     public bool $aktiv = true;
+    public string $reviewerNote = '';
     public array $fields = [];
     public string $search = '';
     public string $filterStatus = '';
@@ -50,11 +50,11 @@ class Antragsarten extends Component
         $this->typeId = $type->id;
         $this->name = $type->name;
         $this->beschreibung = (string) $type->beschreibung;
-        $this->reviewerNote = (string) $type->reviewer_note;
         $this->frist = $type->frist?->format('Y-m-d') ?? '';
         $this->requiresClub = $type->requires_club;
         $this->requiresFundingPot = $type->requires_funding_pot;
         $this->aktiv = $type->aktiv;
+        $this->reviewerNote = (string) $type->reviewer_note;
         $this->fields = $type->fields->map(fn (ApplicationField $field) => [
             'id' => $field->id,
             'key' => $field->key,
@@ -64,10 +64,11 @@ class Antragsarten extends Component
             'options_text' => implode("\n", $field->options ?? []),
             'help_text' => (string) $field->help_text,
             'aktiv' => $field->aktiv,
+            'for_reviewer' => (bool) $field->for_reviewer,
         ])->all();
     }
 
-    public function addField(): void
+    public function addField(bool $forReviewer = false): void
     {
         $this->authorizeVerwalten();
         $this->fields[] = [
@@ -79,6 +80,7 @@ class Antragsarten extends Component
             'options_text' => '',
             'help_text' => '',
             'aktiv' => true,
+            'for_reviewer' => $forReviewer,
         ];
     }
 
@@ -106,6 +108,27 @@ class Antragsarten extends Component
         }
     }
 
+    public function moveField(int $index, string $direction): void
+    {
+        $this->authorizeVerwalten();
+        $count = count($this->fields);
+        if ($count === 0) {
+            return;
+        }
+
+        $target = $direction === 'up' ? $index - 1 : $index + 1;
+        if ($target < 0 || $target >= $count) {
+            return;
+        }
+
+        // Swap the two fields in the array
+        $temp = $this->fields[$index];
+        $this->fields[$index] = $this->fields[$target];
+        $this->fields[$target] = $temp;
+        // Re-index to keep array keys sequential
+        $this->fields = array_values($this->fields);
+    }
+
     public function saveType(): void
     {
         $this->authorizeVerwalten();
@@ -113,17 +136,17 @@ class Antragsarten extends Component
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'beschreibung' => ['nullable', 'string', 'max:5000'],
-            'reviewerNote' => ['nullable', 'string', 'max:5000'],
             'frist' => ['nullable', 'date'],
             'requiresClub' => ['boolean'],
             'requiresFundingPot' => ['boolean'],
             'aktiv' => ['boolean'],
+            'reviewerNote' => ['nullable', 'string', 'max:2000'],
             'fields' => [
                 'array',
                 'max:100',
                 function ($attribute, $value, $fail) {
-                    if ($this->aktiv && collect($value)->where('aktiv', true)->isEmpty()) {
-                        $fail('Eine aktive Antragsart benötigt mindestens ein aktives Formularfeld.');
+                    if ($this->aktiv && collect($value)->where('aktiv', true)->where('for_reviewer', false)->isEmpty()) {
+                        $fail('Eine aktive Antragsart benötigt mindestens ein aktives Formularfeld für den Antragsteller.');
                     }
                 },
             ],
@@ -135,6 +158,7 @@ class Antragsarten extends Component
             'fields.*.options_text' => ['nullable', 'string', 'max:5000'],
             'fields.*.help_text' => ['nullable', 'string', 'max:2000'],
             'fields.*.aktiv' => ['boolean'],
+            'fields.*.for_reviewer' => ['boolean'],
         ];
 
         foreach ($this->fields as $index => $field) {
@@ -183,11 +207,11 @@ class Antragsarten extends Component
                 'name' => $data['name'],
                 'slug' => $slug,
                 'beschreibung' => $data['beschreibung'] ?: null,
-                'reviewer_note' => $data['reviewerNote'] ?: null,
                 'frist' => $data['frist'] ?: null,
                 'requires_club' => $data['requiresClub'],
                 'requires_funding_pot' => $data['requiresFundingPot'],
                 'aktiv' => $data['aktiv'],
+                'reviewer_note' => $data['reviewerNote'] ?: null,
             ])->save();
 
             foreach ($data['fields'] as $index => $field) {
@@ -212,6 +236,7 @@ class Antragsarten extends Component
                     'help_text' => $field['help_text'] ?: null,
                     'sort_order' => $index,
                     'aktiv' => (bool) $field['aktiv'],
+                    'for_reviewer' => (bool) ($field['for_reviewer'] ?? false),
                 ]);
                 $type->fields()->save($model);
             }
@@ -236,7 +261,7 @@ class Antragsarten extends Component
 
     private function resetForm(): void
     {
-        $this->reset(['typeId', 'name', 'beschreibung', 'reviewerNote', 'frist', 'requiresClub', 'requiresFundingPot', 'fields']);
+        $this->reset(['typeId', 'name', 'beschreibung', 'frist', 'requiresClub', 'requiresFundingPot', 'reviewerNote', 'fields']);
         $this->aktiv = true;
         $this->resetValidation();
     }

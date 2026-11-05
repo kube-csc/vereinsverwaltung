@@ -28,6 +28,7 @@ class AntraegePruefung extends Component
     public array $reviewNotes = [];
     public array $questions = [];
     public array $deletionReasons = [];
+    public array $reviewerAnswers = [];
 
     public function mount(): void
     {
@@ -141,6 +142,28 @@ class AntraegePruefung extends Component
         $amountMode = $this->decisionAmountModes[$applicationId] ?? 'amount';
         $requestedAmount = $application->answers['beantragter_zuschuss'] ?? null;
         $canCalculatePercentage = is_numeric($requestedAmount) && (float) $requestedAmount > 0;
+
+        // Validiere Prüfer-Felder
+        $reviewerFields = collect();
+        if ($application->applicationType?->fields !== null) {
+            $reviewerFields = $application->applicationType->fields
+                ->where('for_reviewer', true)
+                ->where('aktiv', true)
+                ->sortBy('sort_order');
+        }
+
+        $reviewerAnswerRules = [];
+        $reviewerAnswerAttributes = [];
+        foreach ($reviewerFields as $field) {
+            $answerKey = "reviewerAnswers.{$applicationId}.{$field->key}";
+            if ($field->required) {
+                $reviewerAnswerRules[$answerKey] = ['required', 'string', 'max:5000'];
+            } else {
+                $reviewerAnswerRules[$answerKey] = ['nullable', 'string', 'max:5000'];
+            }
+            $reviewerAnswerAttributes[$answerKey] = $field->label ?? $field->key;
+        }
+
         $this->validate([
             $reasonKey => ['required', 'string', 'min:5', 'max:5000'],
             $amountKey => $requiresApprovedAmount
@@ -154,6 +177,10 @@ class AntraegePruefung extends Component
             $amountKey => $amountMode === 'percent' ? 'Bewilligungsanteil' : 'bewilligter Betrag',
             $amountModeKey => 'Eingabeart',
         ]);
+
+        if (!empty($reviewerAnswerRules)) {
+            $this->validate($reviewerAnswerRules, [], $reviewerAnswerAttributes);
+        }
 
         if ($requiresApprovedAmount && $amountMode === 'percent' && ! $canCalculatePercentage) {
             $this->addError($amountModeKey, 'Eine Prozentangabe ist nur mit einem positiven beantragten Zuschuss möglich.');
@@ -173,7 +200,7 @@ class AntraegePruefung extends Component
         }
 
         try {
-            DB::transaction(function () use ($applicationId, $decision, $reasonKey, $approvedAmount) {
+            DB::transaction(function () use ($applicationId, $decision, $reasonKey, $approvedAmount, $reviewerFields) {
                 $application = $this->findApplication($applicationId, lock: true);
                 abort_unless(
                     ! $application->trashed()
@@ -194,6 +221,15 @@ class AntraegePruefung extends Component
                     $application->fundingPot->releaseApplicationReservation($application->id);
                 }
 
+                // Prüfer-Antworten sammeln
+                $reviewerAnswersData = [];
+                foreach ($reviewerFields as $field) {
+                    $answer = $this->reviewerAnswers[$applicationId][$field->key] ?? null;
+                    if ($answer !== null && $answer !== '') {
+                        $reviewerAnswersData[$field->key] = $answer;
+                    }
+                }
+
                 $application->update([
                     'status' => $decision,
                     'reviewed_by' => $application->reviewed_by ?? auth()->id(),
@@ -202,6 +238,7 @@ class AntraegePruefung extends Component
                     'decided_at' => now(),
                     'decision_reason' => $this->decisionReasons[$applicationId],
                     'approved_amount' => $approvedAmount,
+                    'reviewer_answers' => !empty($reviewerAnswersData) ? $reviewerAnswersData : null,
                 ]);
                 $this->recordEvent(
                     $application,

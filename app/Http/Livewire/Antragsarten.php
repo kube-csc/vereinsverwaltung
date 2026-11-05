@@ -20,7 +20,10 @@ class Antragsarten extends Component
     public bool $requiresFundingPot = false;
     public bool $aktiv = true;
     public array $fields = [];
-
+    public string $search = '';
+    public string $filterStatus = '';
+    public string $filterClub = '';
+    public string $filterPot = '';
     public function mount(): void
     {
         $this->authorizeVerwalten();
@@ -234,10 +237,32 @@ class Antragsarten extends Component
         $this->resetValidation();
     }
 
+    public function resetFilters(): void
+    {
+        $this->reset(['search', 'filterStatus', 'filterClub', 'filterPot']);
+    }
+
     public function render()
     {
+        $this->authorizeVerwalten();
+        $search = trim($this->search);
+
+        $types = ApplicationType::with('fields')
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w
+                ->where('name', 'like', '%' . addcslashes($search, '%_\\') . '%')
+                ->orWhere('beschreibung', 'like', '%' . addcslashes($search, '%_\\') . '%')))
+            ->when($this->filterStatus === 'aktiv', fn ($q) => $q->where('aktiv', true))
+            ->when($this->filterStatus === 'inaktiv', fn ($q) => $q->where('aktiv', false))
+            ->when($this->filterClub === 'ja', fn ($q) => $q->where('requires_club', true))
+            ->when($this->filterClub === 'nein', fn ($q) => $q->where('requires_club', false))
+            ->when($this->filterPot === 'ja', fn ($q) => $q->where('requires_funding_pot', true))
+            ->when($this->filterPot === 'nein', fn ($q) => $q->where('requires_funding_pot', false))
+            ->orderBy('name')
+            ->get();
+
         return view('livewire.antragsarten', [
-            'applicationTypes' => ApplicationType::with('fields')->orderBy('name')->get(),
+            'applicationTypes' => $types,
+            'filtersActive' => $search !== '' || $this->filterStatus !== '' || $this->filterClub !== '' || $this->filterPot !== '',
             'fieldTypes' => ApplicationField::TYPES,
         ]);
     }

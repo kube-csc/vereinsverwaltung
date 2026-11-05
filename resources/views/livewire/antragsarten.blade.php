@@ -12,6 +12,38 @@
             <x-button wire:click="newType">Antragsart anlegen</x-button>
         </div>
 
+        <div class="grid gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 sm:grid-cols-2 lg:grid-cols-4">
+            <label class="text-sm font-medium text-gray-700">Suche
+                <input type="search" wire:model.live.debounce.300ms="search" placeholder="Name oder Beschreibung" class="mt-1 w-full rounded-md border-gray-300 text-sm">
+            </label>
+            <label class="text-sm font-medium text-gray-700">Status
+                <select wire:model.live="filterStatus" class="mt-1 w-full rounded-md border-gray-300 text-sm">
+                    <option value="">Alle</option>
+                    <option value="aktiv">Aktiv</option>
+                    <option value="inaktiv">Inaktiv</option>
+                </select>
+            </label>
+            <label class="text-sm font-medium text-gray-700">Vereinsauswahl
+                <select wire:model.live="filterClub" class="mt-1 w-full rounded-md border-gray-300 text-sm">
+                    <option value="">Alle</option>
+                    <option value="ja">Erforderlich</option>
+                    <option value="nein">Nicht erforderlich</option>
+                </select>
+            </label>
+            <label class="text-sm font-medium text-gray-700">Fördertopf
+                <select wire:model.live="filterPot" class="mt-1 w-full rounded-md border-gray-300 text-sm">
+                    <option value="">Alle</option>
+                    <option value="ja">Erforderlich</option>
+                    <option value="nein">Optional</option>
+                </select>
+            </label>
+            @if($filtersActive)
+                <div class="sm:col-span-2 lg:col-span-4">
+                    <button type="button" wire:click="resetFilters" class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Filter zurücksetzen</button>
+                </div>
+            @endif
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @forelse($applicationTypes as $applicationType)
                 <article wire:key="antragsart-{{ $applicationType->id }}" class="space-y-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4 shadow-sm">
@@ -41,7 +73,11 @@
                     </div>
                 </article>
             @empty
-                <p class="text-sm text-gray-600">Noch keine Antragsarten angelegt. Sie können Beispiele über `php artisan db:seed --class=ApplicationExamplesSeeder` einfügen.</p>
+                @if($filtersActive)
+                    <p class="text-sm text-gray-600">Keine Antragsarten für diese Filter.</p>
+                @else
+                    <p class="text-sm text-gray-600">Noch keine Antragsarten angelegt. Sie können Beispiele über `php artisan db:seed --class=ApplicationExamplesSeeder` einfügen.</p>
+                @endif
             @endforelse
         </div>
     </section>

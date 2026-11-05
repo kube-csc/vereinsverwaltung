@@ -142,4 +142,58 @@ class Application extends Model
     {
         return $this->status === self::STATUS_DRAFT;
     }
+
+    /**
+     * Gibt die eingetragenen Antragsdaten als formatierte Zeilen zurück.
+     * Jedes Feld wird als „Label: Wert" ausgegeben.
+     * Wenn form_snapshot die Labels enthält, werden diese verwendet, sonst die field keys.
+     */
+    public function formattedAnswers(): array
+    {
+        $answers = $this->answers ?? [];
+        if (empty($answers)) {
+            return [];
+        }
+
+        $snapshot = $this->form_snapshot ?? [];
+        $labels = [];
+        foreach ($snapshot as $field) {
+            if (isset($field['key']) && isset($field['label'])) {
+                $labels[$field['key']] = $field['label'];
+            }
+        }
+
+        $formatted = [];
+        foreach ($answers as $key => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            $label = $labels[$key] ?? $key;
+
+            // Checkbox-Werte lesbar machen
+            if (is_bool($value)) {
+                $formatted[] = $label . ': ' . ($value ? 'Ja' : 'Nein');
+            } elseif (is_array($value)) {
+                $formatted[] = $label . ': ' . implode(', ', array_filter($value, fn ($v) => $v !== '' && $v !== null));
+            } else {
+                $formatted[] = $label . ': ' . $value;
+            }
+        }
+
+        return $formatted;
+    }
+
+    /**
+     * Gibt die Antragsdaten als einzelner Textblock mit Zeilenumbrüchen zurück (für Platzhalter).
+     */
+    public function formattedAnswersText(): string
+    {
+        $lines = $this->formattedAnswers();
+        if (empty($lines)) {
+            return '';
+        }
+
+        return implode("\n", $lines);
+    }
 }

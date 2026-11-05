@@ -16,12 +16,14 @@ class ApplicationNotificationMail extends Mailable
     /**
      * @param  string[]  $lines  Absätze der Nachricht
      * @param  array{name: string, data: string}|null  $pdf  optionaler Bescheid als PDF
+     * @param  string|null  $deciderName  Name der Person, die den Antrag entschieden hat
      */
     public function __construct(
         public string $mailSubject,
         public string $greetingName,
         public array $lines,
         public ?array $pdf = null,
+        public ?string $deciderName = null,
     ) {
     }
 

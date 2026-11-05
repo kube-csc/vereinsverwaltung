@@ -17,9 +17,15 @@ class ApplicationNotifier
     /** Vorlagentyp des Bescheids, null wenn für den Status noch kein Bescheid existiert. */
     public static function noticeType(Application $application): ?string
     {
+        $hasPot = $application->funding_pot_id !== null;
+
         return match ($application->status) {
-            Application::STATUS_APPROVED => $application->final_amount !== null ? NoticeTemplate::SETTLED : NoticeTemplate::APPROVED,
-            Application::STATUS_REJECTED => NoticeTemplate::REJECTED,
+            Application::STATUS_APPROVED => $hasPot
+                ? ($application->final_amount !== null ? NoticeTemplate::SETTLED : NoticeTemplate::APPROVED)
+                : NoticeTemplate::APPROVED_NO_POT,
+            Application::STATUS_REJECTED => $hasPot
+                ? NoticeTemplate::REJECTED
+                : NoticeTemplate::REJECTED_NO_POT,
             default => null,
         };
     }
@@ -29,6 +35,7 @@ class ApplicationNotifier
         $type = self::noticeType($application);
         abort_if($type === null, 404);
 
+        $application->loadMissing('decider');
         $notice = NoticeTemplate::forType($type)->render($application);
         $html = view('antraege.bescheid-pdf', [
             'notice' => $notice,
@@ -65,13 +72,25 @@ class ApplicationNotifier
         }
 
         $approved = $application->status === Application::STATUS_APPROVED;
+        $hasPot = $application->funding_pot_id !== null;
         $lines = [
             $approved
                 ? 'Ihr Antrag #' . $application->id . ' wurde bewilligt.'
                 : 'Ihr Antrag #' . $application->id . ' wurde abgelehnt.',
-            'Den Bescheid finden Sie im Anhang und unter „Meine Anträge“.',
         ];
-        if ($approved) {
+
+        // Eingegebene Antragsdaten hinzufügen
+        $answers = $application->formattedAnswers();
+        if (!empty($answers)) {
+            $lines[] = 'Eingegebene Antragsdaten:';
+            foreach ($answers as $answerLine) {
+                $lines[] = '- ' . $answerLine;
+            }
+        }
+
+        $lines[] = 'Den Bescheid finden Sie im Anhang und unter „Meine Anträge“.';
+
+        if ($approved && $hasPot) {
             $lines = array_merge($lines, $this->bankLines($application));
         }
 
@@ -91,6 +110,15 @@ class ApplicationNotifier
                 'der Fördertopf „' . $pot->name . '“ wurde abgerechnet. Der endgültige Förderbetrag für Ihren Antrag #' . $application->id
                     . ' beträgt ' . number_format((float) $application->final_amount, 2, ',', '.') . ' €.',
             ];
+
+            // Eingegebene Antragsdaten hinzufügen
+            $answers = $application->formattedAnswers();
+            if (!empty($answers)) {
+                $lines[] = 'Eingegebene Antragsdaten:';
+                foreach ($answers as $answerLine) {
+                    $lines[] = '- ' . $answerLine;
+                }
+            }
 
             $this->send($application, 'Endabrechnung: Förderbetrag zu Ihrem Antrag #' . $application->id, array_merge($lines, $this->bankLines($application)), true);
         }
@@ -117,7 +145,7 @@ class ApplicationNotifier
     private function send(Application $application, string $subject, array $lines, bool $withPdf = false): void
     {
         try {
-            $application->loadMissing('user');
+            $application->loadMissing('user', 'decider');
             $user = $application->user;
             if (! $user || blank($user->email)) {
                 return;
@@ -128,7 +156,11 @@ class ApplicationNotifier
                 : null;
 
             $name = trim(($user->vorname ?? '') . ' ' . ($user->nachname ?? '')) ?: (string) $user->name;
-            Mail::to($user->email)->send(new ApplicationNotificationMail($subject, $name, $lines, $pdf));
+
+            $decider = $application->decider;
+            $deciderName = trim(($decider?->vorname ?? '') . ' ' . ($decider?->nachname ?? '')) ?: (string) $decider?->name;
+
+            Mail::to($user->email)->send(new ApplicationNotificationMail($subject, $name, $lines, $pdf, $deciderName));
         } catch (Throwable $exception) {
             report($exception);
         }

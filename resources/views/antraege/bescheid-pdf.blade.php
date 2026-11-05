@@ -40,6 +40,13 @@
     </div>
     @endif
 
+    @if($application->applicationType?->reviewer_note)
+    <div style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
+        <strong>Prüfaufgabe:</strong><br>
+        {{ $application->applicationType->reviewer_note }}
+    </div>
+    @endif
+
     @php
         $decider = $application->decider;
         $deciderName = trim(($decider?->vorname ?? '') . ' ' . ($decider?->nachname ?? '')) ?: (string) $decider?->name;

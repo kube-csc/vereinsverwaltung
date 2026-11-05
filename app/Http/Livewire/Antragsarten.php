@@ -15,6 +15,7 @@ class Antragsarten extends Component
     public ?int $typeId = null;
     public string $name = '';
     public string $beschreibung = '';
+    public string $reviewerNote = '';
     public string $frist = '';
     public bool $requiresClub = false;
     public bool $requiresFundingPot = false;
@@ -49,6 +50,7 @@ class Antragsarten extends Component
         $this->typeId = $type->id;
         $this->name = $type->name;
         $this->beschreibung = (string) $type->beschreibung;
+        $this->reviewerNote = (string) $type->reviewer_note;
         $this->frist = $type->frist?->format('Y-m-d') ?? '';
         $this->requiresClub = $type->requires_club;
         $this->requiresFundingPot = $type->requires_funding_pot;
@@ -111,6 +113,7 @@ class Antragsarten extends Component
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'beschreibung' => ['nullable', 'string', 'max:5000'],
+            'reviewerNote' => ['nullable', 'string', 'max:5000'],
             'frist' => ['nullable', 'date'],
             'requiresClub' => ['boolean'],
             'requiresFundingPot' => ['boolean'],
@@ -180,6 +183,7 @@ class Antragsarten extends Component
                 'name' => $data['name'],
                 'slug' => $slug,
                 'beschreibung' => $data['beschreibung'] ?: null,
+                'reviewer_note' => $data['reviewerNote'] ?: null,
                 'frist' => $data['frist'] ?: null,
                 'requires_club' => $data['requiresClub'],
                 'requires_funding_pot' => $data['requiresFundingPot'],
@@ -232,7 +236,7 @@ class Antragsarten extends Component
 
     private function resetForm(): void
     {
-        $this->reset(['typeId', 'name', 'beschreibung', 'frist', 'requiresClub', 'requiresFundingPot', 'fields']);
+        $this->reset(['typeId', 'name', 'beschreibung', 'reviewerNote', 'frist', 'requiresClub', 'requiresFundingPot', 'fields']);
         $this->aktiv = true;
         $this->resetValidation();
     }

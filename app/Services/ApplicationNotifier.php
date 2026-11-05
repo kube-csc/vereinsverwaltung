@@ -88,6 +88,11 @@ class ApplicationNotifier
             }
         }
 
+        // Prüfaufgabe hinzufügen, falls vorhanden
+        if (!empty($application->applicationType?->reviewer_note)) {
+            $lines[] = 'Prüfaufgabe: ' . $application->applicationType->reviewer_note;
+        }
+
         $lines[] = 'Den Bescheid finden Sie im Anhang und unter „Meine Anträge“.';
 
         if ($approved && $hasPot) {
@@ -118,6 +123,11 @@ class ApplicationNotifier
                 foreach ($answers as $answerLine) {
                     $lines[] = '- ' . $answerLine;
                 }
+            }
+
+            // Prüfaufgabe hinzufügen, falls vorhanden
+            if (!empty($application->applicationType?->reviewer_note)) {
+                $lines[] = 'Prüfaufgabe: ' . $application->applicationType->reviewer_note;
             }
 
             $this->send($application, 'Endabrechnung: Förderbetrag zu Ihrem Antrag #' . $application->id, array_merge($lines, $this->bankLines($application)), true);

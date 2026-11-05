@@ -183,6 +183,12 @@
 
             <div class="space-y-4 p-4">
                 @if($canReview)
+                @if($application->applicationType->reviewer_note)
+                    <div class="rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
+                        <p class="text-xs font-bold uppercase tracking-wider text-amber-700">Hinweis für den Prüfer</p>
+                        <p class="mt-1 text-sm text-amber-900">{{ $application->applicationType->reviewer_note }}</p>
+                    </div>
+                @endif
                 <section class="overflow-hidden rounded-lg border-2 border-blue-200 bg-blue-50">
                     <header class="border-b border-blue-200 bg-blue-100 px-4 py-3">
                         <p class="text-xs font-bold uppercase tracking-wider text-blue-700">Antragsformular</p>

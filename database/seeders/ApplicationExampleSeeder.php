@@ -24,6 +24,7 @@ abstract class ApplicationExampleSeeder extends Seeder
         $attributes = [
             'name' => $definition['name'],
             'beschreibung' => $definition['beschreibung'],
+            'reviewer_note' => $definition['reviewer_note'] ?? null,
             'frist' => $definition['frist'],
             'requires_club' => $definition['requires_club'],
             'requires_funding_pot' => $definition['requires_funding_pot'],
@@ -106,11 +107,12 @@ abstract class ApplicationExampleSeeder extends Seeder
         ];
     }
 
-    protected function exampleDefinition(string $name, string $slug, string $purpose, array $fields): array
+    protected function exampleDefinition(string $name, string $slug, string $purpose, array $fields, ?string $reviewerNote = null): array
     {
         $definition = $this->placeholderDefinition($name, $slug);
         $definition['beschreibung'] = "Unverbindliche Beispielvorlage für {$purpose}. Vor Aktivierung fachlich prüfen und anpassen.";
         $definition['fields'] = $fields;
+        $definition['reviewer_note'] = $reviewerNote;
 
         return $definition;
     }

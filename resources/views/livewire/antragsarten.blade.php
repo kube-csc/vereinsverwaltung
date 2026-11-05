@@ -106,6 +106,12 @@
                 <x-input-error for="beschreibung" class="mt-1" />
             </div>
             <div class="md:col-span-2">
+                <x-label value="Hilfstext für Prüfer (optional)" />
+                <textarea wire:model="reviewerNote" rows="2" class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                <p class="mt-1 text-xs text-gray-600">Dieser Text wird dem Prüfer bei der Bearbeitung des Antrags angezeigt (z. B. "Bitte gebe den Bootsplatz für die Bewilligung an.").</p>
+                <x-input-error for="reviewerNote" class="mt-1" />
+            </div>
+            <div class="md:col-span-2">
                 <label class="inline-flex items-start text-sm text-gray-700">
                     <input type="checkbox" wire:model="requiresClub" class="mt-0.5 h-5 w-5 rounded border-2 border-gray-600 text-blue-600 focus:ring-blue-500">
                     <span class="ml-2">

@@ -36,6 +36,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('antraege.antraege_loeschen', fn (User $user) => $user->hasPermission('antraege.antraege_loeschen'));
         Gate::define('antraege.pruefbereich', fn (User $user) => $user->can('antraege.pruefen')
             || $user->can('antraege.antraege_loeschen'));
+        Gate::define('antraege.auswertung', fn (User $user) => $user->can('antraege.foerdermittel_verwalten')
+            || $user->can('antraege.pruefen')
+            || $user->can('antraege.entscheiden'));
         Gate::define('antraege.stellen', fn (User $user) => $user->hasPermission('antraege.stellen'));
         Gate::define('antraege.verwaltung', fn (User $user) => $user->can('antraege.foerdermittel_verwalten')
             || $user->hasPermission('antraege.benutzer')

@@ -111,6 +111,10 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/antraege/{application}/be
     ->whereNumber('application')
     ->name('antraege.bescheid');
 
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.auswertung'])->get('/antraege/auswertungen', function () {
+    return view('antraege.auswertungen');
+})->name('antraege.auswertungen');
+
 Route::middleware(['auth:sanctum', 'verified', 'can:antraege.foerdermittel_verwalten'])->get('/antraege/bescheidvorlagen', function () {
     return view('antraege.bescheidvorlagen');
 })->name('antraege.bescheidvorlagen');

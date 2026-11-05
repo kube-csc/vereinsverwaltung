@@ -1,0 +1,19 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Auswertungen
+        </h2>
+    </x-slot>
+
+    <div class="bg-gray-100 py-8">
+        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+            <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+                @livewire('auswertungen')
+            </div>
+
+            <a href="{{ route('antraege.dashboard') }}" class="inline-flex items-center rounded-md border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-800 shadow-sm hover:bg-indigo-50">
+                Zurück zur Antragsverwaltung
+            </a>
+        </div>
+    </div>
+</x-app-layout>

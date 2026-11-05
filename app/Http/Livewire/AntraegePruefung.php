@@ -112,6 +112,8 @@ class AntraegePruefung extends Component
             $this->recordEvent($application, Application::EVENT_QUESTION, $question);
         });
 
+        app(\App\Services\ApplicationNotifier::class)->question(Application::findOrFail($applicationId), $this->questions[$applicationId]);
+
         unset($this->questions[$applicationId]);
     }
 
@@ -209,7 +211,10 @@ class AntraegePruefung extends Component
             });
         } catch (DomainException $exception) {
             $this->addError($reasonKey, $exception->getMessage());
+            return;
         }
+
+        app(\App\Services\ApplicationNotifier::class)->decision(Application::findOrFail($applicationId));
     }
 
     public function archive(int $applicationId): void

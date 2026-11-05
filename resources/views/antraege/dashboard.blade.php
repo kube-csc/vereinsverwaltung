@@ -67,6 +67,16 @@
                         </a>
                     @endcan
 
+                    @can('antraege.foerdermittel_verwalten')
+                        <a href="{{ route('antraege.bescheidvorlagen') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-blue-400 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">
+                            <span class="flex-shrink-0 h-12 w-12 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xl"><i class="fas fa-envelope-open-text"></i></span>
+                            <span>
+                                <span class="block font-semibold text-gray-900 group-hover:text-blue-700">Bescheidvorlagen</span>
+                                <span class="block mt-1 text-sm text-gray-600">Texte für Bewilligungs-, Ablehnungs- und Endabrechnungsbescheide.</span>
+                            </span>
+                        </a>
+                    @endcan
+
                     {{-- TODO: Remove the legacy admin-level fallback after existing administrators are migrated to roles. --}}
                     @can('antraege.benutzer')
                         <a href="{{ route('antraege.benutzer') }}" class="group bg-gray-50 border border-gray-300 rounded-xl shadow-md hover:bg-white hover:border-green-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-all duration-200 p-6 flex items-start space-x-4">

@@ -117,6 +117,9 @@
                                     <button wire:click="respondToQuestion({{ $application->id }})" class="mt-2 rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">Antwort übermitteln</button>
                                 @else
                                     <span class="text-gray-500">Abgegeben</span>
+                                    @if(in_array($application->status, [\App\Models\Application::STATUS_APPROVED, \App\Models\Application::STATUS_REJECTED], true))
+                                        <a href="{{ route('antraege.bescheid', $application->id) }}" class="mt-1 block font-medium text-blue-700 hover:underline">Bescheid (PDF)</a>
+                                    @endif
                                     @if($application->status === \App\Models\Application::STATUS_APPROVED && $application->funding_pot_id)
                                         <div class="mt-2 text-left text-xs text-gray-700">
                                             @php($payoutAccount = $application->payoutAccountData())

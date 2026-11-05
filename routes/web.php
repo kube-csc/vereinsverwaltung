@@ -107,6 +107,14 @@ Route::middleware(['auth:sanctum', 'verified'])->get(
     [\App\Http\Controllers\AntraegeController::class, 'download']
 )->whereNumber('applicationDocument')->name('antraege.dokumente.download');
 
+Route::middleware(['auth:sanctum', 'verified'])->get('/antraege/{application}/bescheid', \App\Http\Controllers\AntraegeBescheidController::class)
+    ->whereNumber('application')
+    ->name('antraege.bescheid');
+
+Route::middleware(['auth:sanctum', 'verified', 'can:antraege.foerdermittel_verwalten'])->get('/antraege/bescheidvorlagen', function () {
+    return view('antraege.bescheidvorlagen');
+})->name('antraege.bescheidvorlagen');
+
 Route::middleware(['auth:sanctum', 'verified'])->get('/Adminmenu', function () {
     return view('admin.adminmenu');
 })->name('adminmenu');

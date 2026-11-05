@@ -362,11 +362,14 @@ class Foerdertoepfe extends Component
         $this->authorizeVerwalten();
 
         try {
-            FundingPot::findOrFail($id)->settle(auth()->user());
+            $pot = FundingPot::findOrFail($id);
+            $pot->settle(auth()->user());
         } catch (DomainException $exception) {
             session()->flash('error', $exception->getMessage());
             return;
         }
+
+        app(\App\Services\ApplicationNotifier::class)->settled($pot->fresh());
 
         $this->settlementPotId = null;
         session()->flash('message', 'Endabrechnung durchgeführt. Die endgültigen Förderbeträge sind gespeichert.');

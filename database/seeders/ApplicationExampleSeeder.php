@@ -15,17 +15,26 @@ abstract class ApplicationExampleSeeder extends Seeder
     public function run(): void
     {
         $definition = $this->definition();
-        $type = ApplicationType::firstOrCreate(
-            ['slug' => $definition['slug']],
-            [
-                'name' => $definition['name'],
-                'beschreibung' => $definition['beschreibung'],
-                'frist' => $definition['frist'],
-                'requires_club' => $definition['requires_club'],
-                'requires_funding_pot' => $definition['requires_funding_pot'],
-                'aktiv' => $definition['aktiv'],
-            ]
-        );
+        $type = ApplicationType::where('slug', $definition['slug'])->first();
+
+        if ($type && ! $this->isUnchangedPlaceholder($type, $definition)) {
+            return;
+        }
+
+        $attributes = [
+            'name' => $definition['name'],
+            'beschreibung' => $definition['beschreibung'],
+            'frist' => $definition['frist'],
+            'requires_club' => $definition['requires_club'],
+            'requires_funding_pot' => $definition['requires_funding_pot'],
+            'aktiv' => $definition['aktiv'],
+        ];
+
+        if ($type) {
+            $type->update($attributes);
+        } else {
+            $type = ApplicationType::create($attributes + ['slug' => $definition['slug']]);
+        }
 
         foreach ($definition['fields'] as $order => $field) {
             $type->fields()->firstOrCreate(
@@ -41,6 +50,20 @@ abstract class ApplicationExampleSeeder extends Seeder
                 ]
             );
         }
+    }
+
+    private function isUnchangedPlaceholder(ApplicationType $type, array $definition): bool
+    {
+        $placeholder = $this->placeholderDefinition($definition['name'], $definition['slug']);
+
+        return $type->name === $placeholder['name']
+            && $type->beschreibung === $placeholder['beschreibung']
+            && $type->frist === null
+            && ! $type->requires_club
+            && ! $type->requires_funding_pot
+            && ! $type->aktiv
+            && ! $type->fields()->exists()
+            && ! $type->fundingPots()->exists();
     }
 
     protected function sharedFields(): array
@@ -81,5 +104,14 @@ abstract class ApplicationExampleSeeder extends Seeder
             'aktiv' => false,
             'fields' => [],
         ];
+    }
+
+    protected function exampleDefinition(string $name, string $slug, string $purpose, array $fields): array
+    {
+        $definition = $this->placeholderDefinition($name, $slug);
+        $definition['beschreibung'] = "Unverbindliche Beispielvorlage für {$purpose}. Vor Aktivierung fachlich prüfen und anpassen.";
+        $definition['fields'] = $fields;
+
+        return $definition;
     }
 }

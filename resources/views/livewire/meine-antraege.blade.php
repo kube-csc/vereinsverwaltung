@@ -3,7 +3,7 @@
         <div class="text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded p-3">{{ session('message') }}</div>
     @endif
     <section class="space-y-4">
-        <div class="rounded-xl bg-gray-300 px-5 py-4 text-gray-900">
+        <div class="rounded-xl border-l-4 border-gray-600 bg-gray-300 px-5 py-4 text-gray-900">
             <h3 class="text-lg font-bold">Verfügbare Antragsarten</h3>
             <p class="text-sm text-gray-800">Sie können einen Antrag zunächst als Entwurf speichern und später einreichen.</p>
         </div>
@@ -34,7 +34,7 @@
     </section>
 
     <section class="space-y-4 border-t border-gray-200 pt-6">
-        <div class="rounded-xl bg-gray-300 px-5 py-4 text-gray-900">
+        <div class="rounded-xl border-l-4 border-gray-600 bg-gray-300 px-5 py-4 text-gray-900">
             <h3 class="text-lg font-bold">Meine gespeicherten Anträge</h3>
             <p class="text-sm text-gray-800">Eingereichte Anträge können hier nicht mehr geändert werden.</p>
         </div>
@@ -128,9 +128,11 @@
                                             @endif
                                             <p class="font-semibold">Bankverbindung für die Auszahlung</p>
                                             <p>{{ $payoutAccount ? 'Aktuell: ' . ($payoutAccount['kontoinhaber'] ?? '') . ', ' . substr($payoutAccount['iban'], 0, 4) . ' •••• ' . substr($payoutAccount['iban'], -4) : 'Noch keine Bankverbindung hinterlegt.' }}</p>
-                                            @if($accounts->isNotEmpty())
+                                            @if($accounts->count() === 1 && $payoutAccount && ($payoutAccount['iban'] ?? null) === $accounts->first()->iban)
+                                                <p class="mt-1">Ihr einziges Bankkonto wird automatisch verwendet.</p>
+                                            @elseif($accounts->isNotEmpty())
                                                 <select wire:model="payoutAccounts.{{ $application->id }}" class="mt-1 w-64 rounded-md border-gray-300 text-sm">
-                                                    <option value="">Bankkonto wählen</option>
+                                                <select wire:model="payoutAccounts.{{ $application->id }}" class="mt-1 w-64 rounded-md border-gray-300 text-sm"> class="mt-1 w-64 rounded-md border-gray-300 text-sm">                                                    <option value="">Bankkonto wählen</option>
                                                     @foreach($accounts as $account)
                                                         <option value="{{ $account->id }}">{{ $account->kontoinhaber }} – {{ $account->maskedIban() }}</option>
                                                     @endforeach

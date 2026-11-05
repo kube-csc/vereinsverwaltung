@@ -222,6 +222,10 @@ class AntragForm extends Component
                 $account = $accountId
                     ? auth()->user()->bankAccounts()->lockForUpdate()->findOrFail($accountId)
                     : null;
+                if (! $account && $submitting) {
+                    $ownAccounts = auth()->user()->bankAccounts()->limit(2)->get();
+                    $account = $ownAccounts->count() === 1 ? $ownAccounts->first() : null;
+                }
                 $fundingPot = $fundingPotId
                     ? FundingPot::whereHas('applicationTypes', fn ($query) => $query->whereKey($type->id))
                         ->lockForUpdate()

@@ -2,8 +2,10 @@
 /public/*_*.*
 /public/storage
 /public/images
-/public/storage/**/*_*.*
+/storage/app/öocal/*/*_*.*
+/storage/app/local/*/*/*_*.*
 /storage/app/public/*/*_*.*
+/storage/app/public/*/*/*_*.*
 /public/daten/
 /public/asset/img/portfolio
 /public/asset/img/team
@@ -11,8 +13,8 @@
 /public/apple-touch-icon.png
 /public/favicon.ico
 /vendor
-/database/DB_Projekt_KEL
-/database/seeders_KEL
+/database/DB_Projekt*
+/database/seeders_*
 /resources/views/vendor/livewire
 /storage/*.key
 /storage/botman/*.json
@@ -21,6 +23,8 @@
 .phpunit.result.cache
 .vs
 .idea
+.junie
+*.bak
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml

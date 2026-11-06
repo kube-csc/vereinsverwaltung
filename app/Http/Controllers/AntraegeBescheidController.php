@@ -18,11 +18,11 @@ class AntraegeBescheidController extends Controller
         abort_if(ApplicationNotifier::noticeType($application) === null, 404);
 
         // Auf das gespeicherte Bescheid-PDF zurückgreifen; keine Neuerzeugung
-        if (empty($application->bescheid_pdf_path) || !Storage::disk('public')->exists($application->bescheid_pdf_path)) {
+        if (empty($application->bescheid_pdf_path) || !Storage::disk('local')->exists($application->bescheid_pdf_path)) {
             abort(404, 'Der Bescheid wurde noch nicht erstellt oder ist nicht verfügbar.');
         }
 
-        $pdfContent = Storage::disk('public')->get($application->bescheid_pdf_path);
+        $pdfContent = Storage::disk('local')->get($application->bescheid_pdf_path);
 
         return response($pdfContent, 200, [
             'Content-Type' => 'application/pdf',

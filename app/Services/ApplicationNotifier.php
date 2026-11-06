@@ -105,16 +105,16 @@ class ApplicationNotifier
      */
     private function savePdf(Application $application, string $pdfContent): void
     {
-        $directory = 'bescheide/' . $application->id;
+        $directory = 'local/bescheide/' . $application->id;
         $filename = 'bescheid_' . $application->id . '_' . now()->format('Y-m-d') . '_' . $application->status . '.pdf';
         $path = $directory . '/' . $filename;
 
         // Falls bereits ein PDF existiert, löschen
         if (!empty($application->bescheid_pdf_path)) {
-            Storage::disk('public')->delete($application->bescheid_pdf_path);
+            Storage::disk('local')->delete($application->bescheid_pdf_path);
         }
 
-        Storage::disk('public')->put($path, $pdfContent);
+        Storage::disk('local')->put($path, $pdfContent);
 
         $application->bescheid_pdf_path = $path;
         $application->save();

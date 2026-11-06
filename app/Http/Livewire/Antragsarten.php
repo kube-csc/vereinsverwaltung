@@ -46,6 +46,12 @@ class Antragsarten extends Component
         $this->authorizeVerwalten();
         $type = ApplicationType::with('fields')->findOrFail($id);
 
+        $lockReason = $type->lockReason();
+        if ($lockReason !== null) {
+            session()->flash('locked', $lockReason);
+            return;
+        }
+
         $this->resetValidation();
         $this->typeId = $type->id;
         $this->name = $type->name;
@@ -132,6 +138,16 @@ class Antragsarten extends Component
     public function saveType(): void
     {
         $this->authorizeVerwalten();
+
+        // Bei bestehenden Antragsarten: Bearbeitungsschutz prüfen
+        if ($this->typeId) {
+            $type = ApplicationType::findOrFail($this->typeId);
+            $lockReason = $type->lockReason();
+            if ($lockReason !== null) {
+                $this->addError('', $lockReason);
+                return;
+            }
+        }
 
         $rules = [
             'name' => ['required', 'string', 'max:255'],
@@ -289,10 +305,20 @@ class Antragsarten extends Component
             ->orderBy('name')
             ->get();
 
+        // Prüfe für jede Antragsart, ob sie noch bearbeitet werden darf und sammle den Sperrgrund
+        $lockReasons = [];
+        foreach ($types as $type) {
+            $reason = $type->lockReason();
+            if ($reason !== null) {
+                $lockReasons[$type->id] = $reason;
+            }
+        }
+
         return view('livewire.antragsarten', [
             'applicationTypes' => $types,
             'filtersActive' => $search !== '' || $this->filterStatus !== '' || $this->filterClub !== '' || $this->filterPot !== '',
             'fieldTypes' => ApplicationField::TYPES,
+            'lockReasons' => $lockReasons,
         ]);
     }
 }

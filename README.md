@@ -1,5 +1,5 @@
 <h1>Internetauftritt für Vereine</h1>
-<p>Version: V00.10.09</p>
+<p>Version: V00.11.0</p>
 <p>
 Ausgelegt z.B. für einen Verein mit verschiedenen Abteilungen / Sportarten
 </p>
@@ -157,6 +157,32 @@ Folgende Lizenz wird für die Nutzung des Frontends benötigt:
   </li>
 <li>Backlinksverwaltung Umleitung von Links die nicht mehr Existieren</li>
 </ul>
+
+<h3>Fördermittel- und Antragsverwaltung</h3>
+<p>
+Der Bereich „Anträge" (unter <code>/antraege/...</code>) bietet eine vollständige Fördermittel- und Antragsverwaltung. Er ist als eigener Funktionsbereich in die bestehende Anwendung integriert und nutzt dieselbe Datenbank.
+</p>
+
+<strong>Demodaten</strong>
+<p>
+  Die Standard-Demodaten (Email: info@info.de, Password: password) werden beim <code>php artisan migrate --seed</code> oder <code>php artisan db:seed</code> angelegt. Der Benutzer erhält automatisch die Administrator-Rolle.<br>
+  Zusätzlich können Beispielantragsarten und Fördertöpfe mit <code>php artisan db:seed --class=ApplicationExamplesSeeder</code> befüllt werden.
+</p>
+
+<ul>
+  <li><strong>Neues Rechtesystem:</strong> Rollenbasierte Berechtigungen (Administrator, Fördertopfverwalter, Gremium, Antragsteller). Berechtigungen werden serverseitig geprüft. Bestehende Benutzer mit <code>admin = 4</code> erhalten automatisch die Administrator-Rolle.</li>
+  <li><strong>Benutzer- und Einladungsverwaltung:</strong> Unter <code>/antraege/benutzer</code> können Benutzer eingeladen, Rollen zugewiesen und Berechtigungen konfiguriert werden.</li>
+  <li><strong>Bankkontenverwaltung:</strong> Antragsteller können unter <code>/antraege/bankkonten</code> mehrere Bankkonten verwalten; IBAN/BIC werden verschlüsselt gespeichert.</li>
+  <li><strong>Förderprogramme und Fördertöpfe:</strong> Unter <code>/antraege/foerderprogramme</code> können Förderprogramme, befristete oder fortlaufende Fördertöpfe mit Budgetverwaltung verwaltet werden. Endabrechnung mit anteiliger Berechnung bei überschrittenem Budget.</li>
+  <li><strong>Antragsarten und Formularbaukasten:</strong> Unter <code>/antraege/antragsarten</code> können Antragsarten mit flexibel konfigurierbaren Formularen (Text, Zahl, Datum, E-Mail, Auswahlliste, Bestätigung, Dateianlage) erstellt werden. Prüfer-Felder ermöglichen strukturierte Prüfer-Antworten, die nur bei der Prüfung sichtbar sind.</li>
+  <li><strong>Antragstellung:</strong> Antragsteller können Anträge online ausfüllen, als Entwurf speichern und einreichen. Der Statusverlauf (Entwurf → Eingereicht → In Prüfung → Rückfrage → Bewilligt/Abgelehnt) ist nachvollziehbar dokumentiert.</li>
+  <li><strong>Antragsprüfung:</strong> Unter <code>/antraege/pruefung</code> können berechtigte Benutzer Anträge prüfen, Rückfragen stellen und Entscheidungen (Bewilligung/Ablehnung) mit Begründung treffen.</li>
+  <li><strong>Bescheide und Benachrichtigungen:</strong> Vorlagenbasierte PDF-Bescheide mit E-Mail-Benachrichtigungen. Bescheide ohne Fördertopf enthalten keine Betragsangaben. Vorlagen können unter <code>/antraege/bescheidvorlagen</code> angepasst werden.</li>
+  <li><strong>SEPA-Überweisungsdatei:</strong> Nach der Endabrechnung kann eine SEPA-Überweisungsdatei (pain.001.001.03) für die Auszahlung der Förderbeträge erzeugt werden.</li>
+  <li><strong>Auswertungen:</strong> Unter <code>/antraege/auswertungen</code> stehen filterbare Übersichten mit CSV-Export zur Verfügung.</li>
+  <li><strong>Sonstige Anträge:</strong> Neben Förderanträgen unterstützt die Anwendung auch Anträge ohne Fördertopf (z. B. Bootsregistrierung, Liegeplatz, Hallennutzung, Vereinsbeitritt).</li>
+</ul>
+
 <h3>Regatta-Verwaltung</h3>
 <p>
 In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Verwaltung ein und ausgeschaltet werden.
@@ -220,8 +246,8 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
       </ul>
     </li>
    <li>php artisan storage:link</li>
-    <li><strong>Info:</strong> Headerbilder für Informationsseiten werden im Disk <code>public</code> gespeichert, standardmäßig unter <code>storage/app/public/instructionHeader</code> und sind danach über <code>/storage/instructionHeader/...</code> erreichbar.</li>
-   <li>in Ordner "/recources/views/textimport ist folgendes zu Bearbeiten:
+    <li><strong>Information:</strong> Headerbilder für Informationsseiten werden im Disk <code>public</code> gespeichert, standardmäßig unter <code>storage/app/public/instructionHeader</code> und sind danach über <code>/storage/instructionHeader/...</code> erreichbar.</li>
+   <li>in Ordner "resources/views/textimport" ist folgendes zu Bearbeiten:
    <ul>
      <li>anfahrt.blade.php anlegen und mit der Vorlage von anfahrt_example.blade.php ausfüllen</li>
      <li>recht.blade.php anlegen und mit der Vorlage von recht_example.blade.php ausfüllen</li>
@@ -229,20 +255,26 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
      <li>map.blade.php anlegen und mit der Vorlage von map_example.blade.php ausfüllen</li>
      <li>footer.blade.php anlegen und mit der Vorlage von footer_example.blade.php ausfüllen</li>
      <li>werbung_options.php anlegen und mit der Vorlage von werbung_options_example.blade.php ausfüllen</li>
+     <li><strong>mailImpressum.blade.php</strong> anlegen und mit der Vorlage von <strong>mailImpressum_example.blade.php</strong> ausfüllen (Vereinsadresse, Vorstand, Registernummer, Steuernummer für Bescheid-Impressum in PDF und E-Mail)</li>
    </ul>
    <li>in Ordner "public sind die folgenden Dateien anzulegen:
    <ul>
      <li>apple-touch-icon.png</li>
      <li>favicon.ico</li>
    </ul>
-   <li>php artisan migrate --seed<br>(Datenbank wird mit Demodaten geladen)</li>
+   <li>php artisan migrate --seed<br>(Datenbank wird mit Standard-Demodaten geladen, Benutzer erhält Administrator-Rolle)</li>
+   <li><strong>Optional:</strong> Beispielantragsarten und Fördertöpfe befüllen: <code>php artisan db:seed --class=ApplicationExamplesSeeder</code></li>
+   <li><strong>Information:</strong> Bescheid-PDFs werden unter <code>storage/app/local/bescheide/</code> gespeichert (nicht öffentlich zugänglich). Der Ordner wird bei Bedarf automatisch angelegt.</li>
 </ul>
 
 <h2>Update</h2>
 <ul>
-   <li>git pull origin main</li>
-   <li>php artisan migrate:fresh --seed (solange noch keine einige Daten in die Datenbank eingegeben worden sind / Alle Daten werden gelöscht)</li>
+   <li>git pull origin Antraege</li>
+   <li>composer install --no-dev --optimize-autoloader</li>
+   <li>php artisan optimize:clear</li>
+   <li>php artisan migrate:fresh --seed (solange noch keine eigenen Daten in die Datenbank eingegeben worden sind / Alle Daten werden gelöscht)</li>
    <li>php artisan migrate (Wenn schon eigene Daten in der Datenbank vorhanden sind)</li>
+   <li><strong>Manuelle Anpassung:</strong> Falls noch nicht vorhanden, <code>mailImpressum.blade.php</code> in <code>resources/views/textimport/</code> anlegen (siehe Installation).</li>
 </ul>
 
 <h2>Zugehörige Projekte</h2>
@@ -282,66 +314,3 @@ Die Version V00.02.01 <a href="https://github.com/kube-csc/kurse.git" target="_b
 <a href="https://github.com/kube-csc/vereinsverwaltung.git" target="_blank">https://github.com/kube-csc/vereinsverwaltung.git</a>.
 </p>
 <hr>
-<br>
-<p style="text-align:center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel"></a></p>
-
-<p style="text-align:center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

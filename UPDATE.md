@@ -1,4 +1,47 @@
 ## Update Anleitung
+**Version V00.11.0 – Fördermittel- und Antragsverwaltung**
+
+***Wichtigste Änderungen***
+- **Neue Fördermittel- und Antragsverwaltung:** Vollständiger Funktionsbereich für die Verwaltung von Förderprogrammen, Fördertöpfen, Antragsarten, Anträgen, Bescheiden und Benachrichtigungen.
+- **Neues Rechtesystem:** Rollenbasierte Berechtigungen (Administrator, Fördertopfverwalter, Gremium, Antragsteller) mit feingranularen, serverseitig geprüften Rechten. Bestehende Benutzer mit `users.admin = 4` werden automatisch zur Administrator-Rolle migriert.
+- **Bankkontenverwaltung:** Antragsteller können mehrere Bankkonten verwalten; IBAN/BIC verschlüsselt gespeichert.
+- **Förderprogramme und Fördertöpfe:** Befristete oder fortlaufende Fördertöpfe mit Budgetverwaltung, Reservierung und Endabrechnung.
+- **Antragsarten und Formularbaukasten:** Flexible Antragsformulare mit konfigurierbaren Feldern (Text, Zahl, Datum, E-Mail, Auswahlliste, Bestätigung, Dateianlage). Prüfer-Felder für strukturierte Prüfer-Antworten.
+- **Antragstellung und Prüfung:** Online-Formulare mit Entwurf-Funktion, Prüfung mit Rückfragen, Bewilligung/Ablehnung mit Begründung.
+- **Bescheide und Benachrichtigungen:** Vorlagenbasierte PDF-Bescheide mit E-Mail-Benachrichtigungen. Bescheide ohne Fördertopf enthalten keine Betragsangaben.
+- **Endabrechnung:** Anteilige Berechnung bei überschrittenem Budget, SEPA-Überweisungsdatei (pain.001.001.03).
+- **Auswertungen:** Filterbare Übersichten mit CSV-Export.
+
+***Neue Datenbanktabellen***
+- `roles` – Rollen (Administrator, Fördertopfverwalter, Gremium, Antragsteller)
+- `role_user` – Zuordnung Benutzer zu Rollen
+- `permissions` – Berechtigungen
+- `permission_role` – Zuordnung Berechtigungen zu Rollen
+- `invitation_role` – Rollen für Einladungen
+- `bank_accounts` – Bankkonten der Antragsteller
+- `funding_programs` – Förderprogramme
+- `funding_pots` – Fördertöpfe mit Budget und Frist
+- `funding_pot_bindings` – Budgetbindungen (reserviert, bewilligt)
+- `application_types` – Antragsarten mit Beschreibung und Frist
+- `application_fields` – Formularfelder pro Antragsart
+- `applications` – Anträge mit Status, Antworten und Verlauf
+- `notice_templates` – Bescheidvorlagen
+- `application_events` – Ereignisverlauf der Anträge
+
+***Hinweise nach dem Update***
+- **Vor dem Update:** Datenbank und Dateien unter `storage/app/public` sichern.
+- **Migration:** `php artisan migrate` (bei neuer Testdatenbank: `php artisan migrate:fresh --force`)
+- **Demodaten:** `php artisan db:seed --class=ApplicationExamplesSeeder` (optional, befüllt Beispielantragsarten und Fördertöpfe)
+- **Manuelle Anpassungen:**
+  - In Ordner `resources/views/textimport/` die Datei `mailImpressum.blade.php` anlegen und mit der Vorlage von `mailImpressum_example.blade.php` ausfüllen (Vereinsadresse, Vorstand, Registernummer, Steuernummer für Bescheid-Impressum).
+  - `.env`: Falls noch nicht vorhanden, `TINYMCE_API_KEY` eintragen.
+  - `.env`: `APP_REGATTA=ja` oder `nein` (Regatta-Verwaltung ein-/ausschalten).
+- **Storage-Verzeichnis:** Unter `storage/app/local/bescheide/` werden Bescheid-PDFs gespeichert (nicht öffentlich zugänglich). Ordner wird bei Bedarf automatisch angelegt.
+- **Rollenvergabe:** Nach dem Update haben bestehende Benutzer mit `admin = 4` automatisch die Administrator-Rolle. Neue Benutzer haben zunächst keine Rollen und müssen über `/antraege/benutzer` Rollen zugewiesen bekommen.
+- **Anwendungscaches leeren:** `php artisan optimize:clear`
+
+---
+
 **Version V00.10.09 – Umstellung auf Laravel 12**
 
 ***Wichtigste Änderungen***

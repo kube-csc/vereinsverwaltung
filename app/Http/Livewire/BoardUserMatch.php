@@ -145,7 +145,7 @@ class BoardUserMatch extends Component
 
         $newImageName='posten_'.$this->boardUserId.'_'.str::random(4).'.jpg';
 
-            Storage::disk('local')->putFileAs(
+            Storage::disk('private')->putFileAs(
                 'public/boardPortrait/',
                 $this->image,
                 $newImageName

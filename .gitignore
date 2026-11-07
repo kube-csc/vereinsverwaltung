@@ -2,8 +2,8 @@
 /public/*_*.*
 /public/storage
 /public/images
-/storage/app/öocal/*/*_*.*
-/storage/app/local/*/*/*_*.*
+/storage/app/private/*/*_*.**
+/storage/app/private/*/*/*_*.*
 /storage/app/public/*/*_*.*
 /storage/app/public/*/*/*_*.*
 /public/daten/

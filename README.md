@@ -231,6 +231,11 @@ In der .env kann mit der Variabel APP_REGATTA die Möglichkeit einer Regatta-Ver
    <li>curl -sS https://getcomposer.org/installer</li>
    <li>php composer.phar</li>
    <li>php composer.phar install</li>
+   <li>die Unterordner unter "/storage/app/private/" wird automatisch angelegt
+      <ul>
+        <li>private</li>
+      </ul>
+    </li>
    <li>die Unterordner unter "/storage/app/public/" sollten angelegt sein, wenn nicht von hand anlegen
       <ul>
         <li>boardPortrait</li>

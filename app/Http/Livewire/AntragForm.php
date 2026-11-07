@@ -304,7 +304,7 @@ class AntragForm extends Component
                     }
 
                     $filename = Str::uuid() . '.' . strtolower($upload->getClientOriginalExtension());
-                    $path = $upload->storeAs('application-documents/' . auth()->id(), $filename, 'local');
+                    $path = $upload->storeAs('application-documents/' . auth()->id(), $filename, 'private');
                     if (! $path) {
                         throw new \RuntimeException('Die Anlage konnte nicht sicher gespeichert werden.');
                     }
@@ -333,12 +333,12 @@ class AntragForm extends Component
                 return true;
             });
         } catch (Throwable $exception) {
-            Storage::disk('local')->delete($newPaths);
+            Storage::disk('private')->delete($newPaths);
             throw $exception;
         }
 
         if ($saved !== true) {
-            Storage::disk('local')->delete($newPaths);
+            Storage::disk('private')->delete($newPaths);
             $message = match ($saved) {
                 'user_limit' => 'Sie haben die Höchstzahl eingereichter Anträge für diesen Fördertopf erreicht.',
                 'club_limit' => 'Für diesen Verein ist die Höchstzahl eingereichter Anträge für diesen Fördertopf erreicht.',
@@ -348,7 +348,7 @@ class AntragForm extends Component
             return;
         }
 
-        Storage::disk('local')->delete($replacedPaths);
+        Storage::disk('private')->delete($replacedPaths);
         session()->flash('message', $submitting ? 'Ihr Antrag wurde eingereicht.' : 'Der Entwurf wurde gespeichert.');
         $this->redirectRoute('antraege.meine');
     }
@@ -366,7 +366,7 @@ class AntragForm extends Component
     {
         $application = $this->draftApplication();
         $document = $application->documents()->findOrFail($documentId);
-        Storage::disk('local')->delete($document->path);
+        Storage::disk('private')->delete($document->path);
         $document->delete();
     }
 

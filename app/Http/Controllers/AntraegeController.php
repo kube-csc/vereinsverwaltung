@@ -59,7 +59,7 @@ class AntraegeController extends Controller
 
         abort_unless($isOwner || $isReviewer, 403);
 
-        return Storage::disk('local')->download(
+        return Storage::disk('private')->download(
             $applicationDocument->path,
             $applicationDocument->original_name,
             ['Content-Type' => $applicationDocument->mime_type]

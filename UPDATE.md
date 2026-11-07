@@ -34,9 +34,8 @@
 - **Demodaten:** `php artisan db:seed --class=ApplicationExamplesSeeder` (optional, befüllt Beispielantragsarten und Fördertöpfe)
 - **Manuelle Anpassungen:**
   - In Ordner `resources/views/textimport/` die Datei `mailImpressum.blade.php` anlegen und mit der Vorlage von `mailImpressum_example.blade.php` ausfüllen (Vereinsadresse, Vorstand, Registernummer, Steuernummer für Bescheid-Impressum).
-  - `.env`: Falls noch nicht vorhanden, `TINYMCE_API_KEY` eintragen.
-  - `.env`: `APP_REGATTA=ja` oder `nein` (Regatta-Verwaltung ein-/ausschalten).
-- **Storage-Verzeichnis:** Unter `storage/app/local/bescheide/` werden Bescheid-PDFs gespeichert (nicht öffentlich zugänglich). Ordner wird bei Bedarf automatisch angelegt.
+
+- **Storage-Verzeichnis:** Unter `storage/app/private/bescheide/` werden Bescheid-PDFs gespeichert (nicht öffentlich zugänglich). Ordner wird bei Bedarf automatisch angelegt.
 - **Rollenvergabe:** Nach dem Update haben bestehende Benutzer mit `admin = 4` automatisch die Administrator-Rolle. Neue Benutzer haben zunächst keine Rollen und müssen über `/antraege/benutzer` Rollen zugewiesen bekommen.
 - **Anwendungscaches leeren:** `php artisan optimize:clear`
 

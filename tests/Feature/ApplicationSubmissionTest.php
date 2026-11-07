@@ -364,7 +364,7 @@ class ApplicationSubmissionTest extends TestCase
 
     public function test_submitted_application_has_encrypted_bank_snapshot_and_required_private_attachment(): void
     {
-        Storage::fake('local');
+        Storage::fake('private');
         $applicant = $this->applicant();
         $type = $this->applicationType([
             ['key' => 'projekt', 'label' => 'Projekt', 'type' => 'text', 'required' => true],
@@ -417,7 +417,7 @@ class ApplicationSubmissionTest extends TestCase
         $this->assertSame('Projekt', $application->fresh()->form_snapshot[0]['label']);
 
         $document = $application->documents()->firstOrFail();
-        Storage::disk('local')->assertExists($document->path);
+        Storage::disk('private')->assertExists($document->path);
         $this->actingAs($applicant)->get(route('antraege.dokumente.download', $document->id))->assertOk();
         $this->actingAs($this->applicant())->get(route('antraege.dokumente.download', $document->id))->assertForbidden();
     }
